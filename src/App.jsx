@@ -1,12 +1,7 @@
-import './App.css'
+import './App.css';
 
 const App = () => {
+  return <div className="bg-blue-500 text-white p-4">Hello World!</div>;
+};
 
-  return (
-      <h1>
-          Hello world!
-      </h1>
-  )
-}
-
-export default App
+export default App;
