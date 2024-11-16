@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router-dom';
+import { FaHeart, FaMap, FaSearch, FaUser } from 'react-icons/fa';
 
 const navItems = [
-  { path: '/map', label: '지도' },
-  { path: '/like', label: '찜' },
-  { path: '/', label: '메인' },
-  { path: '/search', label: '검색' },
-  { path: '/my-page', label: '내정보' },
+  { path: '/like', label: '찜', icon: FaHeart },
+  { path: '/search', label: '검색', icon: FaSearch },
+  { path: '/', label: '메인', icon: null },
+  { path: '/map', label: '지도', icon: FaMap },
+  { path: '/my-page', label: '내정보', icon: FaUser },
 ];
 
 const FooterNav = () => {
@@ -15,10 +16,20 @@ const FooterNav = () => {
         <NavLink
           key={item.path}
           to={item.path}
-          className="text-gray-500 hover:text-blue-500"
-          activeClassName="text-blue-500 font-bold"
+          className={({ isActive }) =>
+            `flex flex-col items-center text-gray-500 hover:text-blue-500 ${
+              isActive ? 'text-black' : ''
+            }`
+          }
         >
-          {item.label}
+          {item.icon ? (
+            <>
+              <item.icon size={24} />
+              <span className="text-xs mt-1">{item.label}</span>
+            </>
+          ) : (
+            <img alt="메인 로고" className="h-8 w-auto" />
+          )}
         </NavLink>
       ))}
     </nav>
