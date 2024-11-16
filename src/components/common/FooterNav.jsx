@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { FaHeart, FaMap, FaSearch, FaUser } from 'react-icons/fa';
+import FooterLogo from '../../assets/common/FooterLogo.svg';
 
 const navItems = [
   { path: '/like', label: '찜', icon: FaHeart },
@@ -17,9 +18,9 @@ const FooterNav = () => {
           key={item.path}
           to={item.path}
           className={({ isActive }) =>
-            `flex flex-col items-center text-gray-500 hover:text-blue-500 ${
-              isActive ? 'text-black' : ''
-            }`
+            `flex flex-col items-center text-xs mt-1 ${
+              isActive ? 'text-black' : 'text-gray-500'
+            } hover:text-blue-500`
           }
         >
           {item.icon ? (
@@ -28,7 +29,7 @@ const FooterNav = () => {
               <span className="text-xs mt-1">{item.label}</span>
             </>
           ) : (
-            <img alt="메인 로고" className="h-8 w-auto" />
+            <img src={FooterLogo} alt="메인 로고" className="h-14 w-auto" />
           )}
         </NavLink>
       ))}
