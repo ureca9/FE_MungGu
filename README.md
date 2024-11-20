@@ -2,12 +2,12 @@
 ![스크린샷 2024-11-14 오후 1 24 58](https://github.com/user-attachments/assets/5c337fc4-2a2f-4074-abf2-79b5a3fa9c5c)
 
 ex) 
-- member server를 만들때!
 - master: 배포가 되는 브랜치
 - develop: 배포전 임시
+- KAN-[number]: Jira 스토리 번호
 
 ### 생성되는 jira branch 이름
-![스크린샷 2024-11-14 오후 1 25 05](https://github.com/user-attachments/assets/93331e43-2bbd-4028-9108-c7835ade57ef)
+![Group 39659](https://github.com/user-attachments/assets/f9db5dff-116c-4bf4-a234-09e0f8ba4a67)
 
 # Commit
 ### Commit Format
