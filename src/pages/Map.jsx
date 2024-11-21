@@ -3,41 +3,44 @@ import { useEffect, useRef } from 'react';
 const Map = () => {
   const mapContainer = useRef(null);
 
+  const initMap = (latitude, longitude) => {
+    const map = new window.kakao.maps.Map(mapContainer.current, {
+      center: new window.kakao.maps.LatLng(latitude, longitude),
+      level: 3,
+    });
+
+    const marker = new window.kakao.maps.Marker({
+      position: new window.kakao.maps.LatLng(latitude, longitude),
+    });
+    marker.setMap(map);
+  };
+
+  const waitForKakaoMaps = (retries = 10) => {
+    if (window.kakao && window.kakao.maps) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          initMap(latitude, longitude);
+        },
+        (error) => {
+          console.error('현재 위치를 가져오지 못했습니다:', error);
+          alert('현재 위치를 가져오지 못했습니다. 위치 권한을 허용해주세요.');
+        },
+      );
+    } else if (retries > 0)
+      setTimeout(() => waitForKakaoMaps(retries - 1), 100);
+    else alert('Kakao Maps를 불러오지 못했습니다.');
+  };
+
   useEffect(() => {
-    const waitForKakaoMaps = () => {
-      if (window.kakao && window.kakao.maps) {
-        const map = new window.kakao.maps.Map(mapContainer.current, {
-          center: new window.kakao.maps.LatLng(37.5665, 126.978),
-          level: 3,
-        });
-
-        const marker = new window.kakao.maps.Marker({
-          position: new window.kakao.maps.LatLng(37.5665, 126.978),
-        });
-
-        marker.setMap(map);
-        window.kakao.maps.event.addListener(map, 'click', (mouseEvent) => {
-          const latLng = mouseEvent.latLng;
-          alert(`클릭한 위치의 좌표는: ${latLng.getLat()}, ${latLng.getLng()}`);
-        });
-      } else {
-        setTimeout(waitForKakaoMaps, 100);
-      }
-    };
-
     waitForKakaoMaps();
   }, []);
 
   return (
-    <div>
-      <h1 className="text-center text-2xl mb-4">카카오 지도 페이지</h1>
+    <div className="flex flex-col items-center w-full h-screen p-4 bg-gray-50">
       <div
         ref={mapContainer}
-        style={{
-          width: '100%',
-          height: '500px',
-          border: '1px solid black',
-        }}
+        className="w-full max-w-4xl h-[500px] border border-gray-300 shadow-lg rounded-lg"
       ></div>
     </div>
   );
