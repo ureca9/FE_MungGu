@@ -37,11 +37,8 @@ const Map = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center w-full h-screen p-4 bg-gray-50">
-      <div
-        ref={mapContainer}
-        className="w-full max-w-4xl h-[500px] border border-gray-300 shadow-lg rounded-lg"
-      ></div>
+    <div className="w-full h-[1080px]">
+      <div ref={mapContainer} className="w-full h-full"></div>
     </div>
   );
 };
