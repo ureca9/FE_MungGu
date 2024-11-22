@@ -8,4 +8,7 @@ export default defineConfig({
     loader: 'jsx',
     include: /src\/.*\.[jt]sx?$/,
   },
+  optimizeDeps: {
+    include: ['msw'],
+  },
 });
