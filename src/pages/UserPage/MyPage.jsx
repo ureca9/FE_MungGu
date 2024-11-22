@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 // import petgray from '../../assets/common/petgray.svg';
 import { useState } from 'react';
-import axios from 'axios';
+import { fetchPetData } from '../../api/pet';
 const MyPage = () => {
   const serviceList = [
     { name: '이벤트', path: '/' },
@@ -17,19 +17,14 @@ const MyPage = () => {
   const navigate = useNavigate();
   const [pets, setPets] = useState([]);
 
-  const fetchMessage = () => {
-    // axios로 /api/hello 엔드포인트 호출
-    axios
-      .get('/api/pet')
-      .then((response) => {
-        console.log('API 응답:', response.data); // 응답이 왔는지 확인
-        console.log('되는건가?');
-
-        setPets(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
+  const fetchPet = async () => {
+    try {
+      const data = await fetchPetData(); // API 요청 호출
+      console.log('API 응답:', data);
+      setPets(data); // 상태 업데이트
+    } catch (error) {
+      console.error('데이터 가져오기 실패:', error);
+    }
   };
 
   return (
@@ -59,7 +54,7 @@ const MyPage = () => {
             >
               편집
             </button>
-            <button onClick={fetchMessage}>시작</button>
+            <button onClick={fetchPet}>시작</button>
           </div>
           <div className="flex">
             {pets.map((pet) => (
