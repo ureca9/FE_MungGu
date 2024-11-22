@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { FaDirections } from 'react-icons/fa';
 
 const Map = () => {
   const mapContainer = useRef(null);
@@ -37,8 +38,21 @@ const Map = () => {
   }, []);
 
   return (
-    <div className="w-full h-[1080px]">
-      <div ref={mapContainer} className="w-full h-full"></div>
+    <div className="w-full h-full relative">
+      <div className="absolute top-4 left-4 right-4 z-10 p-4 bg-transparent">
+        <div className="flex items-center">
+          <input
+            type="text"
+            placeholder="지역명/장소으로 입력해주세요"
+            className="w-full py-4 pl-2 border rounded-lg"
+          />
+          <button className="ml-4 px-4 py-1 bg-blue-500 text-white rounded-lg whitespace-nowrap flex flex-col items-center justify-center space-y-2">
+            <FaDirections className="text-2xl" />
+            <span>길찾기</span>
+          </button>
+        </div>
+      </div>
+      <div ref={mapContainer} className="w-full h-[1070px]"></div>
     </div>
   );
 };
