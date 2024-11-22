@@ -1,11 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import petgray from '../../assets/common/petgray.svg';
+// import petgray from '../../assets/common/petgray.svg';
+import { useState } from 'react';
+import { fetchPetData } from '../../api/pet';
 const MyPage = () => {
-  const petList = [
-    { name: '토리', src: petgray },
-    { name: '모리', src: petgray },
-    { name: '젤리', src: petgray },
-  ];
   const serviceList = [
     { name: '이벤트', path: '/' },
     { name: '내 예약', path: '/' },
@@ -18,6 +15,17 @@ const MyPage = () => {
     { name: '공지사항', path: '/' },
   ];
   const navigate = useNavigate();
+  const [pets, setPets] = useState([]);
+
+  const fetchPet = async () => {
+    try {
+      const data = await fetchPetData(); // API 요청 호출
+      console.log('API 응답:', data);
+      setPets(data); // 상태 업데이트
+    } catch (error) {
+      console.error('데이터 가져오기 실패:', error);
+    }
+  };
 
   return (
     <>
@@ -34,24 +42,28 @@ const MyPage = () => {
             수정
           </button>
         </div>
-        <div className='flex flex-col bg-white mx-5 mb-5 h-40'>
-          <div className='flex items-center'>
-          마이펫
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              navigate('/pet-update');
-            }}
-            className="flex bg-sky-400 hover:bg-sky-500 p-1"
+        <div className="flex flex-col bg-white mx-5 mb-5 h-40">
+          <div className="flex items-center">
+            마이펫
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/pet-update');
+              }}
+              className="flex bg-sky-400 hover:bg-sky-500 p-1"
             >
-            편집
-          </button>
-            </div>
-            <div className='flex'>
-          {petList.map((pet)=>(<div key={pet.name} className="hover:bg-sky-500 p-1 m-1">
-            <img src={pet.src} />
-          </div>))}
-            </div>
+              편집
+            </button>
+            <button onClick={fetchPet}>시작</button>
+          </div>
+          <div className="flex">
+            {pets.map((pet) => (
+              <div key={pet.puppyName} className="hover:bg-sky-500 p-1 m-1">
+                <img src={pet.src} />
+                {pet.puppyName}
+              </div>
+            ))}
+          </div>
         </div>
         <div className="bg-white mx-5 mb-5 h-auto ">
           서비스 관리 <br />
