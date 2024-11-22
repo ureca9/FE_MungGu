@@ -7,6 +7,7 @@ import MyPage from '../pages/UserPage/MyPage.jsx';
 import Search from '../pages/Search.jsx';
 import UserUpdatePage from '../pages/UserPage/UserUpdatePage.jsx';
 import PetUpdatePage from '../pages/PetPage/PetUpdatePage.jsx';
+import Login from '../pages/Login.jsx';
 
 const routes = [
   {
@@ -37,8 +38,11 @@ const routes = [
     path: '/pet-update',
     element: <PetUpdatePage />,
   },
+  {
+    path: '/login',
+    element: <Login />,
+  },
 ];
-
 const router = createBrowserRouter([
   {
     element: <DefaultLayout />,
