@@ -7,6 +7,7 @@ import MyPage from '../pages/UserPage/MyPage.jsx';
 import Search from '../pages/Search.jsx';
 import UserUpdatePage from '../pages/UserPage/UserUpdatePage.jsx';
 import PetUpdatePage from '../pages/PetPage/PetUpdatePage.jsx';
+import Test from '../pages/Test.jsx';
 
 const routes = [
   {
@@ -36,6 +37,10 @@ const routes = [
   {
     path: '/pet-update',
     element: <PetUpdatePage />,
+  },
+  {
+    path: '/test',
+    element: <Test />,
   },
 ];
 
