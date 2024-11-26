@@ -4,6 +4,15 @@ const instance = axios.create({
   baseURL: 'http://localhost:5173',
 });
 
+export const healthCheck = async () => {
+  try {
+    const response = await instance.get('/actuator/health');
+    console.log(response.data);
+  } catch (error) {
+    console.error('Health check failed:', error);
+  }
+};
+
 const ACCESS_TOKEN = 'access_token';
 const REFRESH_TOKEN = 'refresh_token';
 
