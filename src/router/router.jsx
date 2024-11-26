@@ -9,6 +9,7 @@ import PetForm from '../pages/PetPage/PetForm.jsx';
 import PetAdd from '../pages/PetPage/PetAdd.jsx';
 import PetEdit from '../pages/PetPage/PetEdit.jsx';
 import UserEdit from '../pages/UserPage/UserEdit.jsx';
+import Test from '../pages/Test.jsx';
 
 const routes = [
   {
@@ -46,6 +47,10 @@ const routes = [
   {
     path: '/pet-edit',
     element: <PetEdit />,
+  },
+  {
+    path: '/test',
+    element: <Test />,
   },
 ];
 

@@ -3,11 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { memberData } from '../../api/pet';
 const MyPage = () => {
-  const petList = [
-    { name: '토리', src: petgray },
-    { name: '모리', src: petgray },
-    { name: '젤리', src: petgray },
-  ];
   const serviceList = [
     { name: '이벤트', path: '/' },
     { name: '내 예약', path: '/' },
