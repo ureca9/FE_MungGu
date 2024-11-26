@@ -23,7 +23,6 @@ const MapSearch = () => {
       localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
       setSearchHistory(updatedHistory);
     }
-    setSearchTerm('');
   };
 
   const handleKeyDown = (e) => {

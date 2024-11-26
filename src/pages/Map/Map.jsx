@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import MapSearch from '../components/map/MapSearch';
-import MapContainer from '../components/map/MapContainer';
-import MapPanel from '../components/map/MapPanel';
+import MapSearch from '../../components/map/MapSearch';
+import MapContainer from '../../components/map/MapContainer';
+import MapPanel from '../../components/map/MapPanel';
 
 const Map = () => {
   const [isPanelExpanded, setIsPanelExpanded] = useState(false);
