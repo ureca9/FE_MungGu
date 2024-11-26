@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import petgray from '../../assets/common/petgray.svg';
+// import petgray from '../../assets/common/petgray.svg';
+import { useEffect, useState } from 'react';
+import { memberData } from '../../api/pet';
 const MyPage = () => {
   const petList = [
     { name: '토리', src: petgray },
@@ -18,40 +20,65 @@ const MyPage = () => {
     { name: '공지사항', path: '/' },
   ];
   const navigate = useNavigate();
+  const [memberD, setMemberD] = useState({ puppyList: [] });
+
+  const userData = async () => {
+    try {
+      const Mdata = await memberData();
+      console.log('API 응답:', Mdata.data);
+      setMemberD(Mdata.data);
+    } catch (error) {
+      console.error('데이터 가져오기 실패:', error);
+    }
+  };
 
   return (
     <>
       <div className="flex flex-col bg-gray-100">
-        <div className="bg-white m-5 h-40 ">
-          사용자
+        <div className="bg-white m-5 h-auto min-h-40">
+          사용자 : {memberD.nickname}
           <button
             onClick={(e) => {
               e.preventDefault();
-              navigate('/user-update');
+              navigate('/user-edit');
             }}
             className="bg-sky-400 hover:bg-sky-500 p-1"
           >
             수정
           </button>
+          <img src={memberD.profileImageUrl} />
         </div>
-        <div className='flex flex-col bg-white mx-5 mb-5 h-40'>
-          <div className='flex items-center'>
-          마이펫
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              navigate('/pet-update');
-            }}
-            className="flex bg-sky-400 hover:bg-sky-500 p-1"
+        <div className="flex flex-col bg-white mx-5 mb-5 h-40">
+          <div className="flex items-center">
+            마이펫
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/pet-edit');
+              }}
+              className="flex bg-sky-400 hover:bg-sky-500 p-1"
             >
-            편집
-          </button>
-            </div>
-            <div className='flex'>
-          {petList.map((pet)=>(<div key={pet.name} className="hover:bg-sky-500 p-1 m-1">
-            <img src={pet.src} />
-          </div>))}
-            </div>
+              편집
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/pet-add');
+              }}
+              className="flex bg-sky-400 hover:bg-sky-500 p-1"
+            >
+              추가
+            </button>
+            <button onClick={userData}>시작</button>
+          </div>
+          <div className="flex">
+            {memberD.puppyList.map((puppy) => (
+              <div key={puppy.puppyId} className="hover:bg-sky-500 p-1 m-1">
+                <img src={puppy.src} />
+                {puppy.puppyName}
+              </div>
+            ))}
+          </div>
         </div>
         <div className="bg-white mx-5 mb-5 h-auto ">
           서비스 관리 <br />
