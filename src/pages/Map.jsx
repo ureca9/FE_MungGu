@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FaDirections } from 'react-icons/fa';
 
 const Map = () => {
   const mapContainer = useRef(null);
+  const [isPanelExpanded, setIsPanelExpanded] = useState(false);
 
   const initMap = (latitude, longitude) => {
     const map = new window.kakao.maps.Map(mapContainer.current, {
@@ -38,7 +39,7 @@ const Map = () => {
   }, []);
 
   return (
-    <div className="w-full h-full relative">
+    <div className="relative w-full h-[calc(100vh-8rem)]">
       <div className="absolute top-4 left-4 right-4 z-10 p-4 bg-transparent">
         <div className="flex items-center">
           <input
@@ -52,7 +53,29 @@ const Map = () => {
           </button>
         </div>
       </div>
-      <div ref={mapContainer} className="w-full h-[1070px]"></div>
+
+      <div className="absolute inset-0">
+        <div ref={mapContainer} id="map" className="w-full h-full"></div>
+      </div>
+
+      <div
+        className={`absolute bottom-0 left-0 right-0 z-20 bg-white rounded-t-lg shadow-lg transition-all duration-300 ${
+          isPanelExpanded ? 'h-3/5' : 'h-20'
+        }`}
+      >
+        <div
+          className="flex items-center justify-center p-4 cursor-pointer"
+          onClick={() => setIsPanelExpanded(!isPanelExpanded)}
+        >
+          <div className="w-12 h-1 bg-gray-400 rounded-full"></div>
+        </div>
+
+        {isPanelExpanded && (
+          <div className="p-4 overflow-y-auto">
+            <p>찜목록</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
