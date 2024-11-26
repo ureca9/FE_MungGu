@@ -44,7 +44,7 @@ const MapContainer = ({ onMapLoaded }) => {
 };
 
 MapContainer.propTypes = {
-  onMapLoaded: PropTypes.func.isRequired,
+  onMapLoaded: PropTypes.func,
 };
 
 export default MapContainer;

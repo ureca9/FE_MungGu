@@ -7,6 +7,7 @@ import MyPage from '../pages/UserPage/MyPage.jsx';
 import Search from '../pages/Search.jsx';
 import UserUpdatePage from '../pages/UserPage/UserUpdatePage.jsx';
 import PetUpdatePage from '../pages/PetPage/PetUpdatePage.jsx';
+import MapSearch from '../pages/Map/MapSearch.jsx';
 
 const routes = [
   {
@@ -20,6 +21,10 @@ const routes = [
   {
     path: '/map',
     element: <Map />,
+  },
+  {
+    path: '/map-search',
+    element: <MapSearch />,
   },
   {
     path: '/my-page',
