@@ -1,17 +1,12 @@
 import axios from 'axios';
 
-const instance = axios.create({
-  baseURL: 'http://localhost:5173',
+export const instance = axios.create({
+  baseURL: 'https://meong9.store/api/v1',
 });
 
-export const healthCheck = async () => {
-  try {
-    const response = await instance.get('/actuator/health');
-    console.log(response.data);
-  } catch (error) {
-    console.error('Health check failed:', error);
-  }
-};
+export const localInstance = axios.create({
+  baseURL: 'http://localhost:5173',
+});
 
 const ACCESS_TOKEN = 'access_token';
 const REFRESH_TOKEN = 'refresh_token';
@@ -59,5 +54,3 @@ instance.interceptors.response.use(
       ? handle401Error(error)
       : Promise.reject(error),
 );
-
-export default instance;
