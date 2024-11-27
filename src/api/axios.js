@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getAuthToken } from './auth/auth.js';
+import Swal from 'sweetalert2';
 
 export const instance = axios.create({
   baseURL: 'https://meong9.store/api/v1',
@@ -29,7 +30,7 @@ const handle401Error = async (error) => {
     return instance(originalRequest);
   } catch {
     localStorage.clear();
-    alert('다시 로그인해주세요.');
+    await Swal.fire({ title: '다시 로그인해주세요.', icon: 'warning' });
     window.location.href = '/login';
     return Promise.reject(error);
   }
