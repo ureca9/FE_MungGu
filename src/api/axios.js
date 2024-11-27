@@ -3,10 +3,12 @@ import { getAuthToken } from './auth/auth.js';
 
 export const instance = axios.create({
   baseURL: 'https://meong9.store/api/v1',
+  withCredentials: true,
 });
 
 export const localInstance = axios.create({
   baseURL: 'http://localhost:5173',
+  withCredentials: true,
 });
 
 const ACCESS_TOKEN = 'access_token';
