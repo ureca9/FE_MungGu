@@ -9,6 +9,7 @@ import UserUpdatePage from '../pages/UserPage/UserUpdatePage.jsx';
 import PetUpdatePage from '../pages/PetPage/PetUpdatePage.jsx';
 import MapSearch from '../pages/Map/MapSearch.jsx';
 import Test from '../pages/Test.jsx';
+import Directions from '../pages/Map/Directions.jsx';
 
 const routes = [
   {
@@ -26,6 +27,10 @@ const routes = [
   {
     path: '/map-search',
     element: <MapSearch />,
+  },
+  {
+    path: '/directions',
+    element: <Directions />,
   },
   {
     path: '/my-page',
