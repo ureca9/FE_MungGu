@@ -5,9 +5,12 @@ import Like from '../pages/Like.jsx';
 import Map from '../pages/Map.jsx';
 import MyPage from '../pages/UserPage/MyPage.jsx';
 import Search from '../pages/Search.jsx';
-import UserUpdatePage from '../pages/UserPage/UserUpdatePage.jsx';
-import PetUpdatePage from '../pages/PetPage/PetUpdatePage.jsx';
+import PetForm from '../pages/PetPage/PetForm.jsx';
+import PetAdd from '../pages/PetPage/PetAdd.jsx';
+import PetEdit from '../pages/PetPage/PetEdit.jsx';
+import UserEdit from '../pages/UserPage/UserEdit.jsx';
 import Test from '../pages/Test.jsx';
+import PetRegister from '../pages/PetPage/PetRegister.jsx';
 
 const routes = [
   {
@@ -31,12 +34,24 @@ const routes = [
     element: <Search />,
   },
   {
-    path: '/user-update',
-    element: <UserUpdatePage />,
+    path: '/user-edit',
+    element: <UserEdit />,
   },
   {
-    path: '/pet-update',
-    element: <PetUpdatePage />,
+    path: '/pet-form',
+    element: <PetForm />,
+  },
+  {
+    path: '/pet-register',
+    element: <PetRegister />,
+  },
+  {
+    path: '/pet-add',
+    element: <PetAdd />,
+  },
+  {
+    path: '/pet-edit',
+    element: <PetEdit />,
   },
   {
     path: '/test',

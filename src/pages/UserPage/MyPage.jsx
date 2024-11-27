@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-// import petgray from '../../assets/common/petgray.svg';
-import { useState } from 'react';
-import { fetchPetData } from '../../api/pet';
+import petgray from '../../assets/common/petgray.svg';
+import { useEffect, useState } from 'react';
+import { memberData } from '../../api/pet';
+import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
 const MyPage = () => {
   const serviceList = [
     { name: '이벤트', path: '/' },
@@ -15,58 +16,94 @@ const MyPage = () => {
     { name: '공지사항', path: '/' },
   ];
   const navigate = useNavigate();
-  const [pets, setPets] = useState([]);
+  const [memberD, setMemberD] = useState({ puppyList: [] });
 
-  const fetchPet = async () => {
+  const userData = async () => {
     try {
-      const data = await fetchPetData(); // API 요청 호출
-      console.log('API 응답:', data);
-      setPets(data); // 상태 업데이트
+      const Mdata = await memberData();
+      console.log('API 응답:', Mdata.data);
+      setMemberD(Mdata.data);
     } catch (error) {
       console.error('데이터 가져오기 실패:', error);
     }
   };
 
+  useEffect(() => {
+    userData();
+  }, []);
+
   return (
-    <>
-      <div className="flex flex-col bg-gray-100">
-        <div className="bg-white m-5 h-40 ">
-          사용자
-          <button
+    <div className="bg-backgroundGray">
+      <div className="flex flex-col gap-5 mx-5">
+        <div className="flex items-center justify-between h-auto py-5 mt-5 bg-white border rounded-lg px-9 border-borderlineGray min-h-40">
+          <span className="flex items-center ">
+            <img
+              src={memberD?.profileImageUrl}
+              alt="프로필 이미지"
+              className="rounded-full size-20"
+            />
+            <span className="ml-4 text-base">{memberD?.nickname}</span>
+          </span>
+          <CRUDBtn
+            styleType="reverseBlue"
+            size="xs"
+            label="수정"
             onClick={(e) => {
               e.preventDefault();
-              navigate('/user-update');
+              navigate('/user-edit');
             }}
-            className="bg-sky-400 hover:bg-sky-500 p-1"
-          >
-            수정
-          </button>
+          />
         </div>
-        <div className="flex flex-col bg-white mx-5 mb-5 h-40">
-          <div className="flex items-center">
-            마이펫
+        <div className="flex flex-col h-auto py-5 bg-white border rounded-lg px-9 border-borderlineGray">
+          <div className="flex items-center justify-between mb-6">
+            <span>
+              <span className="text-lg text-textGray">마이펫</span>
+              <span className="text-[#3288FF] ml-1">
+                {memberD?.puppyList.length}
+              </span>
+            </span>
+            <CRUDBtn
+              styleType="reverseBlue"
+              size="xs"
+              label="편집"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/pet-edit');
+              }}
+            />
+            {/* <button onClick={userData}>시작</button> */}
+          </div>
+          <div className="flex items-center gap-5">
+            {memberD?.puppyList.map((puppy) => (
+              <div key={puppy.puppyId} className="flex-col hover:bg-sky-500">
+                <img
+                  src={puppy.src || petgray}
+                  alt="마이펫 이미지"
+                  className="bg-gray-200 rounded-full size-16"
+                />
+                <span className="flex justify-center text-textGray">
+                  {puppy.puppyName}
+                </span>
+              </div>
+            ))}
             <button
               onClick={(e) => {
                 e.preventDefault();
-                navigate('/pet-update');
+                navigate('/pet-add');
               }}
-              className="flex bg-sky-400 hover:bg-sky-500 p-1"
+              className="flex-col hover:bg-sky-500"
             >
-              편집
+              <img
+                src={petgray}
+                alt="펫 추가 이미지"
+                className="bg-gray-200 rounded-full size-16"
+              />
+              <span className="flex justify-center text-textGray">추가</span>
             </button>
-            <button onClick={fetchPet}>시작</button>
-          </div>
-          <div className="flex">
-            {pets.map((pet) => (
-              <div key={pet.puppyName} className="hover:bg-sky-500 p-1 m-1">
-                <img src={pet.src} />
-                {pet.puppyName}
-              </div>
-            ))}
           </div>
         </div>
-        <div className="bg-white mx-5 mb-5 h-auto ">
-          서비스 관리 <br />
+        <div className="h-auto py-5 bg-white border rounded-lg px-9 border-borderlineGray">
+          <div className="mb-3 text-lg text-textGray">서비스 관리</div>
           <div className="flex flex-col">
             {serviceList.map((service) => (
               <button
@@ -74,15 +111,15 @@ const MyPage = () => {
                 onClick={() => {
                   navigate(service.path);
                 }}
-                className=" hover:bg-sky-500 p-1 w-24 m-1"
+                className="flex justify-start w-24 py-2 hover:bg-slate-300"
               >
                 {service.name}
               </button>
             ))}
           </div>
         </div>
-        <div className="bg-white mx-5 mb-5 h-auto ">
-          앱 이용 <br />
+        <div className="h-auto py-5 mb-5 bg-white border rounded-lg px-9 border-borderlineGray">
+          <div className="mb-3 text-lg text-textGray">앱 이용</div>
           <div className="flex flex-col">
             {appList.map((app) => (
               <button
@@ -90,7 +127,7 @@ const MyPage = () => {
                 onClick={() => {
                   navigate(app.path);
                 }}
-                className=" hover:bg-sky-500 p-1 w-24 m-1"
+                className="flex justify-start w-24 py-2 hover:bg-slate-300"
               >
                 {app.name}
               </button>
@@ -98,7 +135,7 @@ const MyPage = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
