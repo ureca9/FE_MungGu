@@ -1,33 +1,54 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const PlaceDetailPage = () => {
+  const { id } = useParams(); // URL의 ID
   const navigate = useNavigate();
-  const [showFullIntro, setShowFullIntro] = useState(false);
+  const [placeDetail, setPlaceDetail] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleBack = () => {
-    navigate(-1); // 이전 페이지로 이동
-  };
+  useEffect(() => {
+    const fetchPlaceDetail = async () => {
+      try {
+        const response = await axios.get(`/api/place-detail/${id}`);
+        setPlaceDetail(response.data.data);
+      } catch (err) {
+        setError('데이터를 불러오는 중 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const toggleIntro = () => {
-    setShowFullIntro(!showFullIntro);
-  };
+    fetchPlaceDetail();
+  }, [id]);
+
+  // 로딩 중일 때
+  if (loading) return <div className="p-4">로딩 중...</div>;
+
+  // 에러 발생 시
+  if (error) return <div className="p-4 text-red-500">{error}</div>;
+
+  // placeDetail이 정상적으로 로드되지 않은 경우 처리
+  if (!placeDetail) {
+    return <div className="p-4">잘못된 데이터입니다.</div>;
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* Header */}
       <header className="bg-white shadow-md p-4 flex items-center">
-        <button onClick={handleBack} className="mr-4 text-gray-600 text-lg">
+        <button onClick={() => navigate(-1)} className="mr-4 text-gray-600 text-lg">
           {'<'}
         </button>
-        <h1 className="text-xl font-bold">장소명</h1>
+        <h1 className="text-xl font-bold">{placeDetail.pensionInfo.pensionName}</h1>
       </header>
 
       {/* Image Section */}
       <div className="bg-gray-300 h-48 w-full flex items-center justify-center">
-        {/* Replace with actual image */}
         <img
-          src="https://via.placeholder.com/800x300" // 예시 이미지
+          src={placeDetail.pensionInfo.images[0] || 'https://via.placeholder.com/800x300'} // 예시 이미지
           alt="Place"
           className="h-full w-full object-cover"
         />
@@ -35,23 +56,18 @@ const PlaceDetailPage = () => {
 
       {/* Place Info */}
       <section className="bg-white p-4">
-        <h2 className="text-lg font-bold mb-2">장소명입니다.</h2>
-        <p className="text-gray-600 text-sm mb-2">서울 강남구 강남대로</p>
+        <h2 className="text-lg font-bold mb-2">{placeDetail.pensionInfo.pensionName}</h2>
+        <p className="text-gray-600 text-sm mb-2">{placeDetail.pensionInfo.address}</p>
         <div className="flex items-center space-x-2 mb-4">
-          <span className="text-yellow-500 text-sm">⭐ 4.5 (200)</span>
-          <button className="text-gray-600 text-sm border px-2 py-1 rounded-lg">
-            즐겨찾기
-          </button>
-          <button className="text-gray-600 text-sm border px-2 py-1 rounded-lg">
-            공유하기
-          </button>
+          <span className="text-yellow-500 text-sm">
+            ⭐ {placeDetail.pensionInfo.reviewAvg} ({placeDetail.pensionInfo.reviewCount})
+          </span>
+          <button className="text-gray-600 text-sm border px-2 py-1 rounded-lg">즐겨찾기</button>
+          <button className="text-gray-600 text-sm border px-2 py-1 rounded-lg">공유하기</button>
         </div>
         <div className="flex flex-wrap gap-2">
-          {['주차 가능', '반려견 출입 가능', '쇼핑', '물놀이 가능'].map((tag) => (
-            <span
-              key={tag}
-              className="px-3 py-1 bg-gray-200 text-sm rounded-full"
-            >
+          {placeDetail.pensionInfo.tags.map((tag) => (
+            <span key={tag} className="px-3 py-1 bg-gray-200 text-sm rounded-full">
               {tag}
             </span>
           ))}
@@ -61,31 +77,19 @@ const PlaceDetailPage = () => {
       {/* Introduction */}
       <section className="bg-white mt-4 p-4">
         <h3 className="text-lg font-bold mb-2">소개글</h3>
-        <p className="text-gray-600 text-sm mb-2">
-          {showFullIntro
-            ? `이곳은 정말 아름답습니다. 주변 산책로와 놀이터가 잘 구비되어 있어
-            반려견과 함께하기 좋습니다. 이곳에서 즐거운 시간을 보내세요.`
-            : `이곳은 정말 아름답습니다. 주변 산책로와 놀이터가 잘 구비되어 있어
-            반려견과 함께하기 좋습니다.`}
-        </p>
-        <button onClick={toggleIntro} className="text-blue-500 text-sm">
-          {showFullIntro ? '접기' : '더보기'}
-        </button>
+        <p className="text-gray-600 text-sm">{placeDetail.pensionInfo.introduction}</p>
       </section>
 
       {/* Reviews */}
       <section className="bg-white mt-4 p-4">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-bold">리얼 리뷰</h3>
-          <button className="text-blue-500 text-sm">전체 보기 ></button>
+          <button className="text-blue-500 text-sm">전체 보기 {'>'}</button>
         </div>
-        <div className="flex gap-4 overflow-x-scroll">
-          {[1, 2, 3, 4, 5].map((_, idx) => (
-            <div
-              key={idx}
-              className="w-24 h-24 bg-gray-300 rounded-lg flex-shrink-0"
-            >
-              {/* Replace with review images */}
+        <div className="flex gap-4 overflow-x-auto">
+          {placeDetail.review.map((review) => (
+            <div key={review.reviewId} className="w-24 h-24 bg-gray-300 rounded-lg">
+              <img src={review.file[0].fileUrl} alt="Review" className="w-full h-full object-cover" />
             </div>
           ))}
         </div>
@@ -95,28 +99,22 @@ const PlaceDetailPage = () => {
       <section className="bg-white mt-4 p-4">
         <h3 className="text-lg font-bold mb-2">기본 정보</h3>
         <ul className="text-gray-600 text-sm list-disc pl-5">
-          <li>반려견 동반 입장 가능.</li>
-          <li>야외 좌석 제공.</li>
-          <li>주차 가능.</li>
+          <li>{placeDetail.pensionInfo.description}</li>
+          <li>입실 시간: {placeDetail.pensionInfo.startTime}</li>
+          <li>퇴실 시간: {placeDetail.pensionInfo.endTime}</li>
         </ul>
       </section>
 
-      {/* Usage Info */}
+      {/* Usage Policy */}
       <section className="bg-white mt-4 p-4">
-        <h3 className="text-lg font-bold mb-2">이용 정보</h3>
-        <p className="text-gray-600 text-sm mb-2">
-          방문 시 반려동물 목줄을 착용해 주세요. 기본적으로 예약이 필요하지 않으나,
-          주말과 공휴일에는 붐빌 수 있습니다.
-        </p>
+        <h3 className="text-lg font-bold mb-2">이용 정책</h3>
+        <p className="text-gray-600 text-sm">{placeDetail.pensionInfo.policy}</p>
       </section>
 
       {/* Warnings */}
       <section className="bg-white mt-4 p-4">
         <h3 className="text-lg font-bold mb-2">주의 사항</h3>
-        <p className="text-gray-600 text-sm">
-          - 시설을 사용한 후 쓰레기를 치워주세요. <br />
-          - 반려견이 다른 방문객에게 피해를 주지 않도록 관리해 주세요.
-        </p>
+        <p className="text-gray-600 text-sm">{placeDetail.pensionInfo.restrictions}</p>
       </section>
 
       {/* Bottom Navigation */}
