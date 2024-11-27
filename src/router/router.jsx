@@ -50,7 +50,7 @@ const routes = [
     element: <PetAdd />,
   },
   {
-    path: '/pet-edit',
+    path: '/pet-edit/:puppyId',
     element: <PetEdit />,
   },
   {
