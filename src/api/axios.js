@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getAuthToken } from './auth/auth.js';
 
 export const instance = axios.create({
   baseURL: 'https://meong9.store/api/v1',
@@ -9,13 +10,6 @@ export const localInstance = axios.create({
 });
 
 const ACCESS_TOKEN = 'access_token';
-const REFRESH_TOKEN = 'refresh_token';
-
-const handleLogout = (message) => {
-  alert(message || '다시 로그인해주세요.');
-  localStorage.clear();
-  window.location.href = `${instance.defaults.baseURL}/login`;
-};
 
 instance.interceptors.request.use((config) => {
   const token = localStorage.getItem(ACCESS_TOKEN);
@@ -23,26 +17,18 @@ instance.interceptors.request.use((config) => {
   return config;
 });
 
-const getAuthToken = async () => {};
-
 const handle401Error = async (error) => {
   const originalRequest = error.config;
-  const savedRefreshToken = localStorage.getItem(REFRESH_TOKEN);
-  if (!savedRefreshToken) {
-    handleLogout('인증 정보가 만료되었습니다. 다시 로그인 해주세요.');
-    return Promise.reject(error);
-  }
-
   try {
-    const { headers } = await getAuthToken();
-    localStorage.setItem(ACCESS_TOKEN, headers.access);
-    localStorage.setItem(REFRESH_TOKEN, headers.refresh);
-    originalRequest.headers.Authorization = `Bearer ${headers.access}`;
+    const response = await getAuthToken();
+    const newAccessToken = response.headers['authorization'].split(' ')[1];
+    localStorage.setItem(ACCESS_TOKEN, newAccessToken);
+    originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
     return instance(originalRequest);
   } catch {
     localStorage.clear();
     alert('다시 로그인해주세요.');
-    window.location.href = `${instance.defaults.baseURL}/login`;
+    window.location.href = '/login';
     return Promise.reject(error);
   }
 };
