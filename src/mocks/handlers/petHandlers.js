@@ -29,13 +29,14 @@ export const petHandlers = [
       message: 'success',
       data: {
         memberId: 1,
-        nickname: '닉네임 값',
+        nickname: '사용자명',
         profileImageUrl:
           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTz1VEr5uBGBH5ixQ3PsmlVIP9moiXrQY4XA&s',
         puppyList: [
           {
             puppyId: 1,
             puppyName: '모리',
+            src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTz1VEr5uBGBH5ixQ3PsmlVIP9moiXrQY4XA&s',
           },
           {
             puppyId: 2,

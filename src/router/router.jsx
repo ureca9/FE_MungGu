@@ -10,6 +10,7 @@ import PetAdd from '../pages/PetPage/PetAdd.jsx';
 import PetEdit from '../pages/PetPage/PetEdit.jsx';
 import UserEdit from '../pages/UserPage/UserEdit.jsx';
 import Test from '../pages/Test.jsx';
+import PetRegister from '../pages/PetPage/PetRegister.jsx';
 
 const routes = [
   {
@@ -39,6 +40,10 @@ const routes = [
   {
     path: '/pet-form',
     element: <PetForm />,
+  },
+  {
+    path: '/pet-register',
+    element: <PetRegister />,
   },
   {
     path: '/pet-add',
