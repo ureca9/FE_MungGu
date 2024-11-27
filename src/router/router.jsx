@@ -8,6 +8,7 @@ import Search from '../pages/Search.jsx';
 import UserUpdatePage from '../pages/UserPage/UserUpdatePage.jsx';
 import PetUpdatePage from '../pages/PetPage/PetUpdatePage.jsx';
 import MapSearch from '../pages/Map/MapSearch.jsx';
+import Test from '../pages/Test.jsx';
 
 const routes = [
   {
@@ -41,6 +42,10 @@ const routes = [
   {
     path: '/pet-update',
     element: <PetUpdatePage />,
+  },
+  {
+    path: '/test',
+    element: <Test />,
   },
 ];
 
