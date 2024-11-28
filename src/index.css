@@ -37,3 +37,18 @@
 .LogoFont {
   font-family: 'HakgyoansimDunggeunmisoTTF-B';
 }
+
+@layer utilities {
+  .bg-googleIcon {
+    @apply w-[19px] h-[19px];
+    background: url('src/assets/login/LoginImgSprite.png') -230px -94px;
+  }
+  .bg-naverIcon {
+    @apply w-[20px] h-[20px];
+    background: url('src/assets/login/LoginImgSprite.png') -230px -54px;
+  }
+  .bg-kakaoIcon {
+    @apply w-[24px] h-[24px];
+    background: url('src/assets/login/LoginImgSprite.png') -230px -10px;
+  }
+}

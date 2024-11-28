@@ -1,0 +1,39 @@
+import { fn } from '@storybook/test';
+
+import { LoginBtn } from './LoginBtn';
+
+export default {
+  title: 'Example/LoginBtn',
+  component: LoginBtn,
+  parameters: {
+    layout: 'centered', // 컴포넌트 중앙 배치
+  },
+  tags: ['autodocs'],
+  args: {
+    onClick: fn(), // 클릭 이벤트 추적용
+  },
+};
+
+// 기본 버튼 스토리
+export const LoginPrimary = {
+  args: {
+    label: '카카오로 로그인하기',
+    styleType: 'kakao',
+  },
+};
+
+// 구글 버튼 스토리
+export const LoginGoogle = {
+  args: {
+    label: '구글로 로그인하기',
+    styleType: 'google',
+  },
+};
+
+// 네이버 버튼 스토리
+export const LoginNaver = {
+  args: {
+    label: '네이버로 로그인하기',
+    styleType: 'naver',
+  },
+};
