@@ -1,4 +1,5 @@
 const ROUTER_PATHS = {
+  MAIN: '/',
   MAP: '/map',
   MY_PAGE: '/my-page',
   LOGIN: '/login',
