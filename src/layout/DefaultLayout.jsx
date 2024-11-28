@@ -8,10 +8,6 @@ const DefaultLayout = () => {
       <Header />
       <main className="flex-grow pt-16 pb-20">
         <Outlet />
-        <div className="h-[2000px]">
-          <h1 className="py-10 text-3xl text-center">스크롤 테스트</h1>
-          <p className="text-center">테스트</p>
-        </div>
       </main>
       <FooterNav />
     </div>
