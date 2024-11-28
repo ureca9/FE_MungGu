@@ -55,7 +55,7 @@ const MyPet = ({ memberD, navigate }) => {
             e.preventDefault();
             navigate('/pet-add');
           }}
-          className="flex flex-col items-center justify-center hover:bg-sky-500"
+          className="flex flex-col items-center justify-center"
         >
           <div className="bg-[#F5F5F5] border border-[#8A8A8A] flex items-center justify-center rounded-full size-16">
             <div className="bg-PlusIcon"></div>
