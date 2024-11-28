@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaSearch, FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaSearch } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
+import SearchHistory from '../../components/map/SearchHistory.jsx';
+import useSearchHistoryStore from '../../stores/map/useSearchHistoryStore.js';
 
 const MapSearch = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchHistory, setSearchHistory] = useState([]);
+  const { searchHistory, setSearchHistory } = useSearchHistoryStore();
 
   useEffect(() => {
     const storedHistory =
@@ -29,16 +31,8 @@ const MapSearch = () => {
     if (e.key === 'Enter') handleSearch();
   };
 
-  const handleDelete = (item) => {
-    const updatedHistory = searchHistory.filter(
-      (historyItem) => historyItem !== item,
-    );
-    setSearchHistory(updatedHistory);
-    localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
-  };
-
   return (
-    <div className="relative w-full h-screen bg-white">
+    <div className="relative w-full h-[calc(100vh-8rem)] bg-white">
       <div className="absolute top-4 left-4 right-4 z-10 p-4 bg-transparent">
         <div className="flex items-center">
           <button
@@ -64,25 +58,7 @@ const MapSearch = () => {
           </button>
         </div>
       </div>
-
-      <div className="pt-[7rem] p-4 flex-grow">
-        <ul>
-          {searchHistory.map((item, index) => (
-            <li
-              key={index}
-              className="flex items-center justify-between px-10 py-5 border-b border-gray-300"
-            >
-              <span className="text-xl">{item}</span>
-              <button
-                className="ml-2 text-gray-300"
-                onClick={() => handleDelete(item)}
-              >
-                <FaTimes />
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <SearchHistory />
     </div>
   );
 };
