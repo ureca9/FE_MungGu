@@ -10,30 +10,33 @@ import PetAdd from '../pages/PetPage/PetAdd.jsx';
 import PetEdit from '../pages/PetPage/PetEdit.jsx';
 import UserEdit from '../pages/UserPage/UserEdit.jsx';
 import Test from '../pages/Test.jsx';
+import ROUTER_PATHS from '../utils/RouterPath.js';
 import PetRegister from '../pages/PetPage/PetRegister.jsx';
 
 const routes = [
   {
-    path: '/',
+    path: ROUTER_PATHS.MAIN,
     element: <Main />,
   },
   {
-    path: '/like',
+    path: ROUTER_PATHS.LIKE,
     element: <Like />,
   },
   {
-    path: '/map',
+    path: ROUTER_PATHS.MAP,
     element: <Map />,
   },
   {
-    path: '/my-page',
+    path: ROUTER_PATHS.MY_PAGE,
     element: <MyPage />,
   },
   {
-    path: '/search',
+    path: ROUTER_PATHS.SEARCH,
     element: <Search />,
   },
   {
+    path: ROUTER_PATHS.USER_UPDATE,
+    element: <UserUpdatePage />,
     path: '/user-edit',
     element: <UserEdit />,
   },
@@ -42,6 +45,8 @@ const routes = [
     element: <PetForm />,
   },
   {
+    path: ROUTER_PATHS.PET_UPDATE,
+    element: <PetUpdatePage />,
     path: '/pet-register',
     element: <PetRegister />,
   },
@@ -54,7 +59,7 @@ const routes = [
     element: <PetEdit />,
   },
   {
-    path: '/test',
+    path: ROUTER_PATHS.TEST,
     element: <Test />,
   },
 ];
