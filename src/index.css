@@ -25,3 +25,54 @@
     sans-serif;
   box-sizing: border-box;
 }
+@layer utilities {
+  .bg-user {
+    @apply w-[48px] h-[48px];
+    background: url('src/assets/MypageImg/MyPageImg.png') -10px -10px;
+}
+
+.bg-PlusIcon {
+    @apply w-[35px] h-[35px];
+    background: url('src/assets/MypageImg/MyPageImg.png') -10px -78px;
+}
+
+.bg-petIcon {
+    @apply w-[51px] h-[51px];
+    background: url('src/assets/MypageImg/MyPageImg.png') -78px -10px;
+}
+
+.bg-고객센터_아이콘 {
+    @apply w-[24px] h-[24px];
+    background: url('src/assets/MypageImg/MyPageImg.png') -65px -78px;
+}
+
+.bg-공지사항_아이콘 {
+    @apply w-[24px] h-[24px];
+    background: url('src/assets/MypageImg/MyPageImg.png') -149px -10px;
+}
+
+.bg-최근_본_장소_아이콘 {
+    @apply w-[24px] h-[24px];
+    background: url('src/assets/MypageImg/MyPageImg.png') -149px -54px;
+}
+
+.bg-설정_아이콘 {
+    @apply w-[24px] h-[24px];
+    background: url('src/assets/MypageImg/MyPageImg.png') -10px -133px;
+}
+
+.bg-후기_아이콘 {
+    @apply w-[24px] h-[24px];
+    background: url('src/assets/MypageImg/MyPageImg.png') -54px -133px;
+}
+
+.bg-예약_아이콘 {
+    @apply w-[24px] h-[24px];
+    background: url('src/assets/MypageImg/MyPageImg.png') -98px -133px;
+}
+
+.bg-이벤트_아이콘 {
+    @apply w-[24px] h-[24px];
+    background: url('src/assets/MypageImg/MyPageImg.png') -142px -133px;
+}
+}
