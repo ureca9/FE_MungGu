@@ -4,7 +4,7 @@ import { LoginBtn } from '../stories/Buttons/LoginBtn/LoginBtn';
 import { instance } from './../api/axios';
 
 const Login = () => {
-  const REST_API_KEY = 'f5073399aab84d115f651941e6f66e5c'; // 카카오 REST API 키
+  const REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
   const REDIRECT_URI = 'https://meong9.store/api/v1/auth/callback/kakao';
   const navigate = useNavigate();
 
