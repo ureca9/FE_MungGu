@@ -5,7 +5,7 @@ import { instance } from './../api/axios';
 
 const Login = () => {
   const REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
-  const REDIRECT_URI = 'https://meong9.store/api/v1/auth/callback/kakao';
+  const REDIRECT_URI = 'http://localhost:5173/login';
   const navigate = useNavigate();
 
   const handleKakaoLogin = () => {
