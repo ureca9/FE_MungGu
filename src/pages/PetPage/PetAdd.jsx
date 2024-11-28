@@ -1,22 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import PetForm from './PetForm';
 
 const PetAdd = () => {
-  const handleAdd = (e) => {
-    e.preventDefault();
-    console.log('반려동물 추가');
+  const puppyAdd = async (formData) => {
+    try {
+      const response = await axios.post('/api/puppies', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('반려동물 추가 성공 :', response.data);
+    } catch (error) {
+      console.error('추가 중 오류 발생:', error);
+    }
   };
 
   return (
-    <>
-      <h1>Pet Add</h1>
+    <div>
       <PetForm
-        title="반려동물 추가"
+        title="우리 강아지 정보를 입력해 주세요."
         buttonText="추가"
+        onSubmit={puppyAdd}
         deleteButton={false}
-        onSubmit01={handleAdd}
       />
-    </>
+    </div>
   );
 };
 

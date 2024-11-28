@@ -2,8 +2,7 @@ import React from 'react';
 import PetForm from './PetForm';
 
 const PetEdit = () => {
-  const handleEdit = (e) => {
-    e.preventDefault();
+  const handleEdit = () => {
     console.log('반려동물 수정');
   };
 
@@ -14,7 +13,7 @@ const PetEdit = () => {
         title="반려동물 수정 "
         buttonText="수정"
         deleteButton={true}
-        onSubmit01={handleEdit}
+        onSubmit={handleEdit}
       />
     </>
   );
