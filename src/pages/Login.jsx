@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import { LoginBtn } from '../stories/Buttons/LoginBtn/LoginBtn';
 import { instance } from './../api/axios';
 import ROUTER_PATHS from '../utils/RouterPath';
-import useLoginStore from '../stores/login';
+import useLoginStore from '../stores/Auth/useLoginStore';
 import LOCAL_STORAGE_KEYS from '../utils/LocalStorageKey';
 
 const Login = () => {
