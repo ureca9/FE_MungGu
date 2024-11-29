@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import petgray from '../../assets/common/petgray.svg';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
+import axios from 'axios';
 const PetForm = ({
   title,
   buttonText,
@@ -48,6 +49,15 @@ const PetForm = ({
     if (file) {
       setProfileImage(file); // 선택된 파일 저장
       setPreviewUrl(URL.createObjectURL(file)); // 파일 객체를 URL로 변환
+    }
+  };
+  const puppytype = async () => {
+    try {
+      const response = await axios.get('/puppies/types');
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error('견종목록 오류 확인:', error);
     }
   };
 
@@ -187,7 +197,7 @@ const PetForm = ({
             </label>
           </div>
         </div>
-        <div className='flex flex-col w-full'>
+        <div className="flex flex-col w-full">
           <div className="mb-2 text-xl">몸무게(kg)</div>
           <label className="flex flex-row justify-between w-full gap-4 mb-5">
             <input
@@ -198,7 +208,7 @@ const PetForm = ({
               min={0}
               max={99}
               required
-              className="flex items-center justify-center w-full px-5 text-center border rounded-lg cursor-pointer h-14 border-inputGray "
+              className="flex items-center justify-center w-full px-5 border rounded-lg cursor-pointer text-start h-14 border-inputGray "
             />
             <input
               type="number"

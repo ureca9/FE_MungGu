@@ -1,4 +1,4 @@
-import { instance } from './axios';
+import { instance, localInstance } from './axios';
 
 export const memberData = async () => {
   try {
