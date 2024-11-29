@@ -1,47 +1,68 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { LoginBtn } from '../stories/Buttons/LoginBtn/LoginBtn';
 import { instance } from './../api/axios';
+import ROUTER_PATHS from '../utils/RouterPath';
+import useLoginStore from '../stores/login';
+import LOCAL_STORAGE_KEYS from '../utils/LocalStorageKey';
 
 const Login = () => {
   const REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
-  const REDIRECT_URI = 'http://localhost:5173/login';
+  const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
   const navigate = useNavigate();
+  const { setLogin } = useLoginStore();
 
   const handleKakaoLogin = () => {
-    const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${encodeURIComponent(
+    window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${encodeURIComponent(
       REDIRECT_URI,
     )}`;
-    window.location.href = kakaoAuthUrl; // Kakao 로그인 페이지로 리다이렉트
   };
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
     if (code) {
-      fetchAccessToken(code); // code를 이용해 액세스 토큰 요청
+      fetchAccessToken(code);
     }
   }, []);
 
   const fetchAccessToken = async (code) => {
     try {
       const response = await instance.get(`/auth/callback/kakao?code=${code}`);
-
       const data = response.data;
 
       if (data.message === 'success') {
-        const { email, nickname, NewMember } = data.data;
-        console.log('사용자 정보:', { email, nickname, NewMember });
-        alert(`환영합니다, ${nickname}님!`);
+        const { memberId, email, nickname, newMember } = data.data;
+        localStorage.setItem(LOCAL_STORAGE_KEYS.MEMBER_ID, memberId);
+        localStorage.setItem(LOCAL_STORAGE_KEYS.EMAIL, email);
+        localStorage.setItem(LOCAL_STORAGE_KEYS.NICKNAME, nickname);
+        localStorage.setItem(LOCAL_STORAGE_KEYS.NEW_MEMBER, newMember);
 
-        navigate('/');
+        setLogin();
+
+        navigate(newMember ? ROUTER_PATHS.USER_REGISTER : ROUTER_PATHS.MAIN);
       } else {
         console.error('응답 오류:', data);
-        alert('로그인 중 문제가 발생했습니다.');
+
+        Swal.fire({
+          icon: 'error',
+          title: '로그인 실패',
+          text: '로그인 중 문제가 발생했습니다.',
+          confirmButtonText: '확인',
+          confirmButtonColor: '#3288FF',
+        });
       }
     } catch (error) {
       console.error('백엔드 통신 에러:', error);
-      alert('서버와의 통신 중 오류가 발생했습니다.');
+
+      Swal.fire({
+        icon: 'error',
+        title: '통신 오류',
+        text: '서버와의 통신 중 오류가 발생했습니다.',
+        confirmButtonText: '확인',
+        confirmButtonColor: '#3288FF',
+      });
     }
   };
 
@@ -63,12 +84,12 @@ const Login = () => {
       ></div>
       <div className="flex items-center w-2/3 gap-4 my-4">
         <div className="w-full h-[1px] border-[1px] border-[#8a8a8a]"></div>
-        <div className="w-full text-base font-bold text-center text-gray-600">
-          소셜로그인
+        <div className="w-full text-sm text-center text-gray-600">
+          SNS 계정으로 로그인
         </div>
         <div className="w-full h-[1px] border-[1px] border-[#8a8a8a]"></div>
       </div>
-      <div className="w-2/3 mt-2 space-y-4">
+      <div className="flex justify-between w-[200px] mt-4 text-center">
         <LoginBtn
           styleType="kakao"
           label="카카오로 시작하기"
