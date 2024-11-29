@@ -7,43 +7,50 @@ import MyPage from '../pages/UserPage/MyPage.jsx';
 import Search from '../pages/Search.jsx';
 import UserUpdatePage from '../pages/UserPage/UserUpdatePage.jsx';
 import PetUpdatePage from '../pages/PetPage/PetUpdatePage.jsx';
+<<<<<<< HEAD
 import PlaceDetailPage from '../pages/DetailPage/PlaceDetailPage.jsx';
 import SearchModal from '../components/MainPage/SearchModal/SearchModal.jsx';
 import ListPage from '../pages/ListPage/ListPage.jsx'; // ListPage 경로 확인
 import PensionListPage from '../pages/ListPage/PensionListPage.jsx';
 import PensionDetailPage from '../pages/DetailPage/PensionDetailPage.jsx';
 import Test from '../pages/Test.jsx';
+=======
+import Login from '../pages/Login.jsx';
+import ROUTER_PATHS from '../utils/RouterPath.js';
+import Meongsengneacut from '../pages/Meongsengneacut.jsx';
+>>>>>>> f9ddb28a09dd76610f5d097851668f0d04c5391b
 
 const routes = [
   {
-    path: '/',
+    path: ROUTER_PATHS.MAIN,
     element: <Main />,
   },
   {
-    path: '/like',
+    path: ROUTER_PATHS.LIKE,
     element: <Like />,
   },
   {
-    path: '/map',
+    path: ROUTER_PATHS.MAP,
     element: <Map />,
   },
   {
-    path: '/my-page',
+    path: ROUTER_PATHS.MY_PAGE,
     element: <MyPage />,
   },
   {
-    path: '/search',
+    path: ROUTER_PATHS.SEARCH,
     element: <Search />,
   },
   {
-    path: '/user-update',
+    path: ROUTER_PATHS.USER_UPDATE,
     element: <UserUpdatePage />,
   },
   {
-    path: '/pet-update',
+    path: ROUTER_PATHS.PET_UPDATE,
     element: <PetUpdatePage />,
   },
   {
+<<<<<<< HEAD
     path: '/search-modal', // 검색 모달 경로 추가
     element: <SearchModal />,
   },
@@ -66,9 +73,16 @@ const routes = [
   {
     path: '/test',
     element: <Test />,
+=======
+    path: ROUTER_PATHS.LOGIN,
+    element: <Login />,
+  },
+  {
+    path: ROUTER_PATHS.MEONGSENGNEACUT,
+    element: <Meongsengneacut />,
+>>>>>>> f9ddb28a09dd76610f5d097851668f0d04c5391b
   },
 ];
-
 const router = createBrowserRouter([
   {
     element: <DefaultLayout />,
