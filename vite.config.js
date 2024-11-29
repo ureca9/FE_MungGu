@@ -11,4 +11,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ['msw'],
   },
+  resolve: {
+    extensions: ['.js', '.jsx'],
+  },
 });

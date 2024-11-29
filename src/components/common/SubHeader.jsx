@@ -6,7 +6,7 @@ const SubHeader = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const pageTitles = {
+  const PAGE_TITLES = {
     [ROUTER_PATHS.MAP]: '강아지도',
     [ROUTER_PATHS.MY_PAGE]: '마이페이지',
     [ROUTER_PATHS.LOGIN]: '로그인',
@@ -30,7 +30,7 @@ const SubHeader = () => {
     [ROUTER_PATHS.MEONGSENG_NEACUT]: '멍생네컷',
   };
 
-  const pageTitle = pageTitles[location.pathname] || '';
+  const pageTitle = PAGE_TITLES[location.pathname] || '페이지 없음';
 
   return (
     <header className="fixed top-0 z-10 w-[768px] border-b border-gray-300 backdrop-blur-md">
