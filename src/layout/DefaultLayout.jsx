@@ -3,6 +3,7 @@ import Header from '../components/common/Header.jsx';
 import SubHeader from '../components/common/SubHeader.jsx';
 import FooterNav from '../components/common/FooterNav.jsx';
 import ROUTER_PATHS from '../utils/RouterPath.js';
+import ScrollTop from './../utils/ScrollTop';
 
 const DefaultLayout = () => {
   const location = useLocation();
@@ -11,6 +12,7 @@ const DefaultLayout = () => {
     ROUTER_PATHS.MAP,
     ROUTER_PATHS.MY_PAGE,
     ROUTER_PATHS.LOGIN,
+    ROUTER_PATHS.SEARCH,
     ROUTER_PATHS.LIVE_REVIEW,
     ROUTER_PATHS.USER_REGISTER,
     ROUTER_PATHS.DOG_REGISTER,
@@ -36,12 +38,9 @@ const DefaultLayout = () => {
       {isSubHeaderPath ? <SubHeader /> : <Header />}
       <main className="flex-grow pt-16 pb-20">
         <Outlet />
-        <div className="h-[2000px]">
-          <h1 className="py-10 text-3xl text-center">스크롤 테스트</h1>
-          <p className="text-center">테스트</p>
-        </div>
       </main>
       <FooterNav />
+      <ScrollTop />
     </div>
   );
 };

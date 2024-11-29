@@ -7,8 +7,9 @@ import MyPage from '../pages/UserPage/MyPage.jsx';
 import Search from '../pages/Search.jsx';
 import UserUpdatePage from '../pages/UserPage/UserUpdatePage.jsx';
 import PetUpdatePage from '../pages/PetPage/PetUpdatePage.jsx';
-import Test from '../pages/Test.jsx';
+import Login from '../pages/Login.jsx';
 import ROUTER_PATHS from '../utils/RouterPath.js';
+import Meongsengneacut from '../pages/Meongsengneacut.jsx';
 
 const routes = [
   {
@@ -40,11 +41,14 @@ const routes = [
     element: <PetUpdatePage />,
   },
   {
-    path: ROUTER_PATHS.TEST,
-    element: <Test />,
+    path: ROUTER_PATHS.LOGIN,
+    element: <Login />,
+  },
+  {
+    path: ROUTER_PATHS.MEONGSENGNEACUT,
+    element: <Meongsengneacut />,
   },
 ];
-
 const router = createBrowserRouter([
   {
     element: <DefaultLayout />,

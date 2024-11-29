@@ -3,6 +3,7 @@ const ROUTER_PATHS = {
   MAP: '/map',
   MY_PAGE: '/my-page',
   LOGIN: '/login',
+  SEARCH: '/search',
   LIVE_REVIEW: '/live-review',
   USER_REGISTER: '/user-register',
   DOG_REGISTER: '/dog-register',
@@ -20,7 +21,7 @@ const ROUTER_PATHS = {
   RESERVATION: '/reservation',
   RESERVATION_COMPLETE: '/reservation-complete',
   RESERVATION_LIST: '/reservation-list',
-  MEONGSENG_NEACUT: '/meongsengneacut',
+  MEONGSENGNEACUT: '/meongsengneacut',
 };
 
 export default ROUTER_PATHS;
