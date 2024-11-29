@@ -10,6 +10,7 @@ import PetUpdatePage from '../pages/PetPage/PetUpdatePage.jsx';
 import Login from '../pages/Login.jsx';
 import ROUTER_PATHS from '../utils/RouterPath.js';
 import Meongsengneacut from '../pages/Meongsengneacut.jsx';
+import UserRegister from './../pages/UserPage/UserRegister';
 
 const routes = [
   {
@@ -43,6 +44,10 @@ const routes = [
   {
     path: ROUTER_PATHS.LOGIN,
     element: <Login />,
+  },
+  {
+    path: ROUTER_PATHS.USER_REGISTER,
+    element: <UserRegister />,
   },
   {
     path: ROUTER_PATHS.MEONGSENGNEACUT,

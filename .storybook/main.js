@@ -6,7 +6,6 @@ const config = {
     '@storybook/addon-essentials',
     '@chromatic-com/storybook',
     '@storybook/addon-interactions',
-    '@storybook/addon-postcss', // PostCSS 추가
   ],
   framework: {
     name: '@storybook/react-vite',
