@@ -35,8 +35,6 @@ const routes = [
     element: <Search />,
   },
   {
-    path: ROUTER_PATHS.USER_UPDATE,
-    element: <UserUpdatePage />,
     path: '/user-edit',
     element: <UserEdit />,
   },
@@ -45,8 +43,6 @@ const routes = [
     element: <PetForm />,
   },
   {
-    path: ROUTER_PATHS.PET_UPDATE,
-    element: <PetUpdatePage />,
     path: '/pet-register',
     element: <PetRegister />,
   },
