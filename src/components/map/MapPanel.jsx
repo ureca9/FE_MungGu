@@ -1,11 +1,14 @@
 import PropTypes from 'prop-types';
+import LikeListCategory from './LikeListCategory';
 
 const MapPanel = ({ panelState, setPanelState }) => {
   const panelHeightClass = {
-    collapsed: 'h-20',
+    collapsed: 'h-32',
     expanded: 'h-2/5',
     maximized: 'h-[calc(100vh-15rem)]',
   };
+
+  const handleCategorySelect = () => setPanelState('maximized');
 
   return (
     <div
@@ -14,23 +17,17 @@ const MapPanel = ({ panelState, setPanelState }) => {
       <div
         className="flex items-center justify-center p-4 cursor-pointer"
         onClick={() => {
-          if (panelState === 'collapsed') {
-            setPanelState('expanded');
-          } else if (panelState === 'expanded') {
-            setPanelState('maximized');
-          } else {
-            setPanelState('collapsed');
-          }
+          if (panelState === 'collapsed') setPanelState('expanded');
+          else if (panelState === 'expanded') setPanelState('maximized');
+          else setPanelState('collapsed');
         }}
       >
         <div className="w-12 h-1 bg-gray-400 rounded-full"></div>
       </div>
 
-      {panelState !== 'collapsed' && (
-        <div className="p-4 overflow-y-auto">
-          <p>찜목록</p>
-        </div>
-      )}
+      <div className="p-4 overflow-y-auto">
+        <LikeListCategory onCategorySelect={handleCategorySelect} />
+      </div>
     </div>
   );
 };
