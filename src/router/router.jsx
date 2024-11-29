@@ -9,28 +9,30 @@ import PetForm from '../pages/PetPage/PetForm.jsx';
 import PetAdd from '../pages/PetPage/PetAdd.jsx';
 import PetEdit from '../pages/PetPage/PetEdit.jsx';
 import UserEdit from '../pages/UserPage/UserEdit.jsx';
-import Test from '../pages/Test.jsx';
+import Login from '../pages/Login.jsx';
+import ROUTER_PATHS from '../utils/RouterPath.js';
+import Meongsengneacut from '../pages/Meongsengneacut.jsx';
 import PetRegister from '../pages/PetPage/PetRegister.jsx';
 
 const routes = [
   {
-    path: '/',
+    path: ROUTER_PATHS.MAIN,
     element: <Main />,
   },
   {
-    path: '/like',
+    path: ROUTER_PATHS.LIKE,
     element: <Like />,
   },
   {
-    path: '/map',
+    path: ROUTER_PATHS.MAP,
     element: <Map />,
   },
   {
-    path: '/my-page',
+    path: ROUTER_PATHS.MY_PAGE,
     element: <MyPage />,
   },
   {
-    path: '/search',
+    path: ROUTER_PATHS.SEARCH,
     element: <Search />,
   },
   {
@@ -54,11 +56,14 @@ const routes = [
     element: <PetEdit />,
   },
   {
-    path: '/test',
-    element: <Test />,
+    path: ROUTER_PATHS.LOGIN,
+    element: <Login />,
+  },
+  {
+    path: ROUTER_PATHS.MEONGSENGNEACUT,
+    element: <Meongsengneacut />,
   },
 ];
-
 const router = createBrowserRouter([
   {
     element: <DefaultLayout />,
