@@ -1,18 +1,14 @@
 import { Link, useNavigate } from 'react-router-dom';
 import ROUTER_PATHS from '../../utils/RouterPath';
-import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
-import useLoginStore from '../../stores/login';
+import useLoginStore from '../../stores/Auth/useLoginStore';
 
 const Header = () => {
   const navigate = useNavigate();
   const { isLoggedIn, setLogout } = useLoginStore();
 
   const handleLogout = () => {
-    Object.values(LOCAL_STORAGE_KEYS).forEach((key) =>
-      localStorage.removeItem(key),
-    );
-
     setLogout();
+    localStorage.clear();
     navigate(ROUTER_PATHS.MAIN);
   };
 
