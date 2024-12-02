@@ -5,11 +5,18 @@ import PetForm from './PetForm';
 const PetAdd = () => {
   const puppyAdd = async (formData) => {
     try {
-      const response = await axios.post('/api/puppies', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      const response = await axios.post(
+        'https://meong9.store/api/v1/api/puppies',
+        formData,
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+            Authorization: `
+          Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMxMTcwNDksInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMwOTkwNDl9.Jl8wubnv_sCIdOybnqaY5wMLWC1ZpgQN6D82P9yZLI8`,
+          },
         },
-      });
+      );
       console.log('반려동물 추가 성공 :', response.data);
     } catch (error) {
       console.error('추가 중 오류 발생:', error);

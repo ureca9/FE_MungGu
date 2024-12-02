@@ -35,7 +35,7 @@ export const petHandlers = [
     return HttpResponse.json(memberData, { status: 200 });
   }),
 
-  http.post('/api/puppies', async (req) => {
+  http.post('/api/p', async (req) => {
     const contentType = req.headers.post('content-type'); // 헤더에서 Content-Type 확인
 
     if (contentType.includes('multipart/form-data')) {

@@ -9,3 +9,13 @@ export const memberData = async () => {
     throw error;
   }
 };
+
+export const BreedsTypeData = async () => {
+  try {
+    const response = await instance.get('/puppies/types');
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('견종목록 오류 확인:', error);
+  }
+};

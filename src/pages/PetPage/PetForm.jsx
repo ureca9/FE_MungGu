@@ -1,48 +1,65 @@
 import { useState } from 'react';
 import petgray from '../../assets/common/petgray.svg';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
-import axios from 'axios';
+
 import { BasicInput } from '../../stories/Input/BasicInput';
 import BreedsPanel from '../../components/pet/BreedsPanel';
+import Swal from 'sweetalert2';
 const PetForm = ({
   title,
   buttonText,
   deleteButton,
-  initialData = {},
+  basicData = {},
   onSubmit,
   onDelete,
 }) => {
-  const [puppyName, setPuppyName] = useState(initialData.name || '');
+  const [puppyName, setPuppyName] = useState(basicData.name || '');
   const [profileImage, setProfileImage] = useState(null);
-  const [breedId, setBreedId] = useState(initialData.breedId || '');
-  const [birthDate, setBirthDate] = useState(initialData.birthDate || '');
-  const [gender, setGender] = useState(initialData.gender || '');
-  const [neutered, setNeutered] = useState(initialData.neutered || '');
+  const [breedId, setBreedId] = useState(basicData.breedId || '');
+  const [breedName, setBreedName] = useState(basicData.breedName || '');
+  const [birthDate, setBirthDate] = useState(basicData.birthDate || '');
+  const [gender, setGender] = useState(basicData.gender || '');
+  const [neutered, setNeutered] = useState(basicData.neutered || '');
   const [weightFront, setWeightFront] = useState(
-    initialData.weight ? initialData.weight.split('.')[0] : '',
+    basicData.weight ? basicData.weight.split('.')[0] : '',
   );
   const [weightBack, setWeightBack] = useState(
-    initialData.weight ? initialData.weight.split('.')[1] : '',
+    basicData.weight ? basicData.weight.split('.')[1] : '',
   );
   const [previewUrl, setPreviewUrl] = useState(''); // 미리보기 URL 상태
-  //   const [weightBack, setWeightBack] = useState(
-  //     initialData.weight && initialData.weight.includes('.')
-  //       ? initialData.weight.split('.')[1]
-  //       : ''
-  // );
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!checkDateForm()) return;
+    const today = new Date();
+    const inputDate = new Date(birthDate);
+    const isValidDate =
+      /^\d{4}-\d{2}-\d{2}$/.test(birthDate) && !isNaN(inputDate);
+
+    if (inputDate > today || !isValidDate) {
+      Swal.fire({
+        title: 'Oops...',
+        text: '생년월일은 오늘 이전 날짜여야 하며, YYYY-MM-DD 형식이어야 합니다.',
+        icon: 'error',
+      });
+      return;
+    }
+
+    const puppyData = {
+      name: puppyName,
+      breedId: breedId,
+      birthDate: birthDate,
+      gender: gender,
+      neutered: neutered,
+      weight: `${weightFront}.${weightBack}`,
+    };
+
     const formData = new FormData();
-    formData.append('name', puppyName);
-    formData.append('breedId', breedId);
-    formData.append('birthDate', birthDate);
-    formData.append('gender', gender);
-    formData.append('neutered', neutered);
-    formData.append('weight', `${weightFront}.${weightBack}`);
+    formData.append('data', JSON.stringify(puppyData));
     if (profileImage) {
       formData.append('image', profileImage);
     }
+    console.log('저장하는 데이터 :', [...formData.entries()]);
     onSubmit(formData);
   };
 
@@ -53,30 +70,37 @@ const PetForm = ({
       setPreviewUrl(URL.createObjectURL(file)); // 파일 객체를 URL로 변환
     }
   };
-  const puppytype = async () => {
-    try {
-      const response = await axios.get('/puppies/types');
-      console.log(response.data);
-      return response.data;
-    } catch (error) {
-      console.error('견종목록 오류 확인:', error);
-    }
+  const handleBreedSelect = (breedId, breedName) => {
+    setBreedId(breedId);
+    setBreedName(breedName);
   };
 
-  const getCurrentDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+  const checkDateForm = () => {
+    if (
+      !puppyName ||
+      !profileImage ||
+      !breedId ||
+      !birthDate ||
+      !weightFront ||
+      !weightBack ||
+      !gender ||
+      !neutered
+    ) {
+      Swal.fire({
+        title: 'Oops...',
+        text: '모든 항목을 입력해주세요.',
+        icon: 'error',
+      });
+      return false;
+    }
+    return true;
   };
 
   return (
     <div className="flex flex-col my-5 mx-28">
-      <div className="flex w-48 text-2xl font-semibold leading-normal">
+      <div className="flex w-48 mb-5 text-2xl font-semibold leading-normal">
         {title}
       </div>
-      <BreedsPanel />
       <form onSubmit={handleSubmit} className="flex flex-col gap-6 ">
         <BasicInput
           label="이름"
@@ -88,7 +112,7 @@ const PetForm = ({
         />
         {puppyName && (
           <label className="w-20 cursor-pointer">
-            <div className="mb-1 text-xl">사진</div>
+            <div className="mb-1 text-[15px] font-bold">사진</div>
             <input
               type="file"
               onChange={handleFileChange}
@@ -112,7 +136,15 @@ const PetForm = ({
             </div>
           </label>
         )}
-        {puppyName && previewUrl && (
+        {puppyName && profileImage && (
+          <BreedsPanel
+            onBreedSelect={handleBreedSelect}
+            breedName={breedName}
+            breedId={breedId}
+            setBreedName={setBreedName}
+          />
+        )}
+        {/* {puppyName && previewUrl && (
           <BasicInput
             label="견종"
             id="breedId"
@@ -121,23 +153,21 @@ const PetForm = ({
             value={breedId}
             required
           />
-        )}
+        )} */}
         {puppyName && previewUrl && breedId && (
           <BasicInput
             label="생년월일"
             id="breed"
             placeholder="YYYY-MM-DD"
             value={birthDate}
-            pattern="\d{8}"
-            onInput="this.value = this.value.replace(/\D/g, '')"
             onChange={(e) => setBirthDate(e.target.value)}
-            max={getCurrentDate()}
+            max={new Date().toISOString().split('T')[0]}
             required
           />
         )}
         {puppyName && previewUrl && breedId && birthDate && (
           <div>
-            <div className="mb-2 text-xl">성별</div>
+            <div className="mb-1 text-[15px] font-bold">성별</div>
             <div className="flex flex-row justify-between w-full gap-4">
               <label className="w-full">
                 <input
@@ -148,7 +178,7 @@ const PetForm = ({
                   onChange={() => setGender('w')}
                   className="hidden peer"
                 />
-                <div className="flex items-center justify-center text-center border rounded-2xl cursor-pointer h-14 border-inputGray peer-checked:border-[#3288FF] peer-checked:bg-[#C4DDFF] peer-checked:text-[#3288FF]">
+                <div className="flex items-center justify-center text-center border rounded-2xl cursor-pointer h-12 border-inputGray peer-checked:border-[#3288FF] peer-checked:bg-[#C4DDFF] peer-checked:text-[#3288FF]">
                   여아
                 </div>
               </label>
@@ -161,7 +191,7 @@ const PetForm = ({
                   onChange={() => setGender('m')}
                   className="hidden peer"
                 />
-                <div className="flex items-center justify-center text-center border rounded-2xl cursor-pointer h-14 border-inputGray peer-checked:border-[#3288FF] peer-checked:bg-[#C4DDFF] peer-checked:text-[#3288FF]">
+                <div className="flex items-center justify-center text-center border rounded-2xl cursor-pointer h-12 border-inputGray peer-checked:border-[#3288FF] peer-checked:bg-[#C4DDFF] peer-checked:text-[#3288FF]">
                   남아
                 </div>
               </label>
@@ -170,7 +200,7 @@ const PetForm = ({
         )}
         {puppyName && previewUrl && breedId && birthDate && gender && (
           <div>
-            <div className="mb-2 text-xl">중성화 수술 여부</div>
+            <div className="mb-1 text-[15px] font-bold">중성화 수술 여부</div>
             <div className="flex flex-row gap-4">
               <label className="w-full">
                 <input
@@ -181,7 +211,7 @@ const PetForm = ({
                   onChange={() => setNeutered('false')}
                   className="hidden peer"
                 />
-                <div className="flex items-center justify-center text-center border rounded-2xl cursor-pointer h-14 border-inputGray peer-checked:border-[#3288FF] peer-checked:bg-[#C4DDFF] peer-checked:text-[#3288FF]">
+                <div className="flex items-center justify-center text-center border rounded-2xl cursor-pointer h-12 border-inputGray peer-checked:border-[#3288FF] peer-checked:bg-[#C4DDFF] peer-checked:text-[#3288FF]">
                   안했어요
                 </div>
               </label>
@@ -194,7 +224,7 @@ const PetForm = ({
                   onChange={() => setNeutered('true')}
                   className="hidden peer"
                 />
-                <div className="flex items-center justify-center text-center border rounded-2xl cursor-pointer h-14 border-inputGray peer-checked:border-[#3288FF] peer-checked:bg-[#C4DDFF] peer-checked:text-[#3288FF]">
+                <div className="flex items-center justify-center text-center border rounded-2xl cursor-pointer h-12 border-inputGray peer-checked:border-[#3288FF] peer-checked:bg-[#C4DDFF] peer-checked:text-[#3288FF]">
                   했어요
                 </div>
               </label>
@@ -208,7 +238,7 @@ const PetForm = ({
           gender &&
           neutered && (
             <div className="flex flex-col w-full">
-              <div className="mb-2 text-xl">몸무게(kg)</div>
+              <div className="mb-1 text-[15px] font-bold">몸무게(kg)</div>
               <label className="flex flex-row justify-between w-full gap-4 mb-5">
                 <input
                   type="number"
@@ -218,7 +248,7 @@ const PetForm = ({
                   min={0}
                   max={99}
                   required
-                  className="flex items-center justify-center w-full px-5 border rounded-lg cursor-pointer text-start h-14 border-inputGray "
+                  className="flex items-center justify-center w-full h-12 px-5 border rounded-lg cursor-pointer text-start border-inputGray "
                 />
                 <input
                   type="number"
@@ -228,7 +258,7 @@ const PetForm = ({
                   min={0}
                   max={9}
                   required
-                  className="flex items-center justify-center w-full px-5 border rounded-lg cursor-pointer text-start h-14 border-inputGray"
+                  className="flex items-center justify-center w-full h-12 px-5 border rounded-lg cursor-pointer text-start border-inputGray"
                 />
               </label>
             </div>
@@ -258,7 +288,6 @@ const PetForm = ({
             </div>
           )}
       </form>
-      
     </div>
   );
 };

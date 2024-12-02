@@ -3,9 +3,9 @@ import './index.css';
 import App from './App.jsx';
 
 // MSW 초기화
-if (import.meta.env.MODE === 'development') {
+if (import.meta.env.MODE !== 'development') {
   const { worker } = await import('./mocks/browser');
-  worker.start();
+  worker.start({ onUnhandledRequest: 'bypass' });
 }
 
 createRoot(document.getElementById('root')).render(<App />);
