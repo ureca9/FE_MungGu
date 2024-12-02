@@ -10,8 +10,14 @@ import axios from 'axios';
 import { BreedsTypeData } from '../../api/pet';
 import { IoMdSearch } from 'react-icons/io';
 import { IoIosCloseCircle } from 'react-icons/io';
-
-const BreedsPanel = ({ onBreedSelect, breedName, breedId,setBreedName, ...props }) => {
+import { motion } from 'framer-motion';
+const BreedsPanel = ({
+  onBreedSelect,
+  breedName,
+  breedId,
+  setBreedName,
+  ...props
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [breedsType, setBreedsType] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
@@ -25,7 +31,7 @@ const BreedsPanel = ({ onBreedSelect, breedName, breedId,setBreedName, ...props 
         {
           headers: {
             Authorization: `
-Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMxNDAyMDQsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMxMjIyMDR9.VAbv2W7kfaQht1ii-t9e14JallX9RedFoWM9J16eg1Q`,
+Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMxNzMwNzgsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMxNTUwNzh9.S_JLkzK7W4UA0iG8qncxmnotm1X7e6Uoxay_QR22bwA`,
           },
         },
       );
@@ -90,63 +96,66 @@ Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3
           className={`fixed inset-0 transition-opacity ${isOpen ? 'opacity-50 bg-black' : 'opacity-0'}`}
         ></div>
         <div className="fixed inset-0 flex items-end justify-center w-screen h-full">
-          <DialogPanel className="w-[768px] px-10 py-7 h-[580px] flex flex-col rounded-t-[50px] bg-white border">
-            <div className="flex justify-center">
-              <div className="flex w-64 h-[10px]  mb-6 bg-black rounded-full "></div>
-            </div>
-            <div className="relative flex items-center w-full mb-8">
-              <DialogTitle className="mx-auto text-2xl font-bold">
-                견종을 검색해주세요.
-              </DialogTitle>
-              <IoIosCloseCircle
-                onClick={() => setIsOpen(false)}
-                className="cursor-pointer absolute right-0 size-9 text-[#D9D9D9]"
-              />
-            </div>
-            <div className="flex flex-col px-20">
-              <div className="flex justify-end">
-                <input
-                  type="search"
-                  placeholder="견종을 검색해주세요"
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  className="border w-full px-4 border-[#8A8A8A] bg-[#F5F5F5] h-14 rounded-lg mb-7"
+          <motion.div
+            initial={{ opacity: 1, y: 200 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 1, y: -200 }}
+            transition={{ duration: 0.5 }}
+          >
+            <DialogPanel className="w-[768px] px-10 py-7 h-[580px] flex flex-col rounded-t-[50px] bg-white border">
+              <div className="flex justify-center">
+                <div className="flex w-64 h-[10px]  mb-6 bg-black rounded-full "></div>
+              </div>
+              <div className="relative flex items-center w-full mb-8">
+                <DialogTitle className="mx-auto text-2xl font-bold">
+                  견종을 검색해주세요.
+                </DialogTitle>
+                <IoIosCloseCircle
+                  onClick={() => setIsOpen(false)}
+                  className="cursor-pointer absolute right-0 size-9 text-[#D9D9D9]"
                 />
-                {!searchValue && (
-                  <IoMdSearch className="flex absolute mr-2 mt-3 size-8 text-[#8A8A8A]" />
-                )}
               </div>
-              <Description className="text-lg font-semibold">
-                많이 찾는 견종
-              </Description>
-              {/* {isLoggedIn ? ( */}
-              <ul>
-                {breedsType
-                  .filter((breed) => {// 견종 검색 기능 추가
-                    if (!searchValue) return breed.isFrequented;
-                    return breed.name
-                      .toLowerCase()
-                      .includes(searchValue.toLowerCase());
-                  })
-                  .map((breeds) => (
-                    <li
-                      key={breeds.breedId}
-                      value={breeds.breedId}
-                      onClick={() =>
-                        handleBreedClick(breeds.breedId, breeds.name)
-                      }
-                      className="my-3 cursor-pointer"
-                    >
-                      {breeds.name}
-                    </li>
-                  ))}
-              </ul>
-              {/* ) : (
-              <div>
-              <p>로그인 후 견종 목록을 확인할 수 있습니다.</p>
+              <div className="flex flex-col px-20">
+                <div className="flex justify-end">
+                  <input
+                    type="search"
+                    placeholder="견종을 검색해주세요"
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    className="border w-full px-4 border-[#8A8A8A] bg-[#F5F5F5] h-14 rounded-lg mb-7"
+                  />
+                  {!searchValue && (
+                    <IoMdSearch className="flex absolute mr-2 mt-3 size-8 text-[#8A8A8A]" />
+                  )}
+                </div>
+                <Description className="text-lg font-semibold">
+                  많이 찾는 견종
+                </Description>
+                {/* {isLoggedIn ? ( */}
+                <ul>
+                  {breedsType
+                    .filter((breed) => {
+                      // 견종 검색 기능 추가
+                      if (!searchValue) return breed.isFrequented;
+                      return breed.name
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase());
+                    })
+                    .map((breeds) => (
+                      <li
+                        key={breeds.breedId}
+                        value={breeds.breedId}
+                        onClick={() =>
+                          handleBreedClick(breeds.breedId, breeds.name)
+                        }
+                        className="my-3 cursor-pointer"
+                      >
+                        {breeds.name}
+                      </li>
+                    ))}
+                </ul>
               </div>
-              )} */}
-            </div>
-          </DialogPanel>
+            </DialogPanel>
+          </motion.div>
         </div>
       </Dialog>
     </>

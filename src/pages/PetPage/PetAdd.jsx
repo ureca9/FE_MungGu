@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import PetForm from './PetForm';
+import Swal from 'sweetalert2';
 
 const PetAdd = () => {
   const puppyAdd = async (formData) => {
     try {
-      // FormData 생성
-      const formDataToSend = new FormData();
+      const puppyFormData = new FormData();
 
-      // JSON 텍스트 데이터 추가
-      const jsonPayload = {
+      const joinPuppy = {
         name: formData.name,
         breedId: formData.breedId,
         birthDate: formData.birthDate,
@@ -17,33 +16,36 @@ const PetAdd = () => {
         gender: formData.gender,
         neutered: formData.neutered,
       };
-      formDataToSend.append(
+      puppyFormData.append(
         'data',
-        new Blob([JSON.stringify(jsonPayload)], { type: 'application/json' }),
+        new Blob([JSON.stringify(joinPuppy)], { type: 'application/json' }),
       );
 
-      // 이미지 데이터 추가
       if (formData.image) {
-        formDataToSend.append('image', formData.image);
+        puppyFormData.append('image', formData.image);
       }
 
-      // Axios 요청
       const response = await axios.post(
         'https://meong9.store/api/v1/puppies',
-        formDataToSend,
+        puppyFormData,
         {
           headers: {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMxNDAyMDQsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMxMjIyMDR9.VAbv2W7kfaQht1ii-t9e14JallX9RedFoWM9J16eg1Q`,
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMxNzMwNzgsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMxNTUwNzh9.S_JLkzK7W4UA0iG8qncxmnotm1X7e6Uoxay_QR22bwA`,
           },
         },
       );
       console.log('반려동물 추가 성공 :', response.data);
+      Swal.fire({
+        title: '등록 성공!',
+        icon: 'success',
+      });
     } catch (error) {
       console.error('추가 중 오류 발생:', error);
     }
   };
+
   return (
     <div>
       <PetForm
