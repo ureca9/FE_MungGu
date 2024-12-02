@@ -2,7 +2,6 @@ import { instance } from '../axios.js';
 import Swal from 'sweetalert2';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import ROUTER_PATHS from '../../utils/RouterPath';
-import { ACCESS_TOKEN } from '../axios.js';
 
 export const getAuthToken = async () => {
   return await instance.post('/auth/token');
@@ -19,21 +18,17 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
     const data = response.data;
 
     if (data.message === 'success') {
-      const {
-        memberId,
-        email,
-        nickname,
-        newMember,
-        accessToken,
-        profileImageUrl,
-      } = data.data;
+      const accessToken = response.headers['Authorization'];
+
+      const { memberId, email, nickname, newMember, profileImageUrl } =
+        data.data;
 
       localStorage.setItem(LOCAL_STORAGE_KEYS.MEMBER_ID, memberId);
       localStorage.setItem(LOCAL_STORAGE_KEYS.EMAIL, email);
       localStorage.setItem(LOCAL_STORAGE_KEYS.NICKNAME, nickname);
       localStorage.setItem(LOCAL_STORAGE_KEYS.NEW_MEMBER, newMember);
-      localStorage.setItem(ACCESS_TOKEN, accessToken);
       localStorage.setItem(LOCAL_STORAGE_KEYS.PROFILE_IMAGE, profileImageUrl);
+      localStorage.setItem('ACCESS_TOKEN', accessToken);
 
       setLogin();
 
