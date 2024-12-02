@@ -60,7 +60,7 @@ const PetForm = ({
       formData.append('image', profileImage);
     }
     console.log('저장하는 데이터 :', [...formData.entries()]);
-    onSubmit(formData);
+    onSubmit({ ...puppyData, image: profileImage });
   };
 
   const handleFileChange = (e) => {
@@ -173,9 +173,9 @@ const PetForm = ({
                 <input
                   type="radio"
                   name="gender"
-                  value="w"
-                  checked={gender === 'w'}
-                  onChange={() => setGender('w')}
+                  value="W"
+                  checked={gender === 'W'}
+                  onChange={() => setGender('W')}
                   className="hidden peer"
                 />
                 <div className="flex items-center justify-center text-center border rounded-2xl cursor-pointer h-12 border-inputGray peer-checked:border-[#3288FF] peer-checked:bg-[#C4DDFF] peer-checked:text-[#3288FF]">
@@ -186,9 +186,9 @@ const PetForm = ({
                 <input
                   type="radio"
                   name="gender"
-                  value="m"
-                  checked={gender === 'm'}
-                  onChange={() => setGender('m')}
+                  value="M"
+                  checked={gender === 'M'}
+                  onChange={() => setGender('M')}
                   className="hidden peer"
                 />
                 <div className="flex items-center justify-center text-center border rounded-2xl cursor-pointer h-12 border-inputGray peer-checked:border-[#3288FF] peer-checked:bg-[#C4DDFF] peer-checked:text-[#3288FF]">

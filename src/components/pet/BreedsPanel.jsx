@@ -25,7 +25,7 @@ const BreedsPanel = ({ onBreedSelect, breedName, breedId,setBreedName, ...props 
         {
           headers: {
             Authorization: `
-Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMxMTcwNDksInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMwOTkwNDl9.Jl8wubnv_sCIdOybnqaY5wMLWC1ZpgQN6D82P9yZLI8`,
+Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMxNDAyMDQsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMxMjIyMDR9.VAbv2W7kfaQht1ii-t9e14JallX9RedFoWM9J16eg1Q`,
           },
         },
       );
