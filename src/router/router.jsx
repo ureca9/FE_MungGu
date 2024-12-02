@@ -10,21 +10,25 @@ import PetUpdatePage from '../pages/PetPage/PetUpdatePage.jsx';
 import MapSearch from '../pages/Map/MapSearch.jsx';
 import Test from '../pages/Test.jsx';
 import Directions from '../pages/Map/Directions.jsx';
+import Login from '../pages/Login.jsx';
+import ROUTER_PATHS from '../utils/RouterPath.js';
+import Meongsengneacut from '../pages/Meongsengneacut.jsx';
 
 const routes = [
   {
-    path: '/',
+    path: ROUTER_PATHS.MAIN,
     element: <Main />,
   },
   {
-    path: '/like',
+    path: ROUTER_PATHS.LIKE,
     element: <Like />,
   },
   {
-    path: '/map',
+    path: ROUTER_PATHS.MAP,
     element: <Map />,
   },
   {
+
     path: '/map-search',
     element: <MapSearch />,
   },
@@ -33,27 +37,30 @@ const routes = [
     element: <Directions />,
   },
   {
-    path: '/my-page',
+    path: ROUTER_PATHS.MY_PAGE,
     element: <MyPage />,
   },
   {
-    path: '/search',
+    path: ROUTER_PATHS.SEARCH,
     element: <Search />,
   },
   {
-    path: '/user-update',
+    path: ROUTER_PATHS.USER_UPDATE,
     element: <UserUpdatePage />,
   },
   {
-    path: '/pet-update',
+    path: ROUTER_PATHS.PET_UPDATE,
     element: <PetUpdatePage />,
   },
   {
-    path: '/test',
-    element: <Test />,
+    path: ROUTER_PATHS.LOGIN,
+    element: <Login />,
+  },
+  {
+    path: ROUTER_PATHS.MEONGSENGNEACUT,
+    element: <Meongsengneacut />,
   },
 ];
-
 const router = createBrowserRouter([
   {
     element: <DefaultLayout />,

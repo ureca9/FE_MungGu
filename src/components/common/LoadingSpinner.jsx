@@ -7,7 +7,7 @@ const LoadingSpinner = () => {
   if (!isLoading) return null;
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div className="flex items-center justify-center min-h-screen">
       <div className="flex flex-col items-center">
         <CircularProgress />
         <span className="mt-4 text-lg">Loading...</span>
