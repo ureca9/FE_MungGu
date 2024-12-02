@@ -12,7 +12,7 @@ export const localInstance = axios.create({
   withCredentials: true,
 });
 
-const ACCESS_TOKEN = 'access_token';
+export const ACCESS_TOKEN = 'access_token';
 
 instance.interceptors.request.use((config) => {
   const token = localStorage.getItem(ACCESS_TOKEN);
