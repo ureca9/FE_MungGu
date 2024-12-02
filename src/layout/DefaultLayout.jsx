@@ -36,7 +36,7 @@ const DefaultLayout = () => {
   return (
     <div className="flex flex-col min-h-svh w-full sm:max-w-[768px] mx-auto shadow-2xl">
       {isSubHeaderPath ? <SubHeader /> : <Header />}
-      <main className="flex-grow pt-16 pb-20">
+      <main className="pt-16 pb-16">
         <Outlet />
       </main>
       <FooterNav />
