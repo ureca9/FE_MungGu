@@ -4,7 +4,6 @@ import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import userIcon from '../../assets/MypageImg/user.svg';
-import { FaRegUser } from 'react-icons/fa6';
 const UserD = ({ memberD, navigate }) => {
   const { isLoggedIn, setLogout } = useLoginStore();
 
