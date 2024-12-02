@@ -1,0 +1,49 @@
+.bg-user {
+    width: 48px; height: 48px;
+    background: url('css_sprites.png') -10px -10px;
+}
+
+.bg-Plus {
+    width: 35px; height: 35px;
+    background: url('css_sprites.png') -10px -78px;
+}
+
+.bg-회색강아지_2 {
+    width: 51px; height: 45px;
+    background: url('css_sprites.png') -78px -10px;
+}
+
+.bg-고객센터_아이콘 {
+    width: 24px; height: 24px;
+    background: url('css_sprites.png') -65px -78px;
+}
+
+.bg-공지사항_아이콘 {
+    width: 24px; height: 24px;
+    background: url('css_sprites.png') -149px -10px;
+}
+
+.bg-최근_본_장소_아이콘 {
+    width: 24px; height: 24px;
+    background: url('css_sprites.png') -149px -54px;
+}
+
+.bg-설정_아이콘 {
+    width: 24px; height: 24px;
+    background: url('css_sprites.png') -10px -133px;
+}
+
+.bg-후기_아이콘 {
+    width: 24px; height: 24px;
+    background: url('css_sprites.png') -54px -133px;
+}
+
+.bg-예약_아이콘 {
+    width: 24px; height: 24px;
+    background: url('css_sprites.png') -98px -133px;
+}
+
+.bg-이벤트_아이콘 {
+    width: 24px; height: 24px;
+    background: url('css_sprites.png') -142px -133px;
+}

@@ -27,7 +27,7 @@ const SubHeader = () => {
     [ROUTER_PATHS.RESERVATION]: '예약',
     [ROUTER_PATHS.RESERVATION_COMPLETE]: '예약완료',
     [ROUTER_PATHS.RESERVATION_LIST]: '예약 내역',
-    [ROUTER_PATHS.MEONGSENG_NEACUT]: '멍생네컷',
+    [ROUTER_PATHS.MEONGSENGNEACUT]: '멍생네컷',
   };
 
   const pageTitle = PAGE_TITLES[location.pathname] || '페이지 없음';
