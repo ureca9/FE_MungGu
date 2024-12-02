@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import LikeListCategory from './LikeListCategory';
+import LikeList from './LikeList'; // LikeList 컴포넌트 추가
+import { useState } from 'react';
 
 const MapPanel = ({ panelState, setPanelState }) => {
   const panelHeightClass = {
@@ -8,7 +10,12 @@ const MapPanel = ({ panelState, setPanelState }) => {
     maximized: 'h-[calc(100vh-15rem)]',
   };
 
-  const handleCategorySelect = () => setPanelState('maximized');
+  const [selectedCategory, setSelectedCategory] = useState('전체');
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+    setPanelState('maximized');
+  };
 
   return (
     <div
@@ -25,8 +32,9 @@ const MapPanel = ({ panelState, setPanelState }) => {
         <div className="w-12 h-1 bg-gray-400 rounded-full"></div>
       </div>
 
-      <div className="p-4 overflow-y-auto">
+      <div className="h-full p-4 overflow-y-auto ">
         <LikeListCategory onCategorySelect={handleCategorySelect} />
+        <LikeList selectedCategory={selectedCategory} />
       </div>
     </div>
   );
