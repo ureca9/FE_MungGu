@@ -10,6 +10,14 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'HakgyoansimDunggeunmisoTTF-B';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimDunggeunmisoTTF-B.woff2')
+    format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
 * {
   font-family:
     'Pretendard',
@@ -24,4 +32,23 @@
     'Malgun Gothic',
     sans-serif;
   box-sizing: border-box;
+}
+
+.LogoFont {
+  font-family: 'HakgyoansimDunggeunmisoTTF-B';
+}
+
+@layer utilities {
+  .bg-googleIcon {
+    @apply w-[19px] h-[19px];
+    background: url('src/assets/login/LoginImgSprite.png') -230px -94px;
+  }
+  .bg-naverIcon {
+    @apply w-[20px] h-[20px];
+    background: url('src/assets/login/LoginImgSprite.png') -230px -54px;
+  }
+  .bg-kakaoIcon {
+    @apply w-[24px] h-[24px];
+    background: url('src/assets/login/LoginImgSprite.png') -230px -10px;
+  }
 }
