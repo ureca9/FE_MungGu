@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import Swal from 'sweetalert2';
 
 const MapContainer = ({ onMapLoaded }) => {
   const mapContainer = useRef(null);
@@ -26,14 +27,19 @@ const MapContainer = ({ onMapLoaded }) => {
         },
         (error) => {
           console.error('현재 위치를 가져오지 못했습니다:', error);
-          alert('현재 위치를 가져오지 못했습니다. 위치 권한을 허용해주세요.');
+          Swal.fire({
+            title: '현재 위치를 가져오지 못했습니다. 위치 권한을 허용해주세요.',
+            icon: 'question',
+          });
         },
       );
-    } else if (retries > 0) {
+    } else if (retries > 0)
       setTimeout(() => waitForKakaoMaps(retries - 1), 100);
-    } else {
-      alert('Kakao Maps를 불러오지 못했습니다.');
-    }
+    else
+      Swal.fire({
+        title: 'Kakao Maps를 불러오지 못했습니다.',
+        icon: 'error',
+      });
   };
 
   useEffect(() => {
