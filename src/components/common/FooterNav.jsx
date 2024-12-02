@@ -83,7 +83,7 @@ const FooterNav = () => {
   };
 
   return (
-    <footer className="fixed bottom-0 left-0 z-10 w-full h-16 bg-white border-t border-gray-300">
+    <footer className="fixed bottom-0 z-40 w-[768px] h-16 bg-white border-t border-gray-300">
       <nav className="max-w-[768px] mx-auto flex justify-between items-center h-full px-8 lg:px-16">
         {navItems.map((item) => (
           <NavLink
