@@ -18,7 +18,8 @@ export const petHandlers = [
           {
             puppyId: 1,
             puppyName: '모리',
-            src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTz1VEr5uBGBH5ixQ3PsmlVIP9moiXrQY4XA&s',
+            puppyImageUrl:
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTz1VEr5uBGBH5ixQ3PsmlVIP9moiXrQY4XA&s',
           },
           {
             puppyId: 2,

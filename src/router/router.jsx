@@ -15,6 +15,7 @@ import Login from '../pages/Login.jsx';
 import ROUTER_PATHS from '../utils/RouterPath.js';
 import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import Meongsengneacut from '../pages/Meongsengneacut.jsx';
+import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import UserRegister from './../pages/UserPage/UserRegister';
 
 const routes = [

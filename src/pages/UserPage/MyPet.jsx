@@ -36,7 +36,7 @@ const MyPet = ({ memberD, navigate }) => {
             className="relative flex flex-col items-center cursor-pointer"
           >
             <img
-              src={puppy.src || petgray}
+              src={puppy.puppyImageUrl || petgray}
               alt="마이펫 이미지"
               className="bg-[#F5F5F5] border border-[#8A8A8A] rounded-full size-16"
             />
