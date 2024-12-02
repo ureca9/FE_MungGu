@@ -13,7 +13,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 z-10 w-full border-b border-gray-300 backdrop-blur-md">
+    <header className="fixed top-0 z-10 w-[768px] border-b border-gray-300 backdrop-blur-md">
       <div className="container flex items-center justify-center h-16 px-4 mx-auto">
         <Link
           to={ROUTER_PATHS.LOGIN}
