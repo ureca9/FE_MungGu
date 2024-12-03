@@ -260,7 +260,7 @@ const UserRegister = () => {
           ))}
         </div>
       </div>
-      <div className="w-full mt-6">
+      <div className="w-full mt-6 mb-16">
         <BasicBtn
           styleType={isFormValid() ? 'blue' : 'gray'}
           size="md"
