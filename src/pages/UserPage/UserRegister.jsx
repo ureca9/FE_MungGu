@@ -4,6 +4,7 @@ import { BasicInput } from '../../stories/Input/BasicInput';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
 import { registerUser } from '../../api/userRegister';
 import { instance } from '../../api/axios';
+import KakaoLogo from '../../assets/login/KakaoLogo.svg';
 
 const agreements = [
   { id: 'agreeTerms', label: '이용약관 동의 (필수)', required: true },
@@ -21,98 +22,86 @@ const agreements = [
 
 const UserRegister = () => {
   const navigate = useNavigate();
-  const [profileImage, setProfileImage] = useState(null);
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [nickname, setNickname] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [form, setForm] = useState({
+    profileImage: null,
+    email: '',
+    name: '',
+    nickname: '',
+    phoneNumber: '',
+  });
   const [phoneError, setPhoneError] = useState('');
   const [isPhoneTouched, setIsPhoneTouched] = useState(false);
   const [isCheckingNickname, setIsCheckingNickname] = useState(false);
-
-  const [allChecked, setAllChecked] = useState(false);
   const [checkedItems, setCheckedItems] = useState(
-    agreements.reduce((acc, item) => ({ ...acc, [item.id]: false }), {}),
+    agreements.reduce((acc, { id }) => ({ ...acc, [id]: false }), {}),
   );
+
+  const allChecked = agreements.every(({ id }) => checkedItems[id]);
 
   useEffect(() => {
     const storedProfileImage = localStorage.getItem('PROFILE_IMAGE');
     const storedEmail = localStorage.getItem('EMAIL');
 
-    if (storedProfileImage) setProfileImage(storedProfileImage);
-    if (storedEmail) setEmail(storedEmail);
+    setForm((prev) => ({
+      ...prev,
+      profileImage: storedProfileImage,
+      email: storedEmail || '',
+    }));
   }, []);
+
+  const handleChange = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setProfileImage(file);
-      localStorage.setItem('PROFILE_IMAGE', URL.createObjectURL(file));
+      const fileURL = URL.createObjectURL(file);
+      localStorage.setItem('PROFILE_IMAGE', fileURL);
+      handleChange('profileImage', file);
     }
   };
 
   const handlePhoneChange = (e) => {
-    const input = e.target.value;
     const phoneRegex = /^\d{3}-\d{4}-\d{4}$/;
-    setPhoneNumber(input);
-
-    if (!phoneRegex.test(input)) {
-      setPhoneError('전화번호 형식이 올바르지 않습니다. (예: 010-1234-5678)');
-    } else {
-      setPhoneError('');
-    }
-  };
-
-  const handlePhoneBlur = () => {
-    setIsPhoneTouched(true);
-  };
-
-  const handleAllCheck = () => {
-    const newCheckedState = !allChecked;
-    setAllChecked(newCheckedState);
-    setCheckedItems(
-      agreements.reduce(
-        (acc, item) => ({ ...acc, [item.id]: newCheckedState }),
-        {},
-      ),
+    const value = e.target.value;
+    handleChange('phoneNumber', value);
+    setPhoneError(
+      phoneRegex.test(value)
+        ? ''
+        : '전화번호 형식이 올바르지 않습니다. (예: 010-1234-5678)',
     );
   };
 
-  const handleIndividualCheck = (id) => {
-    const newCheckedItems = { ...checkedItems, [id]: !checkedItems[id] };
-    setCheckedItems(newCheckedItems);
+  const handleAgreementChange = (id) => {
+    setCheckedItems((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
-    const allChecked = agreements.every((item) => newCheckedItems[item.id]);
-    setAllChecked(allChecked);
+  const handleCheckAll = () => {
+    const newState = !allChecked;
+    setCheckedItems(
+      agreements.reduce((acc, { id }) => ({ ...acc, [id]: newState }), {}),
+    );
   };
 
   const checkNicknameDuplicate = async () => {
-    if (!nickname.trim()) {
+    if (!form.nickname.trim()) {
       alert('닉네임을 입력해주세요.');
       return;
     }
 
     setIsCheckingNickname(true);
-
     try {
-      const response = await instance.get(
-        `/members/check?nickname=${nickname}`,
-        {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        },
+      const { data } = await instance.get(
+        `/members/check?nickname=${form.nickname}`,
       );
-
-      const message = response.data.message;
-      if (message === '중복된 닉네임입니다.') {
-        alert('해당 닉네임은 이미 사용 중입니다!');
-      } else {
-        alert('사용 가능한 닉네임입니다.');
-      }
+      alert(
+        data.message === '중복된 닉네임입니다.'
+          ? '해당 닉네임은 이미 사용 중입니다!'
+          : '사용 가능한 닉네임입니다.',
+      );
     } catch (error) {
-      console.error(error);
+      console.error('닉네임 확인 중 오류:', error);
       alert('닉네임 확인 중 오류가 발생했습니다.');
     } finally {
       setIsCheckingNickname(false);
@@ -120,14 +109,16 @@ const UserRegister = () => {
   };
 
   const isFormValid = () => {
+    const requiredAgreements = agreements
+      .filter((a) => a.required)
+      .every(({ id }) => checkedItems[id]);
     return (
-      profileImage &&
-      email &&
-      name &&
-      nickname &&
+      form.profileImage &&
+      form.email &&
+      form.name &&
+      form.nickname &&
       !phoneError &&
-      checkedItems['agreeTerms'] &&
-      checkedItems['agreePrivacy']
+      requiredAgreements
     );
   };
 
@@ -137,18 +128,16 @@ const UserRegister = () => {
       return;
     }
 
-    const memberInfo = {
-      name,
-      nickname,
-      phone: phoneNumber,
-    };
-
     try {
-      await registerUser(profileImage, memberInfo);
+      await registerUser(form.profileImage, {
+        name: form.name,
+        nickname: form.nickname,
+        phone: form.phoneNumber,
+      });
       alert('등록이 완료되었습니다.');
       navigate('/dog-register');
     } catch (error) {
-      console.error('등록 중 오류가 발생했습니다:', error);
+      console.error('등록 중 오류:', error);
       alert('회원가입 중 문제가 발생했습니다.');
     }
   };
@@ -161,14 +150,14 @@ const UserRegister = () => {
           htmlFor="profileImage"
           className="flex items-center justify-center w-32 h-32 bg-gray-100 border rounded-full cursor-pointer"
           style={{
-            backgroundImage: profileImage
-              ? `url(${typeof profileImage === 'string' ? profileImage : URL.createObjectURL(profileImage)})`
+            backgroundImage: form.profileImage
+              ? `url(${typeof form.profileImage === 'string' ? form.profileImage : URL.createObjectURL(form.profileImage)})`
               : 'none',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
         >
-          {!profileImage && <span className="text-blue-500">등록</span>}
+          {!form.profileImage && <span className="text-blue-500">등록</span>}
         </label>
         <input
           type="file"
@@ -182,28 +171,26 @@ const UserRegister = () => {
         label="이메일"
         id="email"
         type="text"
-        placeholder="이메일을 입력해주세요."
-        style="gray"
-        value={email}
+        value={form.email}
+        style="disabled"
         readOnly
-      />
+        disabled
+      >
+        <img src={KakaoLogo} alt="Kakao Logo" className="w-5 h-5" />
+      </BasicInput>
       <BasicInput
         label="이름"
         id="name"
         type="text"
-        placeholder="이름을 입력해주세요."
-        style="gray"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        value={form.name}
+        onChange={(e) => handleChange('name', e.target.value)}
       />
       <BasicInput
         label="닉네임"
         id="nickname"
         type="text"
-        placeholder="원하시는 닉네임을 입력해주세요."
-        style="gray"
-        value={nickname}
-        onChange={(e) => setNickname(e.target.value)}
+        value={form.nickname}
+        onChange={(e) => handleChange('nickname', e.target.value)}
       >
         <button
           onClick={checkNicknameDuplicate}
@@ -217,11 +204,9 @@ const UserRegister = () => {
         label="휴대폰 번호"
         id="phone"
         type="text"
-        placeholder="010-1234-5678 형식으로 입력해주세요."
-        style="gray"
-        value={phoneNumber}
+        value={form.phoneNumber}
         onChange={handlePhoneChange}
-        onBlur={handlePhoneBlur}
+        onBlur={() => setIsPhoneTouched(true)}
       />
       {isPhoneTouched && phoneError && (
         <p className="text-xs text-red-500">{phoneError}</p>
@@ -232,22 +217,22 @@ const UserRegister = () => {
             type="checkbox"
             id="agreeAll"
             checked={allChecked}
-            onChange={handleAllCheck}
+            onChange={handleCheckAll}
             className="w-4 h-4 mr-2 text-blue-500 border-gray-300 rounded"
           />
           <label htmlFor="agreeAll">모두 동의합니다.</label>
         </div>
         <div className="flex flex-col pl-6 space-y-1">
-          {agreements.map((item) => (
-            <div key={item.id} className="flex items-center">
+          {agreements.map(({ id, label }) => (
+            <div key={id} className="flex items-center">
               <input
                 type="checkbox"
-                id={item.id}
-                checked={checkedItems[item.id]}
-                onChange={() => handleIndividualCheck(item.id)}
+                id={id}
+                checked={checkedItems[id]}
+                onChange={() => handleAgreementChange(id)}
                 className="w-4 h-4 mr-2 text-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor={item.id}>{item.label}</label>
+              <label htmlFor={id}>{label}</label>
             </div>
           ))}
         </div>

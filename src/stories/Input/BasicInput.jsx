@@ -21,6 +21,7 @@ export const BasicInput = ({
   const styleClass = {
     gray: 'bg-white border-gray-300 text-gray-700 text-sm',
     blue: 'bg-[#3288FF] text-white text-base',
+    disabled: 'bg-[#F5F5F5] border border-[#8a8a8a] text-sm text-[#8a8a8a]',
   };
 
   const selectedClass = styleClass[style] || styleClass.gray;
@@ -41,7 +42,7 @@ export const BasicInput = ({
           {...props}
         />
         {children && (
-          <div className="absolute transform -translate-y-1/2 right-2 top-1/2">
+          <div className="absolute transform -translate-y-1/2 right-3 top-1/2">
             {children}
           </div>
         )}
@@ -55,6 +56,6 @@ BasicInput.propTypes = {
   placeholder: PropTypes.string,
   id: PropTypes.string.isRequired,
   type: PropTypes.oneOf(['radio', 'email', 'text', 'file', 'submit']),
-  style: PropTypes.oneOf(['gray', 'blue']),
+  style: PropTypes.oneOf(['gray', 'blue', 'disabled']),
   children: PropTypes.node,
 };
