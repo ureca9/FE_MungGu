@@ -1,5 +1,8 @@
 import PropTypes from 'prop-types';
 import LikeListCategory from './LikeListCategory';
+import PlaceList from './PlaceList.jsx';
+import { useState } from 'react';
+import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
 
 const MapPanel = ({ panelState, setPanelState }) => {
   const panelHeightClass = {
@@ -8,11 +11,19 @@ const MapPanel = ({ panelState, setPanelState }) => {
     maximized: 'h-[calc(100vh-15rem)]',
   };
 
-  const handleCategorySelect = () => setPanelState('maximized');
+  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const { searchResults } = useMapSearchStore();
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+    setPanelState('maximized');
+  };
 
   return (
     <div
-      className={`absolute bottom-0 left-0 right-0 z-20 bg-white rounded-t-lg shadow-lg transition-all duration-300 ${panelHeightClass[panelState]}`}
+      className={`absolute bottom-0 left-0 right-0 z-20 bg-white rounded-t-lg shadow-lg transition-all duration-300 ${panelHeightClass[panelState]} overflow-y-auto`}
+      aria-expanded={panelState !== 'collapsed'}
+      aria-label={`장소 정보 패널 - ${panelState === 'collapsed' ? '접힘' : '펼쳐짐'}`}
     >
       <div
         className="flex items-center justify-center p-4 cursor-pointer"
@@ -25,8 +36,15 @@ const MapPanel = ({ panelState, setPanelState }) => {
         <div className="w-12 h-1 bg-gray-400 rounded-full"></div>
       </div>
 
-      <div className="p-4 overflow-y-auto">
-        <LikeListCategory onCategorySelect={handleCategorySelect} />
+      <div
+        className="h-full p-4"
+        role="region"
+        aria-label="카테고리 및 장소 목록"
+      >
+        {searchResults.length === 0 && (
+          <LikeListCategory onCategorySelect={handleCategorySelect} />
+        )}
+        <PlaceList selectedCategory={selectedCategory} />
       </div>
     </div>
   );
