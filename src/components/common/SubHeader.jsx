@@ -38,7 +38,7 @@ const SubHeader = () => {
         <button onClick={() => navigate(-1)} className="text-xl">
           <IoIosArrowBack />
         </button>
-        <div className="text-lg font-bold">{pageTitle}</div>
+        <div className="text-xl font-bold">{pageTitle}</div>
         <div className="w-5"></div>
       </div>
     </header>
