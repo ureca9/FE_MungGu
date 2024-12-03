@@ -11,7 +11,9 @@ export const checkNickname = async (nickname) => {
   }
 
   try {
-    const { data } = await instance.get(`/members/check?nickname=${nickname}`);
+    const { data } = await instance.get(
+      `/members/check?nickname=${encodeURIComponent(nickname)}`,
+    );
     return data.message;
   } catch (error) {
     console.error('닉네임 확인 중 오류:', error);

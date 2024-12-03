@@ -78,10 +78,6 @@ const routes = [
     path: ROUTER_PATHS.MEONGSENGNEACUT,
     element: <Meongsengneacut />,
   },
-  {
-    path: ROUTER_PATHS.USER_REGISTER,
-    element: <UserRegister />,
-  },
 ];
 
 const router = createBrowserRouter([

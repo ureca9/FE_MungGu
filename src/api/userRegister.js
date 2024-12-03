@@ -19,7 +19,9 @@ export const registerUser = async (profileImage, memberInfo) => {
       formData.append('ProfileImage', profileImage);
     }
     const token = localStorage.getItem('ACCESS_TOKEN');
-
+    if (!token) {
+      throw new Error('인증 토큰이 없습니다.');
+    }
     const response = await instance.post('/members/info', formData, {
       headers: {
         Accept: 'application/json',
@@ -28,16 +30,22 @@ export const registerUser = async (profileImage, memberInfo) => {
       },
     });
 
-    if (response.status === 200 && response.data.message === 'success') {
-      Swal.fire({
-        icon: 'success',
-        title: '등록 성공',
-        text: '회원가입이 완료되었습니다.',
-        confirmButtonColor: '#3288FF',
-      });
-      return response.data;
+    if (response.status === 200) {
+      if (response.data.message === 'success') {
+        Swal.fire({
+          icon: 'success',
+          title: '등록 성공',
+          text: '회원가입이 완료되었습니다.',
+          confirmButtonColor: '#3288FF',
+        });
+        return response.data;
+      } else {
+        throw new Error(
+          response.data.message || '서버 처리 중 오류가 발생했습니다.',
+        );
+      }
     } else {
-      throw new Error('서버로부터 알 수 없는 응답을 받았습니다.');
+      throw new Error(`서버 오류: ${response.status}`);
     }
   } catch (error) {
     console.error('Error during registration:', error);

@@ -34,6 +34,7 @@ const UserRegister = () => {
   const [phoneError, setPhoneError] = useState('');
   const [isPhoneTouched, setIsPhoneTouched] = useState(false);
   const [isCheckingNickname, setIsCheckingNickname] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkedItems, setCheckedItems] = useState(
     agreements.reduce((acc, { id }) => ({ ...acc, [id]: false }), {}),
   );
@@ -131,6 +132,7 @@ const UserRegister = () => {
   };
 
   const handleSubmit = async () => {
+    if (isSubmitting) return;
     if (!isFormValid()) {
       Swal.fire({
         icon: 'warning',
@@ -140,6 +142,7 @@ const UserRegister = () => {
     }
 
     try {
+      setIsSubmitting(true);
       await registerUser(form.profileImage, {
         name: form.name,
         nickname: form.nickname,
@@ -157,6 +160,8 @@ const UserRegister = () => {
         icon: 'error',
         title: '등록 실패',
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
