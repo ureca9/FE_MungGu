@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import LikeListCategory from './LikeListCategory';
-import LikeList from './LikeList';
+import PlaceList from './PlaceList.jsx';
 import { useState } from 'react';
+import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
 
 const MapPanel = ({ panelState, setPanelState }) => {
   const panelHeightClass = {
@@ -11,6 +12,7 @@ const MapPanel = ({ panelState, setPanelState }) => {
   };
 
   const [selectedCategory, setSelectedCategory] = useState('전체');
+  const { searchResults } = useMapSearchStore();
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
@@ -33,12 +35,14 @@ const MapPanel = ({ panelState, setPanelState }) => {
       </div>
 
       <div
-        className="h-full p-4 overflow-y-auto"
+        className="h-full p-4"
         role="region"
         aria-label="카테고리 및 장소 목록"
       >
-        <LikeListCategory onCategorySelect={handleCategorySelect} />
-        <LikeList selectedCategory={selectedCategory} />
+        {searchResults.length === 0 && (
+          <LikeListCategory onCategorySelect={handleCategorySelect} />
+        )}
+        <PlaceList selectedCategory={selectedCategory} />
       </div>
     </div>
   );
