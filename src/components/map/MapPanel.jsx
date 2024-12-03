@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import LikeListCategory from './LikeListCategory';
-import LikeList from './LikeList'; // LikeList 컴포넌트 추가
+import LikeList from './LikeList';
 import { useState } from 'react';
 
 const MapPanel = ({ panelState, setPanelState }) => {
@@ -19,7 +19,7 @@ const MapPanel = ({ panelState, setPanelState }) => {
 
   return (
     <div
-      className={`absolute bottom-0 left-0 right-0 z-20 bg-white rounded-t-lg shadow-lg transition-all duration-300 ${panelHeightClass[panelState]}`}
+      className={`absolute bottom-0 left-0 right-0 z-20 bg-white rounded-t-lg shadow-lg transition-all duration-300 ${panelHeightClass[panelState]} overflow-y-auto`}
     >
       <div
         className="flex items-center justify-center p-4 cursor-pointer"
@@ -32,7 +32,7 @@ const MapPanel = ({ panelState, setPanelState }) => {
         <div className="w-12 h-1 bg-gray-400 rounded-full"></div>
       </div>
 
-      <div 
+      <div
         className="h-full p-4 overflow-y-auto"
         role="region"
         aria-label="카테고리 및 장소 목록"
