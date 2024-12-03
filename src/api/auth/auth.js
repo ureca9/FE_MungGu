@@ -18,7 +18,7 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
     const data = response.data;
 
     if (data.message === 'success') {
-      const accessToken = response.headers['Authorization'];
+      const accessToken = response.headers['authorization'];
 
       const { memberId, email, nickname, newMember, profileImageUrl } =
         data.data;
@@ -28,9 +28,8 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
       localStorage.setItem(LOCAL_STORAGE_KEYS.NICKNAME, nickname);
       localStorage.setItem(LOCAL_STORAGE_KEYS.NEW_MEMBER, newMember);
       localStorage.setItem(LOCAL_STORAGE_KEYS.PROFILE_IMAGE, profileImageUrl);
-      localStorage.setItem('ACCESS_TOKEN', accessToken);
 
-      setLogin();
+      setLogin(accessToken);
 
       navigate(newMember ? ROUTER_PATHS.USER_REGISTER : ROUTER_PATHS.MAIN);
     } else {

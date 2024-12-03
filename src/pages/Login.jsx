@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { LoginBtn } from '../stories/Buttons/LoginBtn/LoginBtn';
 import { fetchAccessToken } from '../api/auth/auth.js';
 import useLoginStore from '../stores/Auth/useLoginStore';
+import ROUTER_PATHS from '../utils/RouterPath.js';
 
 const Login = () => {
   const REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
   const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
   const navigate = useNavigate();
-  const { setLogin } = useLoginStore();
+  const { isLoggedIn, setLogin } = useLoginStore();
 
   const handleKakaoLogin = () => {
     const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${encodeURIComponent(
@@ -18,12 +19,16 @@ const Login = () => {
   };
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    if (code) {
-      fetchAccessToken(code, setLogin, navigate);
+    if (isLoggedIn) {
+      navigate(ROUTER_PATHS.MAIN);
+    } else {
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      if (code) {
+        fetchAccessToken(code, setLogin, navigate);
+      }
     }
-  }, []);
+  }, [isLoggedIn, navigate, setLogin]);
 
   return (
     <div className="flex flex-col items-center min-h-screen px-6 mt-8">
@@ -49,13 +54,9 @@ const Login = () => {
         <div className="w-full h-[1px] border-[1px] border-[#8a8a8a]"></div>
       </div>
       <div className="flex justify-between w-[200px] mt-4 text-center">
-        <LoginBtn
-          styleType="kakao"
-          label="카카오로 시작하기"
-          onClick={handleKakaoLogin}
-        />
-        <LoginBtn styleType="google" label="Google로 시작하기" />
-        <LoginBtn styleType="naver" label="네이버로 시작하기" />
+        <LoginBtn styleType="kakao" onClick={handleKakaoLogin} />
+        <LoginBtn styleType="google" />
+        <LoginBtn styleType="naver" />
       </div>
     </div>
   );
