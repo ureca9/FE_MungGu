@@ -3,6 +3,7 @@ import petgray from '../../assets/common/petgray.svg';
 import { IoMdCheckmark } from 'react-icons/io';
 import usePetStore from '../../stores/pet/usePetStore';
 import ROUTER_PATHS from '../../utils/RouterPath';
+import Swal from 'sweetalert2';
 
 const MyPet = ({ memberD, navigate }) => {
   const { selectedPetId, setSelectedPetId } = usePetStore();
@@ -26,11 +27,13 @@ const MyPet = ({ memberD, navigate }) => {
           onClick={(e) => {
             e.preventDefault();
             selectedPetId
-              ? // ? navigate(`/pet-edit/${selectedPetId}`)
-                navigate(
+              ? navigate(
                   ROUTER_PATHS.PET_EDIT_ID.replace(':puppyId', selectedPetId),
                 )
-              : alert('편집할 마이펫을 선택해주세요.');
+              : Swal.fire({
+                  title: '편집할 마이펫을 선택해주세요.',
+                  icon: 'warning',
+                });
           }}
         />
       </div>

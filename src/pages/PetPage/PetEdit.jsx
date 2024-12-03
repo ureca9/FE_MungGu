@@ -115,7 +115,6 @@ const PetEdit = () => {
 
   return (
     <>
-      <h1>Pet Edit</h1>
       {isLoading ? (
         <div>로딩 중...</div>
       ) : basicData ? (

@@ -72,8 +72,8 @@ const PetForm = ({
   const checkBirthDate = (birthDate) => {
     const today = new Date().setHours(0, 0, 0, 0);
     const inputDate = new Date(birthDate).getTime();
-    // const isValidDate =
-    //   /^\d{4}-\d{2}-\d{2}$/.test(birthDate) && !isNaN(inputDate);
+    const isValidDate =
+      /^\d{4}-\d{2}-\d{2}$/.test(birthDate) && !isNaN(inputDate);
 
     if (inputDate > today || isNaN(inputDate)) {
       Swal.fire({
