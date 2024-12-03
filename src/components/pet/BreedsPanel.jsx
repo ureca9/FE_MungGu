@@ -31,7 +31,7 @@ const BreedsPanel = ({
         {
           headers: {
             Authorization: `
-Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMxNzMwNzgsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMxNTUwNzh9.S_JLkzK7W4UA0iG8qncxmnotm1X7e6Uoxay_QR22bwA`,
+Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMyMTAyMzUsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMxOTIyMzV9.lqmPIQaoi-Y8mq_6iORCM5IInvNk34MyOdfXy0ABoLk`,
           },
         },
       );

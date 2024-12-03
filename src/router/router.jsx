@@ -5,7 +5,6 @@ import Like from '../pages/Like.jsx';
 import Map from '../pages/Map/Map.jsx';
 import MyPage from '../pages/UserPage/MyPage.jsx';
 import Search from '../pages/Search.jsx';
-import PetForm from '../pages/PetPage/PetForm.jsx';
 import PetAdd from '../pages/PetPage/PetAdd.jsx';
 import PetEdit from '../pages/PetPage/PetEdit.jsx';
 import UserEdit from '../pages/UserPage/UserEdit.jsx';
@@ -15,7 +14,6 @@ import Login from '../pages/Login.jsx';
 import ROUTER_PATHS from '../utils/RouterPath.js';
 import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import Meongsengneacut from '../pages/Meongsengneacut.jsx';
-import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import UserRegister from './../pages/UserPage/UserRegister';
 
 const routes = [
@@ -50,10 +48,6 @@ const routes = [
   {
     path: '/user-edit',
     element: <UserEdit />,
-  },
-  {
-    path: '/pet-form',
-    element: <PetForm />,
   },
   {
     path: '/pet-register',

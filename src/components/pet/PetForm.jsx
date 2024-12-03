@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import petgray from '../../assets/common/petgray.svg';
-import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
-import { BasicInput } from '../../stories/Input/BasicInput';
-import BreedsPanel from '../../components/pet/BreedsPanel';
 import Swal from 'sweetalert2';
-import MotionDiv from './MotionDiv';
+import { BasicInput } from '../../stories/Input/BasicInput';
+import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
+import MotionDiv from '../../pages/PetPage/MotionDiv';
+import BreedsPanel from './BreedsPanel';
+
 const PetForm = ({
   title,
   buttonText,

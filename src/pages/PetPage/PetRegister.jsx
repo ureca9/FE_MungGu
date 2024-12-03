@@ -1,4 +1,5 @@
-import PetForm from './PetForm';
+import PetForm from "../../components/pet/PetForm";
+
 
 const PetRegister = () => {
   const handleRegister = (e) => {

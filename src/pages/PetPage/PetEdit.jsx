@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import PetForm from './PetForm';
+import { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import PetForm from '../../components/pet/PetForm';
 
 const PetEdit = () => {
-
   const [puppyId, setPuppyId] = useState('');
 
   const handleEdit = async () => {
+    axios.put(`https://meong9.store/api/v1/puppies?puppyid=${puppyId}`, {
+      
+    });
     try {
       const puppyFormData = new FormData();
 
@@ -28,20 +30,20 @@ const PetEdit = () => {
         puppyFormData.append('image', formData.image);
       }
 
-      const response = await axios.post(
-        'https://meong9.store/api/v1/puppies',
+      const response = await axios.put(
+        `https://meong9.store/api/v1/puppies?puppyid=${puppyId}`,
         puppyFormData,
         {
           headers: {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMxNzMwNzgsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMxNTUwNzh9.S_JLkzK7W4UA0iG8qncxmnotm1X7e6Uoxay_QR22bwA`,
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMyMTAyMzUsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMxOTIyMzV9.lqmPIQaoi-Y8mq_6iORCM5IInvNk34MyOdfXy0ABoLk`,
           },
         },
       );
-      console.log('반려동물 추가 성공 :', response.data);
+      console.log('반려동물 수정 성공 :', response.data);
       Swal.fire({
-        title: '등록 성공!',
+        title: '수정 성공!',
         icon: 'success',
       });
     } catch (error) {
