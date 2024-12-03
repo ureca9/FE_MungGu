@@ -133,7 +133,8 @@ const LikeList = ({ selectedCategory }) => {
                 <div className="flex-col">
                   <div className="flex">
                     <a
-                      href={`#`}
+                      href={`/place/${place.placeId}`}
+                      aria-label={`${place.placeName} 상세정보 보기`}
                       className="text-blue-600 text-xl font-semibold hover:underline"
                     >
                       {place.placeName}
