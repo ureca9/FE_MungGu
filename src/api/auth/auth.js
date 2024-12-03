@@ -42,13 +42,24 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
       if (!accessToken || typeof accessToken !== 'string') {
         throw new Error('Invalid access token received');
       }
-      localStorage.clear();
 
-      localStorage.setItem(LOCAL_STORAGE_KEYS.MEMBER_ID, memberId);
-      localStorage.setItem(LOCAL_STORAGE_KEYS.EMAIL, email);
-      localStorage.setItem(LOCAL_STORAGE_KEYS.NICKNAME, nickname);
-      localStorage.setItem(LOCAL_STORAGE_KEYS.NEW_MEMBER, newMember);
-      localStorage.setItem(LOCAL_STORAGE_KEYS.PROFILE_IMAGE, profileImageUrl);
+      const updateLocalStorage = (keysAndValues) => {
+        Object.keys(keysAndValues).forEach((key) => {
+          localStorage.removeItem(key);
+        });
+        Object.entries(keysAndValues).forEach(([key, value]) => {
+          localStorage.setItem(key, value);
+        });
+      };
+      const keysAndValues = {
+        [LOCAL_STORAGE_KEYS.MEMBER_ID]: memberId,
+        [LOCAL_STORAGE_KEYS.EMAIL]: email,
+        [LOCAL_STORAGE_KEYS.NICKNAME]: nickname,
+        [LOCAL_STORAGE_KEYS.NEW_MEMBER]: newMember,
+        [LOCAL_STORAGE_KEYS.PROFILE_IMAGE]: profileImageUrl,
+      };
+
+      updateLocalStorage(keysAndValues);
 
       setLogin(accessToken);
 

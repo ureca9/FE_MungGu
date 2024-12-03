@@ -18,7 +18,8 @@ export const BasicBtn = ({
     reverseBlue: `bg-white text-[#3288FF] border-2 border-[#3288FF] font-bold`,
     black: `bg-[#000000] text-[#ffffff] font-bold hover:bg-gray-600`,
     reverseBlack: `bg-[#ffffff] text-[#000000] border border-[#8A8A8A] font-bold`,
-    gray: `bg-white text-[#8a8a8a] border border-[#8a8a8a] font-light`,
+    gray: `bg-gray-300 text-white font-bold`,
+    reverseGray: `bg-white text-[#8a8a8a] border border-[#8a8a8a] font-light`,
   };
 
   const sizeClasses = {
@@ -49,6 +50,7 @@ BasicBtn.propTypes = {
     'black',
     'reverseBlack',
     'gray',
+    'reverseGray',
   ]),
   size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
   label: PropTypes.string.isRequired,

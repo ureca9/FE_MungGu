@@ -71,12 +71,12 @@ const routes = [
     element: <Login />,
   },
   {
-    path: ROUTER_PATHS.MEONGSENGNEACUT,
-    element: <Meongsengneacut />,
-  },
-  {
     path: ROUTER_PATHS.USER_REGISTER,
     element: <UserRegister />,
+  },
+  {
+    path: ROUTER_PATHS.MEONGSENGNEACUT,
+    element: <Meongsengneacut />,
   },
 ];
 
