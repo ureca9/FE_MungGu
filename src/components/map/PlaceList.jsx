@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
 import PlaceCard from './PlaceCard';
@@ -7,6 +7,15 @@ import { dummyPlaces } from '../../utils/DummyPlaces.js';
 const PlaceList = ({ selectedCategory }) => {
   const [placesToShow, setPlacesToShow] = useState([]);
   const { searchResults } = useMapSearchStore();
+
+  const likedPlacesMap = useMemo(
+    () =>
+      placesToShow.reduce((acc, place) => {
+        acc[place.placeId] = place.isLiked;
+        return acc;
+      }, {}),
+    [placesToShow],
+  );
 
   useEffect(() => {
     if (searchResults.length > 0) setPlacesToShow(searchResults);
@@ -38,10 +47,7 @@ const PlaceList = ({ selectedCategory }) => {
             <PlaceCard
               key={place.placeId}
               place={place}
-              likedPlaces={placesToShow.reduce((acc, place) => {
-                acc[place.placeId] = place.isLiked;
-                return acc;
-              }, {})}
+              likedPlaces={likedPlacesMap}
               handleLikeClick={handleLikeClick}
             />
           ))}

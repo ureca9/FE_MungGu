@@ -22,6 +22,8 @@ const MapPanel = ({ panelState, setPanelState }) => {
   return (
     <div
       className={`absolute bottom-0 left-0 right-0 z-20 bg-white rounded-t-lg shadow-lg transition-all duration-300 ${panelHeightClass[panelState]} overflow-y-auto`}
+      aria-expanded={panelState !== 'collapsed'}
+      aria-label={`장소 정보 패널 - ${panelState === 'collapsed' ? '접힘' : '펼쳐짐'}`}
     >
       <div
         className="flex items-center justify-center p-4 cursor-pointer"
