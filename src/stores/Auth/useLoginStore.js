@@ -1,9 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-const LOCAL_STORAGE_KEYS = {
-  ACCESS_TOKEN: 'ACCESS_TOKEN',
-};
+import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 
 const useLoginStore = create(
   persist(

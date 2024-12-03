@@ -2,9 +2,23 @@ import { instance } from '../axios.js';
 import Swal from 'sweetalert2';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import ROUTER_PATHS from '../../utils/RouterPath';
+import { ERROR_MESSAGES } from '../../utils/ErrorMessage.js';
 
 export const getAuthToken = async () => {
-  return await instance.post('/auth/token');
+  try {
+    const response = await instance.post('/auth/token');
+    return response;
+  } catch (error) {
+    console.error('토큰 갱신 실패:', error);
+    Swal.fire({
+      icon: 'error',
+      title: '세션 만료',
+      text: '로그인이 만료되었습니다. 다시 로그인해 주세요.',
+      confirmButtonText: '확인',
+      confirmButtonColor: '#3288FF',
+    });
+    throw error;
+  }
 };
 
 /**
@@ -14,6 +28,9 @@ export const getAuthToken = async () => {
  */
 export const fetchAccessToken = async (code, setLogin, navigate) => {
   try {
+    if (!code || typeof code !== 'string') {
+      throw new Error('Invalid authorization code');
+    }
     const response = await instance.get(`/auth/callback/kakao?code=${code}`);
     const data = response.data;
 
@@ -22,6 +39,10 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
 
       const { memberId, email, nickname, newMember, profileImageUrl } =
         data.data;
+      if (!accessToken || typeof accessToken !== 'string') {
+        throw new Error('Invalid access token received');
+      }
+      localStorage.clear();
 
       localStorage.setItem(LOCAL_STORAGE_KEYS.MEMBER_ID, memberId);
       localStorage.setItem(LOCAL_STORAGE_KEYS.EMAIL, email);
@@ -37,8 +58,8 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
 
       Swal.fire({
         icon: 'error',
-        title: '로그인 실패',
-        text: '로그인 중 문제가 발생했습니다.',
+        title: ERROR_MESSAGES.LOGIN_FAILED_TITLE,
+        text: ERROR_MESSAGES.LOGIN_FAILED_MESSAGE,
         confirmButtonText: '확인',
         confirmButtonColor: '#3288FF',
       });
@@ -48,8 +69,8 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
 
     Swal.fire({
       icon: 'error',
-      title: '통신 오류',
-      text: '서버와의 통신 중 오류가 발생했습니다.',
+      title: ERROR_MESSAGES.COMMUNICATION_ERROR_TITLE,
+      text: ERROR_MESSAGES.COMMUNICATION_ERROR_MESSAGE,
       confirmButtonText: '확인',
       confirmButtonColor: '#3288FF',
     });
