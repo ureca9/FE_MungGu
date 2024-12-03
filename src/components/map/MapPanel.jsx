@@ -32,7 +32,11 @@ const MapPanel = ({ panelState, setPanelState }) => {
         <div className="w-12 h-1 bg-gray-400 rounded-full"></div>
       </div>
 
-      <div className="h-full p-4 overflow-y-auto ">
+      <div 
+        className="h-full p-4 overflow-y-auto"
+        role="region"
+        aria-label="카테고리 및 장소 목록"
+      >
         <LikeListCategory onCategorySelect={handleCategorySelect} />
         <LikeList selectedCategory={selectedCategory} />
       </div>
