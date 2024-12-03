@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BasicInput } from '../../stories/Input/BasicInput';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
 import { registerUser } from '../../api/userRegister';
+import { instance } from '../../api/axios';
 
 const agreements = [
   { id: 'agreeTerms', label: '이용약관 동의 (필수)', required: true },
@@ -18,45 +19,36 @@ const agreements = [
   },
 ];
 
-const inputFields = [
-  {
-    label: '이메일',
-    id: 'email',
-    type: 'text',
-    placeholder: '이메일을 입력해주세요.',
-    style: 'gray',
-  },
-  {
-    label: '이름',
-    id: 'name',
-    type: 'text',
-    placeholder: '이름을 입력해주세요.',
-    style: 'gray',
-  },
-  {
-    label: '닉네임',
-    id: 'nickname',
-    type: 'text',
-    placeholder: '원하시는 닉네임을 입력해주세요.',
-    style: 'gray',
-    hasButton: true,
-  },
-];
-
 const UserRegister = () => {
   const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState(null);
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [nickname, setNickname] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [isPhoneTouched, setIsPhoneTouched] = useState(false);
+  const [isCheckingNickname, setIsCheckingNickname] = useState(false);
 
   const [allChecked, setAllChecked] = useState(false);
   const [checkedItems, setCheckedItems] = useState(
     agreements.reduce((acc, item) => ({ ...acc, [item.id]: false }), {}),
   );
 
+  useEffect(() => {
+    const storedProfileImage = localStorage.getItem('PROFILE_IMAGE');
+    const storedEmail = localStorage.getItem('EMAIL');
+
+    if (storedProfileImage) setProfileImage(storedProfileImage);
+    if (storedEmail) setEmail(storedEmail);
+  }, []);
+
   const handleProfileImageChange = (e) => {
-    setProfileImage(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setProfileImage(file);
+      localStorage.setItem('PROFILE_IMAGE', URL.createObjectURL(file));
+    }
   };
 
   const handlePhoneChange = (e) => {
@@ -94,39 +86,70 @@ const UserRegister = () => {
     setAllChecked(allChecked);
   };
 
+  const checkNicknameDuplicate = async () => {
+    if (!nickname.trim()) {
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+
+    setIsCheckingNickname(true);
+
+    try {
+      const response = await instance.get(
+        `/members/check?nickname=${nickname}`,
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      const message = response.data.message;
+      if (message === '중복된 닉네임입니다.') {
+        alert('해당 닉네임은 이미 사용 중입니다!');
+      } else {
+        alert('사용 가능한 닉네임입니다.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('닉네임 확인 중 오류가 발생했습니다.');
+    } finally {
+      setIsCheckingNickname(false);
+    }
+  };
+
+  const isFormValid = () => {
+    return (
+      profileImage &&
+      email &&
+      name &&
+      nickname &&
+      !phoneError &&
+      checkedItems['agreeTerms'] &&
+      checkedItems['agreePrivacy']
+    );
+  };
+
   const handleSubmit = async () => {
-    if (phoneError) {
-      alert('휴대폰 번호를 올바르게 입력해주세요.');
-      return;
-    }
-
-    if (!profileImage) {
-      alert('프로필 이미지를 업로드해주세요.');
-      return;
-    }
-
-    if (!checkedItems['agreeTerms'] || !checkedItems['agreePrivacy']) {
-      alert('필수 약관에 동의해주세요.');
+    if (!isFormValid()) {
+      alert('모든 필수 정보를 올바르게 입력해주세요.');
       return;
     }
 
     const memberInfo = {
-      name: document.getElementById('name').value,
-      nickname: document.getElementById('nickname').value,
+      name,
+      nickname,
       phone: phoneNumber,
     };
 
-    const formData = new FormData();
-    formData.append('MemberInfoDto', JSON.stringify(memberInfo));
-    formData.append('ProfileImage', profileImage);
-
     try {
-      await registerUser(formData);
+      await registerUser(profileImage, memberInfo);
       alert('등록이 완료되었습니다.');
       navigate('/dog-register');
     } catch (error) {
-      console.error(error);
-      alert('등록 중 오류가 발생했습니다.');
+      console.error('등록 중 오류가 발생했습니다:', error);
+      alert('회원가입 중 문제가 발생했습니다.');
     }
   };
 
@@ -139,7 +162,7 @@ const UserRegister = () => {
           className="flex items-center justify-center w-32 h-32 bg-gray-100 border rounded-full cursor-pointer"
           style={{
             backgroundImage: profileImage
-              ? `url(${URL.createObjectURL(profileImage)})`
+              ? `url(${typeof profileImage === 'string' ? profileImage : URL.createObjectURL(profileImage)})`
               : 'none',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
@@ -155,22 +178,41 @@ const UserRegister = () => {
           onChange={handleProfileImageChange}
         />
       </div>
-      {inputFields.map((field) => (
-        <BasicInput
-          key={field.id}
-          label={field.label}
-          id={field.id}
-          type={field.type}
-          placeholder={field.placeholder}
-          style={field.style}
+      <BasicInput
+        label="이메일"
+        id="email"
+        type="text"
+        placeholder="이메일을 입력해주세요."
+        style="gray"
+        value={email}
+        readOnly
+      />
+      <BasicInput
+        label="이름"
+        id="name"
+        type="text"
+        placeholder="이름을 입력해주세요."
+        style="gray"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <BasicInput
+        label="닉네임"
+        id="nickname"
+        type="text"
+        placeholder="원하시는 닉네임을 입력해주세요."
+        style="gray"
+        value={nickname}
+        onChange={(e) => setNickname(e.target.value)}
+      >
+        <button
+          onClick={checkNicknameDuplicate}
+          disabled={isCheckingNickname}
+          className="px-3 py-1 text-xs text-blue-500 border border-blue-500 rounded"
         >
-          {field.hasButton && (
-            <button className="px-3 py-1 text-xs text-blue-500 border border-blue-500 rounded">
-              중복 확인
-            </button>
-          )}
-        </BasicInput>
-      ))}
+          {isCheckingNickname ? '확인 중' : '중복 확인'}
+        </button>
+      </BasicInput>
       <BasicInput
         label="휴대폰 번호"
         id="phone"
@@ -184,7 +226,6 @@ const UserRegister = () => {
       {isPhoneTouched && phoneError && (
         <p className="text-xs text-red-500">{phoneError}</p>
       )}
-
       <div className="flex flex-col w-full mt-4 space-y-2 text-sm">
         <div className="flex items-center">
           <input
@@ -211,13 +252,13 @@ const UserRegister = () => {
           ))}
         </div>
       </div>
-
       <div className="w-full mt-6">
         <BasicBtn
-          styleType="blue"
+          styleType={isFormValid() ? 'blue' : 'gray'}
           size="md"
           label="다음"
           onClick={handleSubmit}
+          disabled={!isFormValid()}
         />
       </div>
     </div>

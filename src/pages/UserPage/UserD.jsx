@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import useLoginStore from '../../stores/login';
+import useLoginStore from '../../stores/Auth/useLoginStore';
 import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import ROUTER_PATHS from '../../utils/RouterPath';
