@@ -8,7 +8,6 @@ const MyPet = ({ memberD, navigate }) => {
 
   const handleClick = (puppyId) => {
     setSelectedPetId(puppyId);
-    navigate(`/pet-edit/${puppyId}`);
   };
   return (
     <div className="flex flex-col h-auto py-8 bg-white border rounded-lg px-9 border-borderlineGray">
