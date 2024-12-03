@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { BasicInput } from '../../stories/Input/BasicInput';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
 import { registerUser } from '../../api/userRegister';
-import { instance } from '../../api/axios';
+import { checkNickname } from '../../api/checkNickname';
 import KakaoLogo from '../../assets/login/KakaoLogo.svg';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const agreements = [
   { id: 'agreeTerms', label: '이용약관 동의 (필수)', required: true },
@@ -86,23 +88,29 @@ const UserRegister = () => {
 
   const checkNicknameDuplicate = async () => {
     if (!form.nickname.trim()) {
-      alert('닉네임을 입력해주세요.');
+      Swal.fire({
+        icon: 'warning',
+        title: '닉네임을 입력해주세요.',
+      });
       return;
     }
 
     setIsCheckingNickname(true);
     try {
-      const { data } = await instance.get(
-        `/members/check?nickname=${form.nickname}`,
-      );
-      alert(
-        data.message === '중복된 닉네임입니다.'
-          ? '해당 닉네임은 이미 사용 중입니다!'
-          : '사용 가능한 닉네임입니다.',
-      );
+      const message = await checkNickname(form.nickname);
+      Swal.fire({
+        icon: message === '중복된 닉네임입니다.' ? 'error' : 'success',
+        text:
+          message === '중복된 닉네임입니다.'
+            ? '이미 사용 중인 닉네임입니다.'
+            : '사용 가능한 닉네임입니다.',
+      });
     } catch (error) {
-      console.error('닉네임 확인 중 오류:', error);
-      alert('닉네임 확인 중 오류가 발생했습니다.');
+      Swal.fire({
+        icon: 'error',
+        title: '오류 발생',
+        text: error.message,
+      });
     } finally {
       setIsCheckingNickname(false);
     }
@@ -124,7 +132,10 @@ const UserRegister = () => {
 
   const handleSubmit = async () => {
     if (!isFormValid()) {
-      alert('모든 필수 정보를 올바르게 입력해주세요.');
+      Swal.fire({
+        icon: 'warning',
+        title: '필수 정보를 입력해주세요.',
+      });
       return;
     }
 
@@ -134,11 +145,18 @@ const UserRegister = () => {
         nickname: form.nickname,
         phone: form.phoneNumber,
       });
-      alert('등록이 완료되었습니다.');
-      navigate('/dog-register');
+      Swal.fire({
+        icon: 'success',
+        title: '등록 완료',
+      }).then(() => {
+        navigate('/dog-register');
+      });
     } catch (error) {
       console.error('등록 중 오류:', error);
-      alert('회원가입 중 문제가 발생했습니다.');
+      Swal.fire({
+        icon: 'error',
+        title: '등록 실패',
+      });
     }
   };
 
