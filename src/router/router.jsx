@@ -5,14 +5,17 @@ import Like from '../pages/Like.jsx';
 import Map from '../pages/Map/Map.jsx';
 import MyPage from '../pages/UserPage/MyPage.jsx';
 import Search from '../pages/Search.jsx';
-import UserUpdatePage from '../pages/UserPage/UserUpdatePage.jsx';
-import PetUpdatePage from '../pages/PetPage/PetUpdatePage.jsx';
+import PetForm from '../pages/PetPage/PetForm.jsx';
+import PetAdd from '../pages/PetPage/PetAdd.jsx';
+import PetEdit from '../pages/PetPage/PetEdit.jsx';
+import UserEdit from '../pages/UserPage/UserEdit.jsx';
 import MapSearch from '../pages/Map/MapSearch.jsx';
 import Directions from '../pages/Map/Directions.jsx';
 import Login from '../pages/Login.jsx';
 import ROUTER_PATHS from '../utils/RouterPath.js';
 import Meongsengneacut from '../pages/Meongsengneacut.jsx';
 import UserRegister from './../pages/UserPage/UserRegister';
+import PetRegister from '../pages/PetPage/PetRegister.jsx';
 
 const routes = [
   {
@@ -44,12 +47,24 @@ const routes = [
     element: <Search />,
   },
   {
-    path: ROUTER_PATHS.USER_UPDATE,
-    element: <UserUpdatePage />,
+    path: '/user-edit',
+    element: <UserEdit />,
   },
   {
-    path: ROUTER_PATHS.PET_UPDATE,
-    element: <PetUpdatePage />,
+    path: '/pet-form',
+    element: <PetForm />,
+  },
+  {
+    path: '/pet-register',
+    element: <PetRegister />,
+  },
+  {
+    path: '/pet-add',
+    element: <PetAdd />,
+  },
+  {
+    path: '/pet-edit/:puppyId',
+    element: <PetEdit />,
   },
   {
     path: ROUTER_PATHS.LOGIN,
