@@ -24,14 +24,16 @@ const BreedsPanel = ({
   const [searchValue, setSearchValue] = useState(''); // 입력값 상태 관리
   const Breeds = async () => {
     try {
-      const accessToken = localStorage.getItem('access_token');
-      console.log('유저 정보', accessToken);
+      const token = localStorage.getItem('ACCESS_TOKEN');
+      if (!token) {
+        throw new Error('토큰이 없습니다. 로그인 상태를 확인하세요.');
+      }
+      console.log('유저 정보', token);
       const response = await axios.get(
         'https://meong9.store/api/v1/puppies/types',
         {
           headers: {
-            Authorization: `
-Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMyMTAyMzUsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMxOTIyMzV9.lqmPIQaoi-Y8mq_6iORCM5IInvNk34MyOdfXy0ABoLk`,
+            Authorization: `Bearer ${token}`,
           },
         },
       );

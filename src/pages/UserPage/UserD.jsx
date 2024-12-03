@@ -1,9 +1,9 @@
 import Swal from 'sweetalert2';
-import useLoginStore from '../../stores/login';
 import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import userIcon from '../../assets/MypageImg/user.svg';
+import useLoginStore from '../../stores/Auth/useLoginStore';
 const UserD = ({ memberD, navigate }) => {
   const { isLoggedIn, setLogout } = useLoginStore();
 

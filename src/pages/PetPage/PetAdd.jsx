@@ -24,6 +24,8 @@ const PetAdd = () => {
         puppyFormData.append('image', formData.image);
       }
 
+      const token = localStorage.getItem('ACCESS_TOKEN');
+      console.log('등록 유저 정보', token);
       const response = await axios.post(
         'https://meong9.store/api/v1/puppies',
         puppyFormData,
@@ -31,7 +33,7 @@ const PetAdd = () => {
           headers: {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMyMTAyMzUsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMxOTIyMzV9.lqmPIQaoi-Y8mq_6iORCM5IInvNk34MyOdfXy0ABoLk`,
+            Authorization: `Bearer ${token}`,
           },
         },
       );
@@ -48,6 +50,7 @@ const PetAdd = () => {
   return (
     <div>
       <PetForm
+        key="add"
         title="우리 강아지 정보를 입력해 주세요."
         buttonText="추가"
         onSubmit={puppyAdd}

@@ -2,30 +2,31 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import PetForm from '../../components/pet/PetForm';
-import usePetStore from '../../stores/usePetStore';
+import usePetStore from '../../stores/pet/usePetStore';
 
 const PetEdit = () => {
-  const { selectedPetId } = usePetStore();
-  const [basicData, setBasicData] = useState(null); // 기존 정보 저장
+  const { selectedPetId, setBasicData, basicData } = usePetStore();
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
 
   useEffect(() => {
     const fetchPetData = async () => {
       setIsLoading(true); // 로딩 시작
       try {
-        const accessToken = localStorage.getItem('access_token');
-        console.log('유저 정보', accessToken);
+        const token = localStorage.getItem('ACCESS_TOKEN');
+        if (!token) {
+          throw new Error('토큰이 없습니다. 로그인 상태를 확인하세요.');
+        }
+        console.log('유저 정보', token);
         const response = await axios.get(
-          `https://meong9.store/api/v1/puppies?puppyid=${selectedPetId}`,
+          `https://meong9.store/api/v1/puppies?puppyId=${selectedPetId}`,
           {
             headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMyMjM0MTMsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMyMDU0MTN9.dEwpMQ9WwA1p2K8dSGhkioqvkRCvBCJ7nq4nSOqpKsI`,
+              Authorization: `Bearer ${token}`,
             },
           },
         );
         console.log('반려동물 정보:', response.data);
-        setBasicData(response.data);
+        setBasicData(response.data.data);
         setIsLoading(false); // 로딩 완료
       } catch (error) {
         console.error('반려동물 정보 가져오기 오류:', error);
@@ -36,9 +37,9 @@ const PetEdit = () => {
     if (selectedPetId) {
       fetchPetData();
     }
-  }, [selectedPetId]); // selectedPetId가 변경될 때마다 실행
+  }, []);
+
   const handleEdit = async (formData) => {
-    // formData 매개변수 추가
     try {
       const puppyFormData = new FormData();
 
@@ -59,14 +60,20 @@ const PetEdit = () => {
         puppyFormData.append('image', formData.image);
       }
 
+      const token = localStorage.getItem('ACCESS_TOKEN');
+      if (!token) {
+        throw new Error('토큰이 없습니다. 로그인 상태를 확인하세요.');
+      }
+      console.log('수정 유저 정보', token);
+
       const response = await axios.put(
-        `https://meong9.store/api/v1/puppies?puppyid=${selectedPetId}`,
+        `https://meong9.store/api/v1/puppies?puppyId=${selectedPetId}`,
         puppyFormData,
         {
           headers: {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkbGRtc3RqcjExNEBuYXZlci5jb20iLCJleHAiOjE3MzMyMTAyMzUsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3MzMxOTIyMzV9.lqmPIQaoi-Y8mq_6iORCM5IInvNk34MyOdfXy0ABoLk`,
+            Authorization: `Bearer ${token}`,
           },
         },
       );
@@ -79,21 +86,49 @@ const PetEdit = () => {
       console.error('반려동물 수정 오류 :', error);
     }
   };
+
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem('ACCESS_TOKEN');
+      if (!token) {
+        throw new Error('토큰이 없습니다. 로그인 상태를 확인하세요.');
+      }
+
+      const response = await axios.delete(
+        `https://meong9.store/api/v1/puppies?puppyId=${selectedPetId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      console.log('반려동물 삭제 성공 :', response.data);
+      Swal.fire({
+        title: '삭제 성공!',
+        icon: 'success',
+      });
+      // 삭제 후 페이지 이동 또는 상태 업데이트 등 필요한 작업 수행
+    } catch (error) {
+      console.error('반려동물 삭제 오류 :', error);
+    }
+  };
+
   return (
     <>
       <h1>Pet Edit</h1>
-      {isLoading ? ( // 로딩 중이면 로딩 메시지 표시
+      {isLoading ? (
         <div>로딩 중...</div>
-      ) : basicData ? ( // 로딩 완료 후 basicData가 있으면 PetForm 렌더링
+      ) : basicData ? (
         <PetForm
+          key="edit"
           title="반려동물 수정 "
           buttonText="수정"
           deleteButton={true}
           onSubmit={handleEdit}
-          basicData={basicData}
+          onDelete={handleDelete}
         />
       ) : (
-        <div>데이터를 찾을 수 없습니다.</div> // 로딩 완료 후 basicData가 없으면 메시지 표시
+        <div>데이터를 찾을 수 없습니다.</div>
       )}
     </>
   );

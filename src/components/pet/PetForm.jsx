@@ -5,41 +5,47 @@ import { BasicInput } from '../../stories/Input/BasicInput';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
 import MotionDiv from '../../pages/PetPage/MotionDiv';
 import BreedsPanel from './BreedsPanel';
+import usePetStore from '../../stores/pet/usePetStore';
 
 const PetForm = ({
   title,
   buttonText,
   deleteButton,
-  basicData = {},
+  // basicData = {},
   onSubmit,
   onDelete,
 }) => {
-  const [puppyName, setPuppyName] = useState(basicData.name || '');
+  const { basicData } = usePetStore();
+  const [puppyName, setPuppyName] = useState(basicData?.name ?? '');
   const [profileImage, setProfileImage] = useState(null);
-  const [breedId, setBreedId] = useState(basicData.breedId || '');
-  const [breedName, setBreedName] = useState(basicData.breedName || '');
-  const [birthDate, setBirthDate] = useState(basicData.birthDate || '');
-  const [gender, setGender] = useState(basicData.gender || '');
-  const [neutered, setNeutered] = useState(basicData.neutered || '');
+  const [breedId, setBreedId] = useState(basicData?.breedId ?? '');
+  const [breedName, setBreedName] = useState(basicData?.breedName ?? '');
+  const [birthDate, setBirthDate] = useState(basicData?.birthDate ?? '');
+  const [gender, setGender] = useState(basicData?.gender ?? '');
+  const [neutered, setNeutered] = useState(
+    basicData ? basicData.neutered : undefined,
+  );
   const [weightFront, setWeightFront] = useState(
-    basicData.weight ? basicData.weight.split('.')[0] : '',
+    basicData ? String(basicData.weight).split('.')[0] : '',
   );
   const [weightBack, setWeightBack] = useState(
-    basicData.weight ? basicData.weight.split('.')[1] : '',
+    basicData ? String(basicData.weight).split('.')[1] : '0',
   );
-  const [previewUrl, setPreviewUrl] = useState(''); // 미리보기 URL 상태
+  const [previewUrl, setPreviewUrl] = useState(
+    basicData?.profileImageUrl ?? '',
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!checkDateForm()) return;
-    if (!checkBirthDate()) return;
+    if (!checkDataForm()) return;
+    // if (!checkBirthDate()) return;
     const puppyData = {
       name: puppyName,
       breedId: breedId,
       birthDate: birthDate,
       gender: gender,
       neutered: neutered,
-      weight: `${weightFront}.${weightBack}`,
+      weight: Number(weightFront) + Number(weightBack) / 10,
     };
 
     const formData = new FormData();
@@ -64,22 +70,23 @@ const PetForm = ({
   };
 
   const checkBirthDate = (birthDate) => {
-    const today = new Date();
-    const inputDate = new Date(birthDate);
-    const isValidDate =
-      /^\d{4}-\d{2}-\d{2}$/.test(birthDate) && !isNaN(inputDate);
+    const today = new Date().setHours(0, 0, 0, 0);
+    const inputDate = new Date(birthDate).getTime();
+    // const isValidDate =
+    //   /^\d{4}-\d{2}-\d{2}$/.test(birthDate) && !isNaN(inputDate);
 
-    if (inputDate > today || !isValidDate) {
+    if (inputDate > today || isNaN(inputDate)) {
       Swal.fire({
         title: 'Oops...',
         text: '생년월일은 오늘 이전 날짜여야 하며, YYYY-MM-DD 형식이어야 합니다.',
         icon: 'error',
       });
-      return;
+      return false;
     }
+    return true;
   };
 
-  const checkDateForm = () => {
+  const checkDataForm = () => {
     if (
       !puppyName ||
       !profileImage ||
@@ -87,8 +94,7 @@ const PetForm = ({
       !birthDate ||
       !weightFront ||
       !weightBack ||
-      !gender ||
-      !neutered
+      !gender
     ) {
       Swal.fire({
         title: 'Oops...',
@@ -144,7 +150,7 @@ const PetForm = ({
             </label>
           </MotionDiv>
         )}
-        {puppyName && profileImage && (
+        {puppyName && previewUrl && (
           <MotionDiv>
             <BreedsPanel
               onBreedSelect={handleBreedSelect}
@@ -211,9 +217,9 @@ const PetForm = ({
                   <input
                     type="radio"
                     name="neutered"
-                    value="false"
-                    checked={neutered === 'false'}
-                    onChange={() => setNeutered('false')}
+                    value={false}
+                    checked={neutered === false}
+                    onChange={() => setNeutered(false)}
                     className="hidden peer"
                   />
                   <div className="flex items-center justify-center text-center border rounded-2xl cursor-pointer h-12 border-inputGray peer-checked:border-[#3288FF] peer-checked:bg-[#C4DDFF] peer-checked:text-[#3288FF]">
@@ -224,9 +230,9 @@ const PetForm = ({
                   <input
                     type="radio"
                     name="neutered"
-                    value="true"
-                    checked={neutered === 'true'}
-                    onChange={() => setNeutered('true')}
+                    value={true}
+                    checked={neutered === true}
+                    onChange={() => setNeutered(true)}
                     className="hidden peer"
                   />
                   <div className="flex items-center justify-center text-center border rounded-2xl cursor-pointer h-12 border-inputGray peer-checked:border-[#3288FF] peer-checked:bg-[#C4DDFF] peer-checked:text-[#3288FF]">
@@ -242,7 +248,7 @@ const PetForm = ({
           breedId &&
           birthDate &&
           gender &&
-          neutered && (
+          typeof neutered === 'boolean' && (
             <MotionDiv>
               <div className="flex flex-col w-full">
                 <div className="mb-1 text-[15px] font-bold">몸무게(kg)</div>
@@ -277,7 +283,7 @@ const PetForm = ({
           breedId &&
           birthDate &&
           gender &&
-          neutered &&
+          typeof neutered === 'boolean' &&
           weightBack && (
             <MotionDiv>
               <div className="flex flex-col gap-6">
@@ -291,7 +297,7 @@ const PetForm = ({
                   styleType="reverseBlue"
                   size="lg"
                   label="삭제"
-                  type="submit"
+                  type="button"
                   onClick={onDelete}
                   style={{ display: deleteButton ? 'block' : 'none' }}
                 />

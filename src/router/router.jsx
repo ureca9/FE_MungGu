@@ -15,7 +15,6 @@ import ROUTER_PATHS from '../utils/RouterPath.js';
 import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import Meongsengneacut from '../pages/Meongsengneacut.jsx';
 import UserRegister from './../pages/UserPage/UserRegister';
-import PetRegister from '../pages/PetPage/PetRegister.jsx';
 
 const routes = [
   {
@@ -47,19 +46,19 @@ const routes = [
     element: <Search />,
   },
   {
-    path: '/user-edit',
+    path: ROUTER_PATHS.USER_EDIT,
     element: <UserEdit />,
   },
   {
-    path: '/pet-register',
+    path: ROUTER_PATHS.PET_REGISTER,
     element: <PetRegister />,
   },
   {
-    path: '/pet-add',
+    path: ROUTER_PATHS.PET_ADD,
     element: <PetAdd />,
   },
   {
-    path: '/pet-edit/:puppyId',
+    path: ROUTER_PATHS.PET_EDIT_ID,
     element: <PetEdit />,
   },
   {
