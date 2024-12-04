@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { getAuthToken } from './auth/auth.js';
 import Swal from 'sweetalert2';
+import LOCAL_STORAGE_KEYS from '../utils/LocalStorageKey.js';
 
 export const instance = axios.create({
   baseURL: 'https://meong9.store/api/v1',
@@ -12,10 +13,8 @@ export const localInstance = axios.create({
   withCredentials: true,
 });
 
-export const ACCESS_TOKEN = 'access_token';
-
 instance.interceptors.request.use((config) => {
-  const token = localStorage.getItem(ACCESS_TOKEN);
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -25,7 +24,7 @@ const handle401Error = async (error) => {
   try {
     const response = await getAuthToken();
     const newAccessToken = response.headers['Authorization'].split(' ')[1];
-    localStorage.setItem(ACCESS_TOKEN, newAccessToken);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, newAccessToken);
     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
     return instance(originalRequest);
   } catch {

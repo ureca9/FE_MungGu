@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 import PetForm from '../../components/pet/PetForm';
 import usePetStore from '../../stores/pet/usePetStore';
 import ROUTER_PATHS from '../../utils/RouterPath';
-import { PuppyBasicData, PuppyDeleteData, PuppyEditData } from '../../api/pet';
+import { DeletePuppyData, GetPuppyBasicData, PatchPuppyEditData, } from '../../api/pet';
 
 const PetEdit = () => {
   const { selectedPetId, basicData, setBasicData } = usePetStore();
@@ -18,7 +18,7 @@ const PetEdit = () => {
           throw new Error('토큰이 없습니다. 로그인 상태를 확인하세요.');
         }
         console.log('유저 정보', token);
-        const response = await PuppyBasicData(selectedPetId);
+        const response = await GetPuppyBasicData(selectedPetId);
         console.log('반려동물 정보:', response.data);
         setBasicData(response.data);
         setIsLoading(false);
@@ -53,7 +53,7 @@ const PetEdit = () => {
       if (formData.image) {
         puppyFormData.append('image', formData.image);
       }
-      const response = await PuppyEditData(selectedPetId, puppyFormData);
+      const response = await PatchPuppyEditData(selectedPetId, puppyFormData);
       console.log('반려동물 수정 성공 :', response.data);
       Swal.fire({
         title: '수정 성공!',
@@ -72,7 +72,7 @@ const PetEdit = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await PuppyDeleteData(selectedPetId);
+      const response = await DeletePuppyData(selectedPetId);
       console.log('반려동물 삭제 성공 :', response.data);
       Swal.fire({
         title: '삭제 성공!',

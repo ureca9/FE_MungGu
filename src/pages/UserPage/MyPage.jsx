@@ -1,17 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { memberData } from '../../api/pet';
 import AppList from '../../components/mypage/AppList';
 import MyPet from '../../components/mypage/MyPet';
 import ServiceList from '../../components/mypage/ServiceList';
 import UserData from '../../components/mypage/UserData';
+import { GetmemberData } from '../../api/pet';
 const MyPage = () => {
   const navigate = useNavigate();
   const [memberD, setMemberD] = useState({ puppyList: [] });
 
   const userData = async () => {
     try {
-      const Mdata = await memberData();
+      const Mdata = await GetmemberData();
       setMemberD(Mdata.data);
     } catch (error) {
       console.error('데이터 가져오기 실패:', error);

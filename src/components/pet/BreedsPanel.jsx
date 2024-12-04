@@ -9,7 +9,7 @@ import { BasicInput } from '../../stories/Input/BasicInput';
 import { IoMdSearch } from 'react-icons/io';
 import { IoIosCloseCircle } from 'react-icons/io';
 import { motion } from 'framer-motion';
-import { BreedsTypeData } from '../../api/pet';
+import { GetBreedsTypeData } from '../../api/pet';
 const BreedsPanel = ({
   onBreedSelect,
   breedName,
@@ -23,7 +23,7 @@ const BreedsPanel = ({
   const [searchValue, setSearchValue] = useState('');
   const Breeds = async () => {
     try {
-      const response = await BreedsTypeData();
+      const response = await GetBreedsTypeData();
       setBreedsType(response.data);
     } catch (error) {
       console.error('견종목록 오류 확인:', error);
