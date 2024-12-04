@@ -3,6 +3,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import PetForm from '../../components/pet/PetForm';
 import usePetStore from '../../stores/pet/usePetStore';
+import ROUTER_PATHS from '../../utils/RouterPath';
 
 const PetEdit = () => {
   const { selectedPetId, setBasicData, basicData } = usePetStore();
@@ -37,7 +38,7 @@ const PetEdit = () => {
     if (selectedPetId) {
       fetchPetData();
     }
-  }, []);
+  }, [selectedPetId]);
 
   const handleEdit = async (formData) => {
     try {
@@ -66,7 +67,7 @@ const PetEdit = () => {
       }
       console.log('수정 유저 정보', token);
 
-      const response = await axios.put(
+      const response = await axios.patch(
         `https://meong9.store/api/v1/puppies?puppyId=${selectedPetId}`,
         puppyFormData,
         {
@@ -81,6 +82,8 @@ const PetEdit = () => {
       Swal.fire({
         title: '수정 성공!',
         icon: 'success',
+      }).then(() => {
+        window.location.href = ROUTER_PATHS.MY_PAGE;
       });
     } catch (error) {
       console.error('반려동물 수정 오류 :', error);
@@ -106,8 +109,9 @@ const PetEdit = () => {
       Swal.fire({
         title: '삭제 성공!',
         icon: 'success',
+      }).then(() => {
+        window.location.href = ROUTER_PATHS.MY_PAGE;
       });
-      // 삭제 후 페이지 이동 또는 상태 업데이트 등 필요한 작업 수행
     } catch (error) {
       console.error('반려동물 삭제 오류 :', error);
     }

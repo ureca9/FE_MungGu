@@ -1,12 +1,12 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import PetForm from '../../components/pet/PetForm';
+import ROUTER_PATHS from '../../utils/RouterPath';
 
 const PetAdd = () => {
   const puppyAdd = async (formData) => {
     try {
       const puppyFormData = new FormData();
-
       const joinPuppy = {
         name: formData.name,
         breedId: formData.breedId,
@@ -41,6 +41,8 @@ const PetAdd = () => {
       Swal.fire({
         title: '등록 성공!',
         icon: 'success',
+      }).then(() => {
+        window.location.href = ROUTER_PATHS.MY_PAGE;
       });
     } catch (error) {
       console.error('추가 중 오류 발생:', error);

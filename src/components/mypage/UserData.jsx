@@ -4,7 +4,7 @@ import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import userIcon from '../../assets/MypageImg/user.svg';
 import useLoginStore from '../../stores/Auth/useLoginStore';
-const UserD = ({ memberD, navigate }) => {
+const UserData = ({ memberD, navigate }) => {
   const { isLoggedIn, setLogout } = useLoginStore();
 
   const handleLogout = () => {
@@ -62,4 +62,4 @@ const UserD = ({ memberD, navigate }) => {
   );
 };
 
-export default UserD;
+export default UserData;

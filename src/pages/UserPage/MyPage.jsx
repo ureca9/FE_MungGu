@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { memberData } from '../../api/pet';
-import ServiceList from './ServiceList';
-import AppList from './AppList';
-import UserD from './UserD';
-import MyPet from './MyPet';
+import AppList from '../../components/mypage/AppList';
+import MyPet from '../../components/mypage/MyPet';
+import ServiceList from '../../components/mypage/ServiceList';
+import UserData from '../../components/mypage/UserData';
 const MyPage = () => {
   const navigate = useNavigate();
   const [memberD, setMemberD] = useState({ puppyList: [] });
@@ -27,7 +27,7 @@ const MyPage = () => {
   return (
     <div className="h-dvh bg-backgroundGray">
       <div className="flex flex-col gap-5 mx-5">
-        <UserD memberD={memberD} navigate={navigate} />
+        <UserData memberD={memberD} navigate={navigate} />
         <MyPet memberD={memberD} navigate={navigate} />
         <ServiceList />
         <AppList />

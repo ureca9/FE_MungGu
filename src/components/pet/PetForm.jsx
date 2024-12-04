@@ -3,7 +3,7 @@ import petgray from '../../assets/common/petgray.svg';
 import Swal from 'sweetalert2';
 import { BasicInput } from '../../stories/Input/BasicInput';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
-import MotionDiv from '../../pages/PetPage/MotionDiv';
+import MotionDiv from './MotionDiv';
 import BreedsPanel from './BreedsPanel';
 import usePetStore from '../../stores/pet/usePetStore';
 
@@ -29,7 +29,11 @@ const PetForm = ({
     basicData ? String(basicData.weight).split('.')[0] : '',
   );
   const [weightBack, setWeightBack] = useState(
-    basicData ? String(basicData.weight).split('.')[1] : '0',
+    basicData
+      ? String(basicData.weight).includes('.')
+        ? String(basicData.weight).split('.')[1]
+        : '0'
+      : '0',
   );
   const [previewUrl, setPreviewUrl] = useState(
     basicData?.profileImageUrl ?? '',
@@ -38,7 +42,7 @@ const PetForm = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!checkDataForm()) return;
-    // if (!checkBirthDate()) return;
+    if (!checkBirthDate(birthDate)) return;
     const puppyData = {
       name: puppyName,
       breedId: breedId,
@@ -71,25 +75,34 @@ const PetForm = ({
 
   const checkBirthDate = (birthDate) => {
     const today = new Date().setHours(0, 0, 0, 0);
-    const inputDate = new Date(birthDate).getTime();
-    const isValidDate =
-      /^\d{4}-\d{2}-\d{2}$/.test(birthDate) && !isNaN(inputDate);
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
-    if (inputDate > today || isNaN(inputDate)) {
+    if (!dateRegex.test(birthDate)) {
       Swal.fire({
         title: 'Oops...',
-        text: '생년월일은 오늘 이전 날짜여야 하며, YYYY-MM-DD 형식이어야 합니다.',
+        text: '생년월일은 YYYY-MM-DD 형식이어야 합니다.',
         icon: 'error',
       });
       return false;
     }
+
+    const inputDate = new Date(birthDate).getTime();
+    if (isNaN(inputDate) || inputDate > today) {
+      Swal.fire({
+        title: 'Oops...',
+        text: '생년월일은 오늘 이전 날짜여야 합니다.',
+        icon: 'error',
+      });
+      return false;
+    }
+
     return true;
   };
 
   const checkDataForm = () => {
     if (
       !puppyName ||
-      !profileImage ||
+      !previewUrl ||
       !breedId ||
       !birthDate ||
       !weightFront ||
