@@ -35,7 +35,7 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
     const data = response.data;
 
     if (data.message === 'success') {
-      const accessToken = response.headers['authorization'];
+      const accessToken = response.headers['authorization'].split(' ')[1];
 
       const { memberId, email, nickname, newMember, profileImageUrl } =
         data.data;

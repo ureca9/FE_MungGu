@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import useLoginStore from '../../stores/login';
+import useLoginStore from '../../stores/Auth/useLoginStore.js';
 import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import ROUTER_PATHS from '../../utils/RouterPath';
@@ -30,10 +30,9 @@ const UserD = ({ memberD, navigate }) => {
     <div className="flex items-center justify-between h-auto py-5 mt-5 bg-white border rounded-lg px-9 border-borderlineGray min-h-40">
       <span className="flex items-center ">
         <img
-          src={memberD?.profileImageUrl || userIcon }
+          src={memberD?.profileImageUrl || userIcon}
           alt="사용자 프로필 이미지"
           className="rounded-full size-20 bg-[#F5F5F5] border border-[#8A8A8A] user-icon"
-          
         />
         <span className="ml-4 text-base">
           {memberD?.nickname || '닉네임 없음'}
