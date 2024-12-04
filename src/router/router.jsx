@@ -15,6 +15,7 @@ import Login from '../pages/Login.jsx';
 import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import Meongsengneacut from '../pages/Meongsengneacut.jsx';
 import UserRegister from './../pages/UserPage/UserRegister';
+import LiveReviews from '../pages/Review/LiveReviews.jsx';
 
 const routes = [
   {
@@ -76,6 +77,10 @@ const routes = [
   {
     path: ROUTER_PATHS.USER_REGISTER,
     element: <UserRegister />,
+  },
+  {
+    path: ROUTER_PATHS.LIVE_REVIEW,
+    element: <LiveReviews />,
   },
 ];
 
