@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 const AppList = () => {
   const navigate = useNavigate();

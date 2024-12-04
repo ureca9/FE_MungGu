@@ -11,7 +11,6 @@ const PetForm = ({
   title,
   buttonText,
   deleteButton,
-  // basicData = {},
   onSubmit,
   onDelete,
 }) => {

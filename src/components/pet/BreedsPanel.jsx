@@ -6,11 +6,10 @@ import {
 } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import { BasicInput } from '../../stories/Input/BasicInput';
-import axios from 'axios';
-import { BreedsTypeData } from '../../api/pet';
 import { IoMdSearch } from 'react-icons/io';
 import { IoIosCloseCircle } from 'react-icons/io';
 import { motion } from 'framer-motion';
+import { BreedsTypeData } from '../../api/pet';
 const BreedsPanel = ({
   onBreedSelect,
   breedName,
@@ -20,31 +19,17 @@ const BreedsPanel = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [breedsType, setBreedsType] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
-  const [searchValue, setSearchValue] = useState(''); // 입력값 상태 관리
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const Breeds = async () => {
     try {
-      const token = localStorage.getItem('ACCESS_TOKEN');
-      if (!token) {
-        throw new Error('토큰이 없습니다. 로그인 상태를 확인하세요.');
-      }
-      console.log('유저 토큰', token);
-      const response = await axios.get(
-        'https://meong9.store/api/v1/puppies/types',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      console.log('견종 리스트: ', response.data);
-      setBreedsType(response.data.data);
+      const response = await BreedsTypeData();
+      setBreedsType(response.data);
     } catch (error) {
       console.error('견종목록 오류 확인:', error);
     }
   };
   useEffect(() => {
-    // 로그인 상태 확인 (예: localStorage 또는 쿠키 확인)
     const token = localStorage.getItem('ACCESS_TOKEN');
     console.log('페널 토큰 :', token);
 
@@ -53,7 +38,6 @@ const BreedsPanel = ({
     }
   }, []);
   useEffect(() => {
-    // if (!isLoggedIn) {
     Breeds();
   }, [isLoggedIn]);
 
@@ -70,9 +54,9 @@ const BreedsPanel = ({
 
   const handleBreedClick = (breedId, breedName) => {
     if (onBreedSelect) {
-      onBreedSelect(breedId, breedName); // 견종 ID와 이름을 PetForm으로 전달
+      onBreedSelect(breedId, breedName);
     }
-    setIsOpen(false); // 팝업 닫기
+    setIsOpen(false);
   };
 
   return (
@@ -83,8 +67,6 @@ const BreedsPanel = ({
         placeholder="견종"
         value={breedName}
         readOnly
-        // onChange={(e) => setBreedId(e.target.value)}
-        // value={breedId}
         onClick={() => setIsOpen(true)}
         required
         {...props}
@@ -132,11 +114,9 @@ const BreedsPanel = ({
                 <Description className="text-lg font-semibold">
                   많이 찾는 견종
                 </Description>
-                {/* {isLoggedIn ? ( */}
                 <ul>
                   {breedsType
                     .filter((breed) => {
-                      // 견종 검색 기능 추가
                       if (!searchValue) return breed.isFrequented;
                       return breed.name
                         .toLowerCase()

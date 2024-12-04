@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import PetForm from '../../components/pet/PetForm';
 import usePetStore from '../../stores/pet/usePetStore';
 import ROUTER_PATHS from '../../utils/RouterPath';
+import { PuppyBasicData, PuppyDeleteData, PuppyEditData } from '../../api/pet';
 
 const PetEdit = () => {
-  const { selectedPetId, setBasicData, basicData } = usePetStore();
+  const { selectedPetId, basicData, setBasicData } = usePetStore();
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
 
   useEffect(() => {
@@ -18,17 +18,10 @@ const PetEdit = () => {
           throw new Error('토큰이 없습니다. 로그인 상태를 확인하세요.');
         }
         console.log('유저 정보', token);
-        const response = await axios.get(
-          `https://meong9.store/api/v1/puppies?puppyId=${selectedPetId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
+        const response = await PuppyBasicData(selectedPetId);
         console.log('반려동물 정보:', response.data);
-        setBasicData(response.data.data);
-        setIsLoading(false); // 로딩 완료
+        setBasicData(response.data);
+        setIsLoading(false);
       } catch (error) {
         console.error('반려동물 정보 가져오기 오류:', error);
         setIsLoading(false);
@@ -60,24 +53,7 @@ const PetEdit = () => {
       if (formData.image) {
         puppyFormData.append('image', formData.image);
       }
-
-      const token = localStorage.getItem('ACCESS_TOKEN');
-      if (!token) {
-        throw new Error('토큰이 없습니다. 로그인 상태를 확인하세요.');
-      }
-      console.log('수정 유저 정보', token);
-
-      const response = await axios.patch(
-        `https://meong9.store/api/v1/puppies?puppyId=${selectedPetId}`,
-        puppyFormData,
-        {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await PuppyEditData(selectedPetId, puppyFormData);
       console.log('반려동물 수정 성공 :', response.data);
       Swal.fire({
         title: '수정 성공!',
@@ -87,24 +63,16 @@ const PetEdit = () => {
       });
     } catch (error) {
       console.error('반려동물 수정 오류 :', error);
+      Swal.fire({
+        title: '수정 오류!',
+        icon: 'error',
+      });
     }
   };
 
   const handleDelete = async () => {
     try {
-      const token = localStorage.getItem('ACCESS_TOKEN');
-      if (!token) {
-        throw new Error('토큰이 없습니다. 로그인 상태를 확인하세요.');
-      }
-
-      const response = await axios.delete(
-        `https://meong9.store/api/v1/puppies?puppyId=${selectedPetId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await PuppyDeleteData(selectedPetId);
       console.log('반려동물 삭제 성공 :', response.data);
       Swal.fire({
         title: '삭제 성공!',
