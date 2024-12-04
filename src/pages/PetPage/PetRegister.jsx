@@ -1,4 +1,5 @@
-import PetForm from './PetForm';
+import PetForm from "../../components/pet/PetForm";
+
 
 const PetRegister = () => {
   const handleRegister = (e) => {
@@ -10,7 +11,7 @@ const PetRegister = () => {
     <>
       <h1>Pet Register</h1>
       <PetForm
-        title="반려동물 수정 "
+        title="반려동물 등록 "
         buttonText="다음"
         deleteButton={false}
         onSubmit01={handleRegister}

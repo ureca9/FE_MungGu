@@ -4,7 +4,7 @@ import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import userIcon from '../../assets/MypageImg/user.svg';
-const UserD = ({ memberD, navigate }) => {
+const UserData = ({ memberD, navigate }) => {
   const { isLoggedIn, setLogout } = useLoginStore();
 
   const handleLogout = () => {
@@ -61,4 +61,4 @@ const UserD = ({ memberD, navigate }) => {
   );
 };
 
-export default UserD;
+export default UserData;
