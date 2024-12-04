@@ -25,7 +25,7 @@ const PetAdd = () => {
       }
 
       const token = localStorage.getItem('ACCESS_TOKEN');
-      console.log('등록 유저 정보', token);
+      console.log('펫추가: ', token);
       const response = await axios.post(
         'https://meong9.store/api/v1/puppies',
         puppyFormData,

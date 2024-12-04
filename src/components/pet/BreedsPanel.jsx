@@ -28,7 +28,7 @@ const BreedsPanel = ({
       if (!token) {
         throw new Error('토큰이 없습니다. 로그인 상태를 확인하세요.');
       }
-      console.log('유저 정보', token);
+      console.log('유저 토큰', token);
       const response = await axios.get(
         'https://meong9.store/api/v1/puppies/types',
         {
@@ -37,7 +37,7 @@ const BreedsPanel = ({
           },
         },
       );
-      console.log('견종 데이터 : ', response.data);
+      console.log('견종 리스트: ', response.data);
       setBreedsType(response.data.data);
     } catch (error) {
       console.error('견종목록 오류 확인:', error);
@@ -45,8 +45,8 @@ const BreedsPanel = ({
   };
   useEffect(() => {
     // 로그인 상태 확인 (예: localStorage 또는 쿠키 확인)
-    const token = localStorage.getItem('access_token');
-    console.log('로컬스토리 :', token);
+    const token = localStorage.getItem('ACCESS_TOKEN');
+    console.log('페널 토큰 :', token);
 
     if (token) {
       setIsLoggedIn(true);

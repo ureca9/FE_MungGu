@@ -12,7 +12,6 @@ const MyPage = () => {
   const userData = async () => {
     try {
       const Mdata = await memberData();
-      console.log('API 응답:', Mdata.data);
       setMemberD(Mdata.data);
     } catch (error) {
       console.error('데이터 가져오기 실패:', error);

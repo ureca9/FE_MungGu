@@ -14,7 +14,7 @@ export const memberData = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('사용자 정보:', response.data);
+    console.log('마이페이지 :', response.data);
     return response.data;
   } catch (error) {
     console.error('Error 확인:', error);
