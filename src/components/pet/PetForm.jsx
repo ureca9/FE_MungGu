@@ -7,13 +7,7 @@ import MotionDiv from './MotionDiv';
 import BreedsPanel from './BreedsPanel';
 import usePetStore from '../../stores/pet/usePetStore';
 
-const PetForm = ({
-  title,
-  buttonText,
-  deleteButton,
-  onSubmit,
-  onDelete,
-}) => {
+const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
   const { basicData } = usePetStore();
   const [puppyName, setPuppyName] = useState(basicData?.name ?? '');
   const [profileImage, setProfileImage] = useState(null);
@@ -296,6 +290,7 @@ const PetForm = ({
           birthDate &&
           gender &&
           typeof neutered === 'boolean' &&
+          weightFront &&
           weightBack && (
             <MotionDiv>
               <div className="flex flex-col gap-6">

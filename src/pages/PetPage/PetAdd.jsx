@@ -1,7 +1,7 @@
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import PetForm from '../../components/pet/PetForm';
 import ROUTER_PATHS from '../../utils/RouterPath';
+import { PostPuppyData } from '../../api/pet';
 
 const PetAdd = () => {
   const puppyAdd = async (formData) => {
@@ -24,22 +24,10 @@ const PetAdd = () => {
         puppyFormData.append('image', formData.image);
       }
 
-      const token = localStorage.getItem('ACCESS_TOKEN');
-      console.log('펫추가: ', token);
-      const response = await axios.post(
-        'https://meong9.store/api/v1/puppies',
-        puppyFormData,
-        {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await PostPuppyData(puppyFormData);
       console.log('반려동물 추가 성공 :', response.data);
       Swal.fire({
-        title: '등록 성공!',
+        title: '추가 성공!',
         icon: 'success',
       }).then(() => {
         window.location.href = ROUTER_PATHS.MY_PAGE;
