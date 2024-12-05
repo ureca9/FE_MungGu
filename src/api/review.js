@@ -1,14 +1,14 @@
-import { instance } from './axios';
+import { localInstance } from './axios';
 
-export const GetReviewData = async () => {
+export const GetAllReviews = async () => {
   try {
-    const response = await instance.get('/spots/reviews', {
+    const response = await localInstance.get('/pensions/2/reviews?page=0', {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     });
-    console.log('실시간 리뷰 :', response.data);
+    console.log('장소 리뷰 목록 :', response);
     return response.data;
   } catch (error) {
     console.error('Error 확인:', error);

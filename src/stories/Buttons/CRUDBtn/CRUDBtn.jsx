@@ -23,6 +23,7 @@ export const CRUDBtn = ({
     xs: `py-2 text-xs w-16`,
     sm: `py-2 text-sm w-20 font-bold`,
     md: `py-3 text-base w-24 font-bold`,
+    lg: `py-3 text-base w-28 `,
   };
 
   return (
