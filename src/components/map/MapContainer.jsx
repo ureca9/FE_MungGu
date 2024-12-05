@@ -5,18 +5,27 @@ import { getMarkers } from '../../api/map/map.js';
 
 const MapContainer = ({ onMapLoaded }) => {
   const mapContainer = useRef(null);
+  const testImage =
+    'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
 
   const initMap = async (latitude, longitude) => {
     const map = new window.kakao.maps.Map(mapContainer.current, {
       center: new window.kakao.maps.LatLng(latitude, longitude),
-      level: 3,
+      level: 10,
     });
 
-    const marker = new window.kakao.maps.Marker({
+    addCurrentMarker(map, latitude, longitude);
+    await addLikedMarker(map);
+  };
+
+  const addCurrentMarker = (map, latitude, longitude) => {
+    new window.kakao.maps.Marker({
       position: new window.kakao.maps.LatLng(latitude, longitude),
+      map,
     });
-    marker.setMap(map);
+  };
 
+  const addLikedMarker = async (map) => {
     const places = await getMarkers();
     places.forEach((place) => {
       const marker = new window.kakao.maps.Marker({
@@ -25,6 +34,11 @@ const MapContainer = ({ onMapLoaded }) => {
           Number(place.longitude),
         ),
         map,
+        image: new window.kakao.maps.MarkerImage(
+          testImage,
+          new window.kakao.maps.Size(26, 34),
+          { offset: new window.kakao.maps.Point(16, 34) },
+        ),
       });
 
       const infoWindow = new window.kakao.maps.InfoWindow({
