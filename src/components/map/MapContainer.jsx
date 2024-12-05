@@ -26,29 +26,37 @@ const MapContainer = ({ onMapLoaded }) => {
   };
 
   const addLikedMarker = async (map) => {
-    const places = await getMarkers();
-    places.forEach((place) => {
-      const marker = new window.kakao.maps.Marker({
-        position: new window.kakao.maps.LatLng(
-          Number(place.latitude),
-          Number(place.longitude),
-        ),
-        map,
-        image: new window.kakao.maps.MarkerImage(
-          testImage,
-          new window.kakao.maps.Size(26, 34),
-          { offset: new window.kakao.maps.Point(16, 34) },
-        ),
-      });
+    try {
+      const places = await getMarkers();
+      places.forEach((place) => {
+        const marker = new window.kakao.maps.Marker({
+          position: new window.kakao.maps.LatLng(
+            Number(place.latitude),
+            Number(place.longitude),
+          ),
+          map,
+          image: new window.kakao.maps.MarkerImage(
+            testImage,
+            new window.kakao.maps.Size(26, 34),
+            { offset: new window.kakao.maps.Point(16, 34) },
+          ),
+        });
 
-      const infoWindow = new window.kakao.maps.InfoWindow({
-        content: `<div style="padding:5px;">${place.name}</div>`,
-      });
+        const infoWindow = new window.kakao.maps.InfoWindow({
+          content: `<div style="padding:5px;">${place.name}</div>`,
+        });
 
-      window.kakao.maps.event.addListener(marker, 'click', () => {
-        infoWindow.open(map, marker);
+        window.kakao.maps.event.addListener(marker, 'click', () => {
+          infoWindow.open(map, marker);
+        });
       });
-    });
+    } catch (error) {
+      console.error('찜한 장소를 불러오는 중 오류가 발생했습니다:', error);
+      Swal.fire({
+        title: '찜한 장소를 불러오는데 실패했습니다.',
+        icon: 'error',
+      });
+    }
   };
 
   const waitForKakaoMaps = (retries = 10) => {
