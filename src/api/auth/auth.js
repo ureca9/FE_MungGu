@@ -35,10 +35,16 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
     const data = response.data;
 
     if (data.message === 'success') {
-      const accessToken = response.headers['authorization'];
+      const accessToken = response.headers['authorization'].split(' ')[1];
 
-      const { memberId, email, nickname, newMember, profileImageUrl } =
-        data.data;
+      const {
+        memberId,
+        email,
+        nickname,
+        newMember,
+        profileImageUrl,
+        hasMemberInfo,
+      } = data.data;
       if (!accessToken || typeof accessToken !== 'string') {
         throw new Error('Invalid access token received');
       }
@@ -57,6 +63,7 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
         [LOCAL_STORAGE_KEYS.NICKNAME]: nickname,
         [LOCAL_STORAGE_KEYS.NEW_MEMBER]: newMember,
         [LOCAL_STORAGE_KEYS.PROFILE_IMAGE]: profileImageUrl,
+        [LOCAL_STORAGE_KEYS.HAS_MEMBER_INFO]: hasMemberInfo,
       };
 
       updateLocalStorage(keysAndValues);

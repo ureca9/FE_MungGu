@@ -1,13 +1,17 @@
+import LOCAL_STORAGE_KEYS from '../utils/LocalStorageKey.js';
 import { instance } from './axios.js';
 import Swal from 'sweetalert2';
 
 /**
- * @param {File} profileImage - 업로드할 프로필 이미지 파일
- * @param {Object} memberInfo - 회원 정보 객체
+ * @param {File} profileImage
+ * @param {Object} memberInfo
  * @returns {Promise<Object>}
  */
 export const registerUser = async (profileImage, memberInfo) => {
   try {
+    if (!memberInfo?.name?.trim() || !memberInfo?.nickname?.trim()) {
+      throw new Error('필수 정보가 누락되었습니다.');
+    }
     const formData = new FormData();
 
     formData.append(
@@ -18,7 +22,7 @@ export const registerUser = async (profileImage, memberInfo) => {
     if (profileImage) {
       formData.append('ProfileImage', profileImage);
     }
-    const token = localStorage.getItem('ACCESS_TOKEN');
+    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
     if (!token) {
       throw new Error('인증 토큰이 없습니다.');
     }

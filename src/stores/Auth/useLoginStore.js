@@ -16,7 +16,11 @@ const useLoginStore = create(
         }
       },
       setLogin: (token) => {
-        localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, token);
+        const tokenWithoutBearer = token.replace('Bearer ', '');
+        localStorage.setItem(
+          LOCAL_STORAGE_KEYS.ACCESS_TOKEN,
+          tokenWithoutBearer,
+        );
         set({ isLoggedIn: true });
       },
       setLogout: () => {

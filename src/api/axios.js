@@ -13,25 +13,18 @@ export const localInstance = axios.create({
   withCredentials: true,
 });
 
-export const ACCESS_TOKEN = 'access_token';
-
-instance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
+instance.interceptors.request.use((config) => {
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
 const handle401Error = async (error) => {
   const originalRequest = error.config;
   try {
     const response = await getAuthToken();
     const newAccessToken = response.headers['authorization'].split(' ')[1];
-    localStorage.setItem(ACCESS_TOKEN, newAccessToken);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, newAccessToken);
     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
     return instance(originalRequest);
   } catch {
