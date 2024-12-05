@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { BasicInput } from '../../stories/Input/BasicInput';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
@@ -24,129 +24,121 @@ const agreements = [
 
 const UserRegister = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    profileImage: null,
-    email: '',
-    name: '',
-    nickname: '',
-    phoneNumber: '',
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: {
+      profileImage: null,
+      email: localStorage.getItem('EMAIL') || '',
+      name: '',
+      nickname: '',
+      phoneNumber: '',
+      agreeTerms: false,
+      agreePrivacy: false,
+      agreeMarketing: false,
+    },
   });
-  const [phoneError, setPhoneError] = useState('');
-  const [isPhoneTouched, setIsPhoneTouched] = useState(false);
-  const [isCheckingNickname, setIsCheckingNickname] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [checkedItems, setCheckedItems] = useState(
-    agreements.reduce((acc, { id }) => ({ ...acc, [id]: false }), {}),
-  );
 
-  const allChecked = agreements.every(({ id }) => checkedItems[id]);
-
-  useEffect(() => {
-    const storedProfileImage = localStorage.getItem('PROFILE_IMAGE');
-    const storedEmail = localStorage.getItem('EMAIL');
-
-    setForm((prev) => ({
-      ...prev,
-      profileImage: storedProfileImage,
-      email: storedEmail || '',
-    }));
-  }, []);
-
-  const handleChange = (field, value) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-  };
+  const profileImage = watch('profileImage');
+  const allChecked = agreements.every(({ id }) => watch(id));
 
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+
+      if (!allowedTypes.includes(file.type)) {
+        Swal.fire({
+          icon: 'error',
+          title: '지원하지 않는 파일 형식',
+          text: 'JPG, PNG, JPEG 형식만 지원합니다.',
+        });
+        return;
+      }
+
+      if (file.size > maxSize) {
+        Swal.fire({
+          icon: 'error',
+          title: '파일 크기 초과',
+          text: '5MB 이하의 이미지만 업로드 가능합니다.',
+        });
+        return;
+      }
+
       const fileURL = URL.createObjectURL(file);
       localStorage.setItem('PROFILE_IMAGE', fileURL);
-      handleChange('profileImage', file);
+      setValue('profileImage', file);
     }
-  };
-
-  const handlePhoneChange = (e) => {
-    const phoneRegex = /^\d{3}-\d{4}-\d{4}$/;
-    const value = e.target.value;
-    handleChange('phoneNumber', value);
-    setPhoneError(
-      phoneRegex.test(value)
-        ? ''
-        : '전화번호 형식이 올바르지 않습니다. (예: 010-1234-5678)',
-    );
-  };
-
-  const handleAgreementChange = (id) => {
-    setCheckedItems((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const handleCheckAll = () => {
     const newState = !allChecked;
-    setCheckedItems(
-      agreements.reduce((acc, { id }) => ({ ...acc, [id]: newState }), {}),
-    );
+    agreements.forEach(({ id }) => setValue(id, newState));
   };
 
-  const checkNicknameDuplicate = async () => {
-    if (!form.nickname.trim()) {
+  const checkNicknameDuplicate = async (nickname) => {
+    if (!nickname.trim()) {
       Swal.fire({
         icon: 'warning',
         title: '닉네임을 입력해주세요.',
       });
-      return;
+      return false;
     }
 
-    setIsCheckingNickname(true);
-    try {
-      const message = await checkNickname(form.nickname);
+    const nicknameRegex = /^[가-힣a-zA-Z0-9]{2,8}$/;
+    if (!nicknameRegex.test(nickname)) {
       Swal.fire({
-        icon: message === '중복된 닉네임입니다.' ? 'error' : 'success',
-        text:
-          message === '중복된 닉네임입니다.'
-            ? '이미 사용 중인 닉네임입니다.'
-            : '사용 가능한 닉네임입니다.',
+        icon: 'warning',
+        title: '닉네임 형식 오류',
+        text: '2~8자의 한글, 영문, 숫자만 사용 가능합니다.',
       });
+      return false;
+    }
+
+    try {
+      const message = await checkNickname(nickname);
+      const isAvailable = message !== '중복된 닉네임입니다.';
+      Swal.fire({
+        icon: isAvailable ? 'success' : 'error',
+        text: isAvailable
+          ? '사용 가능한 닉네임입니다.'
+          : '이미 사용 중인 닉네임입니다.',
+      });
+      return isAvailable;
     } catch (error) {
       Swal.fire({
         icon: 'error',
         title: '오류 발생',
         text: error.message,
       });
-    } finally {
-      setIsCheckingNickname(false);
+      return false;
     }
   };
 
-  const isFormValid = () => {
+  const onSubmit = async (data) => {
     const requiredAgreements = agreements
       .filter((a) => a.required)
-      .every(({ id }) => checkedItems[id]);
-    return (
-      form.profileImage &&
-      form.email &&
-      form.name &&
-      form.nickname &&
-      !phoneError &&
-      requiredAgreements
-    );
-  };
+      .every(({ id }) => data[id]);
 
-  const handleSubmit = async () => {
-    if (isSubmitting) return;
-    if (!isFormValid()) {
+    if (!requiredAgreements) {
       Swal.fire({
         icon: 'warning',
-        title: '필수 정보를 입력해주세요.',
+        title: '필수 동의를 확인해주세요.',
       });
       return;
     }
 
     try {
-      setIsSubmitting(true);
-      await registerUser(form.profileImage, {
-        name: form.name,
-        nickname: form.nickname,
-        phone: form.phoneNumber,
+      await registerUser(data.profileImage, {
+        name: data.name,
+        nickname: data.nickname,
+        phone: data.phoneNumber,
       });
       Swal.fire({
         icon: 'success',
@@ -155,32 +147,32 @@ const UserRegister = () => {
         navigate('/dog-register');
       });
     } catch (error) {
-      console.error('등록 중 오류:', error);
       Swal.fire({
         icon: 'error',
         title: '등록 실패',
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md mx-auto mt-10">
+    <form
+      className="w-full max-w-md mx-auto mt-10"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <div className="mb-1 text-[15px] font-bold">프로필 이미지</div>
       <div className="flex flex-col items-center mb-6">
         <label
           htmlFor="profileImage"
           className="flex items-center justify-center w-32 h-32 bg-gray-100 border rounded-full cursor-pointer"
           style={{
-            backgroundImage: form.profileImage
-              ? `url(${typeof form.profileImage === 'string' ? form.profileImage : URL.createObjectURL(form.profileImage)})`
+            backgroundImage: profileImage
+              ? `url(${typeof profileImage === 'string' ? profileImage : URL.createObjectURL(profileImage)})`
               : 'none',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
         >
-          {!form.profileImage && <span className="text-blue-500">등록</span>}
+          {!profileImage && <span className="text-blue-500">등록</span>}
         </label>
         <input
           type="file"
@@ -194,7 +186,7 @@ const UserRegister = () => {
         label="이메일"
         id="email"
         type="text"
-        value={form.email}
+        value={watch('email')}
         style="disabled"
         readOnly
         disabled
@@ -205,34 +197,40 @@ const UserRegister = () => {
         label="이름"
         id="name"
         type="text"
-        value={form.name}
-        onChange={(e) => handleChange('name', e.target.value)}
+        placeholder="이름을 입력해주세요."
+        {...register('name', { required: '이름은 필수 입력 항목입니다.' })}
       />
+      {errors.name && (
+        <p className="text-xs text-red-500">{errors.name.message}</p>
+      )}
       <BasicInput
         label="닉네임"
         id="nickname"
         type="text"
-        value={form.nickname}
-        onChange={(e) => handleChange('nickname', e.target.value)}
-      >
-        <button
-          onClick={checkNicknameDuplicate}
-          disabled={isCheckingNickname}
-          className="px-3 py-1 text-xs text-blue-500 border border-blue-500 rounded"
-        >
-          {isCheckingNickname ? '확인 중' : '중복 확인'}
-        </button>
-      </BasicInput>
+        placeholder="2~8자의 한글, 영문, 숫자만 입력 가능합니다."
+        {...register('nickname', {
+          required: '닉네임은 필수 입력 항목입니다.',
+          validate: async (value) => await checkNicknameDuplicate(value),
+        })}
+      />
+      {errors.nickname && (
+        <p className="text-xs text-red-500">{errors.nickname.message}</p>
+      )}
       <BasicInput
         label="휴대폰 번호"
         id="phone"
         type="text"
-        value={form.phoneNumber}
-        onChange={handlePhoneChange}
-        onBlur={() => setIsPhoneTouched(true)}
+        placeholder="휴대폰 번호를 입력해주세요."
+        {...register('phoneNumber', {
+          required: '휴대폰 번호는 필수 입력 항목입니다.',
+          pattern: {
+            value: /^\d{3}-\d{3,4}-\d{4}$/,
+            message: '올바른 휴대폰 번호 형식을 입력해주세요.',
+          },
+        })}
       />
-      {isPhoneTouched && phoneError && (
-        <p className="text-xs text-red-500">{phoneError}</p>
+      {errors.phoneNumber && (
+        <p className="text-xs text-red-500">{errors.phoneNumber.message}</p>
       )}
       <div className="flex flex-col w-full mt-4 space-y-2 text-sm">
         <div className="flex items-center">
@@ -251,8 +249,7 @@ const UserRegister = () => {
               <input
                 type="checkbox"
                 id={id}
-                checked={checkedItems[id]}
-                onChange={() => handleAgreementChange(id)}
+                {...register(id)}
                 className="w-4 h-4 mr-2 text-blue-500 border-gray-300 rounded"
               />
               <label htmlFor={id}>{label}</label>
@@ -262,14 +259,14 @@ const UserRegister = () => {
       </div>
       <div className="w-full mt-6 mb-16">
         <BasicBtn
-          styleType={isFormValid() ? 'blue' : 'gray'}
+          styleType={!isSubmitting ? 'blue' : 'gray'}
           size="md"
           label="다음"
-          onClick={handleSubmit}
-          disabled={!isFormValid()}
+          type="submit"
+          disabled={isSubmitting}
         />
       </div>
-    </div>
+    </form>
   );
 };
 
