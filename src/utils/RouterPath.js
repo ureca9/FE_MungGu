@@ -24,6 +24,7 @@ const ROUTER_PATHS = {
   RESERVATION_COMPLETE: '/reservation-complete',
   RESERVATION_LIST: '/reservation-list',
   MEONGSENGNEACUT: '/meongsengneacut',
+  REVIEW_ADD: '/review-add',
 };
 
 export default ROUTER_PATHS;
