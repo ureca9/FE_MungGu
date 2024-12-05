@@ -3,11 +3,14 @@ import { FaArrowLeft, FaSearch } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import SearchHistory from '../../components/map/SearchHistory.jsx';
 import useSearchHistoryStore from '../../stores/map/useSearchHistoryStore.js';
+import { dummyPlaces } from '../../utils/DummyPlaces.js';
+import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
 
 const MapSearch = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const { searchHistory, setSearchHistory } = useSearchHistoryStore();
+  const { setSearchResults, searchResults } = useMapSearchStore();
 
   useEffect(() => {
     const storedHistory =
@@ -15,7 +18,7 @@ const MapSearch = () => {
     setSearchHistory(storedHistory);
   }, []);
 
-  const handleSearch = () => {
+  const handleSaveSearchHistory = () => {
     if (searchTerm.trim() !== '') {
       let updatedHistory = [...searchHistory];
       if (!updatedHistory.includes(searchTerm))
@@ -24,6 +27,18 @@ const MapSearch = () => {
       if (searchHistory.length > 20) searchHistory.pop();
       localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
       setSearchHistory(updatedHistory);
+    }
+  };
+
+  const handleSearch = () => {
+    if (searchTerm.trim() !== '') {
+      handleSaveSearchHistory(searchTerm);
+      const filteredResults = dummyPlaces.filter((place) =>
+        place.placeName.includes(searchTerm),
+      );
+      setSearchResults(filteredResults);
+      console.log(filteredResults, searchResults);
+      navigate('/map');
     }
   };
 

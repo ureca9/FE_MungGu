@@ -1,21 +1,20 @@
 import { createBrowserRouter } from 'react-router-dom';
+import ROUTER_PATHS from '../utils/RouterPath.js';
 import DefaultLayout from '../layout/DefaultLayout.jsx';
 import Main from '../pages/Main.jsx';
 import Like from '../pages/Like.jsx';
 import Map from '../pages/Map/Map.jsx';
 import MyPage from '../pages/UserPage/MyPage.jsx';
 import Search from '../pages/Search.jsx';
-import PetForm from '../pages/PetPage/PetForm.jsx';
 import PetAdd from '../pages/PetPage/PetAdd.jsx';
 import PetEdit from '../pages/PetPage/PetEdit.jsx';
 import UserEdit from '../pages/UserPage/UserEdit.jsx';
 import MapSearch from '../pages/Map/MapSearch.jsx';
 import Directions from '../pages/Map/Directions.jsx';
 import Login from '../pages/Login.jsx';
-import ROUTER_PATHS from '../utils/RouterPath.js';
+import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import Meongsengneacut from '../pages/Meongsengneacut.jsx';
 import UserRegister from './../pages/UserPage/UserRegister';
-import PetRegister from '../pages/PetPage/PetRegister.jsx';
 
 const routes = [
   {
@@ -31,11 +30,11 @@ const routes = [
     element: <Map />,
   },
   {
-    path: '/map-search',
+    path: ROUTER_PATHS.MAP_SEARCH,
     element: <MapSearch />,
   },
   {
-    path: '/directions',
+    path: ROUTER_PATHS.DIRECTIONS,
     element: <Directions />,
   },
   {
@@ -47,23 +46,19 @@ const routes = [
     element: <Search />,
   },
   {
-    path: '/user-edit',
+    path: ROUTER_PATHS.USER_EDIT,
     element: <UserEdit />,
   },
   {
-    path: '/pet-form',
-    element: <PetForm />,
-  },
-  {
-    path: '/pet-register',
+    path: ROUTER_PATHS.PET_REGISTER,
     element: <PetRegister />,
   },
   {
-    path: '/pet-add',
+    path: ROUTER_PATHS.PET_ADD,
     element: <PetAdd />,
   },
   {
-    path: '/pet-edit/:puppyId',
+    path: ROUTER_PATHS.PET_EDIT_ID,
     element: <PetEdit />,
   },
   {

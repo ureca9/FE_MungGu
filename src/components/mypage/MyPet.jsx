@@ -1,11 +1,15 @@
 import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
 import petgray from '../../assets/common/petgray.svg';
-import { useState } from 'react';
 import { IoMdCheckmark } from 'react-icons/io';
+import usePetStore from '../../stores/pet/usePetStore';
+import ROUTER_PATHS from '../../utils/RouterPath';
+import Swal from 'sweetalert2';
+
 const MyPet = ({ memberD, navigate }) => {
-  const [choicePuppyId, setChoicePuppyId] = useState(null);
+  const { selectedPetId, setSelectedPetId } = usePetStore();
+
   const handleClick = (puppyId) => {
-    setChoicePuppyId(puppyId);
+    setSelectedPetId(puppyId);
   };
   return (
     <div className="flex flex-col h-auto py-8 bg-white border rounded-lg px-9 border-borderlineGray">
@@ -22,9 +26,14 @@ const MyPet = ({ memberD, navigate }) => {
           label="편집"
           onClick={(e) => {
             e.preventDefault();
-            choicePuppyId
-              ? navigate(`/pet-edit/${choicePuppyId}`)
-              : alert('편집할 마이펫을 선택해주세요.');
+            selectedPetId
+              ? navigate(
+                  ROUTER_PATHS.PET_EDIT_ID.replace(':puppyId', selectedPetId),
+                )
+              : Swal.fire({
+                  title: '편집할 마이펫을 선택해주세요.',
+                  icon: 'warning',
+                });
           }}
         />
       </div>
@@ -43,7 +52,7 @@ const MyPet = ({ memberD, navigate }) => {
             <span className="flex justify-center mt-2 text-textGray">
               {puppy.puppyName}
             </span>
-            {choicePuppyId === puppy.puppyId && (
+            {selectedPetId === puppy.puppyId && (
               <div className="absolute flex items-center justify-center bg-opacity-45 rounded-full size-16 bg-[#3288FF]">
                 <IoMdCheckmark className="text-5xl text-white" />
               </div>
