@@ -19,7 +19,6 @@ export const GetmemberData = async () => {
 export const GetBreedsTypeData = async () => {
   try {
     const response = await instance.get('/puppies/types');
-    console.log('견종 리스트: ', response.data);
     return response.data;
   } catch (error) {
     console.error('견종목록 오류 확인:', error);
@@ -46,7 +45,6 @@ export const PatchPuppyEditData = async (selectedPetId, puppyFormData) => {
         },
       },
     );
-    console.log('반려동물 수정 성공 :', response.data);
     return response.data;
   } catch (error) {
     console.error('반려동물 수정 오류 :', error);
@@ -62,9 +60,21 @@ export const DeletePuppyData = async (selectedPetId) => {
         },
       },
     );
-    console.log('반려동물 삭제 성공 :', response.data);
     return response.data;
   } catch (error) {
     console.error('반려동물 삭제 오류 :', error);
+  }
+};
+export const PostPuppyData = async (puppyFormData) => {
+  try {
+    const response = await instance.post('/puppies', puppyFormData, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('등록 중 오류 발생:', error);
   }
 };
