@@ -2,11 +2,12 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { BasicInput } from '../../stories/Input/BasicInput';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
-import { registerUser } from '../../api/userRegister';
-import { checkNickname } from '../../api/checkNickname';
+import { registerUser } from '../../api/userRegister/userRegister';
+import { checkNickname } from '../../api/userRegister/checkNickname';
 import KakaoLogo from '../../assets/login/KakaoLogo.svg';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import ROUTER_PATHS from '../../utils/RouterPath';
 
 const agreements = [
   { id: 'agreeTerms', label: '이용약관 동의 (필수)', required: true },
@@ -33,7 +34,7 @@ const UserRegister = () => {
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      profileImage: null,
+      profileImage: localStorage.getItem('PROFILE_IMAGE') || null,
       email: localStorage.getItem('EMAIL') || '',
       name: '',
       nickname: '',
@@ -50,7 +51,7 @@ const UserRegister = () => {
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const maxSize = 5 * 1024 * 1024; // 5MB
+      const maxSize = 5 * 1024 * 1024;
       const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
       if (!allowedTypes.includes(file.type)) {
@@ -58,6 +59,7 @@ const UserRegister = () => {
           icon: 'error',
           title: '지원하지 않는 파일 형식',
           text: 'JPG, PNG, JPEG 형식만 지원합니다.',
+          confirmButtonColor: '#3288FF',
         });
         return;
       }
@@ -67,6 +69,7 @@ const UserRegister = () => {
           icon: 'error',
           title: '파일 크기 초과',
           text: '5MB 이하의 이미지만 업로드 가능합니다.',
+          confirmButtonColor: '#3288FF',
         });
         return;
       }
@@ -82,41 +85,48 @@ const UserRegister = () => {
     agreements.forEach(({ id }) => setValue(id, newState));
   };
 
-  const checkNicknameDuplicate = async (nickname) => {
-    if (!nickname.trim()) {
+  const checkNicknameDuplicate = async () => {
+    const nickname = watch('nickname');
+
+    if (!nickname || nickname.trim().length === 0) {
       Swal.fire({
         icon: 'warning',
         title: '닉네임을 입력해주세요.',
+        confirmButtonColor: '#3288FF',
       });
       return false;
     }
 
     const nicknameRegex = /^[가-힣a-zA-Z0-9]{2,8}$/;
-    if (!nicknameRegex.test(nickname)) {
+    if (!nicknameRegex.test(nickname.trim())) {
       Swal.fire({
         icon: 'warning',
         title: '닉네임 형식 오류',
         text: '2~8자의 한글, 영문, 숫자만 사용 가능합니다.',
+        confirmButtonColor: '#3288FF',
       });
       return false;
     }
 
     try {
-      const message = await checkNickname(nickname);
+      const message = await checkNickname(nickname.trim());
       const isAvailable = message !== '중복된 닉네임입니다.';
       Swal.fire({
         icon: isAvailable ? 'success' : 'error',
         text: isAvailable
           ? '사용 가능한 닉네임입니다.'
           : '이미 사용 중인 닉네임입니다.',
+        confirmButtonColor: '#3288FF',
       });
       return isAvailable;
     } catch (error) {
       Swal.fire({
         icon: 'error',
         title: '오류 발생',
-        text: error.message,
+        text: '닉네임 확인 중 오류가 발생했습니다.',
+        confirmButtonColor: '#3288FF',
       });
+      console.error(error);
       return false;
     }
   };
@@ -130,6 +140,7 @@ const UserRegister = () => {
       Swal.fire({
         icon: 'warning',
         title: '필수 동의를 확인해주세요.',
+        confirmButtonColor: '#3288FF',
       });
       return;
     }
@@ -143,13 +154,16 @@ const UserRegister = () => {
       Swal.fire({
         icon: 'success',
         title: '등록 완료',
+        confirmButtonColor: '#3288FF',
       }).then(() => {
-        navigate('/dog-register');
+        navigate(ROUTER_PATHS.PET_REGISTER);
       });
     } catch (error) {
       Swal.fire({
         icon: 'error',
         title: '등록 실패',
+        text: `${error}`,
+        confirmButtonColor: '#3288FF',
       });
     }
   };
@@ -210,9 +224,17 @@ const UserRegister = () => {
         placeholder="2~8자의 한글, 영문, 숫자만 입력 가능합니다."
         {...register('nickname', {
           required: '닉네임은 필수 입력 항목입니다.',
-          validate: async (value) => await checkNicknameDuplicate(value),
         })}
-      />
+      >
+        <button
+          type="button"
+          className="absolute right-1 w-[65px] top-1/2 transform -translate-y-1/2 py-1 text-xs text-[#3288FF] border border-[#3288FF] rounded transition"
+          onClick={checkNicknameDuplicate}
+        >
+          중복 확인
+        </button>
+      </BasicInput>
+
       {errors.nickname && (
         <p className="text-xs text-red-500">{errors.nickname.message}</p>
       )}
@@ -223,16 +245,33 @@ const UserRegister = () => {
         placeholder="휴대폰 번호를 입력해주세요."
         {...register('phoneNumber', {
           required: '휴대폰 번호는 필수 입력 항목입니다.',
-          pattern: {
-            value: /^\d{3}-\d{3,4}-\d{4}$/,
-            message: '올바른 휴대폰 번호 형식을 입력해주세요.',
+          validate: (value) => {
+            const formattedValue = value.replace(/\D/g, '');
+            if (formattedValue.length !== 11) {
+              return '휴대폰 번호는 11자리여야 합니다.';
+            }
+            return true;
           },
         })}
+        maxLength={13}
+        onInput={(e) => {
+          let value = e.target.value.replace(/\D/g, '');
+
+          if (value.length > 3 && value.length <= 7) {
+            value = value.replace(/(\d{3})(\d{1,4})/, '$1-$2');
+          } else if (value.length > 7) {
+            value = value.replace(/(\d{3})(\d{4})(\d{1,4})/, '$1-$2-$3');
+          }
+
+          e.target.value = value;
+          setValue('phoneNumber', value);
+        }}
       />
+
       {errors.phoneNumber && (
         <p className="text-xs text-red-500">{errors.phoneNumber.message}</p>
       )}
-      <div className="flex flex-col w-full mt-4 space-y-2 text-sm">
+      <div className="flex flex-col w-full mt-8 space-y-2 text-sm">
         <div className="flex items-center">
           <input
             type="checkbox"

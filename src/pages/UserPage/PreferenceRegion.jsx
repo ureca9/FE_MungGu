@@ -1,31 +1,35 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { handleSubmitRegions } from '../../api/userRegister/preference';
 
 const PreferencePlant = () => {
   const [selected, setSelected] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const navigate = useNavigate();
 
-  const plant = [
+  const regions = [
     '서울',
-    '경기도',
+    '경기',
     '인천',
-    '강원도',
-    '충청도',
-    '전라도',
-    '경상도',
-    '제주도',
+    '강원권',
+    '충청권',
+    '전라권',
+    '경상권',
+    '제주권',
   ];
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsLoaded(true);
     }, 500);
+    return () => clearTimeout(timer);
   }, []);
 
   const toggleSelect = (option) => {
     if (selected.includes(option)) {
-      setSelected(selected.filter((item) => item !== option));
+      setSelected((prev) => prev.filter((item) => item !== option));
     } else if (selected.length < 2) {
-      setSelected([...selected, option]);
+      setSelected((prev) => [...prev, option]);
     }
   };
 
@@ -37,7 +41,7 @@ const PreferencePlant = () => {
       <main className="flex flex-col items-center pt-16 pb-16">
         <div className="grid grid-rows-[auto] gap-10">
           <div className="flex justify-center gap-16">
-            {plant.slice(0, 3).map((option, index) => (
+            {regions.slice(0, 3).map((option, index) => (
               <button
                 key={index}
                 onClick={() => toggleSelect(option)}
@@ -48,8 +52,7 @@ const PreferencePlant = () => {
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
                   }
-                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}
-                `}
+                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
                 style={{
                   animationDelay: `${index * 0.2}s`,
                 }}
@@ -59,7 +62,7 @@ const PreferencePlant = () => {
             ))}
           </div>
           <div className="flex justify-center gap-16">
-            {plant.slice(3, 5).map((option, index) => (
+            {regions.slice(3, 5).map((option, index) => (
               <button
                 key={index}
                 onClick={() => toggleSelect(option)}
@@ -70,8 +73,7 @@ const PreferencePlant = () => {
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
                   }
-                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'}
-                `}
+                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'}`}
                 style={{
                   animationDelay: `${(index + 2) * 0.2}s`,
                 }}
@@ -81,7 +83,7 @@ const PreferencePlant = () => {
             ))}
           </div>
           <div className="flex justify-center gap-16">
-            {plant.slice(5).map((option, index) => (
+            {regions.slice(5).map((option, index) => (
               <button
                 key={index}
                 onClick={() => toggleSelect(option)}
@@ -92,8 +94,7 @@ const PreferencePlant = () => {
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
                   }
-                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}
-                `}
+                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
                 style={{
                   animationDelay: `${(index + 5) * 0.2}s`,
                 }}
@@ -102,6 +103,14 @@ const PreferencePlant = () => {
               </button>
             ))}
           </div>
+        </div>
+        <div className="w-2/3 mt-16">
+          <button
+            onClick={() => handleSubmitRegions(selected, navigate)}
+            className="w-full px-4 py-2 font-semibold text-white transition-all bg-blue-500 rounded-lg shadow-md hover:bg-blue-700"
+          >
+            완료
+          </button>
         </div>
       </main>
       <style jsx>{`

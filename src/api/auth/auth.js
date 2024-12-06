@@ -1,7 +1,6 @@
 import { instance } from '../axios.js';
 import Swal from 'sweetalert2';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
-import ROUTER_PATHS from '../../utils/RouterPath';
 import { ERROR_MESSAGES } from '../../utils/ErrorMessage.js';
 
 export const getAuthToken = async () => {
@@ -24,9 +23,9 @@ export const getAuthToken = async () => {
 /**
  * @param {string} code
  * @param {Function} setLogin
- * @param {Function} navigate
+ * @param {Function} setHasMemberInfo
  */
-export const fetchAccessToken = async (code, setLogin, navigate) => {
+export const fetchAccessToken = async (code, setLogin, setHasMemberInfo) => {
   try {
     if (!code || typeof code !== 'string') {
       throw new Error('Invalid authorization code');
@@ -69,8 +68,7 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
       updateLocalStorage(keysAndValues);
 
       setLogin(accessToken);
-
-      navigate(newMember ? ROUTER_PATHS.USER_REGISTER : ROUTER_PATHS.MAIN);
+      setHasMemberInfo(hasMemberInfo);
     } else {
       console.error('Response error:', data);
 

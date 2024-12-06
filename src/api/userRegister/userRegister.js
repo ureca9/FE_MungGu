@@ -1,5 +1,4 @@
-import LOCAL_STORAGE_KEYS from '../utils/LocalStorageKey.js';
-import { instance } from './axios.js';
+import { instance } from '../axios.js';
 import Swal from 'sweetalert2';
 
 /**
@@ -22,15 +21,10 @@ export const registerUser = async (profileImage, memberInfo) => {
     if (profileImage) {
       formData.append('ProfileImage', profileImage);
     }
-    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
-    if (!token) {
-      throw new Error('인증 토큰이 없습니다.');
-    }
     const response = await instance.post('/members/info', formData, {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
-        Authorization: `${token}`,
       },
     });
 

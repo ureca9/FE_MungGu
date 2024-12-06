@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
-import { instance } from '../../api/axios';
+import { useNavigate } from 'react-router-dom';
+import ROUTER_PATHS from '../../utils/RouterPath';
+import { savePreferencePlaces } from '../../api/userRegister/preference';
 
 const PreferencePlant = () => {
   const [selected, setSelected] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
-
+  const navigate = useNavigate();
   const plant = ['카페', '공원', '해수욕장', '섬', '놀이터', '마당', '펜션'];
 
   useEffect(() => {
@@ -28,32 +30,12 @@ const PreferencePlant = () => {
       return;
     }
 
-    const token = localStorage.getItem('ACCESS_TOKEN');
-    if (!token) {
-      throw new Error('인증 토큰이 없습니다.');
-    }
-    const requestData = {
-      places: selected,
-    };
-
     try {
-      const response = await instance.post('/members/interests/places', {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `${token}`,
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        alert(`Success: ${result.message}`);
-      } else {
-        alert(`Error: ${response.status}`);
-      }
+      const result = await savePreferencePlaces(selected);
+      alert(`${result.message}`);
+      navigate(ROUTER_PATHS.PREFERENCE_REGION);
     } catch (error) {
-      alert(`Request failed: ${error.message}`);
+      alert(error.message || '오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
 

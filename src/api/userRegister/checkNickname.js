@@ -1,9 +1,8 @@
-import { instance } from './axios';
+import { instance } from '../axios';
 
 /**
- * 닉네임 중복 확인 함수
- * @param {string} nickname 닉네임
- * @returns {Promise<string>} 닉네임 확인 결과 메시지
+ * @param {string} nickname
+ * @returns {Promise<string>}
  */
 export const checkNickname = async (nickname) => {
   if (!nickname.trim()) {
