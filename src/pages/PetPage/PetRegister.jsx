@@ -30,7 +30,7 @@ const PetRegister = () => {
         title: '등록 성공!',
         icon: 'success',
       }).then(() => {
-        window.location.href = ROUTER_PATHS.MY_PAGE;
+        window.location.href = ROUTER_PATHS.PREFERENCE_PLANT;
       });
     } catch (error) {
       console.error('등록 중 오류 발생:', error);
