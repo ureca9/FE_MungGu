@@ -1,24 +1,24 @@
 import { createBrowserRouter } from 'react-router-dom';
+import ROUTER_PATHS from '../utils/RouterPath.js';
 import DefaultLayout from '../layout/DefaultLayout.jsx';
 import Main from '../pages/Main.jsx';
 import Like from '../pages/Like.jsx';
-import Map from '../pages/Map.jsx';
+import Map from '../pages/Map/Map.jsx';
 import MyPage from '../pages/UserPage/MyPage.jsx';
 import Search from '../pages/Search.jsx';
-import UserUpdatePage from '../pages/UserPage/UserUpdatePage.jsx';
-import PetUpdatePage from '../pages/PetPage/PetUpdatePage.jsx';
-<<<<<<< HEAD
+import PetAdd from '../pages/PetPage/PetAdd.jsx';
+import PetEdit from '../pages/PetPage/PetEdit.jsx';
+import UserEdit from '../pages/UserPage/UserEdit.jsx';
+import MapSearch from '../pages/Map/MapSearch.jsx';
+import Directions from '../pages/Map/Directions.jsx';
 import PlaceDetailPage from '../pages/DetailPage/PlaceDetailPage.jsx';
 import SearchModal from '../components/MainPage/SearchModal/SearchModal.jsx';
 import ListPage from '../pages/ListPage/ListPage.jsx'; // ListPage 경로 확인
 import PensionListPage from '../pages/ListPage/PensionListPage.jsx';
 import PensionDetailPage from '../pages/DetailPage/PensionDetailPage.jsx';
-import Test from '../pages/Test.jsx';
-=======
 import Login from '../pages/Login.jsx';
-import ROUTER_PATHS from '../utils/RouterPath.js';
+import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import Meongsengneacut from '../pages/Meongsengneacut.jsx';
->>>>>>> f9ddb28a09dd76610f5d097851668f0d04c5391b
 
 const routes = [
   {
@@ -34,6 +34,14 @@ const routes = [
     element: <Map />,
   },
   {
+    path: ROUTER_PATHS.MAP_SEARCH,
+    element: <MapSearch />,
+  },
+  {
+    path: ROUTER_PATHS.DIRECTIONS,
+    element: <Directions />,
+  },
+  {
     path: ROUTER_PATHS.MY_PAGE,
     element: <MyPage />,
   },
@@ -42,15 +50,22 @@ const routes = [
     element: <Search />,
   },
   {
-    path: ROUTER_PATHS.USER_UPDATE,
-    element: <UserUpdatePage />,
+    path: ROUTER_PATHS.USER_EDIT,
+    element: <UserEdit />,
   },
   {
-    path: ROUTER_PATHS.PET_UPDATE,
-    element: <PetUpdatePage />,
+    path: ROUTER_PATHS.PET_REGISTER,
+    element: <PetRegister />,
   },
   {
-<<<<<<< HEAD
+    path: ROUTER_PATHS.PET_ADD,
+    element: <PetAdd />,
+  },
+  {
+    path: ROUTER_PATHS.PET_EDIT_ID,
+    element: <PetEdit />,
+  },
+  {
     path: '/search-modal', // 검색 모달 경로 추가
     element: <SearchModal />,
   },
@@ -71,18 +86,16 @@ const routes = [
     element: <PensionDetailPage />
   },
   {
-    path: '/test',
-    element: <Test />,
-=======
     path: ROUTER_PATHS.LOGIN,
     element: <Login />,
   },
+
   {
     path: ROUTER_PATHS.MEONGSENGNEACUT,
     element: <Meongsengneacut />,
->>>>>>> f9ddb28a09dd76610f5d097851668f0d04c5391b
   },
 ];
+
 const router = createBrowserRouter([
   {
     element: <DefaultLayout />,
