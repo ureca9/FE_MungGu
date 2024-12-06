@@ -98,7 +98,7 @@ const PensionSection = ({ onClose }) => {
           },
         });
   
-        if (onClose) onClose(); // 부모 컴포넌트에서 전달된 onSearch 콜백 실행
+        if (onClose) onClose(); 
       })
       .catch((error) => {
         console.error("Error during search:", error);

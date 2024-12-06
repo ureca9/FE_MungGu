@@ -2,11 +2,10 @@ import { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 import { getMarkers } from '../../api/map/map.js';
+import heartMarker from '../../assets/common/heartMarker.png';
 
 const MapContainer = ({ onMapLoaded }) => {
   const mapContainer = useRef(null);
-  const testImage =
-    'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
 
   const initMap = async (latitude, longitude) => {
     const map = new window.kakao.maps.Map(mapContainer.current, {
@@ -36,7 +35,7 @@ const MapContainer = ({ onMapLoaded }) => {
           ),
           map,
           image: new window.kakao.maps.MarkerImage(
-            testImage,
+            heartMarker,
             new window.kakao.maps.Size(26, 34),
             { offset: new window.kakao.maps.Point(16, 34) },
           ),

@@ -35,24 +35,42 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
     const data = response.data;
 
     if (data.message === 'success') {
-      const accessToken = response.headers['authorization'].split(' ')[1];
+      const accessToken = response.headers['authorization'];
 
-      const { memberId, email, nickname, newMember, profileImageUrl } =
-        data.data;
+      const {
+        memberId,
+        email,
+        nickname,
+        newMember,
+        profileImageUrl,
+        hasMemberInfo,
+      } = data.data;
       if (!accessToken || typeof accessToken !== 'string') {
         throw new Error('Invalid access token received');
       }
-      localStorage.clear();
+      const updateLocalStorage = (keysAndValues) => {
+        Object.keys(keysAndValues).forEach((key) => {
+          localStorage.removeItem(key);
+        });
+        Object.entries(keysAndValues).forEach(([key, value]) => {
+          localStorage.setItem(key, value);
+        });
+      };
+      const keysAndValues = {
+        [LOCAL_STORAGE_KEYS.MEMBER_ID]: memberId,
+        [LOCAL_STORAGE_KEYS.EMAIL]: email,
+        [LOCAL_STORAGE_KEYS.NICKNAME]: nickname,
+        [LOCAL_STORAGE_KEYS.NEW_MEMBER]: newMember,
+        [LOCAL_STORAGE_KEYS.PROFILE_IMAGE]: profileImageUrl,
+        [LOCAL_STORAGE_KEYS.HAS_MEMBER_INFO]: hasMemberInfo,
+      };
 
-      localStorage.setItem(LOCAL_STORAGE_KEYS.MEMBER_ID, memberId);
-      localStorage.setItem(LOCAL_STORAGE_KEYS.EMAIL, email);
-      localStorage.setItem(LOCAL_STORAGE_KEYS.NICKNAME, nickname);
-      localStorage.setItem(LOCAL_STORAGE_KEYS.NEW_MEMBER, newMember);
-      localStorage.setItem(LOCAL_STORAGE_KEYS.PROFILE_IMAGE, profileImageUrl);
-
+      updateLocalStorage(keysAndValues);
       setLogin(accessToken);
-
-      navigate(newMember ? ROUTER_PATHS.USER_REGISTER : ROUTER_PATHS.MAIN);
+      const isNewUser = localStorage.getItem(
+        LOCAL_STORAGE_KEYS.HAS_MEMBER_INFO,
+      );
+      navigate(isNewUser ? ROUTER_PATHS.USER_REGISTER : ROUTER_PATHS.MAIN);
     } else {
       console.error('Response error:', data);
 

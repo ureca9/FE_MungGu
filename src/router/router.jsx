@@ -17,8 +17,11 @@ import ListPage from '../pages/ListPage/ListPage.jsx'; // ListPage 경로 확인
 import PensionListPage from '../pages/ListPage/PensionListPage.jsx';
 import PensionDetailPage from '../pages/DetailPage/PensionDetailPage.jsx';
 import Login from '../pages/Login.jsx';
-import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import Meongsengneacut from '../pages/Meongsengneacut.jsx';
+import UserRegister from './../pages/UserPage/UserRegister';
+import PetRegister from '../pages/PetPage/PetRegister.jsx';
+import PreferencePlant from '../pages/UserPage/PreferencePlant.jsx';
+import PreferenceRegion from '../pages/UserPage/PreferenceRegion.jsx';
 
 const routes = [
   {
@@ -93,6 +96,14 @@ const routes = [
   {
     path: ROUTER_PATHS.MEONGSENGNEACUT,
     element: <Meongsengneacut />,
+  },
+  {
+    path: ROUTER_PATHS.PREFERENCE_PLANT,
+    element: <PreferencePlant />,
+  },
+  {
+    path: ROUTER_PATHS.PREFERENCE_REGION,
+    element: <PreferenceRegion />,
   },
 ];
 
