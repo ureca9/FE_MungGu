@@ -2,6 +2,7 @@ import axios from 'axios';
 import { getAuthToken } from './auth/auth.js';
 import Swal from 'sweetalert2';
 import LOCAL_STORAGE_KEYS from '../utils/LocalStorageKey.js';
+import ROUTER_PATHS from '../utils/RouterPath.js';
 
 export const instance = axios.create({
   baseURL: 'https://meong9.store/api/v1',
@@ -23,14 +24,19 @@ const handle401Error = async (error) => {
   const originalRequest = error.config;
   try {
     const response = await getAuthToken();
-    const newAccessToken = response.headers['Authorization'].split(' ')[1];
+    const newAccessToken = response.headers['authorization'].split(' ')[1];
     localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, newAccessToken);
     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
     return instance(originalRequest);
   } catch {
     localStorage.clear();
-    await Swal.fire({ title: '다시 로그인해주세요.', icon: 'warning' });
-    window.location.href = '/login';
+    await Swal.fire({
+      title: '로그인 후 이용해주세요.',
+      icon: 'warning',
+      confirmButtonText: '확인',
+      confirmButtonColor: '#3288FF',
+    });
+    window.location.href = ROUTER_PATHS.LOGIN;
     return Promise.reject(error);
   }
 };

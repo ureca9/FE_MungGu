@@ -12,9 +12,11 @@ import UserEdit from '../pages/UserPage/UserEdit.jsx';
 import MapSearch from '../pages/Map/MapSearch.jsx';
 import Directions from '../pages/Map/Directions.jsx';
 import Login from '../pages/Login.jsx';
-import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import Meongsengneacut from '../pages/Meongsengneacut.jsx';
 import UserRegister from './../pages/UserPage/UserRegister';
+import PetRegister from '../pages/PetPage/PetRegister.jsx';
+import PreferencePlant from '../pages/UserPage/PreferencePlant.jsx';
+import PreferenceRegion from '../pages/UserPage/PreferenceRegion.jsx';
 
 const routes = [
   {
@@ -74,8 +76,12 @@ const routes = [
     element: <Meongsengneacut />,
   },
   {
-    path: ROUTER_PATHS.USER_REGISTER,
-    element: <UserRegister />,
+    path: ROUTER_PATHS.PREFERENCE_PLANT,
+    element: <PreferencePlant />,
+  },
+  {
+    path: ROUTER_PATHS.PREFERENCE_REGION,
+    element: <PreferenceRegion />,
   },
 ];
 
