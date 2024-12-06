@@ -15,9 +15,6 @@ const useLoginStore = create(
           return false;
         }
       },
-      hasMemberInfo:
-        JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.HAS_MEMBER_INFO)) ||
-        false,
       setLogin: (token) => {
         const tokenWithoutBearer = token.replace('Bearer ', '');
         localStorage.setItem(
@@ -25,13 +22,6 @@ const useLoginStore = create(
           tokenWithoutBearer,
         );
         set({ isLoggedIn: true });
-      },
-      setHasMemberInfo: (hasMemberInfo) => {
-        localStorage.setItem(
-          LOCAL_STORAGE_KEYS.HAS_MEMBER_INFO,
-          JSON.stringify(hasMemberInfo),
-        );
-        set({ hasMemberInfo });
       },
       setLogout: () => {
         localStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);

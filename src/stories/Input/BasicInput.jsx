@@ -58,4 +58,8 @@ BasicInput.propTypes = {
   type: PropTypes.oneOf(['radio', 'email', 'text', 'file', 'submit']),
   style: PropTypes.oneOf(['gray', 'blue', 'disabled']),
   children: PropTypes.node,
+  required: PropTypes.bool,
+  error: PropTypes.string,
+  onChange: PropTypes.func,
+  value: PropTypes.string,
 };

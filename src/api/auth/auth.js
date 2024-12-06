@@ -1,6 +1,7 @@
 import { instance } from '../axios.js';
 import Swal from 'sweetalert2';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
+import ROUTER_PATHS from '../../utils/RouterPath';
 import { ERROR_MESSAGES } from '../../utils/ErrorMessage.js';
 
 export const getAuthToken = async () => {
@@ -23,9 +24,9 @@ export const getAuthToken = async () => {
 /**
  * @param {string} code
  * @param {Function} setLogin
- * @param {Function} setHasMemberInfo
+ * @param {Function} navigate
  */
-export const fetchAccessToken = async (code, setLogin, setHasMemberInfo) => {
+export const fetchAccessToken = async (code, setLogin, navigate) => {
   try {
     if (!code || typeof code !== 'string') {
       throw new Error('Invalid authorization code');
@@ -34,7 +35,7 @@ export const fetchAccessToken = async (code, setLogin, setHasMemberInfo) => {
     const data = response.data;
 
     if (data.message === 'success') {
-      const accessToken = response.headers['authorization'].split(' ')[1];
+      const accessToken = response.headers['authorization'];
 
       const {
         memberId,
@@ -47,7 +48,6 @@ export const fetchAccessToken = async (code, setLogin, setHasMemberInfo) => {
       if (!accessToken || typeof accessToken !== 'string') {
         throw new Error('Invalid access token received');
       }
-
       const updateLocalStorage = (keysAndValues) => {
         Object.keys(keysAndValues).forEach((key) => {
           localStorage.removeItem(key);
@@ -66,9 +66,11 @@ export const fetchAccessToken = async (code, setLogin, setHasMemberInfo) => {
       };
 
       updateLocalStorage(keysAndValues);
-
       setLogin(accessToken);
-      setHasMemberInfo(hasMemberInfo);
+      const isNewUser = localStorage.getItem(
+        LOCAL_STORAGE_KEYS.HAS_MEMBER_INFO,
+      );
+      navigate(isNewUser ? ROUTER_PATHS.USER_REGISTER : ROUTER_PATHS.MAIN);
     } else {
       console.error('Response error:', data);
 

@@ -3,14 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { LoginBtn } from '../stories/Buttons/LoginBtn/LoginBtn';
 import { fetchAccessToken } from '../api/auth/auth.js';
 import useLoginStore from '../stores/Auth/useLoginStore';
-import ROUTER_PATHS from '../utils/RouterPath.js';
 
 const Login = () => {
   const REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
   const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
   const navigate = useNavigate();
-  const { isLoggedIn, hasMemberInfo, setLogin, setHasMemberInfo } =
-    useLoginStore();
+  const { isLoggedIn, setLogin } = useLoginStore();
 
   const handleKakaoLogin = () => {
     const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${encodeURIComponent(
@@ -20,16 +18,12 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (isLoggedIn) {
-      navigate(hasMemberInfo ? ROUTER_PATHS.MAIN : ROUTER_PATHS.USER_REGISTER);
-    } else {
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-      if (code) {
-        fetchAccessToken(code, setLogin, navigate);
-      }
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code) {
+      fetchAccessToken(code, setLogin, navigate);
     }
-  }, [isLoggedIn, hasMemberInfo, navigate, setLogin, setHasMemberInfo]);
+  }, [isLoggedIn, navigate, setLogin]);
 
   return (
     <div className="flex flex-col items-center min-h-screen px-6 mt-8">
