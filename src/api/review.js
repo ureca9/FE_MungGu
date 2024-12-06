@@ -1,8 +1,8 @@
-import { localInstance } from './axios';
+import { instance } from './axios';
 
-export const GetAllReviews = async () => {
+export const GetPensionsReviews = async () => {
   try {
-    const response = await localInstance.get('/pensions/2/reviews?page=0', {
+    const response = await instance.get('/pensions/2/reviews?page=0', {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',

@@ -12,7 +12,7 @@ const SubHeader = () => {
     [ROUTER_PATHS.LOGIN]: '로그인',
     [ROUTER_PATHS.LIVE_REVIEW]: '실시간 리뷰',
     [ROUTER_PATHS.USER_REGISTER]: '회원 등록',
-    [ROUTER_PATHS.PET_REGISTER]: '강아지 등록',
+    [ROUTER_PATHS.REVIEW_ADD]: '강아지 등록',
     [ROUTER_PATHS.PREFERENCE_PLANT]: '선호 시설 등록',
     [ROUTER_PATHS.PREFERENCE_REGION]: '선호 지역 등록',
     [ROUTER_PATHS.REGION_NAME]: '지역명',

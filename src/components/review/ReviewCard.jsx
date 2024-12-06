@@ -19,50 +19,57 @@ const ReviewCard = ({ review }) => {
     profileImageUrl,
   } = review;
   return (
-    <div className="">
-      <div className="flex flex-col justify-between h-auto">
-        <div>
-          {/* <div className="mb-3 text-2xl font-semibold">{name}</div> */}
-          <div className="flex flex-row justify-between">
-            <div className="flex items-center">
-              <img
-                className="bg-[#F5F5F5] border border-[#8A8A8A] rounded-full size-12"
-                src={profileImageUrl || usericon}
-              />
-              <span className="ml-2 text-[#8A8A8A]">작성자: {nickname}</span>
-            </div>
-            <div className="flex items-center justify-center">
-              {/* <span className="text-[#FDBD00] text-2xl"> */}
-              <span className="text-[#258c2c] text-9xl">
-                <IoIosStar />
-                <RxStarFilled />
-                <SiStarbucks />
-              </span>
-              <span className="ml-1 font-semibold">{score}</span>
-              <span className="font-extralight text-[#8A8A8A] text-sm ml-3">
-                {visitDate}
-              </span>
-            </div>
-          </div>
-          <div className="mt-3 font-light line-clamp-2">{content}</div>
-        </div>
-        <div className="flex flex-row gap-2 mt-3">
-          {file.map((file, index) => (
+    <div
+      className="flex flex-col justify-between h-auto cursor-pointer"
+      onClick={handleOpenModal}
+    >
+      <div>
+        <div className="flex flex-row justify-between">
+          <div className="flex items-center">
             <img
-              key={index}
-              className="w-32 h-32  bg-[#D9D9D9] rounded-lg items-center justify-center"
-              src={file.fileUrl}
+              className="bg-[#F5F5F5] border border-[#8A8A8A] rounded-full size-12"
+              src={profileImageUrl || usericon}
             />
-          ))}
-          <div
-            className="flex w-32 h-32  bg-[#808080] rounded-lg items-center justify-center text-white"
-            onClick={handleOpenModal}
-          >
-            더보기
+            <span className="ml-2 text-[#8A8A8A]">{nickname} 님</span>
           </div>
-
-          <ReviewDetailModal isOpen={isModalOpen} onClose={handleCloseModal} />
+          <div className="flex items-center justify-center">
+            <span className="text-[#FDBD00] text-2xl">
+              {/* <IoIosStar /> */}
+              <RxStarFilled />
+              {/* <SiStarbucks /> */}
+            </span>
+            <span className="ml-1 font-semibold">{score}.0</span>
+            <span className="font-extralight text-[#8A8A8A] text-sm ml-3">
+              {visitDate}
+            </span>
+          </div>
         </div>
+        <div className="mt-3 font-light line-clamp-2">{content}</div>
+      </div>
+      <div className="flex flex-row items-center justify-around gap-3 mt-3">
+        {file.length > 0 ? ( // 이미지가 있는 경우
+          <>
+            {file.slice(0, 4).map((file, index) => (
+              <img
+                key={index}
+                className="w-32 h-32  bg-[#D9D9D9] rounded-lg items-center justify-center flex-row flex  flex-wrap"
+                src={file.fileUrl || usericon}
+              />
+            ))}
+            {file.length > 4 && ( // 이미지가 4개 초과인 경우
+              <div className="flex w-32 h-32  bg-[#808080] rounded-lg items-center justify-center text-white poi">
+                더보기
+              </div>
+            )}
+          </>
+        ) : (
+          // 이미지가 없는 경우
+          // <div className="flex w-32 h-32  bg-[#D9D9D9] rounded-lg items-center justify-center text-[#8A8A8A]">
+          //   이미지 없음
+          // </div>
+          ''
+        )}
+        <ReviewDetailModal isOpen={isModalOpen} onClose={handleCloseModal} />
       </div>
     </div>
   );

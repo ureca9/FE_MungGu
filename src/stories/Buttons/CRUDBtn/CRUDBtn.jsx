@@ -41,7 +41,7 @@ export const CRUDBtn = ({
 
 CRUDBtn.propTypes = {
   styleType: PropTypes.oneOf(['blue', 'reverseBlue', 'black']),
-  size: PropTypes.oneOf(['xs', 'sm', 'md']),
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
   label: PropTypes.string.isRequired,
   onClick: PropTypes.func,
 };
