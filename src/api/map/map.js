@@ -9,3 +9,14 @@ export const getMarkers = async () => {
     return [];
   }
 };
+
+export const searchSpot = async (keyword, latitude, longitude) => {
+  try {
+    const response = await instance.get(
+      `/search?keyword=${keyword}&latitude=${latitude}&longitude=${longitude}`,
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};

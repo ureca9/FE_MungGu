@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 import { getMarkers } from '../../api/map/map.js';
 import heartMarker from '../../assets/common/heartMarker.png';
+import useCoordsStore from '../../stores/map/useCoordsStore.js';
 
 const MapContainer = ({ onMapLoaded }) => {
   const mapContainer = useRef(null);
+  const { setCoords } = useCoordsStore();
 
   const initMap = async (latitude, longitude) => {
     const map = new window.kakao.maps.Map(mapContainer.current, {
@@ -63,6 +65,7 @@ const MapContainer = ({ onMapLoaded }) => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
+          setCoords(latitude, longitude);
           initMap(latitude, longitude);
           if (onMapLoaded) onMapLoaded();
         },
