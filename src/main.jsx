@@ -1,10 +1,12 @@
-import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+// MSW 초기화
+if (import.meta.env.MODE !== 'development') {
+  const { worker } = await import('./mocks/browser');
+  worker.start({ onUnhandledRequest: 'bypass' });
+}
+
+createRoot(document.getElementById('root')).render(<App />);
+
