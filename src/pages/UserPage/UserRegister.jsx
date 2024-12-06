@@ -159,10 +159,24 @@ const UserRegister = () => {
         navigate(ROUTER_PATHS.PET_REGISTER);
       });
     } catch (error) {
+      let errorMessage = '알 수 없는 오류가 발생했습니다.';
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            errorMessage = '입력하신 정보를 다시 확인해주세요.';
+            break;
+          case 409:
+            errorMessage = '이미 등록된 정보입니다.';
+            break;
+          case 500:
+            errorMessage = '서버 오류가 발생했습니다.';
+            break;
+        }
+      }
       Swal.fire({
         icon: 'error',
         title: '등록 실패',
-        text: `${error}`,
+        text: errorMessage,
         confirmButtonColor: '#3288FF',
       });
     }
@@ -246,8 +260,8 @@ const UserRegister = () => {
         {...register('phoneNumber', {
           required: '휴대폰 번호는 필수 입력 항목입니다.',
           validate: (value) => {
-            const formattedValue = value.replace(/\D/g, '');
-            if (formattedValue.length !== 11) {
+            const phoneRegex = /^01[0-9]-\d{4}-\d{4}$/;
+            if (!phoneRegex.test(value)) {
               return '휴대폰 번호는 11자리여야 합니다.';
             }
             return true;

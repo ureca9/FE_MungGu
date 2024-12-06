@@ -1,6 +1,7 @@
 import Swal from 'sweetalert2';
 import { instance } from '../../api/axios';
 import ROUTER_PATHS from '../../utils/RouterPath';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 /**
  * @param {Array} places
@@ -58,5 +59,11 @@ export const handleSubmitRegions = async (selectedRegions, navigate) => {
     navigate(ROUTER_PATHS.MAIN);
   } catch (error) {
     console.error(error);
+    Swal.fire({
+      text: error.message || '선호 지역 저장 중 오류가 발생했습니다.',
+      icon: 'error',
+      confirmButtonText: '확인',
+      confirmButtonColor: '#3288FF',
+    });
   }
 };

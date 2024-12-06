@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { handleSubmitRegions } from '../../api/userRegister/preference';
 
-const PreferencePlant = () => {
+const PreferenceRegion = () => {
   const [selected, setSelected] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const navigate = useNavigate();
@@ -108,6 +108,7 @@ const PreferencePlant = () => {
           <button
             onClick={() => handleSubmitRegions(selected, navigate)}
             className="w-full px-4 py-2 font-semibold text-white transition-all bg-blue-500 rounded-lg shadow-md hover:bg-blue-700"
+            disabled={selected.length !== 2}
           >
             완료
           </button>
@@ -145,4 +146,4 @@ const PreferencePlant = () => {
   );
 };
 
-export default PreferencePlant;
+export default PreferenceRegion;
