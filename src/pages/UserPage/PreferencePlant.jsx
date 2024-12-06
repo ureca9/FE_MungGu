@@ -31,8 +31,7 @@ const PreferencePlant = () => {
     }
 
     try {
-      const result = await savePreferencePlaces(selected);
-      alert(`${result.message}`);
+      await savePreferencePlaces(selected);
       navigate(ROUTER_PATHS.PREFERENCE_REGION);
     } catch (error) {
       alert(error.message || '오류가 발생했습니다. 다시 시도해주세요.');
