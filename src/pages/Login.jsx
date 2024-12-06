@@ -1,15 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoginBtn } from '../stories/Buttons/LoginBtn/LoginBtn';
 import { fetchAccessToken } from '../api/auth/auth.js';
 import useLoginStore from '../stores/Auth/useLoginStore';
-import ROUTER_PATHS from '../utils/RouterPath.js';
+import LoadingSpinner from './../components/common/LoadingSpinner';
+import Swal from 'sweetalert2';
 
 const Login = () => {
   const REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
   const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
   const navigate = useNavigate();
   const { isLoggedIn, setLogin } = useLoginStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleKakaoLogin = () => {
     const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${encodeURIComponent(
@@ -19,16 +21,33 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (isLoggedIn) {
-      navigate(ROUTER_PATHS.MAIN);
-    } else {
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-      if (code) {
-        fetchAccessToken(code, setLogin, navigate);
-      }
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code) {
+      const handleAuth = async () => {
+        try {
+          setIsLoading(true);
+          if (code.length < 10) throw new Error('유효하지 않은 인증 코드');
+          await fetchAccessToken(code, setLogin, navigate);
+        } catch (error) {
+          console.error('인증 실패:', error);
+          Swal.fire({
+            title: '로그인 실패',
+            text: '다시 시도해주세요',
+            icon: 'error',
+            confirmButtonColor: '#3288FF',
+          });
+          navigate('/login');
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      handleAuth();
     }
   }, [isLoggedIn, navigate, setLogin]);
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="flex flex-col items-center min-h-screen px-6 mt-8">
