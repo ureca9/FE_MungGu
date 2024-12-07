@@ -5,6 +5,7 @@ import { fetchAccessToken } from '../api/auth/auth.js';
 import useLoginStore from '../stores/Auth/useLoginStore';
 import LoadingSpinner from './../components/common/LoadingSpinner';
 import Swal from 'sweetalert2';
+import ROUTER_PATHS from '../utils/RouterPath.js';
 
 const Login = () => {
   const REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
@@ -37,7 +38,7 @@ const Login = () => {
             icon: 'error',
             confirmButtonColor: '#3288FF',
           });
-          navigate('/login');
+          navigate(ROUTER_PATHS.LOGIN);
         } finally {
           setIsLoading(false);
         }
