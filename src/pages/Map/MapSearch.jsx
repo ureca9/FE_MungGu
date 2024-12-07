@@ -5,12 +5,14 @@ import SearchHistory from '../../components/map/SearchHistory.jsx';
 import useSearchHistoryStore from '../../stores/map/useSearchHistoryStore.js';
 import { dummyPlaces } from '../../utils/DummyPlaces.js';
 import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
+import useCoordsStore from '../../stores/map/useCoordsStore.js';
 
 const MapSearch = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const { searchHistory, setSearchHistory } = useSearchHistoryStore();
   const { setSearchResults, searchResults } = useMapSearchStore();
+  const { coords } = useCoordsStore();
 
   useEffect(() => {
     const storedHistory =
@@ -37,7 +39,6 @@ const MapSearch = () => {
         place.placeName.includes(searchTerm),
       );
       setSearchResults(filteredResults);
-      console.log(filteredResults, searchResults);
       navigate('/map');
     }
   };
