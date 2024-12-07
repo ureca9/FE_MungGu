@@ -29,54 +29,88 @@ const PlaceDetailPage = () => {
   };
 
   // 장소 상세정보 가져오기
-  const fetchPlaceDetail = async () => {
-    try {
-      let accessToken = localStorage.getItem("ACCESS_TOKEN");
-      if (!accessToken) {
+// 장소 상세정보 가져오기
+const fetchPlaceDetail = async () => {
+  try {
+    let accessToken = localStorage.getItem("ACCESS_TOKEN");
+    if (!accessToken) {
+      setError("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
+
+    const response = await axios.get(
+      `https://meong9.store/api/v1/places/detail/${id}`,
+      {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const data = response.data.data || {};
+    setPlaceDetail({
+      placeName: data.placeName || "정보 없음",
+      address: data.address || "정보 없음",
+      reviewCount: data.reviewCount || 0,
+      reviewAvg: data.reviewAvg || 0,
+      tags: data.tags || [],
+      businessHour: data.businessHour || "정보 없음",
+      telNo: data.telNo || "정보 없음",
+      hmpgUrl: data.hmpgUrl || null,
+      description: data.description || "정보 없음",
+      images: data.images || [],
+      photoReviewList: data.photoReviewList || [],
+      review: data.review || [],
+    });
+  } catch (error) {
+    if (error.response?.status === 401) {
+      try {
+        // 토큰 갱신 및 재요청
+        const newAccessToken = await refreshAccessToken();
+        const retryResponse = await axios.get(
+          `https://meong9.store/api/v1/places/detail/${id}`,
+          {
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${newAccessToken}`,
+            },
+          }
+        );
+
+        const data = retryResponse.data.data || {};
+        setPlaceDetail({
+          placeName: data.placeName || "정보 없음",
+          address: data.address || "정보 없음",
+          reviewCount: data.reviewCount || 0,
+          reviewAvg: data.reviewAvg || 0,
+          tags: data.tags || [],
+          businessHour: data.businessHour || "정보 없음",
+          telNo: data.telNo || "정보 없음",
+          hmpgUrl: data.hmpgUrl || null,
+          description: data.description || "정보 없음",
+          images: data.images || [],
+          photoReviewList: data.photoReviewList || [],
+          review: data.review || [],
+        });
+      } catch (refreshError) {
         setError("로그인이 필요합니다.");
         navigate("/login");
-        return;
       }
-
-      const response = await axios.get(
-        `https://meong9.store/api/v1/places/detail/${id}`,
-        {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      setPlaceDetail(response.data.data);
-    } catch (error) {
-      if (error.response?.status === 401) {
-        try {
-          // 토큰 갱신 및 재요청
-          const newAccessToken = await refreshAccessToken();
-          const retryResponse = await axios.get(
-            `https://meong9.store/api/v1/places/detail/${id}`,
-            {
-              headers: {
-                Accept: "application/json",
-                Authorization: `Bearer ${newAccessToken}`,
-              },
-            }
-          );
-          setPlaceDetail(retryResponse.data.data);
-        } catch (refreshError) {
-          setError("로그인이 필요합니다.");
-          navigate("/login");
-        }
-      } else if (error.response?.status === 404) {
-        setError("해당 시설을 찾을 수 없습니다.");
-      } else {
-        console.error("API 요청 에러:", error);
-        setError("데이터를 불러오는 중 오류가 발생했습니다.");
-      }
-    } finally {
-      setLoading(false);
+    } else if (error.response?.status === 404) {
+      // 404 에러 처리
+      const errorMessage = error.response.data?.message || "데이터를 찾을 수 없습니다.";
+      setError(errorMessage);
+    } else {
+      console.error("API 요청 에러:", error);
+      setError("데이터를 불러오는 중 오류가 발생했습니다.");
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchPlaceDetail();
