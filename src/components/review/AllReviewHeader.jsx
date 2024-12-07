@@ -4,15 +4,30 @@ import { RxStarFilled } from 'react-icons/rx';
 import { FaPenAlt } from 'react-icons/fa';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import { useNavigate } from 'react-router-dom';
+import { GetPensionsSummary } from '../../api/review';
+import { useEffect, useState } from 'react';
 
 const AllReviewHeader = () => {
   const navigate = useNavigate();
+  const [summary, setSummary] = useState('');
 
-  
+  const PensionsSummary = async () => {
+    try {
+      const response = await GetPensionsSummary();
+      console.log('편션 요약 응답 :', response);
+      setSummary(response.data);
+    } catch (error) {
+      console.error('펜션 요약 오류 :', error);
+    }
+  };
+
+  useEffect(() => {
+    PensionsSummary();
+  }, []);
   return (
     <div>
       <div className="flex justify-between">
-        <h1 className="flex text-xl font-semibold">장소명입니다{}</h1>
+        <h1 className="flex text-xl font-semibold">{summary.pensionName}</h1>
         <div className="flex">
           <CRUDBtn
             styleType="blue"
@@ -33,7 +48,7 @@ const AllReviewHeader = () => {
             {/* <IoIosStar /> */}
             <RxStarFilled />
           </span>
-          <span className="text-4xl font-bold">{}5.0</span>
+          <span className="text-4xl font-bold">{summary.reviewAvg}</span>
           <span className="flex items-end text-xl h-full text-[#8A8A8A]">
             /5
           </span>
@@ -42,7 +57,7 @@ const AllReviewHeader = () => {
           <span className="text-[#8A8A8A]">
             <FaPenAlt />
           </span>
-          <span className="ml-2 text-[#3288FF] ">{}123명</span>
+          <span className="ml-2 text-[#3288FF] ">{summary.reviewCount}명</span>
           <span className="text-[#8A8A8A]">이 리뷰를 남겨주셨습니다.</span>
         </div>
       </div>

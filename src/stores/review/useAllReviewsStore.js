@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 
 const useAllReviewsStore = create((set) => ({
-  pensionsReviewData: null,
-  setPensionsReviewData: (Reviews) => set({ pensionsReviewData: Reviews }),
+  pensionsReviewData: { reviews: [] },
+  setPensionsReviewData: (PensionsReviews) =>
+    set({ pensionsReviewData: PensionsReviews }),
 }));
 export default useAllReviewsStore;

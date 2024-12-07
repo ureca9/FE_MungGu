@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import ReviewCard from '../../components/review/ReviewCard';
 import { GetPensionsReviews } from '../../api/review';
 import AllReviewHeader from '../../components/review/AllReviewHeader';
+import useAllReviewsStore from '../../stores/review/useAllReviewsStore';
 
 const AllReviews = () => {
-  const [pensionsReviewData, setPensionsReviewData] = useState({ reviews: [] });
-
+  // const [pensionsReviewData, setPensionsReviewData] = useState({ reviews: [] });
+  const { pensionsReviewData, setPensionsReviewData } = useAllReviewsStore();
   const PensionsReview = async () => {
     try {
       const PensionsReviews = await GetPensionsReviews();
@@ -23,22 +24,22 @@ const AllReviews = () => {
   }, []);
 
   return (
-    <div className="container">
-      <div className="flex flex-col w-full">
-        <div className="px-6 pt-6">
-          <AllReviewHeader />
-        </div>
-        <div className="h-2 mt-1 mb-5 bg-[#D9D9D9]"></div>
-        <div className="flex flex-col w-full gap-3 px-6">
-          {pensionsReviewData.reviews.map((review, index) => (
-            <div key={index}>
-              <ReviewCard key={index} review={review} />
-              <div className="mt-3 h-1 bg-[#D9D9D9] "></div>
-            </div>
-          ))}
-        </div>
+    // <div className="container">
+    <div className="flex flex-col w-full">
+      <div className="px-6 pt-6">
+        <AllReviewHeader />
+      </div>
+      <div className="h-2 mt-1 mb-5 bg-[#D9D9D9]"></div>
+      <div className="flex flex-col w-full gap-3 px-6">
+        {pensionsReviewData.reviews.map((review, index) => (
+          <div key={index}>
+            <ReviewCard key={index} review={review} />
+            <div className="mt-3 h-1 bg-[#D9D9D9] "></div>
+          </div>
+        ))}
       </div>
     </div>
+    // </div>
   );
 };
 

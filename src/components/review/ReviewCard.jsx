@@ -36,7 +36,6 @@ const ReviewCard = ({ review }) => {
             <span className="text-[#FDBD00] text-2xl">
               {/* <IoIosStar /> */}
               <RxStarFilled />
-              {/* <SiStarbucks /> */}
             </span>
             <span className="ml-1 font-semibold">{score}.0</span>
             <span className="font-extralight text-[#8A8A8A] text-sm ml-3">
@@ -69,7 +68,11 @@ const ReviewCard = ({ review }) => {
           // </div>
           ''
         )}
-        <ReviewDetailModal isOpen={isModalOpen} onClose={handleCloseModal} />
+        <ReviewDetailModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          reviewData={review}
+        />
       </div>
     </div>
   );
