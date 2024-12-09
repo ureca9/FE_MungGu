@@ -9,6 +9,8 @@ import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
 import useAllReviewsStore from '../../stores/review/useAllReviewsStore';
 import { RxStarFilled } from 'react-icons/rx';
 import usericon from '../../assets/MypageImg/user.svg';
+import { CgChevronRight } from 'react-icons/cg';
+import { BsChevronCompactLeft, BsChevronCompactRight } from 'react-icons/bs';
 
 const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
   // const [isOpen, setIsOpen] = useState(true);
@@ -22,32 +24,58 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
     file,
     profileImageUrl,
   } = reviewData;
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex < file.length - 1 ? prevIndex + 1 : 0,
+    );
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex > 0 ? prevIndex - 1 : file.length - 1,
+    );
+  };
+
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
 
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="flex bg-white rounded-md h-4/5 min-w-[375px] lg:max-w-6xl lg:h-2/4 ">
-          <Description as="div" className="flex flex-col md:flex-row">
-            <div className="flex w-1/2 md:w-full">
-              {file.length > 0 ? ( // 이미지가 있는 경우
+        <DialogPanel className="flex bg-white rounded-lg h-4/5 w-full min-w-[375px] md:max-w-6xl md:h-2/4">
+          <Description
+            as="div"
+            className="flex flex-col rounded-lg md:flex-row "
+          >
+            <div className="relative overflow:hidden rounded-l-lg flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-full bg-[#D9D9D9]">
+              {file.length > 0 ? (
                 <>
-                  {file.map((file, index) => (
-                    <img
-                      key={index}
-                      className="w-full h-full  bg-[#D9D9D9] rounded-lg items-center justify-center"
-                      src={file.fileUrl || usericon}
-                    />
-                  ))}
+                  <img
+                    className="flex object-contain w-full h-full"
+                    src={file[currentImageIndex].fileUrl}
+                  />
+                  <button
+                    className="absolute text-6xl text-white transform -translate-y-1/2 left-4 top-1/2"
+                    onClick={handlePrevImage}
+                  >
+                    <BsChevronCompactLeft />
+                  </button>
+                  <button
+                    className="absolute text-6xl text-white transform -translate-y-1/2 right-4 top-1/2"
+                    onClick={handleNextImage}
+                  >
+                    <BsChevronCompactRight />
+                  </button>
                 </>
               ) : (
-                // 이미지가 없는 경우
                 <div className="flex w-full h-full  bg-[#D9D9D9] rounded-lg items-center justify-center text-[#8A8A8A]">
                   이미지 없음
                 </div>
               )}
             </div>
-            <div className="flex flex-col w-1/2 p-5">
+            <div className="flex flex-col w-full p-5 h-1/2 md:w-1/2 md:h-full">
               <div className="flex flex-row justify-between">
                 <div className="flex items-center">
                   <img
@@ -67,16 +95,19 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                   </span>
                 </div>
               </div>
-              <div className="flex mt-5">{content}</div>
-
-              <div className="bottom-0 flex">
-                {file.map((file, index) => (
-                  <img
-                    key={index}
-                    className="w-32 h-32  bg-[#D9D9D9] rounded-lg items-center justify-center"
-                    src={file.fileUrl || usericon}
-                  />
-                ))}
+              <div className="flex flex-col justify-between flex-grow h-full mt-5 overflow-y-auto">
+                <div className="mb-2 overflow-y-auto">
+                  {content}
+                </div>
+                <div className="flex gap-1">
+                  {file.slice(0, 5).map((file, index) => (
+                    <img
+                      key={index}
+                      className="w-20 h-20  bg-[#D9D9D9] rounded-lg items-center justify-center"
+                      src={file.fileUrl || usericon}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </Description>
