@@ -6,9 +6,9 @@ import ProfileSection from "./ProfileSection";
 const FacilitySection = ({ onClose }) => { // onClose prop 추가
   const [searchData, setSearchData] = useState({
     searchWord: "",
-    regionList: [],
-    placeTypes: [],
-    heaviestDogWeight: 0, // 강아지 최대 무게
+    regionList: ["전체"], // 기본값
+    placeTypes: ["전체"], // 기본값
+    heaviestDogWeight: 0,
   });
 
   const navigate = useNavigate(); // navigate 함수 초기화
@@ -18,33 +18,33 @@ const FacilitySection = ({ onClose }) => { // onClose prop 추가
   // 지역 선택 핸들러
   const handleRegionSelect = (region) => {
     if (region === "전체") {
-      setSearchData((prev) => ({ ...prev, regionList: ["전체"] }));
+      setSearchData((prev) => ({ ...prev, regionList: ["전체"] })); // "전체"만 선택
     } else {
       setSearchData((prev) => {
         const isSelected = prev.regionList.includes(region);
         const updatedRegions = isSelected
           ? prev.regionList.filter((r) => r !== region)
-          : prev.regionList.filter((r) => r !== "전체").concat(region);
+          : prev.regionList.filter((r) => r !== "전체").concat(region); // "전체" 제거 후 추가
         return { ...prev, regionList: updatedRegions };
       });
     }
   };
-
+  
   // 카테고리 선택 핸들러
   const handleCategorySelect = (category) => {
     if (category === "전체") {
-      setSearchData((prev) => ({ ...prev, placeTypes: ["전체"] }));
+      setSearchData((prev) => ({ ...prev, placeTypes: ["전체"] })); // "전체"만 선택
     } else {
       setSearchData((prev) => {
         const isSelected = prev.placeTypes.includes(category);
         const updatedCategories = isSelected
           ? prev.placeTypes.filter((c) => c !== category)
-          : prev.placeTypes.filter((c) => c !== "전체").concat(category);
+          : prev.placeTypes.filter((c) => c !== "전체").concat(category); // "전체" 제거 후 추가
         return { ...prev, placeTypes: updatedCategories };
       });
     }
   };
-
+  
   // 검색 버튼 핸들러
   const handleSearch = () => {
     const queryParams = new URLSearchParams();
@@ -161,7 +161,6 @@ const FacilitySection = ({ onClose }) => { // onClose prop 추가
       </div>
       {/* 프로필 섹션 */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold">누구와 함께 가나요?</h3>
         <ProfileSection
           setMaxDogWeight={(weight) =>
             setSearchData((prev) => ({ ...prev, heaviestDogWeight: weight }))

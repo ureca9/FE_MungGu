@@ -8,83 +8,110 @@ import { useNavigate } from "react-router-dom";
 const PensionSection = ({ onClose }) => {
   const [searchWord, setSearchWord] = useState(""); // 검색어
   const [selectedRegion, setSelectedRegion] = useState(""); // 선택된 지역
-  const [isCalendarVisible, setIsCalendarVisible] = useState(false); // 달력 가시성
   const [selectedDateRange, setSelectedDateRange] = useState([null, null]); // 선택된 날짜
   const [heaviestDogWeight, setHeaviestDogWeight] = useState(0); // 최대 반려동물 무게
-  const [profileVisible, setProfileVisible] = useState(false); // 프로필 섹션 가시성
+  const [weatherData, setWeatherData] = useState([]); // 날씨 데이터
   const navigate = useNavigate();
 
   const regions = ["서울", "경기", "인천", "강원", "충청", "전라", "경상", "제주"];
 
   const handleRegionSelect = (region) => {
     setSelectedRegion(region === selectedRegion ? "" : region); // 선택된 지역 토글
-    setIsCalendarVisible(true); // 달력 열기
+
+    if (region !== selectedRegion) {
+      fetchWeatherData(region); // 날씨 데이터 가져오기
+    } else {
+      setWeatherData([]); // 선택 해제 시 데이터 초기화
+    }
+  };
+
+  const fetchWeatherData = async (region) => {
+    try {
+      const response = await axios.get(
+        `https://meong9.store/api/v1/weather?region=${region}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = response.data.data;
+      const weather = Object.values(data).slice(1, 11); // day1~day10 날씨 데이터 추출
+      setWeatherData(weather);
+    } catch (error) {
+      console.error("Failed to fetch weather data:", error);
+      alert("날씨 데이터를 가져오는 데 문제가 발생했습니다.");
+    }
   };
 
   const handleDateChange = (value) => {
     setSelectedDateRange(value);
   };
 
-  const isDateInRange = (date) => {
-    if (!selectedDateRange[0] || !selectedDateRange[1]) return false;
-    const startDate = selectedDateRange[0];
-    const endDate = selectedDateRange[1];
-    return date > startDate && date < endDate;
+  const getWeatherIcon = (weather) => {
+    switch (weather) {
+      case "맑음":
+        return "☀️";
+      case "흐림":
+        return "⛅";
+        case "구름많음":
+          return "⛅";
+      case "비/눈":
+        return "🌧️";
+      case "비":
+        return "🌧️";
+      case "눈":
+        return "❄️";
+      default:
+        return "🌈";
+    }
   };
 
-  const isStartDate = (date) => {
-    return (
-      selectedDateRange[0] &&
-      date.toISOString().split("T")[0] === selectedDateRange[0].toISOString().split("T")[0]
+  const tileContent = ({ date, view }) => {
+    if (view !== "month") return null;
+
+    const today = new Date();
+    const dayDifference = Math.floor(
+      (date - today) / (1000 * 60 * 60 * 24)
     );
-  };
 
-  const isEndDate = (date) => {
-    return (
-      selectedDateRange[1] &&
-      date.toISOString().split("T")[0] === selectedDateRange[1].toISOString().split("T")[0]
-    );
-  };
-
-  const isSingleSelectedDate = (date) => {
-    return selectedDateRange[0] && !selectedDateRange[1] && isStartDate(date);
+    if (dayDifference >= 0 && dayDifference < weatherData.length) {
+      const weather = weatherData[dayDifference];
+      return (
+        <div className="weather-icon">
+          {weather && getWeatherIcon(weather)}
+        </div>
+      );
+    }
+    return null;
   };
 
   const handleSearch = () => {
     const queryParams = new URLSearchParams();
-  
-    // 검색어
-    if (searchWord) {
-      queryParams.append("searchWord", searchWord);
-    }
-  
-    // 지역
-    if (selectedRegion) {
-      queryParams.append("regionList", selectedRegion);
-    }
-  
-    // 최대 반려동물 무게
-    if (heaviestDogWeight) {
+
+    if (searchWord) queryParams.append("searchWord", searchWord);
+    if (selectedRegion) queryParams.append("regionList", selectedRegion);
+    if (heaviestDogWeight)
       queryParams.append("heaviestDogWeight", heaviestDogWeight);
-    }
-  
-    // 시작 및 종료 날짜
-    if (selectedDateRange[0]) {
-      queryParams.append("startDate", selectedDateRange[0].toISOString().split("T")[0]);
-    }
-    if (selectedDateRange[1]) {
-      queryParams.append("endDate", selectedDateRange[1].toISOString().split("T")[0]);
-    }
-  
+    if (selectedDateRange[0])
+      queryParams.append(
+        "startDate",
+        selectedDateRange[0].toISOString().split("T")[0]
+      );
+    if (selectedDateRange[1])
+      queryParams.append(
+        "endDate",
+        selectedDateRange[1].toISOString().split("T")[0]
+      );
+
     const url = `https://meong9.store/api/v1/search/pensions?${queryParams.toString()}`;
-  
+
     axios
       .get(url)
       .then((response) => {
         const results = response.data.data.pensionInfo;
-  
-        console.log("Navigating with data:", results);
-  
+
         navigate("/pension-list", {
           state: {
             results,
@@ -97,8 +124,8 @@ const PensionSection = ({ onClose }) => {
             },
           },
         });
-  
-        if (onClose) onClose(); 
+
+        if (onClose) onClose();
       })
       .catch((error) => {
         console.error("Error during search:", error);
@@ -110,12 +137,12 @@ const PensionSection = ({ onClose }) => {
     <div className="p-6 bg-white rounded-lg shadow-md">
       {/* 검색어 입력 */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold">검색어</h3>
+        <h3 className="text-lg font-semibold">어디로 놀러갈까요?</h3>
         <input
           type="text"
           value={searchWord}
           onChange={(e) => setSearchWord(e.target.value)}
-          placeholder="검색어를 입력하세요"
+          placeholder="지역 또는 펜션 검색"
           className="w-full p-3 border border-gray-300 rounded-lg mt-2"
         />
       </div>
@@ -142,22 +169,15 @@ const PensionSection = ({ onClose }) => {
       </div>
 
       {/* 달력 섹션 */}
-      {isCalendarVisible && (
+      { (
         <div className="mb-6">
           <h3 className="text-lg font-semibold">언제 갈 건가요?</h3>
           <Calendar
             onChange={handleDateChange}
             value={selectedDateRange}
             selectRange
+            tileContent={tileContent}
             className="react-calendar"
-            tileClassName={({ date, view }) => {
-              if (view !== "month") return "";
-              if (isStartDate(date)) return "start-date";
-              if (isEndDate(date)) return "end-date"; // 종료 날짜 확인 수정
-              if (isSingleSelectedDate(date)) return "single-date"; // 시작 날짜만 선택했을 때 효과
-              if (isDateInRange(date)) return "in-range";
-              return "";
-            }}
           />
           <div className="mt-2 text-sm text-gray-600">
             {selectedDateRange[0] && selectedDateRange[1]
@@ -171,18 +191,7 @@ const PensionSection = ({ onClose }) => {
 
       {/* 프로필 섹션 */}
       <div className="mb-6">
-        <div
-          className="flex justify-between items-center cursor-pointer"
-          onClick={() => setProfileVisible(!profileVisible)}
-        >
-          <h3 className="text-lg font-semibold">누구와 함께 가나요?</h3>
-          <span>{profileVisible ? "▼" : "▲"}</span>
-        </div>
-        {profileVisible && (
-          <div className="mt-4">
-            <ProfileSection setMaxDogWeight={(weight) => setHeaviestDogWeight(weight)} />
-          </div>
-        )}
+        <ProfileSection setMaxDogWeight={(weight) => setHeaviestDogWeight(weight)} />
       </div>
 
       {/* 검색 버튼 */}

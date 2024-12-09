@@ -1,52 +1,52 @@
-/* App.css 또는 별도의 CSS 파일 */
 .react-calendar {
-    width: 100%;
-    max-width: 100%;
-    background-color: white;
-    border: none;
-    font-family: Arial, Helvetica, sans-serif;
-    line-height: 1.125em;
-  }
-  
-  .react-calendar__tile {
-    height: 60px; /* 날짜 셀의 높이를 조정 */
-    font-size: 1.1em; /* 글자 크기 조정 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .react-calendar__tile--active {
-    background-color: #blue;
-    color: white;
-  }
-  
-  .react-calendar__month-view__days__day--weekend {
-    color: #d9534f; /* 주말 색상 */
-  }
+  width: 100%;
+  max-width: 100%;
+  background-color: white;
+  border: none;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.125em;
+}
 
-  
-/* PensionSection.css */
+.react-calendar__tile {
+  height: 60px; /* 날짜 셀의 높이 */
+  font-size: 1.1em; /* 글자 크기 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* 기본적으로 둥근 셀 */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.react-calendar__tile--now {
+  background-color: #e3f2fd; /* 오늘 날짜 */
+  border-radius: 50%;
+}
+
+.react-calendar__tile--active {
+  background-color: #4caf50; /* 선택된 날짜 */
+  color: white;
+  border-radius: 50%;
+}
+
 .start-date {
-    background-color: #4caf50 !important; /* 녹색 */
-    color: white !important;
-    border-radius: 50% !important;
-  }
-  
-  .end-date {
-    background-color: #f44336 !important; /* 빨간색 */
-    color: white !important;
-    border-radius: 50% !important;
-  }
-  
-  .single-date {
-    background-color: #2196f3 !important; /* 파란색 */
-    color: white !important;
-    border-radius: 50% !important;
-  }
-  
-  .in-range {
-    background-color: #e0f7fa !important; /* 연한 청록색 */
-    color: #00796b !important;
-  }
-  
+  background-color: #4caf50 !important; /* 시작 날짜 */
+  color: white !important;
+  border-radius: 50% !important;
+}
+
+.end-date {
+  background-color: #f44336 !important; /* 종료 날짜 */
+  color: white !important;
+  border-radius: 50% !important;
+}
+
+.single-date {
+  background-color: #2196f3 !important; /* 단일 날짜 */
+  color: white !important;
+  border-radius: 50% !important;
+}
+
+.in-range {
+  background-color: #e0f7fa !important; /* 범위 내 날짜 */
+  color: #00796b !important;
+}

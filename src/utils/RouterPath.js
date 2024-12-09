@@ -24,6 +24,11 @@ const ROUTER_PATHS = {
   RESERVATION_COMPLETE: '/reservation-complete',
   RESERVATION_LIST: '/reservation-list',
   MEONGSENGNEACUT: '/meongsengneacut',
+  SEARCH_MODAL: '/search-modal', // 추가된 경로
+  FACILITY_LIST: '/facility-list', // 추가된 경로
+  PENSION_LIST: '/pension-list', // 추가된 경로
+  PLACE_DETAIL: '/place/:id', // 추가된 경로
+  PENSION_DETAIL: '/pension-detail/:id', // 추가된 경로
 };
 
 export default ROUTER_PATHS;
