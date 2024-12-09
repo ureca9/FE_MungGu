@@ -21,6 +21,8 @@ import UserRegister from './../pages/UserPage/UserRegister';
 import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import PreferencePlant from '../pages/UserPage/PreferencePlant.jsx';
 import PreferenceRegion from '../pages/UserPage/PreferenceRegion.jsx';
+import PlantEdit from '../pages/UserPage/PlantEdit.jsx';
+import RegionEdit from '../pages/UserPage/RegionEdit.jsx';
 
 const routes = [
   {
@@ -102,6 +104,14 @@ const routes = [
   {
     path: ROUTER_PATHS.PREFERENCE_REGION,
     element: <PreferenceRegion />,
+  },
+  {
+    path: ROUTER_PATHS.PLANT_EDIT,
+    element: <PlantEdit />,
+  },
+  {
+    path: ROUTER_PATHS.REGION_EDIT,
+    element: <RegionEdit />,
   },
 ];
 
