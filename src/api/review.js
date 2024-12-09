@@ -1,7 +1,6 @@
-import axios from 'axios';
 import { instance } from './axios';
 
-export const GetPensionsReviews = async () => {
+export const GetPensionsReviews = async (pensionId, page = 0) => {
   try {
     const response = await instance.get('/pensions/2/reviews?page=0', {
       //${pensionId}
@@ -17,7 +16,7 @@ export const GetPensionsReviews = async () => {
     throw error;
   }
 };
-export const GetPensionsSummary = async () => {
+export const GetPensionsSummary = async (pensionId) => {
   try {
     const response = await instance.get('/pensions/2/summary', {
       //${pensionId}

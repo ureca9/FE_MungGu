@@ -1,7 +1,5 @@
-import { IoIosStar } from 'react-icons/io';
 import usericon from '../../assets/MypageImg/user.svg';
 import { RxStarFilled } from 'react-icons/rx';
-import { SiStarbucks } from 'react-icons/si';
 import ReviewDetailModal from './ReviewDetailModal';
 import { useState } from 'react';
 const ReviewCard = ({ review }) => {
@@ -62,10 +60,6 @@ const ReviewCard = ({ review }) => {
             )}
           </>
         ) : (
-          // 이미지가 없는 경우
-          // <div className="flex w-32 h-32  bg-[#D9D9D9] rounded-lg items-center justify-center text-[#8A8A8A]">
-          //   이미지 없음
-          // </div>
           ''
         )}
         <ReviewDetailModal

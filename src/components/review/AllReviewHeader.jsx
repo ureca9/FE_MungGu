@@ -1,4 +1,3 @@
-import { IoIosStar } from 'react-icons/io';
 import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
 import { RxStarFilled } from 'react-icons/rx';
 import { FaPenAlt } from 'react-icons/fa';
@@ -9,9 +8,9 @@ import { useEffect, useState } from 'react';
 
 const AllReviewHeader = () => {
   const navigate = useNavigate();
-  const [summary, setSummary] = useState('');
+  const [summary, setSummary] = useState({});
 
-  const PensionsSummary = async () => {
+  const pensionsSummary = async () => {
     try {
       const response = await GetPensionsSummary();
       console.log('편션 요약 응답 :', response);
@@ -22,7 +21,7 @@ const AllReviewHeader = () => {
   };
 
   useEffect(() => {
-    PensionsSummary();
+    pensionsSummary();
   }, []);
   return (
     <div>

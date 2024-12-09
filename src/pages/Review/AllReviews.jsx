@@ -1,18 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import ReviewCard from '../../components/review/ReviewCard';
 import { GetPensionsReviews } from '../../api/review';
 import AllReviewHeader from '../../components/review/AllReviewHeader';
 import useAllReviewsStore from '../../stores/review/useAllReviewsStore';
 
 const AllReviews = () => {
-  // const [pensionsReviewData, setPensionsReviewData] = useState({ reviews: [] });
   const { pensionsReviewData, setPensionsReviewData } = useAllReviewsStore();
-  const PensionsReview = async () => {
+  const pensionsReview = async () => {
     try {
-      const PensionsReviews = await GetPensionsReviews();
+      const pensionsReviews = await GetPensionsReviews();
 
-      console.log('장소 모든 리뷰 :', PensionsReviews);
-      setPensionsReviewData(PensionsReviews);
+      console.log('장소 모든 리뷰 :', pensionsReviews);
+      setPensionsReviewData(pensionsReviews);
     } catch (error) {
       console.error('장소 모든 리뷰 가져오기 실패 :', error);
       throw error;
@@ -20,7 +19,7 @@ const AllReviews = () => {
   };
 
   useEffect(() => {
-    PensionsReview();
+    pensionsReview();
   }, []);
 
   return (
