@@ -10,7 +10,6 @@ const ProfileSection = ({ setMaxDogWeight }) => {
   const [selectedDogsCount, setSelectedDogsCount] = useState(0); // 선택된 강아지 수
   const [humanCount, setHumanCount] = useState(0); // 인원 수
 
-  // 강아지 리스트 가져오기
   const fetchDogs = async () => {
     try {
       setLoading(true);
@@ -58,7 +57,6 @@ const ProfileSection = ({ setMaxDogWeight }) => {
     }
   };
 
-  // 강아지 선택 핸들러
   const handleDogSelect = (id) => {
     setDogList((prevList) => {
       const updatedList = prevList.map((dog) =>
@@ -84,7 +82,6 @@ const ProfileSection = ({ setMaxDogWeight }) => {
     });
   };
 
-  // 강아지 추가 버튼 핸들러
   const handleAddDogClick = () => {
     if (isLoggedIn) {
       window.location.href = "/pet-add";
@@ -100,7 +97,6 @@ const ProfileSection = ({ setMaxDogWeight }) => {
     }
   };
 
-  // 초기 데이터 로드
   useEffect(() => {
     fetchDogs();
   }, []);
@@ -192,6 +188,14 @@ const ProfileSection = ({ setMaxDogWeight }) => {
         </div>
       </div>
 
+      {/* 가장 무거운 강아지 메시지 */}
+      {selectedDogInfo && (
+        <div className="mt-4 p-4 bg-blue-100 rounded-md">
+          <p className="text-blue-700 font-medium">
+            {selectedDogInfo.name} 기준으로 찾아드려요!
+          </p>
+        </div>
+      )}
     </div>
   );
 };
