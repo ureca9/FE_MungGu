@@ -2,7 +2,6 @@ import { createBrowserRouter } from 'react-router-dom';
 import ROUTER_PATHS from '../utils/RouterPath.js';
 import DefaultLayout from '../layout/DefaultLayout.jsx';
 import Main from '../pages/Main.jsx';
-import Like from '../pages/Like.jsx';
 import Map from '../pages/Map/Map.jsx';
 import MyPage from '../pages/UserPage/MyPage.jsx';
 import Search from '../pages/Search.jsx';
@@ -13,7 +12,7 @@ import MapSearch from '../pages/Map/MapSearch.jsx';
 import Directions from '../pages/Map/Directions.jsx';
 import PlaceDetailPage from '../pages/DetailPage/PlaceDetailPage.jsx';
 import SearchModal from '../components/MainPage/SearchModal/SearchModal.jsx';
-import ListPage from '../pages/ListPage/ListPage.jsx'; // ListPage 경로 확인
+import ListPage from '../pages/ListPage/ListPage.jsx';
 import PensionListPage from '../pages/ListPage/PensionListPage.jsx';
 import PensionDetailPage from '../pages/DetailPage/PensionDetailPage.jsx';
 import Login from '../pages/Login.jsx';
@@ -29,10 +28,6 @@ const routes = [
   {
     path: ROUTER_PATHS.MAIN,
     element: <Main />,
-  },
-  {
-    path: ROUTER_PATHS.LIKE,
-    element: <Like />,
   },
   {
     path: ROUTER_PATHS.MAP,
@@ -71,30 +66,33 @@ const routes = [
     element: <PetEdit />,
   },
   {
-    path: '/search-modal', // 검색 모달 경로 추가
+    path: '/search-modal',
     element: <SearchModal />,
   },
   {
-    path: '/facility-list', // 시설 목록 경로
+    path: '/facility-list',
     element: <ListPage type="facility" />,
   },
   {
-    path: '/pension-list', // 펜션 목록 경로
+    path: '/pension-list',
     element: <PensionListPage />,
   },
   {
-    path: '/place/:id', // 장소 상세 페이지 경로
+    path: '/place/:id',
     element: <PlaceDetailPage />,
   },
   {
-    path: '/pension-detail/:id', // 펜션 상세 페이지 경로
-    element: <PensionDetailPage />
+    path: '/pension-detail/:id',
+    element: <PensionDetailPage />,
   },
   {
     path: ROUTER_PATHS.LOGIN,
     element: <Login />,
   },
-
+  {
+    path: ROUTER_PATHS.USER_REGISTER,
+    element: <UserRegister />,
+  },
   {
     path: ROUTER_PATHS.MEONGSENGNEACUT,
     element: <Meongsengneacut />,
