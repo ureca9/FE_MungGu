@@ -1,10 +1,10 @@
-import PropTypes from 'prop-types';
 import LikeListCategory from './LikeListCategory';
 import PlaceList from './PlaceList.jsx';
 import { useState } from 'react';
 import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
+import usePanelStateStore from '../../stores/map/usePanelStateStore.js';
 
-const MapPanel = ({ panelState, setPanelState }) => {
+const MapPanel = () => {
   const panelHeightClass = {
     collapsed: 'h-32',
     expanded: 'h-2/5',
@@ -13,6 +13,7 @@ const MapPanel = ({ panelState, setPanelState }) => {
 
   const [selectedCategory, setSelectedCategory] = useState('전체');
   const { searchResults } = useMapSearchStore();
+  const { panelState, setPanelState } = usePanelStateStore();
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
@@ -48,12 +49,6 @@ const MapPanel = ({ panelState, setPanelState }) => {
       </div>
     </div>
   );
-};
-
-MapPanel.propTypes = {
-  panelState: PropTypes.oneOf(['collapsed', 'expanded', 'maximized'])
-    .isRequired,
-  setPanelState: PropTypes.func.isRequired,
 };
 
 export default MapPanel;
