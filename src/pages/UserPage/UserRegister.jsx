@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { BasicInput } from '../../stories/Input/BasicInput';
@@ -8,8 +9,9 @@ import KakaoLogo from '../../assets/login/KakaoLogo.svg';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import ROUTER_PATHS from '../../utils/RouterPath';
+import useRegisterStore from '../../stores/register/useRegisterStore';
 
-const agreements = [
+const agreementsList = [
   { id: 'agreeTerms', label: '이용약관 동의 (필수)', required: true },
   {
     id: 'agreePrivacy',
@@ -25,28 +27,37 @@ const agreements = [
 
 const UserRegister = () => {
   const navigate = useNavigate();
+  const { userInfo, setUserInfo, agreements, setAgreements } =
+    useRegisterStore();
 
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors, isSubmitting },
-  } = useForm({
-    defaultValues: {
+  } = useForm();
+
+  useEffect(() => {
+    reset({
       profileImage: localStorage.getItem('PROFILE_IMAGE') || null,
       email: localStorage.getItem('EMAIL') || '',
-      name: '',
-      nickname: '',
-      phoneNumber: '',
-      agreeTerms: false,
-      agreePrivacy: false,
-      agreeMarketing: false,
-    },
-  });
+      ...userInfo,
+      ...agreements,
+    });
+  }, [userInfo, agreements, reset]);
+
+  const handleChange = (field, value) => {
+    if (field in userInfo) {
+      setUserInfo({ [field]: value });
+    } else if (field in agreements) {
+      setAgreements({ [field]: value });
+    }
+    setValue(field, value);
+  };
 
   const profileImage = watch('profileImage');
-  const allChecked = agreements.every(({ id }) => watch(id));
 
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
@@ -81,8 +92,13 @@ const UserRegister = () => {
   };
 
   const handleCheckAll = () => {
-    const newState = !allChecked;
-    agreements.forEach(({ id }) => setValue(id, newState));
+    const allChecked = agreementsList.every(({ id }) => agreements[id]);
+    const newAgreements = agreementsList.reduce((acc, { id }) => {
+      acc[id] = !allChecked;
+      return acc;
+    }, {});
+    setAgreements(newAgreements);
+    Object.keys(newAgreements).forEach((id) => setValue(id, newAgreements[id]));
   };
 
   const checkNicknameDuplicate = async () => {
@@ -132,7 +148,7 @@ const UserRegister = () => {
   };
 
   const onSubmit = async (data) => {
-    const requiredAgreements = agreements
+    const requiredAgreements = agreementsList
       .filter((a) => a.required)
       .every(({ id }) => data[id]);
 
@@ -149,7 +165,17 @@ const UserRegister = () => {
       await registerUser(data.profileImage, {
         name: data.name,
         nickname: data.nickname,
-        phone: data.phoneNumber,
+        phone: data.phone,
+      });
+      setUserInfo({
+        name: data.name,
+        nickname: data.nickname,
+        phone: data.phone,
+      });
+      setAgreements({
+        agreeTerms: data.agreeTerms,
+        agreePrivacy: data.agreePrivacy,
+        agreeMarketing: data.agreeMarketing,
       });
       Swal.fire({
         icon: 'success',
@@ -214,7 +240,7 @@ const UserRegister = () => {
         label="이메일"
         id="email"
         type="text"
-        value={watch('email')}
+        value={watch('email') || ''}
         style="disabled"
         readOnly
         disabled
@@ -225,6 +251,8 @@ const UserRegister = () => {
         label="이름"
         id="name"
         type="text"
+        value={watch('name') || ''}
+        onChange={(e) => handleChange('name', e.target.value)}
         placeholder="이름을 입력해주세요."
         {...register('name', { required: '이름은 필수 입력 항목입니다.' })}
       />
@@ -235,6 +263,8 @@ const UserRegister = () => {
         label="닉네임"
         id="nickname"
         type="text"
+        value={watch('nickname') || ''}
+        onChange={(e) => handleChange('nickname', e.target.value)}
         placeholder="2~8자의 한글, 영문, 숫자만 입력 가능합니다."
         {...register('nickname', {
           required: '닉네임은 필수 입력 항목입니다.',
@@ -256,8 +286,10 @@ const UserRegister = () => {
         label="휴대폰 번호"
         id="phone"
         type="text"
+        value={watch('phone') || ''}
+        onChange={(e) => handleChange('phone', e.target.value)}
         placeholder="휴대폰 번호를 입력해주세요."
-        {...register('phoneNumber', {
+        {...register('phone', {
           required: '휴대폰 번호는 필수 입력 항목입니다.',
           validate: (value) => {
             const phoneRegex = /^01[0-9]-\d{4}-\d{4}$/;
@@ -282,27 +314,28 @@ const UserRegister = () => {
         }}
       />
 
-      {errors.phoneNumber && (
-        <p className="text-xs text-red-500">{errors.phoneNumber.message}</p>
+      {errors.phone && (
+        <p className="text-xs text-red-500">{errors.phone.message}</p>
       )}
       <div className="flex flex-col w-full mt-8 space-y-2 text-sm">
         <div className="flex items-center">
           <input
             type="checkbox"
             id="agreeAll"
-            checked={allChecked}
+            checked={agreementsList.every(({ id }) => agreements[id])}
             onChange={handleCheckAll}
             className="w-4 h-4 mr-2 text-blue-500 border-gray-300 rounded"
           />
           <label htmlFor="agreeAll">모두 동의합니다.</label>
         </div>
         <div className="flex flex-col pl-6 space-y-1">
-          {agreements.map(({ id, label }) => (
+          {agreementsList.map(({ id, label }) => (
             <div key={id} className="flex items-center">
               <input
                 type="checkbox"
                 id={id}
                 {...register(id)}
+                onChange={(e) => handleChange(id, e.target.checked)}
                 className="w-4 h-4 mr-2 text-blue-500 border-gray-300 rounded"
               />
               <label htmlFor={id}>{label}</label>
