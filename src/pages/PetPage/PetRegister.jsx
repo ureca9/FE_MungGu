@@ -2,8 +2,10 @@ import Swal from 'sweetalert2';
 import PetForm from '../../components/pet/PetForm';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import { PostPuppyData } from '../../api/pet';
+import usePetStore from '../../stores/pet/usePetStore';
 
 const PetRegister = () => {
+  const { setBasicData } = usePetStore();
   const puppyRegister = async (formData) => {
     try {
       const puppyFormData = new FormData();
@@ -14,16 +16,17 @@ const PetRegister = () => {
         weight: formData.weight,
         gender: formData.gender,
         neutered: formData.neutered,
+        profileImageUrl: formData.profileImageUrl,
       };
+      console.log('등록:', joinPuppy);
+      setBasicData(joinPuppy);
       puppyFormData.append(
         'data',
         new Blob([JSON.stringify(joinPuppy)], { type: 'application/json' }),
       );
-
       if (formData.image) {
         puppyFormData.append('image', formData.image);
       }
-
       const response = await PostPuppyData(puppyFormData);
       console.log('반려동물 등록 성공 :', response.data);
       Swal.fire({

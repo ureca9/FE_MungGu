@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
-import ReviewCard from '../../components/review/ReviewCard';
 import { GetPensionsReviews } from '../../api/review';
-import AllReviewHeader from '../../components/review/AllReviewHeader';
 import useAllReviewsStore from '../../stores/review/useAllReviewsStore';
+import AllReviewHeader from '../../components/review/AllReviewHeader';
+import ReviewCard from '../../components/review/ReviewCard';
+
 
 const AllReviews = () => {
   const { pensionsReviewData, setPensionsReviewData } = useAllReviewsStore();

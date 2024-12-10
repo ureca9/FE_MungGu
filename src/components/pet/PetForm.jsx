@@ -8,7 +8,7 @@ import BreedsPanel from './BreedsPanel';
 import usePetStore from '../../stores/pet/usePetStore';
 
 const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
-  const { basicData } = usePetStore();
+  const { basicData, setBasicData } = usePetStore();
   const [puppyName, setPuppyName] = useState(basicData?.name ?? '');
   const [profileImage, setProfileImage] = useState(null);
   const [breedId, setBreedId] = useState(basicData?.breedId ?? '');
@@ -43,8 +43,11 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
       gender: gender,
       neutered: neutered,
       weight: Number(weightFront) + Number(weightBack) / 10,
+      profileImageUrl: previewUrl, // 이미지 URL 추가
     };
-
+    // console.log('이건 데이터 :', puppyData);
+    // setBasicData(puppyData);
+    
     const formData = new FormData();
     formData.append('data', JSON.stringify(puppyData));
     if (profileImage) {

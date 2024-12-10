@@ -32,3 +32,24 @@ export const GetPensionsSummary = async (pensionId) => {
     throw error;
   }
 };
+export const PostPensionsReview = async (reviewFormData) => {
+  try {
+    const response = await instance.post('/reviews', reviewFormData, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('리뷰 등록 중 오류 발생:', error);
+  }
+};
+export const GetPentionData = async () => {
+  try {
+    const response = await instance.get(`/pensions/detail/7`);
+    return response.data;
+  } catch (error) {
+    console.error('펜션 정보 가져오기 오류:', error);
+  }
+};
