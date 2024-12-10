@@ -8,7 +8,6 @@ export const GetmemberData = async () => {
         'Content-Type': 'application/json',
       },
     });
-    console.log('마이페이지 :', response.data);
     return response.data;
   } catch (error) {
     console.error('Error 확인:', error);

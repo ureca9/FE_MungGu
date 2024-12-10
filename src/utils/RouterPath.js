@@ -17,6 +17,8 @@ const ROUTER_PATHS = {
   PET_EDIT_ID: '/pet-edit/:puppyId',
   PET_ADD: '/pet-add',
   USER_EDIT: '/user-edit',
+  PLANT_EDIT: '/plant-edit',
+  REGION_EDIT: '/region-edit',
   MY_REVIEW: '/my-review',
   MY_REVIEW_MODIFY: '/my-review-modify',
   RECENT_VIEW_LIST: '/recent-view-list',

@@ -22,6 +22,10 @@ instance.interceptors.request.use((config) => {
 
 const handle401Error = async (error) => {
   const originalRequest = error.config;
+  const exceptionUrls = ['/members'];
+  if (exceptionUrls.some((url) => originalRequest.url.includes(url))) {
+    return Promise.resolve();
+  }
   try {
     const response = await getAuthToken();
     const newAccessToken = response.headers['authorization'].split(' ')[1];
