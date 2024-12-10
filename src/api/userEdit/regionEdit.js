@@ -3,9 +3,9 @@ import { instance } from '../../api/axios';
 /**
  * @returns {Promise<Object>}
  */
-export const getPreferencePlaces = async () => {
+export const getPreferenceRegions = async () => {
   try {
-    const response = await instance.get('/members/interests/places', {
+    const response = await instance.get('/members/interests/regions', {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -16,23 +16,20 @@ export const getPreferencePlaces = async () => {
   } catch (error) {
     throw new Error(
       error.response?.data?.message ||
-        '선호 시설 가져오기 중 오류가 발생했습니다.',
+        '선호 지역 가져오기 중 오류가 발생했습니다.',
     );
   }
 };
 
 /**
- * 선호 시설 저장
- * @param {Array} places
+ * @param {Array} regions
  * @returns {Promise<Object>}
  */
-export const savePreferencePlaces = async (places) => {
+export const savePreferenceRegions = async (regions) => {
   try {
     const response = await instance.patch(
-      '/members/interests/places',
-      {
-        places,
-      },
+      '/members/interests/regions',
+      { regions },
       {
         headers: {
           Accept: 'application/json',
@@ -44,7 +41,7 @@ export const savePreferencePlaces = async (places) => {
     return response.data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || '선호 시설 저장 중 오류가 발생했습니다.',
+      error.response?.data?.message || '선호 지역 저장 중 오류가 발생했습니다.',
     );
   }
 };

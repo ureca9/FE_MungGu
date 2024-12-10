@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
 import { useNavigate } from 'react-router-dom';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import {
@@ -55,6 +54,12 @@ const PlantEdit = () => {
 
     try {
       await savePreferencePlaces(selected);
+      Swal.fire({
+        icon: 'success',
+        title: '저장 완료',
+        text: '선호 지역이 성공적으로 저장되었습니다.',
+        confirmButtonColor: '#3288FF',
+      });
       navigate(ROUTER_PATHS.MY_PAGE);
     } catch (error) {
       Swal.fire({
@@ -138,12 +143,13 @@ const PlantEdit = () => {
           </div>
         </div>
         <div className="w-2/3 mt-16">
-          <BasicBtn
-            styleType="blue"
-            size="md"
-            label="저장"
+          <button
             onClick={handleSubmit}
-          />
+            className="w-full px-4 py-2 font-semibold text-white transition-all bg-blue-500 rounded-lg hover:bg-blue-700 disabled:bg-gray-300"
+            disabled={selected.length !== 2}
+          >
+            저장
+          </button>
         </div>
       </main>
       <style jsx>{`

@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { handleSubmitRegions } from '../../api/userRegister/preference';
+import {
+  getPreferenceRegions,
+  savePreferenceRegions,
+} from '../../api/userEdit/regionEdit';
+import Swal from 'sweetalert2';
 
 const RegionEdit = () => {
   const [selected, setSelected] = useState([]);
@@ -19,10 +23,24 @@ const RegionEdit = () => {
   ];
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 500);
-    return () => clearTimeout(timer);
+    const fetchSelectedRegions = async () => {
+      try {
+        const { regions: savedRegions } = await getPreferenceRegions();
+        setSelected(savedRegions || []);
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: '오류 발생',
+          text: '선호 지역 데이터를 불러오는 중 오류가 발생했습니다.',
+          confirmButtonColor: '#3288FF',
+        });
+      } finally {
+        setTimeout(() => setIsLoaded(true), 500);
+      }
+    };
+
+    fetchSelectedRegions();
   }, []);
 
   const toggleSelect = (option) => {
@@ -33,6 +51,35 @@ const RegionEdit = () => {
     }
   };
 
+  const handleSubmit = async () => {
+    if (selected.length !== 2) {
+      Swal.fire({
+        icon: 'warning',
+        text: '2개의 지역을 선택해주세요.',
+        confirmButtonColor: '#3288FF',
+      });
+      return;
+    }
+
+    try {
+      await savePreferenceRegions(selected);
+      Swal.fire({
+        icon: 'success',
+        title: '저장 완료',
+        text: '선호 지역이 성공적으로 저장되었습니다.',
+        confirmButtonColor: '#3288FF',
+      });
+      navigate('/my-page');
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '오류 발생',
+        text: error.message || '오류가 발생했습니다. 다시 시도해주세요.',
+        confirmButtonColor: '#3288FF',
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen w-full sm:max-w-[768px] mx-auto shadow-2xl">
       <div className="pt-8 mb-4 text-xl text-center">
@@ -40,7 +87,7 @@ const RegionEdit = () => {
       </div>
       <main className="flex flex-col items-center pt-16 pb-16">
         <div className="grid grid-rows-[auto] gap-10">
-          <div className="flex justify-center gap-16">
+          <div className="flex justify-center gap-8">
             {regions.slice(0, 3).map((option, index) => (
               <button
                 key={index}
@@ -75,14 +122,14 @@ const RegionEdit = () => {
                   }
                   ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'}`}
                 style={{
-                  animationDelay: `${(index + 2) * 0.2}s`,
+                  animationDelay: `${(index + 3) * 0.2}s`,
                 }}
               >
                 {option}
               </button>
             ))}
           </div>
-          <div className="flex justify-center gap-16">
+          <div className="flex justify-center gap-8">
             {regions.slice(5).map((option, index) => (
               <button
                 key={index}
@@ -106,11 +153,11 @@ const RegionEdit = () => {
         </div>
         <div className="w-2/3 mt-16">
           <button
-            onClick={() => handleSubmitRegions(selected, navigate)}
-            className="w-full px-4 py-2 font-semibold text-white transition-all bg-blue-500 rounded-lg shadow-md hover:bg-blue-700"
+            onClick={handleSubmit}
+            className="w-full px-4 py-2 font-semibold text-white transition-all bg-blue-500 rounded-lg hover:bg-blue-700 disabled:bg-gray-300"
             disabled={selected.length !== 2}
           >
-            완료
+            저장
           </button>
         </div>
       </main>

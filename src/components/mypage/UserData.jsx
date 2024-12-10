@@ -4,6 +4,7 @@ import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import userIcon from '../../assets/MypageImg/user.svg';
+
 const UserData = ({ memberD, navigate }) => {
   const { isLoggedIn, setLogout } = useLoginStore();
 
@@ -26,36 +27,64 @@ const UserData = ({ memberD, navigate }) => {
       }
     });
   };
+
   return (
-    <div className="flex items-center justify-between h-auto py-5 mt-5 bg-white border rounded-lg px-9 border-borderlineGray min-h-40">
-      <span className="flex items-center ">
-        <img
-          src={memberD?.profileImageUrl || userIcon}
-          alt="사용자 프로필 이미지"
-          className="rounded-full size-20 bg-[#F5F5F5] border border-[#8A8A8A] user-icon"
-        />
-        <span className="ml-4 text-base">
-          {memberD?.nickname || '닉네임 없음'}
-        </span>
-      </span>
-      <div className="justify-between ">
-        {isLoggedIn && (
+    <div className="h-auto py-5 mt-5 bg-white border rounded-lg px-9 border-borderlineGray min-h-40">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <img
+            src={memberD?.profileImageUrl || userIcon}
+            alt="사용자 프로필 이미지"
+            className="rounded-full size-20 bg-[#F5F5F5] border border-[#8A8A8A] user-icon"
+          />
+          <span className="ml-4 text-base">
+            {memberD?.nickname || '로그인 후 이용가능합니다.'}
+          </span>
+        </div>
+        <div className="justify-between">
+          {!isLoggedIn ? (
+            <button
+              onClick={() => navigate(ROUTER_PATHS.LOGIN)}
+              className="text-sm px-2 py-1 font-bold text-[#3288FF] bg-transparent border-none cursor-pointer"
+            >
+              로그인
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={handleLogout}
+                className="text-sm mr-4 font-bold text-[#FF0000] bg-transparent border-none cursor-pointer"
+              >
+                로그아웃
+              </button>
+              <CRUDBtn
+                styleType="reverseBlue"
+                size="xs"
+                label="수정"
+                onClick={() => navigate(ROUTER_PATHS.USER_EDIT)}
+              />
+            </>
+          )}
+        </div>
+      </div>
+      <div className="flex justify-between w-full pt-4 mt-4 border-t-[1px] text-[#8a8a8a] text-sm">
+        <div className="w-full text-center">
           <button
-            onClick={handleLogout}
-            className="text-sm mr-4 font-bold text-[#FF0000] bg-transparent border-none cursor-pointer"
+            className="px-2 py-1"
+            onClick={() => navigate(ROUTER_PATHS.PLANT_EDIT)}
           >
-            로그아웃
+            선호 시설 수정
           </button>
-        )}
-        <CRUDBtn
-          styleType="reverseBlue"
-          size="xs"
-          label="수정"
-          onClick={(e) => {
-            e.preventDefault();
-            navigate('/user-edit');
-          }}
-        />
+        </div>
+        <div className="py-1">|</div>
+        <div className="w-full text-center">
+          <button
+            className="px-2 py-1"
+            onClick={() => navigate(ROUTER_PATHS.REGION_EDIT)}
+          >
+            선호 지역 수정
+          </button>
+        </div>
       </div>
     </div>
   );
