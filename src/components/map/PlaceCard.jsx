@@ -146,12 +146,12 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
 
 PlaceCard.propTypes = {
   place: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    businessHour: PropTypes.string.isRequired,
-    distance: PropTypes.number.isRequired,
+    businessHour: PropTypes.string,
+    distance: PropTypes.number,
     address: PropTypes.string.isRequired,
-    mainImages: PropTypes.arrayOf(PropTypes.string).isRequired,
+    mainImages: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   likedPlaces: PropTypes.object.isRequired,
   handleLikeClick: PropTypes.func.isRequired,
