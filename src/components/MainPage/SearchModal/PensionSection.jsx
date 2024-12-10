@@ -24,6 +24,7 @@ const PensionSection = ({ onClose }) => {
       setWeatherData([]); // 선택 해제 시 데이터 초기화
     }
   };
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchWeatherData = async (region) => {
     try {
@@ -40,8 +41,11 @@ const PensionSection = ({ onClose }) => {
       const weather = Object.values(data).slice(1, 11); // day1~day10 날씨 데이터 추출
       setWeatherData(weather);
     } catch (error) {
-      console.error("Failed to fetch weather data:", error);
-      alert("날씨 데이터를 가져오는 데 문제가 발생했습니다.");
+      console.error("[PensionSection] 날씨 데이터 요청 실패:", error);
+      alert("날씨 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해 주세요.");
+      setWeatherData([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 

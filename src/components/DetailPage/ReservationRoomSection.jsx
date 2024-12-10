@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import PropTypes from 'prop-types';
 
 const ReservationRoomSection = ({ pensionId }) => {
   const today = new Date();
@@ -36,7 +37,6 @@ const ReservationRoomSection = ({ pensionId }) => {
         }
       );
 
-      console.log("Response data:", response.data);
 
       if (response.data && response.data.data) {
         const parsedRooms = response.data.data.map((item) => ({
@@ -54,6 +54,7 @@ const ReservationRoomSection = ({ pensionId }) => {
   };
 
   useEffect(() => {
+
     if (startDate && endDate) {
       fetchRooms();
     }
@@ -63,6 +64,9 @@ const ReservationRoomSection = ({ pensionId }) => {
   useEffect(() => {
     const start = new Date(startDate);
     const end = new Date(endDate);
+    const today = new Date();
+    const maxBookingDate = new Date();
+    maxBookingDate.setMonth(maxBookingDate.getMonth() + 3); // 3개월
 
     // 끝 날짜가 시작 날짜보다 이르면 자동으로 시작 날짜의 다음 날로 설정
     if (end <= start) {
@@ -70,7 +74,30 @@ const ReservationRoomSection = ({ pensionId }) => {
       newEndDate.setDate(start.getDate() + 1);
       setEndDate(formatDate(newEndDate));
     }
+
+    if (start < today) {
+      setStartDate(formatDate(today));
+      return;
+    }
+    
+      // 최대 예약 기간 체크
+  if (start > maxBookingDate) {
+    setStartDate(formatDate(maxBookingDate));
+    return;
+  }
+
+    // 종료 날짜 검증
+    if (end <= start) {
+      const newEndDate = new Date(start);
+      newEndDate.setDate(start.getDate() + 1);
+      setEndDate(formatDate(newEndDate));
+    }
+
   }, [startDate]); // 시작 날짜 변경 시만 실행
+
+  ReservationRoomSection.propTypes = {
+    pensionId: PropTypes.string.isRequired,
+  };
 
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;

@@ -6,8 +6,8 @@ import ProfileSection from "./ProfileSection";
 const FacilitySection = ({ onClose }) => { // onClose prop 추가
   const [searchData, setSearchData] = useState({
     searchWord: "",
-    regionList: ["전체"], // 기본값
-    placeTypes: ["전체"], // 기본값
+    regionList: [""], // 기본값
+    placeTypes: [""], // 기본값
     heaviestDogWeight: 0,
   });
 
@@ -18,7 +18,7 @@ const FacilitySection = ({ onClose }) => { // onClose prop 추가
   // 지역 선택 핸들러
   const handleRegionSelect = (region) => {
     if (region === "전체") {
-      setSearchData((prev) => ({ ...prev, regionList: ["전체"] })); // "전체"만 선택
+      setSearchData((prev) => ({ ...prev, regionList: [""] })); // "전체"만 선택
     } else {
       setSearchData((prev) => {
         const isSelected = prev.regionList.includes(region);
@@ -33,7 +33,7 @@ const FacilitySection = ({ onClose }) => { // onClose prop 추가
   // 카테고리 선택 핸들러
   const handleCategorySelect = (category) => {
     if (category === "전체") {
-      setSearchData((prev) => ({ ...prev, placeTypes: ["전체"] })); // "전체"만 선택
+      setSearchData((prev) => ({ ...prev, placeTypes: [""] })); // "전체"만 선택
     } else {
       setSearchData((prev) => {
         const isSelected = prev.placeTypes.includes(category);

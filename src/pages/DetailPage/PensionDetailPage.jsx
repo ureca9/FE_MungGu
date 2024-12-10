@@ -65,8 +65,11 @@ const PensionDetailPage = () => {
         const accessToken = localStorage.getItem("ACCESS_TOKEN");
         const headers = {
           Accept: "application/json",
-          Authorization: `Bearer ${accessToken}`,
         };
+        
+         if (accessToken) {
+           headers.Authorization = `Bearer ${accessToken}`;
+        }
 
         const response = await axios.get(
           `https://meong9.store/api/v1/pensions/detail/${id}`,
