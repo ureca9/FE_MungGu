@@ -142,6 +142,12 @@ const UserEdit = () => {
       navigate(ROUTER_PATHS.MY_PAGE);
     } catch (error) {
       console.error('Error updating user details:', error);
+      Swal.fire({
+        icon: 'error',
+        title: '업데이트 실패',
+        text: '사용자 정보 업데이트 중 오류가 발생했습니다.',
+        confirmButtonColor: '#3288FF',
+      });
     }
   };
 
@@ -226,7 +232,7 @@ const UserEdit = () => {
         {...register('phoneNumber', {
           required: '휴대폰 번호는 필수 입력 항목입니다.',
           validate: (value) => {
-            const phoneRegex = /^01[0-9]-\d{4}-\d{4}$/;
+            const phoneRegex = /^01[016789]-\d{3,4}-\d{4}$/;
             if (!phoneRegex.test(value)) {
               return '휴대폰 번호는 11자리여야 합니다.';
             }

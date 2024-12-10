@@ -118,34 +118,6 @@ const PreferencePlant = () => {
           />
         </div>
       </main>
-      <style jsx>{`
-        @keyframes bounce-custom {
-          0%,
-          100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
-        @keyframes bounce-grow {
-          0% {
-            transform: translateY(0) scale(1.35);
-          }
-          50% {
-            transform: translateY(-10px) scale(1.35);
-          }
-          100% {
-            transform: translateY(0) scale(1.35);
-          }
-        }
-        .animate-bounce-custom {
-          animation: bounce-custom 1.5s infinite;
-        }
-        .animate-bounce-grow {
-          animation: bounce-grow 1.5s infinite;
-        }
-      `}</style>
     </div>
   );
 };

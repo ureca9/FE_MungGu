@@ -4,8 +4,16 @@ import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import userIcon from '../../assets/MypageImg/user.svg';
+import PropTypes from 'prop-types';
 
 const UserData = ({ memberD, navigate }) => {
+  UserData.propTypes = {
+    memberD: PropTypes.shape({
+      profileImageUrl: PropTypes.string,
+      nickname: PropTypes.string,
+    }),
+    navigate: PropTypes.func.isRequired,
+  };
   const { isLoggedIn, setLogout } = useLoginStore();
 
   const handleLogout = () => {
@@ -38,7 +46,7 @@ const UserData = ({ memberD, navigate }) => {
             className="rounded-full size-20 bg-[#F5F5F5] border border-[#8A8A8A] user-icon"
           />
           <span className="ml-4 text-base">
-            {memberD?.nickname || '로그인 후 이용가능합니다.'}
+            {memberD?.nickname || '로그인이 필요합니다'}
           </span>
         </div>
         <div className="justify-between">
