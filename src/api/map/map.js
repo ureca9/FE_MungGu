@@ -13,9 +13,9 @@ export const getMarkers = async () => {
 export const searchSpot = async (keyword, latitude, longitude) => {
   try {
     const response = await instance.get(
-      `/search?keyword=${keyword}&latitude=${latitude}&longitude=${longitude}`,
+      `/map/search?keyword=${keyword}&latitude=${latitude}&longitude=${longitude}`,
     );
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error(error);
   }

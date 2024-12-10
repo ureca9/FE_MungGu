@@ -3,16 +3,17 @@ import { FaArrowLeft, FaSearch } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import SearchHistory from '../../components/map/SearchHistory.jsx';
 import useSearchHistoryStore from '../../stores/map/useSearchHistoryStore.js';
-import { dummyPlaces } from '../../utils/DummyPlaces.js';
 import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
+import { searchSpot } from '../../api/map/map.js';
 
 const MapSearch = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const { searchHistory, setSearchHistory } = useSearchHistoryStore();
-  const { setSearchResults, searchResults } = useMapSearchStore();
+  const { setSearchResults } = useMapSearchStore();
   const { coords } = useCoordsStore();
+  const { latitude, longitude } = coords;
 
   useEffect(() => {
     const storedHistory =
@@ -32,14 +33,16 @@ const MapSearch = () => {
     }
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (searchTerm.trim() !== '') {
       handleSaveSearchHistory(searchTerm);
-      const filteredResults = dummyPlaces.filter((place) =>
-        place.placeName.includes(searchTerm),
-      );
-      setSearchResults(filteredResults);
-      navigate('/map');
+      try {
+        const response = await searchSpot(searchTerm, latitude, longitude);
+        setSearchResults(response.content);
+        navigate('/map');
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
