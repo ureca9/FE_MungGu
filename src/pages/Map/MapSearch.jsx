@@ -6,6 +6,7 @@ import useSearchHistoryStore from '../../stores/map/useSearchHistoryStore.js';
 import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
 import { searchSpot } from '../../api/map/map.js';
+import Swal from 'sweetalert2';
 
 const MapSearch = () => {
   const navigate = useNavigate();
@@ -35,13 +36,27 @@ const MapSearch = () => {
 
   const handleSearch = async () => {
     if (searchTerm.trim() !== '') {
-      handleSaveSearchHistory(searchTerm);
       try {
         const response = await searchSpot(searchTerm, latitude, longitude);
-        setSearchResults(response.content);
-        navigate('/map');
+
+        if (response.content.length === 0)
+          Swal.fire({
+            title: '검색 결과가 없습니다.',
+            text: `'${searchTerm}'에 대한 결과를 찾을 수 없습니다.`,
+            icon: 'info',
+          });
+        else {
+          handleSaveSearchHistory(searchTerm);
+          setSearchResults(response.content);
+          navigate('/map');
+        }
       } catch (error) {
         console.error(error);
+        Swal.fire({
+          title: '오류 발생',
+          text: '검색 중 문제가 발생했습니다. 다시 시도해주세요.',
+          icon: 'error',
+        });
       }
     }
   };
