@@ -23,6 +23,7 @@ export const CRUDBtn = ({
     xs: `py-2 text-xs w-16`,
     sm: `py-2 text-sm w-20 font-bold`,
     md: `py-3 text-base w-24 font-bold`,
+    lg: `py-3 text-base w-28 `,
   };
 
   return (
@@ -40,7 +41,7 @@ export const CRUDBtn = ({
 
 CRUDBtn.propTypes = {
   styleType: PropTypes.oneOf(['blue', 'reverseBlue', 'black']),
-  size: PropTypes.oneOf(['xs', 'sm', 'md']),
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
   label: PropTypes.string.isRequired,
   onClick: PropTypes.func,
 };

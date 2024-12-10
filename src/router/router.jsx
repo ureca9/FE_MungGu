@@ -21,6 +21,8 @@ import UserRegister from './../pages/UserPage/UserRegister';
 import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import PreferencePlant from '../pages/UserPage/PreferencePlant.jsx';
 import PreferenceRegion from '../pages/UserPage/PreferenceRegion.jsx';
+import AllReviews from '../pages/Review/ALlReviews.jsx';
+import ReviewAdd from '../pages/Review/ReviewAdd.jsx';
 
 const routes = [
   {
@@ -102,6 +104,14 @@ const routes = [
   {
     path: ROUTER_PATHS.PREFERENCE_REGION,
     element: <PreferenceRegion />,
+  },
+  {
+    path: ROUTER_PATHS.ALL_REVIEW,
+    element: <AllReviews />,
+  },
+  {
+    path: ROUTER_PATHS.REVIEW_ADD,
+    element: <ReviewAdd />,
   },
 ];
 

@@ -12,14 +12,14 @@ const SubHeader = () => {
     [ROUTER_PATHS.LOGIN]: '로그인',
     [ROUTER_PATHS.LIVE_REVIEW]: '실시간 리뷰',
     [ROUTER_PATHS.USER_REGISTER]: '회원 등록',
-    [ROUTER_PATHS.DOG_REGISTER]: '강아지 등록',
+    [ROUTER_PATHS.REVIEW_ADD]: '강아지 등록',
     [ROUTER_PATHS.PREFERENCE_PLANT]: '선호 시설 등록',
     [ROUTER_PATHS.PREFERENCE_REGION]: '선호 지역 등록',
     [ROUTER_PATHS.REGION_NAME]: '지역명',
     [ROUTER_PATHS.PLACE_NAME]: '장소명',
     [ROUTER_PATHS.ALL_REVIEW]: '리뷰 전체보기',
-    [ROUTER_PATHS.DOG_UPDATE]: '강아지 수정',
-    [ROUTER_PATHS.DOG_ADD]: '강아지 추가',
+    [ROUTER_PATHS.PET_EDIT_ID]: '강아지 수정',
+    [ROUTER_PATHS.PET_ADD]: '강아지 추가',
     [ROUTER_PATHS.USER_UPDATE]: '회원 정보 수정',
     [ROUTER_PATHS.MY_REVIEW]: '내가 쓴 후기',
     [ROUTER_PATHS.MY_REVIEW_MODIFY]: '후기 수정',
@@ -28,6 +28,7 @@ const SubHeader = () => {
     [ROUTER_PATHS.RESERVATION_COMPLETE]: '예약완료',
     [ROUTER_PATHS.RESERVATION_LIST]: '예약 내역',
     [ROUTER_PATHS.MEONGSENGNEACUT]: '멍생네컷',
+    [ROUTER_PATHS.REVIEW_ADD]: '후기 작성',
   };
 
   const pageTitle = PAGE_TITLES[location.pathname] || '페이지 없음';
