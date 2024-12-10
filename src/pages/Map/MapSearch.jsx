@@ -67,7 +67,7 @@ const MapSearch = () => {
 
   const handleHistoryClick = (historyTerm) => {
     setSearchTerm(historyTerm);
-    handleSearch();
+    if (historyTerm.trim()) handleSearch();
   };
   return (
     <div className="relative w-full h-[calc(100vh-8rem)] bg-white">

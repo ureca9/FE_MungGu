@@ -16,13 +16,17 @@ const SearchHistory = ({ onHistoryClick }) => {
   return (
     <div className="pt-[7rem] p-4 flex-grow">
       <ul>
-        {searchHistory.map((item, index) => (
+        {searchHistory.map((item) => (
           <li
-            key={index}
-            className="flex items-center justify-between px-10 py-5 border-b border-gray-300 hover:bg-gray-100 cursor-pointer"
-            onClick={() => onHistoryClick(item)}
+            key={`${item}-${Date.now()}`}
+            className="flex items-center justify-between px-10 py-5 border-b border-gray-300"
           >
-            <span className="text-xl">{item}</span>
+            <span
+              className="text-xl hover:bg-gray-100 cursor-pointer"
+              onClick={() => onHistoryClick(item)}
+            >
+              {item}
+            </span>
             <button
               className="ml-2 text-gray-300"
               onClick={() => handleDelete(item)}
