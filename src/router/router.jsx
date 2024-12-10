@@ -21,8 +21,13 @@ import UserRegister from './../pages/UserPage/UserRegister';
 import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import PreferencePlant from '../pages/UserPage/PreferencePlant.jsx';
 import PreferenceRegion from '../pages/UserPage/PreferenceRegion.jsx';
+<<<<<<< HEAD
 import PlantEdit from '../pages/UserPage/PlantEdit.jsx';
 import RegionEdit from '../pages/UserPage/RegionEdit.jsx';
+=======
+import AllReviews from '../pages/Review/ALlReviews.jsx';
+import ReviewAdd from '../pages/Review/ReviewAdd.jsx';
+>>>>>>> 342066d47face3088b85a83b21003102f094baea
 
 const routes = [
   {
@@ -66,23 +71,23 @@ const routes = [
     element: <PetEdit />,
   },
   {
-    path: '/search-modal',
+    path: ROUTER_PATHS.SEARCH_MODAL,
     element: <SearchModal />,
   },
   {
-    path: '/facility-list',
+    path: ROUTER_PATHS.FACILITY_LIST,
     element: <ListPage type="facility" />,
   },
   {
-    path: '/pension-list',
+    path: ROUTER_PATHS.PENSION_LIST,
     element: <PensionListPage />,
   },
   {
-    path: '/place/:id',
+    path: ROUTER_PATHS.PLACE_DETAIL,
     element: <PlaceDetailPage />,
   },
   {
-    path: '/pension-detail/:id',
+    path: ROUTER_PATHS.PENSION_DETAIL,
     element: <PensionDetailPage />,
   },
   {
@@ -106,12 +111,21 @@ const routes = [
     element: <PreferenceRegion />,
   },
   {
+<<<<<<< HEAD
     path: ROUTER_PATHS.PLANT_EDIT,
     element: <PlantEdit />,
   },
   {
     path: ROUTER_PATHS.REGION_EDIT,
     element: <RegionEdit />,
+=======
+    path: ROUTER_PATHS.ALL_REVIEW,
+    element: <AllReviews />,
+  },
+  {
+    path: ROUTER_PATHS.REVIEW_ADD,
+    element: <ReviewAdd />,
+>>>>>>> 342066d47face3088b85a83b21003102f094baea
   },
 ];
 
