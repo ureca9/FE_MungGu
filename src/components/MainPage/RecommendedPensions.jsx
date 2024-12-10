@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { instance } from "../../api/axios";
+import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
@@ -7,7 +7,7 @@ const RecommendedPensions = () => {
   const [pensions, setPensions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // useNavigate 훅 추가
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRecommendedPensions = async () => {
@@ -17,20 +17,18 @@ const RecommendedPensions = () => {
         const memberId = localStorage.getItem("MEMBER_ID");
         const token = localStorage.getItem("ACCESS_TOKEN");
 
-        if (!memberId || !token) {
-          handleNotLoggedIn();
-          return;
-        }
-
         const headers = {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         };
 
-        const response = await instance.get('/spots/recommendations', {
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+        }
+
+        const response = await axios.get("/spots/recommendations", {
           headers,
-          params: { memberId },
+          params: memberId ? { memberId } : {},
         });
 
         const { data } = response.data;
@@ -56,17 +54,6 @@ const RecommendedPensions = () => {
 
     fetchRecommendedPensions();
   }, []);
-
-  const handleNotLoggedIn = () => {
-    Swal.fire({
-      title: "로그인 필요",
-      text: "로그인이 필요합니다. 로그인 페이지로 이동합니다.",
-      icon: "info",
-      confirmButtonText: "확인",
-    }).then(() => {
-      window.location.href = "/login";
-    });
-  };
 
   const handlePensionClick = (id) => {
     // PensionDetailPage로 이동
@@ -103,7 +90,7 @@ const RecommendedPensions = () => {
           <div
             key={pension.id}
             className="min-w-[200px] p-4 bg-white shadow-md rounded-lg text-center cursor-pointer"
-            onClick={() => handlePensionClick(pension.id)} // 클릭 핸들러 추가
+            onClick={() => handlePensionClick(pension.id)}
           >
             <div
               className="w-full h-40 bg-gray-300 rounded-lg mb-2"
