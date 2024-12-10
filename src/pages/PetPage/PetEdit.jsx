@@ -95,7 +95,7 @@ const PetEdit = () => {
       ) : basicData ? (
         <PetForm
           key="edit"
-          title="반려동물 수정 "
+          title="우리 강아지 정보를 수정해주세요."
           buttonText="수정"
           deleteButton={true}
           onSubmit={handleEdit}

@@ -265,18 +265,18 @@ const PensionDetailPage = () => {
   >
     <h3 style={{ fontSize: "18px", fontWeight: "bold" }}>리얼 포토 리뷰</h3>
     <button
-      style={{
-        fontSize: "14px",
-        color: "#3182ce",
-        background: "none",
-        border: "none",
-        cursor: "pointer",
-        padding: "0",
-      }}
-      onClick={() => alert("전체보기 기능 연결 예정입니다!")}
-    >
-      전체보기 >
-    </button>
+  style={{
+    fontSize: "14px",
+    color: "#3182ce",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    padding: "0",
+  }}
+  onClick={() => navigate(`/all-review/${id}`)} // ID를 포함해 리뷰 페이지로 이동
+>
+  전체보기 >
+</button>
   </div>
 
   <div

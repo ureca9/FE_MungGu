@@ -13,7 +13,7 @@ const ROUTER_PATHS = {
   PREFERENCE_REGION: '/preference-region',
   REGION_NAME: '/region-name',
   PLACE_NAME: '/place-name',
-  ALL_REVIEW: '/all-review',
+  ALL_REVIEW: '/all-review/:id',
   PET_EDIT_ID: '/pet-edit/:puppyId',
   PET_ADD: '/pet-add',
   USER_EDIT: '/user-edit',
@@ -24,11 +24,12 @@ const ROUTER_PATHS = {
   RESERVATION_COMPLETE: '/reservation-complete',
   RESERVATION_LIST: '/reservation-list',
   MEONGSENGNEACUT: '/meongsengneacut',
-  SEARCH_MODAL: '/search-modal', // 추가된 경로
-  FACILITY_LIST: '/facility-list', // 추가된 경로
-  PENSION_LIST: '/pension-list', // 추가된 경로
-  PLACE_DETAIL: '/place/:id', // 추가된 경로
-  PENSION_DETAIL: '/pension-detail/:id', // 추가된 경로
+  SEARCH_MODAL: '/search-modal', 
+  FACILITY_LIST: '/facility-list', 
+  PENSION_LIST: '/pension-list', 
+  PLACE_DETAIL: '/place/:id', 
+  PENSION_DETAIL: '/pension-detail/:id', 
+  REVIEW_ADD: '/review-add',
 };
 
 export default ROUTER_PATHS;
