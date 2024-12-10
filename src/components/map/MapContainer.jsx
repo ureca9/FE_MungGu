@@ -119,6 +119,7 @@ const MapContainer = ({ onMapLoaded }) => {
     if (searchResults.length > 0) {
       const { latitude, longitude } = searchResults[0];
       setCoords(latitude, longitude);
+
       if (mapRef.current) {
         mapRef.current.setCenter(
           new window.kakao.maps.LatLng(latitude, longitude),
@@ -126,7 +127,7 @@ const MapContainer = ({ onMapLoaded }) => {
         addSearchResultMarker(mapRef.current);
       }
     }
-  }, [searchResults]);
+  }, [searchResults, setCoords]);
   return <div ref={mapContainer} id="map" className="w-full h-full"></div>;
 };
 
