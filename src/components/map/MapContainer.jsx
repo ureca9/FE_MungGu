@@ -8,14 +8,16 @@ import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
 
 const MapContainer = ({ onMapLoaded }) => {
   const mapContainer = useRef(null);
+  const mapRef = useRef(null);
   const { setCoords } = useCoordsStore();
   const { searchResults } = useMapSearchStore();
 
   const initMap = async (latitude, longitude) => {
     const map = new window.kakao.maps.Map(mapContainer.current, {
       center: new window.kakao.maps.LatLng(latitude, longitude),
-      level: 10,
+      level: 4,
     });
+    mapRef.current = map;
 
     addCurrentMarker(map, latitude, longitude);
     await addLikedMarker(map);
@@ -113,6 +115,18 @@ const MapContainer = ({ onMapLoaded }) => {
     waitForKakaoMaps();
   }, []);
 
+  useEffect(() => {
+    if (searchResults.length > 0) {
+      const { latitude, longitude } = searchResults[0];
+      setCoords(latitude, longitude);
+      if (mapRef.current) {
+        mapRef.current.setCenter(
+          new window.kakao.maps.LatLng(latitude, longitude),
+        );
+        addSearchResultMarker(mapRef.current);
+      }
+    }
+  }, [searchResults]);
   return <div ref={mapContainer} id="map" className="w-full h-full"></div>;
 };
 
