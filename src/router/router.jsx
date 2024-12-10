@@ -66,23 +66,23 @@ const routes = [
     element: <PetEdit />,
   },
   {
-    path: '/search-modal',
+    path: ROUTER_PATHS.SEARCH_MODAL,
     element: <SearchModal />,
   },
   {
-    path: '/facility-list',
+    path: ROUTER_PATHS.FACILITY_LIST,
     element: <ListPage type="facility" />,
   },
   {
-    path: '/pension-list',
+    path: ROUTER_PATHS.PENSION_LIST,
     element: <PensionListPage />,
   },
   {
-    path: '/place/:id',
+    path: ROUTER_PATHS.PLACE_DETAIL,
     element: <PlaceDetailPage />,
   },
   {
-    path: '/pension-detail/:id',
+    path: ROUTER_PATHS.PENSION_DETAIL,
     element: <PensionDetailPage />,
   },
   {
