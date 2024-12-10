@@ -33,10 +33,8 @@ const PlaceList = ({ selectedCategory }) => {
   );
 
   useEffect(() => {
-    if (searchResults.length > 0) {
-      setPlacesToShow(searchResults);
-      console.log(searchResults);
-    } else {
+    if (searchResults.length > 0) setPlacesToShow(searchResults);
+    else {
       const likedPlaces = dummyPlaces.filter((place) => place.isLiked);
       if (selectedCategory === '전체') setPlacesToShow(likedPlaces);
       else

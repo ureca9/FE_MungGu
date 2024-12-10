@@ -3,7 +3,7 @@ import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
   const formatDistance = (distance) => {
-    if (!distance) return '';
+    if (distance == null) return '';
     return distance >= 1000
       ? `${(distance / 1000).toFixed(1)}km`
       : `${distance}m`;
@@ -24,7 +24,7 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
 
     const match = businessHour.match(/^(.*?)(\d{1,2}:\d{2}~\d{1,2}:\d{2})$/);
     if (match) {
-      const [_, days, hours] = match;
+      const [, days, hours] = match;
       const [openTime, closeTime] = hours.split('~').map((t) => t.trim());
 
       const daysMap = {
@@ -152,7 +152,7 @@ PlaceCard.propTypes = {
     distance: PropTypes.number,
     address: PropTypes.string.isRequired,
     mainImages: PropTypes.arrayOf(PropTypes.string),
-  }).isRequired,
+  }),
   likedPlaces: PropTypes.object.isRequired,
   handleLikeClick: PropTypes.func.isRequired,
 };
