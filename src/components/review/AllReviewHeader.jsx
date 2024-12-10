@@ -1,28 +1,53 @@
 import { RxStarFilled } from 'react-icons/rx';
 import { FaPenAlt } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
-import ROUTER_PATHS from '../../utils/RouterPath';
-import { GetPensionsSummary } from '../../api/review';
+import { GetPensionsSummary, GetPlacesSummary } from '../../api/review';
+import useTypeStore from '../../stores/review/useTypeStore';
 
-const AllReviewHeader = () => {
+const AllReviewHeader = ({ typePensionID }) => {
   const navigate = useNavigate();
+  const { id: pensionId } = useParams();
+  const { id: placeId } = useParams();
   const [summary, setSummary] = useState({});
+  const location = useLocation();
+
+  const { typePension, setTypePension } = useTypeStore(); //시설 장소 타입
+  useEffect(() => {
+    setTypePension(location.pathname.includes('pension'));
+  }, [location.pathname, setTypePension]);
 
   const pensionsSummary = async () => {
     try {
-      const response = await GetPensionsSummary();
+      const response = await GetPensionsSummary(pensionId);
       console.log('편션 요약 응답 :', response);
       setSummary(response.data);
+      console.log('type 편션:', typePension);
     } catch (error) {
       console.error('펜션 요약 오류 :', error);
     }
   };
 
+  const placeSummary = async () => {
+    try {
+      const response = await GetPlacesSummary(placeId);
+      console.log('시설 요약 응답 :', response);
+      setSummary(response.data);
+      console.log('type 편션:', typePension);
+    } catch (error) {
+      console.error('시설 요약 오류 :', error);
+    }
+  };
+
   useEffect(() => {
-    pensionsSummary();
+    if (typePensionID) {
+      pensionsSummary();
+    } else {
+      placeSummary();
+    }
   }, []);
+
   return (
     <div>
       <div className="flex justify-between">
@@ -32,12 +57,10 @@ const AllReviewHeader = () => {
             styleType="blue"
             size="lg"
             label="글 작성"
-            // onClick={onDelete}
             onClick={(e) => {
               e.preventDefault();
-              navigate(ROUTER_PATHS.REVIEW_ADD);
+              navigate(`/review-add/${pensionId}`);
             }}
-            // style={{ display: deleteButton ? 'block' : 'none' }}
           />
         </div>
       </div>

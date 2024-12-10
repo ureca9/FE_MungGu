@@ -13,12 +13,13 @@ const ROUTER_PATHS = {
   PREFERENCE_REGION: '/preference-region',
   REGION_NAME: '/region-name',
   PLACE_NAME: '/place-name',
-  ALL_REVIEW: '/all-review/:id',
+  PENSION_ALL_REVIEW: '/pension-all-review/:id',
+  PLACE_ALL_REVIEW: '/place-all-review/:id',
   PET_EDIT_ID: '/pet-edit/:puppyId',
   PET_ADD: '/pet-add',
   USER_EDIT: '/user-edit',
   MY_REVIEW: '/my-review',
-  MY_REVIEW_MODIFY: '/my-review-modify',
+  MY_REVIEW_EDIT: '/my-review-edit',
   RECENT_VIEW_LIST: '/recent-view-list',
   RESERVATION: '/reservation',
   RESERVATION_COMPLETE: '/reservation-complete',
@@ -29,7 +30,7 @@ const ROUTER_PATHS = {
   PENSION_LIST: '/pension-list', 
   PLACE_DETAIL: '/place/:id', 
   PENSION_DETAIL: '/pension-detail/:id', 
-  REVIEW_ADD: '/review-add',
+  REVIEW_ADD: '/review-add/:id',
 };
 
 export default ROUTER_PATHS;

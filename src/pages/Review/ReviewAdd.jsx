@@ -1,12 +1,3 @@
-import { FaCamera } from 'react-icons/fa';
-import FileData from '../../components/review/reviewAdd/FileData';
-import PlaceData from '../../components/review/reviewAdd/PlaceData';
-import StarScore from '../../components/review/reviewAdd/StarScore';
-import useScoreStore from '../../stores/review/useScoreStore';
-import { CgMathPlus } from 'react-icons/cg';
-import { useState } from 'react';
-import { RxStarFilled } from 'react-icons/rx';
-import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
 import ReviewForm from '../../components/review/ReviewForm';
 import { PostPensionsReview } from '../../api/review';
 import Swal from 'sweetalert2';
@@ -16,8 +7,8 @@ const ReviewAdd = () => {
   const reviewAdd = async (formData) => {
     try {
       const reviewFormData = new FormData();
-      const joinPuppy = {
-        plcPenId: formData.plcPenId,
+      const reviewAdd = {
+        plcPenId: formData.pensionId,
         content: formData.content,
         score: formData.score,
         type: formData.type,
@@ -25,11 +16,11 @@ const ReviewAdd = () => {
       };
       reviewFormData.append(
         'data',
-        new Blob([JSON.stringify(joinPuppy)], { type: 'application/json' }),
+        new Blob([JSON.stringify(reviewAdd)], { type: 'application/json' }),
       );
 
       if (formData.image) {
-        reviewFormData.append('image', formData.image);
+        reviewFormData.append('file', formData.image);
       }
 
       const response = await PostPensionsReview(reviewFormData);

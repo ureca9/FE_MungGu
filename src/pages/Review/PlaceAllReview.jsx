@@ -1,28 +1,27 @@
 import { useEffect } from 'react';
-import { GetPensionsReviews } from '../../api/review';
-import useAllReviewsStore from '../../stores/review/useAllReviewsStore';
 import AllReviewHeader from '../../components/review/AllReviewHeader';
 import ReviewCard from '../../components/review/ReviewCard';
+import { GetPlaceReviews } from '../../api/review';
 import { useParams } from 'react-router-dom';
+import useAllReviewsStore from '../../stores/review/useAllReviewsStore';
 
-
-const AllReviews = () => {
-  const { id: pensionId } = useParams(); // URL에서 pensionId 가져오기
+const PlaceAllReview = () => {
+  const { id: placeId } = useParams();
   const { pensionsReviewData, setPensionsReviewData } = useAllReviewsStore();
 
-  const fetchPensionsReviews = async () => {
+  const fetchPlaceReviews = async () => {
     try {
-      const reviews = await GetPensionsReviews(pensionId); // 동적 ID 사용
-      console.log("펜션 리뷰 목록 :", reviews);
+      const reviews = await GetPlaceReviews(placeId);
+      console.log('시설 리뷰 목록 :', reviews);
       setPensionsReviewData(reviews);
     } catch (error) {
-      console.error("리뷰 가져오기 실패 :", error);
+      console.error('시설 리뷰 가져오기 실패 :', error);
     }
   };
 
   useEffect(() => {
-    fetchPensionsReviews();
-  }, [pensionId]);
+    fetchPlaceReviews();
+  }, [placeId]);
 
   return (
     <div className="flex flex-col w-full">
@@ -42,4 +41,4 @@ const AllReviews = () => {
   );
 };
 
-export default AllReviews;
+export default PlaceAllReview;

@@ -43,8 +43,8 @@ const ReviewCard = ({ review }) => {
         </div>
         <div className="mt-3 font-light line-clamp-2">{content}</div>
       </div>
-      <div className="flex flex-row items-center justify-around gap-3 mt-3">
-        {file.length > 0 ? ( // 이미지가 있는 경우
+      <div className="flex flex-row items-center justify-start gap-3 mt-3">
+        {file.length > 0 ? (
           <>
             {file.slice(0, 4).map((file, index) => (
               <img
@@ -53,7 +53,7 @@ const ReviewCard = ({ review }) => {
                 src={file.fileUrl || usericon}
               />
             ))}
-            {file.length > 4 && ( // 이미지가 4개 초과인 경우
+            {file.length > 4 && (
               <div className="flex w-32 h-32  bg-[#808080] rounded-lg items-center justify-center text-white poi">
                 더보기
               </div>

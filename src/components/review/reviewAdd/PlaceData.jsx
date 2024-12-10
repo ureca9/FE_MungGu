@@ -6,8 +6,11 @@ import { PiShareNetworkThin } from 'react-icons/pi';
 import { RxStarFilled } from 'react-icons/rx';
 import { TbParkingCircleFilled } from 'react-icons/tb';
 import { GetPentionData } from '../../../api/review';
+import { useParams } from 'react-router-dom';
+import useTypeStore from '../../../stores/review/useTypeStore';
 const PlaceData = () => {
-  const [pensionId] = useState();
+  const { id: pensionId } = useParams();
+  const { typePension } = useTypeStore();
   const [basicPension, setBasicPension] = useState({});
   const placeInfo = [
     { icon: <FaWeightHanging className="text-xl" />, text: '무게 제한 없음' },
@@ -18,12 +21,22 @@ const PlaceData = () => {
   ];
   useEffect(() => {
     const fetchPentionData = async () => {
+      const getPensoinData = new FormData();
+      const typeId = {
+        type: typePension,
+        plcPenId: pensionId,
+      };
+      getPensoinData.append(
+        'data',
+        new Blob([JSON.stringify(typeId)], { type: 'application/json' }),
+      );
+
       try {
-        const response = await GetPentionData();
+        const response = await GetPentionData({ pensionId, getPensoinData });
         console.log('장소 정보:', response);
         setBasicPension(response.data);
       } catch (error) {
-        console.error('반려동물 정보 가져오기 오류:', error);
+        console.error('장소정보 오류:', error);
       }
     };
 

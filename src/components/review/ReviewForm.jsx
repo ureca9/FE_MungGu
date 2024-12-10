@@ -8,12 +8,20 @@ import { useState } from 'react';
 import { RxStarFilled } from 'react-icons/rx';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
 import Swal from 'sweetalert2';
+import { useParams } from 'react-router-dom';
+import useTypeStore from '../../stores/review/useTypeStore';
 
 const ReviewForm = ({ buttonText, deleteButton, onSubmit }) => {
   // const { score, setScore } = useScoreStore();
+  const { id: pensionId } = useParams();
+  // const { pensionId } = useAllReviewsStore();
   const [score, setScore] = useState();
   const [content, setContent] = useState();
+  const [visitDate, setVisitDate] = useState();
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const { typePension } = useTypeStore();
+
+  const type = typePension ? '020' : '010';
 
   const handleScoreChange = (newScore) => {
     setScore(newScore);
@@ -26,21 +34,21 @@ const ReviewForm = ({ buttonText, deleteButton, onSubmit }) => {
     e.preventDefault();
     if (!checkDataForm()) return;
     const reviewData = {
-      plcPenId: '',
+      plcPenId: pensionId,
       content: content,
       score: score,
-      type: '',
-      visit_date: '',
+      type: type,
+      visit_date: visitDate,
     };
     console.log('reviewData :', reviewData);
 
     const formData = new FormData();
     formData.append('data', JSON.stringify(reviewData));
     if (selectedFiles) {
-      formData.append('image', selectedFiles);
+      formData.append('file', selectedFiles);
     }
     console.log('저장하는 리뷰 데이터 :', [...formData.entries()]);
-    onSubmit({ ...reviewData, image: selectedFiles });
+    onSubmit({ ...reviewData, file: selectedFiles });
   };
   const checkDataForm = () => {
     if (!content || !score) {
@@ -95,15 +103,21 @@ const ReviewForm = ({ buttonText, deleteButton, onSubmit }) => {
                 multiple // 여러 파일 선택 가능하도록 multiple 속성 추가
                 accept="image/*, video/*"
               />
-              <div className="w-28 h-28 bg-[#EBF4FF] flex rounded-lg items-center border border-[#3288FF] justify-center text-[#3288FF] text-6xl">
-                <CgMathPlus />
+              <div className="flex-col p-2 w-36 h-36 bg-[#EBF4FF] flex rounded-lg items-center border border-[#3288FF] justify-center text-[#8A8A8A] ">
+                <p className="text-lg">
+                  사진첨부
+                  <span className="text-2xl text-red-600">*</span>
+                </p>
+                <span className="text-sm">
+                  영수증 사진이 없으면 후기가 삭제될수 있습니다.
+                </span>
               </div>
             </label>
           </div>
           {selectedFiles.map((file, index) => (
             <div
               key={index}
-              className="w-28 h-28 bg-[#D9D9D9] flex rounded-lg items-center justify-center overflow-hidden"
+              className="w-36 h-36 bg-[#D9D9D9] flex rounded-lg items-center justify-center overflow-hidden"
             >
               {file.type.startsWith('image/') ? ( // 이미지 파일인 경우
                 <img
@@ -121,10 +135,24 @@ const ReviewForm = ({ buttonText, deleteButton, onSubmit }) => {
               ) : null}
             </div>
           ))}
-          <div className="w-28 h-28 bg-[#D9D9D9] flex rounded-lg items-center justify-center ">
+          <div className="w-36 h-36 bg-[#D9D9D9] flex rounded-lg items-center justify-center ">
             <div className="text-[#8A8A8A] text-4xl flex">
               <FaCamera />
             </div>
+          </div>
+        </div>
+        <div>
+          <div className="flex items-center">
+            <span className="mr-1 text-lg">방문 날짜</span>
+            <span className="mt-0.5 text-2xl text-red-600">*</span>
+          </div>
+          <div>
+            <input
+              type="date"
+              value={visitDate}
+              onChange={(e) => setVisitDate(e.target.value)}
+              className="w-full p-5 text-[#8A8A8A] text-xl rounded-lg h-14 focus:outline-none"
+            />
           </div>
         </div>
         {/* 후기 내용 */}

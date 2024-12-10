@@ -231,16 +231,16 @@ const PensionDetailPage = () => {
       </section>
 
             {/* Reservation Section */}
-            <section className="p-4 bg-white mt-4">
-        <h3 className="text-lg font-bold mb-2">예약 정보</h3>
+            <section className="p-4 mt-4 bg-white">
+        <h3 className="mb-2 text-lg font-bold">예약 정보</h3>
         <p className="text-sm text-gray-500 whitespace-pre-line">
           {pensionDetail.limitInfo}
         </p>
       </section>
         <ReservationRoomSection pensionId= {id}/>
       {/* Basic Info Section */}
-      <section className="p-4 bg-white mt-4">
-        <h3 className="text-lg font-bold mb-2">기본 정보</h3>
+      <section className="p-4 mt-4 bg-white">
+        <h3 className="mb-2 text-lg font-bold">기본 정보</h3>
         <p className="text-sm text-gray-500 whitespace-pre-line">
           {pensionDetail.info}
         </p>
@@ -273,7 +273,7 @@ const PensionDetailPage = () => {
     cursor: "pointer",
     padding: "0",
   }}
-  onClick={() => navigate(`/all-review/${id}`)} // ID를 포함해 리뷰 페이지로 이동
+  onClick={() => navigate(`/pension-all-review/${id}`)} // ID를 포함해 리뷰 페이지로 이동
 >
   전체보기 >
 </button>
