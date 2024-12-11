@@ -46,10 +46,19 @@ const UserEdit = () => {
         localStorage.setItem('PROFILE_IMAGE', data.profileImageUrl);
       } catch (error) {
         console.error('Error loading user details:', error);
+        Swal.fire({
+          icon: 'error',
+          title: '사용자 정보 로드 실패',
+          text: '사용자 정보를 불러오는데 실패했습니다.',
+          confirmButtonColor: '#3288FF',
+        });
       }
     };
 
     loadUserDetails();
+    return () => {
+      localStorage.removeItem('PROFILE_IMAGE');
+    };
   }, [setValue]);
 
   const handleProfileImageChange = (e) => {
