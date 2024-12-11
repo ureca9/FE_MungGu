@@ -1,34 +1,51 @@
-import { useEffect } from 'react';
-import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ROUTER_PATHS from '../../utils/RouterPath';
-import { savePreferencePlaces } from '../../api/userRegister/preference';
-import useRegisterStore from '../../stores/register/useRegisterStore';
+import {
+  savePreferencePlaces,
+  getPreferencePlaces,
+} from '../../api/userEdit/plantEdit';
 import Swal from 'sweetalert2';
-import 'sweetalert2/dist/sweetalert2.min.css';
 
-const PreferencePlant = () => {
-  const { selectedPlants, setSelectedPlants } = useRegisterStore();
+const PlantEdit = () => {
+  const [selected, setSelected] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   const navigate = useNavigate();
   const plant = ['카페', '공원', '해수욕장', '섬', '놀이터', '마당', '펜션'];
 
   useEffect(() => {
-    setSelectedPlants(selectedPlants);
-  }, [setSelectedPlants, selectedPlants]);
+    const fetchSelectedPlaces = async () => {
+      try {
+        const { places } = await getPreferencePlaces();
+        setSelected(places || []);
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: '오류 발생',
+          text: '선호 시설 데이터를 불러오는 중 오류가 발생했습니다.',
+          confirmButtonColor: '#3288FF',
+        });
+      } finally {
+        setIsLoaded(true);
+      }
+    };
+
+    fetchSelectedPlaces();
+  }, []);
 
   const toggleSelect = (option) => {
-    if (selectedPlants.includes(option)) {
-      setSelectedPlants(selectedPlants.filter((item) => item !== option));
-    } else if (selectedPlants.length < 2) {
-      setSelectedPlants([...selectedPlants, option]);
+    if (selected.includes(option)) {
+      setSelected(selected.filter((item) => item !== option));
+    } else if (selected.length < 2) {
+      setSelected([...selected, option]);
     }
   };
 
   const handleSubmit = async () => {
-    if (selectedPlants.length !== 2) {
+    if (selected.length !== 2) {
       Swal.fire({
         icon: 'warning',
-        title: '선택 오류',
         text: '2개의 시설을 선택해주세요.',
         confirmButtonColor: '#3288FF',
       });
@@ -36,15 +53,14 @@ const PreferencePlant = () => {
     }
 
     try {
-      await savePreferencePlaces(selectedPlants);
+      await savePreferencePlaces(selected);
       Swal.fire({
         icon: 'success',
-        title: '저장 성공',
-        text: '선호 시설이 저장되었습니다.',
+        title: '저장 완료',
+        text: '선호 지역이 성공적으로 저장되었습니다.',
         confirmButtonColor: '#3288FF',
-      }).then(() => {
-        navigate(ROUTER_PATHS.PREFERENCE_REGION);
       });
+      navigate(ROUTER_PATHS.MY_PAGE);
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -66,14 +82,17 @@ const PreferencePlant = () => {
             {plant.slice(0, 2).map((option, index) => (
               <button
                 key={index}
+                aria-label={`${option} 선택하기`}
+                role="button"
                 onClick={() => toggleSelect(option)}
                 className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
-                    selectedPlants.includes(option)
+                    selected.includes(option)
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
-                  }`}
+                  }
+                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
                 style={{
                   animationDelay: `${index * 0.2}s`,
                 }}
@@ -86,14 +105,17 @@ const PreferencePlant = () => {
             {plant.slice(2, 5).map((option, index) => (
               <button
                 key={index}
+                aria-label={`${option} 선택하기`}
+                role="button"
                 onClick={() => toggleSelect(option)}
                 className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
-                    selectedPlants.includes(option)
+                    selected.includes(option)
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
-                  }`}
+                  }
+                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'}`}
                 style={{
                   animationDelay: `${(index + 2) * 0.2}s`,
                 }}
@@ -106,14 +128,17 @@ const PreferencePlant = () => {
             {plant.slice(5).map((option, index) => (
               <button
                 key={index}
+                aria-label={`${option} 선택하기`}
+                role="button"
                 onClick={() => toggleSelect(option)}
                 className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
-                    selectedPlants.includes(option)
+                    selected.includes(option)
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
-                  }`}
+                  }
+                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
                 style={{
                   animationDelay: `${(index + 5) * 0.2}s`,
                 }}
@@ -124,16 +149,17 @@ const PreferencePlant = () => {
           </div>
         </div>
         <div className="w-2/3 mt-16">
-          <BasicBtn
-            styleType="blue"
-            size="md"
-            label="다음"
+          <button
             onClick={handleSubmit}
-          />
+            className="w-full px-4 py-2 font-semibold text-white transition-all bg-blue-500 rounded-lg hover:bg-blue-700 disabled:bg-gray-300"
+            disabled={selected.length !== 2}
+          >
+            저장
+          </button>
         </div>
       </main>
     </div>
   );
 };
 
-export default PreferencePlant;
+export default PlantEdit;
