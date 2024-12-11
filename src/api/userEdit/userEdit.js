@@ -44,16 +44,6 @@ export const fetchUserDetails = async () => {
  * @returns {Promise<Object>}
  */
 export const updateUserDetails = async (profileImage, memberInfo) => {
-  if (!memberInfo || typeof memberInfo !== 'object') {
-    throw new Error('memberInfo는 유효한 객체여야 합니다');
-  }
-
-  const requiredFields = ['nickname', 'email'];
-  for (const field of requiredFields) {
-    if (!(field in memberInfo)) {
-      throw new Error(`${field}는 필수 필드입니다`);
-    }
-  }
   const formData = new FormData();
 
   formData.append(
