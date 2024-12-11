@@ -41,7 +41,7 @@ const SubHeader = () => {
   const pageTitle = PAGE_TITLES[location.pathname] || '페이지 없음';
 
   return (
-    <header className="fixed top-0 z-10 w-[768px] border-b border-gray-300 backdrop-blur-md">
+    <header className="fixed top-0 z-10 w-full backdrop-blur-md max-w-[768px]">
       <div className="container flex items-center justify-between h-16 px-4 mx-auto">
         <button onClick={() => navigate(-1)} className="text-xl">
           <IoIosArrowBack />
