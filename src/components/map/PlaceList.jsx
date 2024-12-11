@@ -2,26 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
 import PlaceCard from './PlaceCard';
+import { getLikeList } from '../../api/map/map.js';
+import useCoordsStore from '../../stores/map/useCoordsStore.js';
 
 const PlaceList = ({ selectedCategory }) => {
   const [placesToShow, setPlacesToShow] = useState([]);
   const { searchResults } = useMapSearchStore();
-
-  const dummyPlaces = [
-    {
-      id: 1,
-      name: '강아지와 함께하는 카페',
-      category: '카페',
-      address: '서울시 강남구 테헤란로 123',
-      mainImages: [
-        'https://via.placeholder.com/150',
-        'https://via.placeholder.com/150',
-        'https://via.placeholder.com/150',
-      ],
-      distance: 500,
-      isLiked: true,
-    },
-  ];
+  const { coords } = useCoordsStore();
+  const { latitude, longitude } = coords;
 
   const likedPlacesMap = useMemo(
     () =>
@@ -33,25 +21,35 @@ const PlaceList = ({ selectedCategory }) => {
   );
 
   useEffect(() => {
+    const fetchLikedPlaces = async () => {
+      try {
+        const response = await getLikeList('전체', latitude, longitude);
+        setPlacesToShow(response || []);
+      } catch (error) {
+        console.error('Failed to fetch liked places:', error);
+      }
+    };
+
+    fetchLikedPlaces();
+  }, [latitude, longitude]);
+
+  useEffect(() => {
     if (searchResults.length > 0) setPlacesToShow(searchResults);
-    else {
-      const likedPlaces = dummyPlaces.filter((place) => place.isLiked);
-      if (selectedCategory === '전체') setPlacesToShow(likedPlaces);
-      else
-        setPlacesToShow(
-          likedPlaces.filter((place) => place.category === selectedCategory),
-        );
+    else if (selectedCategory !== '전체') {
+      setPlacesToShow((prevPlaces) =>
+        prevPlaces.filter((place) => place.category === selectedCategory),
+      );
     }
   }, [selectedCategory, searchResults]);
 
   const handleLikeClick = (placeId) => {
-    setPlacesToShow((prevPlaces) => {
-      return prevPlaces.map((place) =>
+    setPlacesToShow((prevPlaces) =>
+      prevPlaces.map((place) =>
         place.placeId === placeId
           ? { ...place, isLiked: !place.isLiked }
           : place,
-      );
-    });
+      ),
+    );
   };
 
   return (

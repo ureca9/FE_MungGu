@@ -69,6 +69,7 @@ const MapSearch = () => {
     setSearchTerm(historyTerm);
     if (historyTerm.trim()) handleSearch();
   };
+
   return (
     <div className="relative w-full h-[calc(100vh-8rem)] bg-white">
       <div className="absolute top-4 left-4 right-4 z-10 p-4 bg-transparent">

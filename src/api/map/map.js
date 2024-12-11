@@ -20,3 +20,15 @@ export const searchSpot = async (keyword, latitude, longitude) => {
     console.error(error);
   }
 };
+
+export const getLikeList = async (categoryName, latitude, longitude) => {
+  try {
+    const response = await instance.get(
+      `/map/likes/detail?categoryName=${categoryName}&latitude=${latitude}&longitude=${longitude}&page=${0}&size=${20}`,
+    );
+    console.log(response.data.data.places);
+    return response.data.data.places;
+  } catch (error) {
+    console.error(error);
+  }
+};
