@@ -92,6 +92,8 @@ const RegionEdit = () => {
             {regions.slice(0, 3).map((option, index) => (
               <button
                 key={index}
+                aria-label={`${option} 선택하기`}
+                role="button"
                 onClick={() => toggleSelect(option)}
                 className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
@@ -113,6 +115,8 @@ const RegionEdit = () => {
             {regions.slice(3, 5).map((option, index) => (
               <button
                 key={index}
+                aria-label={`${option} 선택하기`}
+                role="button"
                 onClick={() => toggleSelect(option)}
                 className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
@@ -134,6 +138,8 @@ const RegionEdit = () => {
             {regions.slice(5).map((option, index) => (
               <button
                 key={index}
+                aria-label={`${option} 선택하기`}
+                role="button"
                 onClick={() => toggleSelect(option)}
                 className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500

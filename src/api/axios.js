@@ -22,8 +22,14 @@ instance.interceptors.request.use((config) => {
 
 const handle401Error = async (error) => {
   const originalRequest = error.config;
-  const exceptionUrls = ['/members'];
-  if (exceptionUrls.some((url) => originalRequest.url.includes(url))) {
+  const EXCEPTION_URLS = Object.freeze(['/members']);
+  const isExceptionUrl = (requestUrl) => {
+    const path = new URL(requestUrl, 'https://base').pathname;
+    return EXCEPTION_URLS.some(
+      (url) => path === url || path.startsWith(`${url}/`),
+    );
+  };
+  if (isExceptionUrl(originalRequest.url)) {
     return Promise.resolve();
   }
   try {

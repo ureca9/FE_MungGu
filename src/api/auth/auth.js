@@ -46,6 +46,10 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
         hasMemberInfo,
       } = data.data;
 
+      if (typeof hasMemberInfo !== 'boolean') {
+        throw new Error('Invalid hasMemberInfo value received');
+      }
+
       if (!accessToken || typeof accessToken !== 'string') {
         throw new Error('Invalid access token received');
       }
@@ -70,7 +74,14 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
       updateLocalStorage(keysAndValues);
       setLogin(accessToken);
 
-      navigate(hasMemberInfo ? ROUTER_PATHS.MAIN : ROUTER_PATHS.USER_REGISTER);
+      if (typeof hasMemberInfo === 'boolean') {
+        navigate(
+          hasMemberInfo ? ROUTER_PATHS.MAIN : ROUTER_PATHS.USER_REGISTER,
+        );
+      } else {
+        console.error('Invalid hasMemberInfo value');
+        navigate(ROUTER_PATHS.USER_REGISTER);
+      }
     } else {
       console.error('Response error:', data);
 

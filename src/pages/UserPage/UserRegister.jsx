@@ -40,12 +40,17 @@ const UserRegister = () => {
   } = useForm();
 
   useEffect(() => {
-    reset({
-      profileImage: localStorage.getItem('PROFILE_IMAGE') || null,
-      email: localStorage.getItem('EMAIL') || '',
-      ...userInfo,
-      ...agreements,
-    });
+    try {
+      reset({
+        profileImage: localStorage.getItem('PROFILE_IMAGE') ?? null,
+        email: localStorage.getItem('EMAIL') ?? '',
+        ...userInfo,
+        ...agreements,
+      });
+    } catch (error) {
+      console.error('로컬 스토리지 접근 중 오류 발생:', error);
+      reset({ ...userInfo, ...agreements });
+    }
   }, [userInfo, agreements, reset]);
 
   const handleChange = (field, value) => {
