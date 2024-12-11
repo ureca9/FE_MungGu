@@ -85,8 +85,8 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
   return (
     <li className="bg-white p-4 rounded-lg shadow relative">
       <div className="absolute top-4 right-4">
-        <button onClick={() => handleLikeClick(place.id)}>
-          {likedPlaces[place.id] ? (
+        <button onClick={() => handleLikeClick(place.placeId)}>
+          {likedPlaces[place.placeId] ? (
             <FaHeart
               size={22}
               className="text-red-500 transition-colors duration-200"
@@ -102,7 +102,7 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
       <div className="flex-col">
         <div className="flex">
           <a
-            href={`/place/${place.id}`}
+            href={``}
             aria-label={`${place.name} 상세정보 보기`}
             className="text-blue-600 text-xl font-semibold hover:underline"
           >
@@ -146,7 +146,7 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
 
 PlaceCard.propTypes = {
   place: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    placeId: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     businessHour: PropTypes.string,
     distance: PropTypes.number,
