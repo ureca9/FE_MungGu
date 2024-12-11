@@ -1,40 +1,57 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
 import { useNavigate } from 'react-router-dom';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import { savePreferencePlaces } from '../../api/userRegister/preference';
+import useRegisterStore from '../../stores/register/useRegisterStore';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const PreferencePlant = () => {
-  const [selected, setSelected] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const { selectedPlants, setSelectedPlants } = useRegisterStore();
   const navigate = useNavigate();
   const plant = ['카페', '공원', '해수욕장', '섬', '놀이터', '마당', '펜션'];
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoaded(true);
-    }, 500);
-  }, []);
+    setSelectedPlants(selectedPlants);
+  }, [setSelectedPlants, selectedPlants]);
 
   const toggleSelect = (option) => {
-    if (selected.includes(option)) {
-      setSelected(selected.filter((item) => item !== option));
-    } else if (selected.length < 2) {
-      setSelected([...selected, option]);
+    if (selectedPlants.includes(option)) {
+      setSelectedPlants(selectedPlants.filter((item) => item !== option));
+    } else if (selectedPlants.length < 2) {
+      setSelectedPlants([...selectedPlants, option]);
     }
   };
 
   const handleSubmit = async () => {
-    if (selected.length !== 2) {
-      alert('2개의 시설을 선택해주세요.');
+    if (selectedPlants.length !== 2) {
+      Swal.fire({
+        icon: 'warning',
+        title: '선택 오류',
+        text: '2개의 시설을 선택해주세요.',
+        confirmButtonColor: '#3288FF',
+      });
       return;
     }
 
     try {
-      await savePreferencePlaces(selected);
-      navigate(ROUTER_PATHS.PREFERENCE_REGION);
+      await savePreferencePlaces(selectedPlants);
+      Swal.fire({
+        icon: 'success',
+        title: '저장 성공',
+        text: '선호 시설이 저장되었습니다.',
+        confirmButtonColor: '#3288FF',
+      }).then(() => {
+        navigate(ROUTER_PATHS.PREFERENCE_REGION);
+      });
     } catch (error) {
-      alert(error.message || '오류가 발생했습니다. 다시 시도해주세요.');
+      Swal.fire({
+        icon: 'error',
+        title: '오류 발생',
+        text: error.message || '오류가 발생했습니다. 다시 시도해주세요.',
+        confirmButtonColor: '#3288FF',
+      });
     }
   };
 
@@ -53,11 +70,10 @@ const PreferencePlant = () => {
                 className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
-                    selected.includes(option)
+                    selectedPlants.includes(option)
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
-                  }
-                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
+                  }`}
                 style={{
                   animationDelay: `${index * 0.2}s`,
                 }}
@@ -74,11 +90,10 @@ const PreferencePlant = () => {
                 className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
-                    selected.includes(option)
+                    selectedPlants.includes(option)
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
-                  }
-                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'}`}
+                  }`}
                 style={{
                   animationDelay: `${(index + 2) * 0.2}s`,
                 }}
@@ -95,11 +110,10 @@ const PreferencePlant = () => {
                 className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
-                    selected.includes(option)
+                    selectedPlants.includes(option)
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
-                  }
-                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
+                  }`}
                 style={{
                   animationDelay: `${(index + 5) * 0.2}s`,
                 }}

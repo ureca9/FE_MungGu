@@ -15,10 +15,21 @@ export const fetchUserDetails = async () => {
     });
     return response.data.data;
   } catch (error) {
+    let errorMessage = '알 수 없는 오류가 발생했습니다.';
+    if (error.response) {
+      switch (error.response.status) {
+        case 404:
+          errorMessage = '사용자 정보를 찾을 수 없습니다.';
+          break;
+        case 401:
+          errorMessage = '인증이 필요합니다. 다시 로그인해주세요.';
+          break;
+      }
+    }
     Swal.fire({
       icon: 'error',
       title: '데이터 불러오기 실패',
-      text: '사용자 정보를 가져오는 중 오류가 발생했습니다.',
+      text: errorMessage,
       confirmButtonColor: '#3288FF',
     });
     console.error(error);

@@ -112,7 +112,6 @@ const UserEdit = () => {
       return false;
     }
   }, 500);
-
   const checkNicknameDuplicate = async () => {
     const nickname = watch('nickname');
 

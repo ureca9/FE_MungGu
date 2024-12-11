@@ -1,12 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { handleSubmitRegions } from '../../api/userRegister/preference';
+import { savePreferenceRegions } from '../../api/userRegister/preference';
+import useRegisterStore from '../../stores/register/useRegisterStore';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 
 const PreferenceRegion = () => {
-  const [selected, setSelected] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const { selectedRegions, setSelectedRegions, resetState } =
+    useRegisterStore();
   const navigate = useNavigate();
-
   const regions = [
     '서울',
     '경기',
@@ -19,17 +22,47 @@ const PreferenceRegion = () => {
   ];
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, []);
+    setSelectedRegions(selectedRegions);
+  }, [setSelectedRegions, selectedRegions]);
 
   const toggleSelect = (option) => {
-    if (selected.includes(option)) {
-      setSelected((prev) => prev.filter((item) => item !== option));
-    } else if (selected.length < 2) {
-      setSelected((prev) => [...prev, option]);
+    if (selectedRegions.includes(option)) {
+      setSelectedRegions(selectedRegions.filter((item) => item !== option));
+    } else if (selectedRegions.length < 2) {
+      setSelectedRegions([...selectedRegions, option]);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (selectedRegions.length !== 2) {
+      Swal.fire({
+        icon: 'warning',
+        title: '선택 오류',
+        text: '2개의 지역을 선택해주세요.',
+        confirmButtonColor: '#3288FF',
+      });
+      return;
+    }
+
+    try {
+      await savePreferenceRegions(selectedRegions, navigate);
+
+      Swal.fire({
+        icon: 'success',
+        title: '저장 성공',
+        text: '선호 지역이 저장되었습니다.',
+        confirmButtonColor: '#3288FF',
+      }).then(() => {
+        resetState();
+        localStorage.removeItem(LOCAL_STORAGE_KEYS.REGISTER_STORAGE);
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '오류 발생',
+        text: error.message || '오류가 발생했습니다. 다시 시도해주세요.',
+        confirmButtonColor: '#3288FF',
+      });
     }
   };
 
@@ -48,11 +81,10 @@ const PreferenceRegion = () => {
                 className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
-                    selected.includes(option)
+                    selectedRegions.includes(option)
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
-                  }
-                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
+                  }`}
                 style={{
                   animationDelay: `${index * 0.2}s`,
                 }}
@@ -69,11 +101,10 @@ const PreferenceRegion = () => {
                 className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
-                    selected.includes(option)
+                    selectedRegions.includes(option)
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
-                  }
-                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'}`}
+                  }`}
                 style={{
                   animationDelay: `${(index + 2) * 0.2}s`,
                 }}
@@ -90,11 +121,10 @@ const PreferenceRegion = () => {
                 className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
-                    selected.includes(option)
+                    selectedRegions.includes(option)
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
-                  }
-                  ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
+                  }`}
                 style={{
                   animationDelay: `${(index + 5) * 0.2}s`,
                 }}
@@ -106,9 +136,9 @@ const PreferenceRegion = () => {
         </div>
         <div className="w-2/3 mt-16">
           <button
-            onClick={() => handleSubmitRegions(selected, navigate)}
+            onClick={handleSubmit}
             className="w-full px-4 py-2 font-semibold text-white transition-all bg-blue-500 rounded-lg shadow-md hover:bg-blue-700"
-            disabled={selected.length !== 2}
+            disabled={selectedRegions.length !== 2}
           >
             완료
           </button>
