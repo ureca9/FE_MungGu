@@ -37,7 +37,7 @@ const RegionEdit = () => {
           confirmButtonColor: '#3288FF',
         });
       } finally {
-        setTimeout(() => setIsLoaded(true), 500);
+        setIsLoaded(true);
       }
     };
 
@@ -72,10 +72,24 @@ const RegionEdit = () => {
       });
       navigate(ROUTER_PATHS.MY_PAGE);
     } catch (error) {
+      let errorMessage = '오류가 발생했습니다. 다시 시도해주세요.';
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            errorMessage = '잘못된 지역 선택입니다.';
+            break;
+          case 401:
+            errorMessage = '로그인이 필요합니다.';
+            break;
+          case 500:
+            errorMessage = '서버 오류가 발생했습니다.';
+            break;
+        }
+      }
       Swal.fire({
         icon: 'error',
         title: '오류 발생',
-        text: error.message || '오류가 발생했습니다. 다시 시도해주세요.',
+        text: errorMessage,
         confirmButtonColor: '#3288FF',
       });
     }
