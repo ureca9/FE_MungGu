@@ -84,31 +84,43 @@ export const PostPensionsReview = async (reviewFormData) => {
     const response = await instance.post('/reviews', reviewFormData, {
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
+        // 'Content-Type': 'multipart/form-data',
       },
     });
-    return response.data;
+    return response;
   } catch (error) {
     console.error('리뷰 등록 중 오류 발생:', error);
   }
 };
 
-export const GetPentionData = async ({ pensionId, getPensoinData }) => {
+export const GetPentionData = async ({ type, id }) => {
   try {
-    const response = await instance.get(
-      `/pensions/detail/${pensionId}`,
-      getPensoinData,
-      {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'multipart/form-data',
-        },
+    const response = await instance.get(`/reviews/info?type=${type}&id=${id}`, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
       },
-    );
-    console.log('get조건:', getPensoinData);
+    });
+    console.log('get조건:', typeId);
     console.log('get받음:', response);
     return response.data;
   } catch (error) {
     console.error('리뷰작성 펜션정보 오류:', error);
+  }
+};
+// 내가쓴리뷰 가져오기
+export const GetMyReviewData = async (lastReviewId) => {
+  try {
+    const response = await instance.get(`/reviews?${lastReviewId}=30`, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log('내 리뷰 :', response);
+    return response.data;
+  } catch (error) {
+    console.error('내 리뷰 가져오기 실패:', error);
+    throw error;
   }
 };

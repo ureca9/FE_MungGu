@@ -32,13 +32,13 @@ const ReviewForm = ({ buttonText, deleteButton, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!checkDataForm()) return;
+    // if (!checkDataForm()) return;
     const reviewData = {
-      plcPenId: pensionId,
+      plcPenId: Number(pensionId),
       content: content,
       score: score,
       type: type,
-      visit_date: visitDate,
+      visitDate: visitDate,
     };
     console.log('reviewData :', reviewData);
 
@@ -68,8 +68,6 @@ const ReviewForm = ({ buttonText, deleteButton, onSubmit }) => {
         className="bg-[#F3F4F5] h-full p-7 gap-5 flex flex-col"
       >
         <PlaceData />
-        {/* <StarScore /> */}
-        {/* <FileData /> */}
         <div className="flex justify-center w-full h-auto p-4 bg-white rounded-lg">
           <div className="flex flex-col items-center justify-center w-3/5 gap-7">
             <div className="text-2xl font-semibold">

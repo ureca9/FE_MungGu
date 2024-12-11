@@ -21,18 +21,14 @@ const PlaceData = () => {
   ];
   useEffect(() => {
     const fetchPentionData = async () => {
-      const getPensoinData = new FormData();
-      const typeId = {
-        type: typePension,
-        plcPenId: pensionId,
-      };
-      getPensoinData.append(
-        'data',
-        new Blob([JSON.stringify(typeId)], { type: 'application/json' }),
-      );
+      const type = typePension ? '020' : '010';
+      const id = Number(pensionId);
+
+      // getPensoinData.append('data', JSON.stringify(typeId));
+      console.log('장소 확인용:', type, id);
 
       try {
-        const response = await GetPentionData({ pensionId, getPensoinData });
+        const response = await GetPentionData({ type, id });
         console.log('장소 정보:', response);
         setBasicPension(response.data);
       } catch (error) {

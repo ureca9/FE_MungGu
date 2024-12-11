@@ -9,7 +9,7 @@ const PensionAllReview = () => {
   const { id: pensionId } = useParams();
   const { pensionsReviewData, setPensionsReviewData } = useAllReviewsStore();
 
-  const [typePensionID] = useState(location.pathname.includes('pension'));
+  const [typePensionID] = useState(location.pathname.includes('pension'));//시설인지 펜션인지 확인 
 
   const fetchPensionsReviews = async () => {
     try {

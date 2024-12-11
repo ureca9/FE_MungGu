@@ -4,33 +4,37 @@ import Swal from 'sweetalert2';
 import ROUTER_PATHS from '../../utils/RouterPath';
 
 const ReviewAdd = () => {
-  const reviewAdd = async (formData) => {
+  const reviewAdd = async (Data) => {
     try {
       const reviewFormData = new FormData();
       const reviewAdd = {
-        plcPenId: formData.pensionId,
-        content: formData.content,
-        score: formData.score,
-        type: formData.type,
-        visit_date: formData.visit_date,
+        plcPenId: Data.plcPenId,
+        content: Data.content,
+        score: Data.score,
+        type: Data.type,
+        visitDate: Data.visitDate,
       };
-      reviewFormData.append(
-        'data',
-        new Blob([JSON.stringify(reviewAdd)], { type: 'application/json' }),
-      );
+      reviewFormData.append('data', JSON.stringify(reviewAdd));
 
-      if (formData.image) {
-        reviewFormData.append('file', formData.image);
+      // `Data.file`이 배열인지 확인
+      if (Array.isArray(Data.file)) {
+        Data.file.forEach((file) => {
+          reviewFormData.append('file', file);
+        });
+      } else if (Data.file) {
+        reviewFormData.append('file', Data.file);
       }
+      console.log('리뷰 저장:', [...reviewFormData.entries()]);
 
       const response = await PostPensionsReview(reviewFormData);
       console.log('리뷰 추가 성공 :', response.data);
       Swal.fire({
         title: '추가 성공!',
         icon: 'success',
-      }).then(() => {
-        window.location.href = ROUTER_PATHS;
       });
+      // .then(() => {
+      //   window.location.href = ROUTER_PATHS;
+      // });
     } catch (error) {
       console.error('추가 중 오류 발생:', error);
     }
