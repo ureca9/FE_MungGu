@@ -21,7 +21,8 @@ const PlaceData = () => {
   ];
   useEffect(() => {
     const fetchPentionData = async () => {
-      const type = typePension ? '020' : '010';
+      // const type = typePension ? '020' : '010';
+      const type = typePension;
       const id = Number(pensionId);
 
       // getPensoinData.append('data', JSON.stringify(typeId));
@@ -29,7 +30,7 @@ const PlaceData = () => {
 
       try {
         const response = await GetPentionData({ type, id });
-        console.log('장소 정보:', response);
+        console.log('장소 정보:', response.data);
         setBasicPension(response.data);
       } catch (error) {
         console.error('장소정보 오류:', error);
@@ -42,15 +43,23 @@ const PlaceData = () => {
   }, []);
   return (
     <div className="flex items-center p-4 bg-white rounded-lg">
-      <div className="min-w-40 h-40 bg-[#D9D9D9] flex rounded-lg items-center justify-center ">
-        <div className="text-[#8A8A8A] text-4xl flex">
-          <FaCamera />
+      {basicPension.fileUrl ? (
+        <img
+          src={basicPension.fileUrl}
+          alt="펜션 이미지"
+          className="h-40 rounded-lg min-w-40"
+        />
+      ) : (
+        <div className="min-w-40 h-40 bg-[#D9D9D9] flex rounded-lg items-center justify-center ">
+          <div className="text-[#8A8A8A] text-4xl flex">
+            <FaCamera />
+          </div>
         </div>
-      </div>
+      )}
       <div className="flex flex-col w-full h-full pl-5">
         <div className="flex flex-row justify-between">
           <div className="flex mb-1 text-2xl font-semibold">
-            {basicPension.pensionName}
+            {basicPension.name}
           </div>
           <div className="flex items-center justify-center gap-2 text-xl">
             <div className="text-xl ">
@@ -69,7 +78,9 @@ const PlaceData = () => {
           <span className="ml-2 font-semibold">{basicPension.reviewAvg}</span>
           {/* <span className="ml-1 text-[#8A8A8A]">내용</span> */}
           <span className="ml-1 text-[#8A8A8A]">
-            ({basicPension.reviewCount})
+            {'('}
+            {basicPension.reviewCount}
+            {')'}
           </span>
         </div>
         <div className="flex justify-around mt-6">
@@ -85,7 +96,6 @@ const PlaceData = () => {
             ))}
           </div>
         </div>
-        {basicPension.description}
       </div>
     </div>
   );

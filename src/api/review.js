@@ -98,10 +98,8 @@ export const GetPentionData = async ({ type, id }) => {
     const response = await instance.get(`/reviews/info?type=${type}&id=${id}`, {
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
       },
     });
-    console.log('get조건:', typeId);
     console.log('get받음:', response);
     return response.data;
   } catch (error) {
@@ -122,5 +120,44 @@ export const GetMyReviewData = async (lastReviewId) => {
   } catch (error) {
     console.error('내 리뷰 가져오기 실패:', error);
     throw error;
+  }
+};
+export const DeleteReview = async (reviewId) => {
+  try {
+    const response = await instance.delete(`/reviews/${reviewId}`, {
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('반려동물 삭제 오류 :', error);
+  }
+};
+
+export const GetReviewBasicData = async (reviewId) => {
+  try {
+    const response = await instance.get(`/reviews/${reviewId}`);
+    return response.data;
+  } catch (error) {
+    console.error('리뷰수정 상세 정보 오류:', error);
+  }
+};
+
+export const PatchReviewEdit = async (selectedPetId, puppyFormData) => {
+  try {
+    const response = await instance.patch(
+      `/puppies?puppyId=${selectedPetId}`,
+      puppyFormData,
+      {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error('반려동물 수정 오류 :', error);
   }
 };

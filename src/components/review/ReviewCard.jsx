@@ -32,7 +32,6 @@ const ReviewCard = ({ review }) => {
           </div>
           <div className="flex items-center justify-center">
             <span className="text-[#FDBD00] text-2xl">
-              {/* <IoIosStar /> */}
               <RxStarFilled />
             </span>
             <span className="ml-1 font-semibold">{score}.0</span>
@@ -47,11 +46,28 @@ const ReviewCard = ({ review }) => {
         {file.length > 0 ? (
           <>
             {file.slice(0, 4).map((file, index) => (
-              <img
+              // <img
+              //   key={index}
+              //   className="w-32 h-32  bg-[#D9D9D9] rounded-lg items-center justify-center flex-row flex  flex-wrap"
+              //   src={file.fileUrl}
+              // />
+              <div
                 key={index}
-                className="w-32 h-32  bg-[#D9D9D9] rounded-lg items-center justify-center flex-row flex  flex-wrap"
-                src={file.fileUrl || usericon}
-              />
+                className="w-32 h-32 bg-[#D9D9D9] rounded-lg items-center justify-center flex-row flex flex-wrap"
+              >
+                {file.type.startsWith('image/') ? ( // 이미지 파일인 경우
+                  <img
+                    src={file.fileUrl}
+                    className="object-cover w-full h-full"
+                  />
+                ) : file.type.startsWith('video/') ? ( // 비디오 파일인 경우
+                  <video
+                    src={file.fileUrl}
+                    className="object-cover w-full h-full"
+                    controls
+                  />
+                ) : null}
+              </div>
             ))}
             {file.length > 4 && (
               <div className="flex w-32 h-32  bg-[#808080] rounded-lg items-center justify-center text-white poi">

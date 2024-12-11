@@ -19,7 +19,7 @@ const ROUTER_PATHS = {
   PET_ADD: '/pet-add',
   USER_EDIT: '/user-edit',
   MY_REVIEW: '/my-review',
-  MY_REVIEW_EDIT: '/my-review-edit',
+  MY_REVIEW_EDIT: '/my-review-edit/:id',
   RECENT_VIEW_LIST: '/recent-view-list',
   RESERVATION: '/reservation',
   RESERVATION_COMPLETE: '/reservation-complete',

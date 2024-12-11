@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 const useTypeStore = create((set) => ({
-  typePension: false,
+  typePension: null,
   pensionId: null,
   setTypePension: (newTypePension) => set({ typePension: newTypePension }),
   setPensionId: (newPensionId) => set({ pensionId: newPensionId }),

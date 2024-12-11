@@ -10,34 +10,61 @@ import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
 import Swal from 'sweetalert2';
 import { useParams } from 'react-router-dom';
 import useTypeStore from '../../stores/review/useTypeStore';
+import useReviewEditStore from '../../stores/review/useReviewEditStore.Store';
 
-const ReviewForm = ({ buttonText, deleteButton, onSubmit }) => {
+const ReviewForm = ({ buttonText, onSubmit }) => {
   // const { score, setScore } = useScoreStore();
   const { id: pensionId } = useParams();
   // const { pensionId } = useAllReviewsStore();
-  const [score, setScore] = useState();
-  const [content, setContent] = useState();
-  const [visitDate, setVisitDate] = useState();
+  const { reviewBasic } = useReviewEditStore();
+  const [score, setScore] = useState(reviewBasic?.score ?? '');
+  const [content, setContent] = useState(reviewBasic?.content ?? '');
+  const [visitDate, setVisitDate] = useState(reviewBasic?.visitDate ?? '');
   const [selectedFiles, setSelectedFiles] = useState([]);
   const { typePension } = useTypeStore();
-
-  const type = typePension ? '020' : '010';
 
   const handleScoreChange = (newScore) => {
     setScore(newScore);
   };
   const handleFileChange = (event) => {
-    setSelectedFiles([...event.target.files]); // 선택된 파일들을 state에 저장
+    const files = [...event.target.files];
+    const maxFileSize = 5 * 1024 * 1024;
+
+    const processedFiles = files
+      .map((file) => {
+        if (file.size > maxFileSize) {
+          Swal.fire({
+            title: 'Oops...',
+            text: `${file.name} 파일의 용량이 너무 큽니다. (${maxFileSize / 1024 / 1024}MB 이하)`,
+            icon: 'error',
+          });
+          return null; // 용량 초과 시 null 반환
+        } else {
+          return {
+            file: file, // File 객체
+            fileUrl: URL.createObjectURL(file), // fileUrl 추가
+            fileType: file.type.startsWith('image/')
+              ? 'IMAGE'
+              : file.type.startsWith('video/')
+                ? 'VIDEO'
+                : null, // fileType 추가
+            fileName: file.name, // fileName 추가
+          };
+        }
+      })
+      .filter((file) => file !== null); // null 값 제거
+
+    setSelectedFiles(processedFiles);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // if (!checkDataForm()) return;
+    if (!checkDataForm()) return;
     const reviewData = {
       plcPenId: Number(pensionId),
       content: content,
       score: score,
-      type: type,
+      type: typePension,
       visitDate: visitDate,
     };
     console.log('reviewData :', reviewData);
@@ -67,7 +94,7 @@ const ReviewForm = ({ buttonText, deleteButton, onSubmit }) => {
         onSubmit={handleSubmit}
         className="bg-[#F3F4F5] h-full p-7 gap-5 flex flex-col"
       >
-        <PlaceData />
+        {/* <PlaceData /> */}
         <div className="flex justify-center w-full h-auto p-4 bg-white rounded-lg">
           <div className="flex flex-col items-center justify-center w-3/5 gap-7">
             <div className="text-2xl font-semibold">
@@ -98,7 +125,7 @@ const ReviewForm = ({ buttonText, deleteButton, onSubmit }) => {
                 type="file"
                 onChange={handleFileChange}
                 className="hidden peer"
-                multiple // 여러 파일 선택 가능하도록 multiple 속성 추가
+                multiple
                 accept="image/*, video/*"
               />
               <div className="flex-col p-2 w-36 h-36 bg-[#EBF4FF] flex rounded-lg items-center border border-[#3288FF] justify-center text-[#8A8A8A] ">
@@ -117,27 +144,31 @@ const ReviewForm = ({ buttonText, deleteButton, onSubmit }) => {
               key={index}
               className="w-36 h-36 bg-[#D9D9D9] flex rounded-lg items-center justify-center overflow-hidden"
             >
-              {file.type.startsWith('image/') ? ( // 이미지 파일인 경우
+              {file.fileType === 'IMAGE' ? ( // 이미지 파일인 경우
                 <img
-                  src={URL.createObjectURL(file)}
-                  alt={file.name}
+                  src={file.fileUrl}
+                  alt={file.fileName}
                   className="object-cover w-full h-full"
                 />
-              ) : file.type.startsWith('video/') ? ( // 비디오 파일인 경우
+              ) : file.fileType === 'VIDEO' ? ( // 비디오 파일인 경우
                 <video
-                  src={URL.createObjectURL(file)}
-                  alt={file.name}
+                  src={file.fileUrl}
+                  alt={file.fileName}
                   className="object-cover w-full h-full"
                   controls
                 />
               ) : null}
             </div>
           ))}
-          <div className="w-36 h-36 bg-[#D9D9D9] flex rounded-lg items-center justify-center ">
-            <div className="text-[#8A8A8A] text-4xl flex">
-              <FaCamera />
+          {selectedFiles.length > 0 ? (
+            ''
+          ) : (
+            <div className="w-36 h-36 bg-[#D9D9D9] flex rounded-lg items-center justify-center ">
+              <div className="text-[#8A8A8A] text-4xl flex">
+                <FaCamera />
+              </div>
             </div>
-          </div>
+          )}
         </div>
         <div>
           <div className="flex items-center">
@@ -174,14 +205,6 @@ const ReviewForm = ({ buttonText, deleteButton, onSubmit }) => {
             size="lg"
             label={buttonText}
             type="submit"
-          />
-          <BasicBtn
-            styleType="reverseBlue"
-            size="lg"
-            label="삭제"
-            type="button"
-            // onClick={onDelete}
-            style={{ display: deleteButton ? 'block' : 'none' }}
           />
         </div>
       </form>

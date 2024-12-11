@@ -2,8 +2,10 @@ import ReviewForm from '../../components/review/ReviewForm';
 import { PostPensionsReview } from '../../api/review';
 import Swal from 'sweetalert2';
 import ROUTER_PATHS from '../../utils/RouterPath';
+import { useParams } from 'react-router-dom';
 
 const ReviewAdd = () => {
+  const { id: Id } = useParams();
   const reviewAdd = async (Data) => {
     try {
       const reviewFormData = new FormData();
@@ -14,7 +16,10 @@ const ReviewAdd = () => {
         type: Data.type,
         visitDate: Data.visitDate,
       };
-      reviewFormData.append('data', JSON.stringify(reviewAdd));
+      reviewFormData.append(
+        'data',
+        new Blob([JSON.stringify(reviewAdd)], { type: 'application/json' }),
+      );
 
       // `Data.file`이 배열인지 확인
       if (Array.isArray(Data.file)) {
@@ -31,17 +36,16 @@ const ReviewAdd = () => {
       Swal.fire({
         title: '추가 성공!',
         icon: 'success',
+      }).then(() => {
+        window.location.href = `/pension-all-review/${Id}`;
       });
-      // .then(() => {
-      //   window.location.href = ROUTER_PATHS;
-      // });
     } catch (error) {
       console.error('추가 중 오류 발생:', error);
     }
   };
   return (
     <div className="">
-      <ReviewForm buttonText="저장" deleteButton={false} onSubmit={reviewAdd} />
+      <ReviewForm buttonText="저장" onSubmit={reviewAdd} />
     </div>
   );
 };

@@ -5,13 +5,13 @@ import MyReviewCard from '../../components/review/MyReviewCard';
 import { FiSearch } from 'react-icons/fi';
 
 const MyReview = () => {
-  const [myReview, setMyReview] = useState();
+  const [myReviews, setMyReviews] = useState([]);
   useEffect(() => {
     const getMyReviewData = async () => {
       try {
         const response = await GetMyReviewData();
         console.log('내가쓴 리뷰:', response.data);
-        setMyReview(response.data);
+        setMyReviews(response.data);
       } catch (error) {
         console.error('내가쓴 리뷰 오류:', error);
       }
@@ -51,7 +51,9 @@ const MyReview = () => {
           </button>
         </span>
       </div>
-      <MyReviewCard />
+      {myReviews.map((myReview, index) => (
+        <MyReviewCard key={index} myReview={myReview} />
+      ))}
     </div>
   );
 };

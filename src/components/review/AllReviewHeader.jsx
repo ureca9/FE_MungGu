@@ -15,8 +15,9 @@ const AllReviewHeader = ({ typePensionID }) => {
 
   const { typePension, setTypePension } = useTypeStore(); //시설 장소 타입
   useEffect(() => {
-    setTypePension(location.pathname.includes('pension'));
-  }, [location.pathname, setTypePension]);
+    const type = location.pathname.includes('pension') ? '020' : '010';
+    setTypePension(type);
+  }, []);
 
   const pensionsSummary = async () => {
     try {
