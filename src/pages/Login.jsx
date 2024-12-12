@@ -19,7 +19,9 @@ const Login = () => {
       REDIRECT_URI,
     )}`;
     window.location.href = kakaoAuthUrl;
+    console.log(kakaoAuthUrl);
   };
+  console.log(REDIRECT_URI);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
