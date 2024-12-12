@@ -33,7 +33,7 @@ const navItems = [
     icon: null,
   },
   {
-    path: ROUTER_PATHS.MEONGSENGNEACUT,
+    path: ROUTER_PATHS.MUNGSENGNEACUT,
     label: '멍생네컷',
     icon: {
       active: (

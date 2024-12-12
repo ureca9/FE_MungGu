@@ -16,7 +16,6 @@ import ListPage from '../pages/ListPage/ListPage.jsx';
 import PensionListPage from '../pages/ListPage/PensionListPage.jsx';
 import PensionDetailPage from '../pages/DetailPage/PensionDetailPage.jsx';
 import Login from '../pages/Login.jsx';
-import Meongsengneacut from '../pages/Meongsengneacut.jsx';
 import UserRegister from './../pages/UserPage/UserRegister';
 import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import PreferencePlant from '../pages/UserPage/PreferencePlant.jsx';
@@ -25,6 +24,8 @@ import PlantEdit from '../pages/UserPage/PlantEdit.jsx';
 import RegionEdit from '../pages/UserPage/RegionEdit.jsx';
 import AllReviews from '../pages/Review/ALlReviews.jsx';
 import ReviewAdd from '../pages/Review/ReviewAdd.jsx';
+import Mungsengneacut from '../pages/Mungsengneacut.jsx/Mungsengneacut.jsx';
+import ChooseFrame from '../pages/Mungsengneacut.jsx/ChooseFrame.jsx';
 
 const routes = [
   {
@@ -96,8 +97,12 @@ const routes = [
     element: <UserRegister />,
   },
   {
-    path: ROUTER_PATHS.MEONGSENGNEACUT,
-    element: <Meongsengneacut />,
+    path: ROUTER_PATHS.MUNGSENGNEACUT,
+    element: <Mungsengneacut />,
+  },
+  {
+    path: ROUTER_PATHS.CHOOSE_FRAME,
+    element: <ChooseFrame />,
   },
   {
     path: ROUTER_PATHS.PREFERENCE_PLANT,
