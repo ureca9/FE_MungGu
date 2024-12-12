@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const ReservationRoomSection = ({ pensionId }) => {
   const today = new Date();
@@ -16,6 +16,8 @@ const ReservationRoomSection = ({ pensionId }) => {
 
   const [startDate, setStartDate] = useState(formatDate(today));
   const [endDate, setEndDate] = useState(formatDate(tomorrow));
+  const [peopleCount, setPeopleCount] = useState(1); // Default people count
+  const [dogCount, setDogCount] = useState(0); // Default dog count
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -37,12 +39,16 @@ const ReservationRoomSection = ({ pensionId }) => {
         }
       );
 
-
       if (response.data && response.data.data) {
-        const parsedRooms = response.data.data.map((item) => ({
-          ...item.room,
-          images: item.images,
-        }));
+        const parsedRooms = response.data.data
+          .map((item) => ({
+            ...item.room,
+            images: item.images,
+          }))
+          .filter(
+            (room) =>
+              room.guestCount >= peopleCount && room.petCount >= dogCount
+          ); // Filter rooms based on people and dog count
         setRooms(parsedRooms);
       }
     } catch (err) {
@@ -54,21 +60,18 @@ const ReservationRoomSection = ({ pensionId }) => {
   };
 
   useEffect(() => {
-
     if (startDate && endDate) {
       fetchRooms();
     }
-  }, [startDate, endDate]);
+  }, [startDate, endDate, peopleCount, dogCount]);
 
-  // 시작 날짜 변경 시 끝 날짜를 검증 및 자동 설정
   useEffect(() => {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const today = new Date();
     const maxBookingDate = new Date();
-    maxBookingDate.setMonth(maxBookingDate.getMonth() + 3); // 3개월
+    maxBookingDate.setMonth(maxBookingDate.getMonth() + 3);
 
-    // 끝 날짜가 시작 날짜보다 이르면 자동으로 시작 날짜의 다음 날로 설정
     if (end <= start) {
       const newEndDate = new Date(start);
       newEndDate.setDate(start.getDate() + 1);
@@ -79,21 +82,12 @@ const ReservationRoomSection = ({ pensionId }) => {
       setStartDate(formatDate(today));
       return;
     }
-    
-      // 최대 예약 기간 체크
-  if (start > maxBookingDate) {
-    setStartDate(formatDate(maxBookingDate));
-    return;
-  }
 
-    // 종료 날짜 검증
-    if (end <= start) {
-      const newEndDate = new Date(start);
-      newEndDate.setDate(start.getDate() + 1);
-      setEndDate(formatDate(newEndDate));
+    if (start > maxBookingDate) {
+      setStartDate(formatDate(maxBookingDate));
+      return;
     }
-
-  }, [startDate]); // 시작 날짜 변경 시만 실행
+  }, [startDate]);
 
   ReservationRoomSection.propTypes = {
     pensionId: PropTypes.string.isRequired,
@@ -103,123 +97,85 @@ const ReservationRoomSection = ({ pensionId }) => {
   if (error) return <div>{error}</div>;
 
   return (
-    <section style={{ padding: "16px", backgroundColor: "#fff", marginTop: "16px" }}>
-      <h3 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "16px" }}>
-        예약하기
-      </h3>
+    <section className="p-4 bg-white mt-4">
+      <h3 className="text-lg font-bold mb-4">예약하기</h3>
 
-      <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+      <div className="flex flex-wrap gap-2 mb-4">
         <input
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          style={{
-            padding: "8px",
-            fontSize: "14px",
-            border: "1px solid #e2e8f0",
-            borderRadius: "4px",
-            flex: 1,
-          }}
+          className="p-2 text-sm border border-gray-300 rounded w-36"
         />
         <input
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
-          style={{
-            padding: "8px",
-            fontSize: "14px",
-            border: "1px solid #e2e8f0",
-            borderRadius: "4px",
-            flex: 1,
-          }}
+          className="p-2 text-sm border border-gray-300 rounded w-36"
         />
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-500">사람 수:</label>
+          <select
+            value={peopleCount}
+            onChange={(e) => setPeopleCount(Number(e.target.value))}
+            className="p-2 text-sm border border-gray-300 rounded"
+          >
+            {[...Array(10)].map((_, i) => (
+              <option key={i} value={i + 1}>
+                {i + 1}명
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-500">강아지 수:</label>
+          <select
+            value={dogCount}
+            onChange={(e) => setDogCount(Number(e.target.value))}
+            className="p-2 text-sm border border-gray-300 rounded"
+          >
+            {[...Array(10)].map((_, i) => (
+              <option key={i} value={i}>
+                {i}견
+              </option>
+            ))}
+          </select>
+        </div>
         <button
           onClick={fetchRooms}
-          style={{
-            padding: "8px 16px",
-            fontSize: "14px",
-            backgroundColor: "#3182ce",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
+          className="p-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           조회
         </button>
       </div>
 
       {rooms.length === 0 ? (
-        <p style={{ fontSize: "14px", color: "#718096" }}>예약 가능한 방이 없습니다.</p>
+        <p className="text-sm text-gray-500">조건에 맞는 방이 없습니다.</p>
       ) : (
         rooms.map((room, index) => (
           <div
             key={room.roomId || index}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "16px",
-              border: "1px solid #e2e8f0",
-              borderRadius: "8px",
-              overflow: "hidden",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            }}
+            className="flex items-center mb-4 border border-gray-300 rounded shadow overflow-hidden"
           >
-            <div style={{ width: "150px", height: "100px", overflow: "hidden" }}>
+            <div className="w-36 h-24 overflow-hidden">
               <img
                 src={room.images[0] || "https://via.placeholder.com/150"}
                 alt={room.roomName}
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                className="w-full h-full object-cover"
               />
             </div>
 
-            <div style={{ flex: 1, padding: "8px 16px" }}>
-              <h4 style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "8px" }}>
-                {room.roomName}
-              </h4>
-              <p style={{ fontSize: "14px", color: "#718096", marginBottom: "4px" }}>
+            <div className="flex-1 p-4">
+              <h4 className="text-base font-bold mb-2">{room.roomName}</h4>
+              <p className="text-sm text-gray-500 mb-1">
                 {room.area ? `${room.area}㎡` : "면적 정보 없음"} · 기준 {room.guestCount}명 · 최대 {room.petCount}견
               </p>
-              <p style={{ fontSize: "14px", color: "#4a5568", marginBottom: "4px" }}>
+              <p className="text-sm text-gray-500 mb-1">
                 {room.startTime ? `입실 ${room.startTime}` : "입실 시간 정보 없음"} · {room.endTime ? `퇴실 ${room.endTime}` : "퇴실 시간 정보 없음"}
               </p>
-              <p style={{ fontSize: "14px", color: "#2d3748" }}>
+              <p className="text-sm text-gray-800 font-semibold">
                 {room.price.toLocaleString()}원 / 1박
               </p>
-            </div>
-
-            <div style={{ padding: "8px 16px" }}>
-              {room.isSoldOut ? (
-                <button
-                  style={{
-                    padding: "8px 16px",
-                    fontSize: "14px",
-                    backgroundColor: "#e2e8f0",
-                    color: "#a0aec0",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "not-allowed",
-                  }}
-                  disabled
-                >
-                  매진
-                </button>
-              ) : (
-                <button
-                  style={{
-                    padding: "8px 16px",
-                    fontSize: "14px",
-                    backgroundColor: "#3182ce",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => alert(`"${room.roomName}" 예약하기`)}
-                >
-                  예약
-                </button>
-              )}
             </div>
           </div>
         ))
