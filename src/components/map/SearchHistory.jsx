@@ -1,7 +1,8 @@
 import { FaTimes } from 'react-icons/fa';
 import useSearchHistoryStore from '../../stores/map/useSearchHistoryStore.js';
+import PropTypes from 'prop-types';
 
-const SearchHistory = () => {
+const SearchHistory = ({ onHistoryClick }) => {
   const { searchHistory, setSearchHistory } = useSearchHistoryStore();
 
   const handleDelete = (item) => {
@@ -15,12 +16,17 @@ const SearchHistory = () => {
   return (
     <div className="pt-[7rem] p-4 flex-grow">
       <ul>
-        {searchHistory.map((item, index) => (
+        {searchHistory.map((item) => (
           <li
-            key={index}
+            key={`${item}-${Date.now()}`}
             className="flex items-center justify-between px-10 py-5 border-b border-gray-300"
           >
-            <span className="text-xl">{item}</span>
+            <span
+              className="text-xl hover:bg-gray-100 cursor-pointer"
+              onClick={() => onHistoryClick(item)}
+            >
+              {item}
+            </span>
             <button
               className="ml-2 text-gray-300"
               onClick={() => handleDelete(item)}
@@ -33,4 +39,9 @@ const SearchHistory = () => {
     </div>
   );
 };
+
+SearchHistory.propTypes = {
+  onHistoryClick: PropTypes.func.isRequired,
+};
+
 export default SearchHistory;

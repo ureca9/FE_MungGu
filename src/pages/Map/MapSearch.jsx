@@ -3,14 +3,18 @@ import { FaArrowLeft, FaSearch } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import SearchHistory from '../../components/map/SearchHistory.jsx';
 import useSearchHistoryStore from '../../stores/map/useSearchHistoryStore.js';
-import { dummyPlaces } from '../../utils/DummyPlaces.js';
 import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
+import useCoordsStore from '../../stores/map/useCoordsStore.js';
+import { searchSpot } from '../../api/map/map.js';
+import Swal from 'sweetalert2';
 
 const MapSearch = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const { searchHistory, setSearchHistory } = useSearchHistoryStore();
-  const { setSearchResults, searchResults } = useMapSearchStore();
+  const { setSearchResults } = useMapSearchStore();
+  const { coords } = useCoordsStore();
+  const { latitude, longitude } = coords;
 
   useEffect(() => {
     const storedHistory =
@@ -30,15 +34,30 @@ const MapSearch = () => {
     }
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (searchTerm.trim() !== '') {
-      handleSaveSearchHistory(searchTerm);
-      const filteredResults = dummyPlaces.filter((place) =>
-        place.placeName.includes(searchTerm),
-      );
-      setSearchResults(filteredResults);
-      console.log(filteredResults, searchResults);
-      navigate('/map');
+      try {
+        const response = await searchSpot(searchTerm, latitude, longitude);
+
+        if (response.content.length === 0)
+          Swal.fire({
+            title: '검색 결과가 없습니다.',
+            text: `'${searchTerm}'에 대한 결과를 찾을 수 없습니다.`,
+            icon: 'info',
+          });
+        else {
+          handleSaveSearchHistory(searchTerm);
+          setSearchResults(response.content);
+          navigate('/map');
+        }
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          title: '오류 발생',
+          text: '검색 중 문제가 발생했습니다. 다시 시도해주세요.',
+          icon: 'error',
+        });
+      }
     }
   };
 
@@ -46,6 +65,10 @@ const MapSearch = () => {
     if (e.key === 'Enter') handleSearch();
   };
 
+  const handleHistoryClick = (historyTerm) => {
+    setSearchTerm(historyTerm);
+    if (historyTerm.trim()) handleSearch();
+  };
   return (
     <div className="relative w-full h-[calc(100vh-8rem)] bg-white">
       <div className="absolute top-4 left-4 right-4 z-10 p-4 bg-transparent">
@@ -73,7 +96,7 @@ const MapSearch = () => {
           </button>
         </div>
       </div>
-      <SearchHistory />
+      <SearchHistory onHistoryClick={handleHistoryClick} />
     </div>
   );
 };

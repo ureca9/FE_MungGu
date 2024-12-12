@@ -1,87 +1,132 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // React Router의 navigate 사용
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProfileSection from "./ProfileSection";
 
-const FacilitySection = ({ onClose }) => { // onClose prop 추가
+const FacilitySection = ({ onClose }) => {
   const [searchData, setSearchData] = useState({
     searchWord: "",
-    regionList: [],
-    placeTypes: [],
-    heaviestDogWeight: 0, // 강아지 최대 무게
+    regionList: ["전체"],
+    placeTypes: ["전체"],
+    heaviestDogWeight: 0,
   });
 
-  const navigate = useNavigate(); // navigate 함수 초기화
-  const regions = ["전체", "서울", "경기", "인천", "강원권", "충청권", "경상권", "전라권", "제주권"];
+  const navigate = useNavigate();
+  const regions = [
+    "전체",
+    "서울",
+    "경기",
+    "인천",
+    "강원권",
+    "충청권",
+    "경상권",
+    "전라권",
+    "제주권",
+  ];
   const categories = ["전체", "카페", "공원", "해수욕장", "섬", "놀이터", "마당"];
 
-  // 지역 선택 핸들러
   const handleRegionSelect = (region) => {
-    if (region === "전체") {
-      setSearchData((prev) => ({ ...prev, regionList: ["전체"] }));
-    } else {
-      setSearchData((prev) => {
+    setSearchData((prev) => {
+      if (region === "전체") {
+        // "전체" 선택 시 모든 다른 선택을 해제
+        return { ...prev, regionList: ["전체"] };
+      } else {
         const isSelected = prev.regionList.includes(region);
-        const updatedRegions = isSelected
-          ? prev.regionList.filter((r) => r !== region)
-          : prev.regionList.filter((r) => r !== "전체").concat(region);
+        let updatedRegions;
+        if (isSelected) {
+          // 이미 선택된 지역 클릭 시 해제
+          updatedRegions = prev.regionList.filter((r) => r !== region);
+        } else {
+          // 새로운 지역 선택 시 "전체" 제외 후 추가
+          updatedRegions = prev.regionList
+            .filter((r) => r !== "전체")
+            .concat(region);
+        }
+  
+        // 모든 선택이 해제되었을 때 "전체"로 초기화
+        if (updatedRegions.length === 0) {
+          updatedRegions = ["전체"];
+        }
+  
         return { ...prev, regionList: updatedRegions };
-      });
-    }
+      }
+    });
   };
 
-  // 카테고리 선택 핸들러
   const handleCategorySelect = (category) => {
-    if (category === "전체") {
-      setSearchData((prev) => ({ ...prev, placeTypes: ["전체"] }));
-    } else {
-      setSearchData((prev) => {
-        const isSelected = prev.placeTypes.includes(category);
-        const updatedCategories = isSelected
-          ? prev.placeTypes.filter((c) => c !== category)
-          : prev.placeTypes.filter((c) => c !== "전체").concat(category);
-        return { ...prev, placeTypes: updatedCategories };
-      });
-    }
+    setSearchData((prev) => {
+      if (category === "전체") {
+        // "전체"를 선택하면 나머지 선택 초기화
+        return { ...prev, placeTypes: ["전체"] };
+      }
+  
+      const isSelected = prev.placeTypes.includes(category);
+      let updatedCategories;
+  
+      if (isSelected) {
+        // 이미 선택된 카테고리를 클릭하면 해제
+        updatedCategories = prev.placeTypes.filter((c) => c !== category);
+      } else {
+        // 새로운 카테고리를 선택하면 "전체"를 제외하고 추가
+        updatedCategories = prev.placeTypes
+          .filter((c) => c !== "전체")
+          .concat(category);
+      }
+  
+      // 아무것도 선택하지 않으면 "전체"로 초기화
+      if (updatedCategories.length === 0) {
+        updatedCategories = ["전체"];
+      }
+  
+      return { ...prev, placeTypes: updatedCategories };
+    });
   };
+  
 
-  // 검색 버튼 핸들러
   const handleSearch = () => {
     const queryParams = new URLSearchParams();
-  
+
     if (searchData.searchWord) {
       queryParams.append("searchWord", searchData.searchWord);
     }
-  
-    searchData.regionList.forEach((region) => {
+
+    const filteredRegions =
+      searchData.regionList.includes("전체") || searchData.regionList.length === 0
+        ? []
+        : searchData.regionList;
+
+    filteredRegions.forEach((region) => {
       queryParams.append("regionList", region);
     });
-  
-    searchData.placeTypes.forEach((placeType) => {
+
+    const filteredCategories =
+      searchData.placeTypes.includes("전체") || searchData.placeTypes.length === 0
+        ? []
+        : searchData.placeTypes;
+
+    filteredCategories.forEach((placeType) => {
       queryParams.append("placeTypes", placeType);
     });
-  
+
     if (searchData.heaviestDogWeight) {
       queryParams.append("heaviestDogWeight", searchData.heaviestDogWeight);
     }
-  
+
     const url = `https://meong9.store/api/v1/search/places?${queryParams.toString()}`;
-  
+
     axios
       .get(url)
       .then((response) => {
         const results = response.data.data.placeInfo;
-        
-        console.log("Navigating with data:", response.data.data.placeInfo);
-        // ListPage로 이동하며 검색 결과 전달
+
         navigate("/facility-list", {
           state: {
-            results, // 검색 결과 데이터
-            filters: searchData, // 검색 조건 데이터
+            results,
+            filters: searchData,
           },
         });
 
-        if (onClose) onClose(); // 검색 성공 시 모달 닫기
+        if (onClose) onClose();
       })
       .catch((error) => {
         console.error("Error during search:", error);
@@ -91,7 +136,6 @@ const FacilitySection = ({ onClose }) => { // onClose prop 추가
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
-      {/* 지역 검색 섹션 */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold">어디로 놀러갈까요?</h3>
         <input
@@ -130,7 +174,6 @@ const FacilitySection = ({ onClose }) => { // onClose prop 추가
         </div>
       </div>
 
-      {/* 카테고리 섹션 */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold">어떤 카테고리를 선택할까요?</h3>
         <div className="grid grid-cols-3 gap-2 mt-2">
@@ -159,16 +202,15 @@ const FacilitySection = ({ onClose }) => { // onClose prop 추가
           ))}
         </div>
       </div>
-      {/* 프로필 섹션 */}
+
       <div className="mb-6">
-        <h3 className="text-lg font-semibold">누구와 함께 가나요?</h3>
         <ProfileSection
           setMaxDogWeight={(weight) =>
             setSearchData((prev) => ({ ...prev, heaviestDogWeight: weight }))
           }
         />
       </div>
-      {/* 검색 버튼 */}
+
       <div className="mt-6">
         <button
           onClick={handleSearch}

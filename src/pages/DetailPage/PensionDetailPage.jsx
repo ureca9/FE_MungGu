@@ -1,25 +1,87 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import ReservationRoomSection from "../../components/DetailPage/ReservationRoomSection";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
+import RecommendedFacility from "../../components/DetailPage/RecommendedFacility";
+import ReviewDetailModal from "../../components/review/ReviewDetailModal"; // Modal import
+
+// Custom Previous Arrow
+const CustomPrevArrow = (props) => {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{
+        ...style,
+        display: "block",
+        background: "rgba(0, 0, 0, 0.5)",
+        borderRadius: "50%",
+        padding: "10px",
+        zIndex: 2,
+        left: "10px",
+      }}
+      onClick={onClick}
+    >
+      ❮
+    </div>
+  );
+};
+
+// Custom Next Arrow
+const CustomNextArrow = (props) => {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{
+        ...style,
+        display: "block",
+        background: "rgba(0, 0, 0, 0.5)",
+        borderRadius: "50%",
+        padding: "10px",
+        zIndex: 2,
+        right: "10px",
+      }}
+      onClick={onClick}
+    >
+      ❯
+    </div>
+  );
+};
 
 const PensionDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const scrollRef = useRef(null);
   const [pensionDetail, setPensionDetail] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(
-    '2024.11.22 (금) - 2024.11.23 (토)',
-  );
-  const [selectedRoom, setSelectedRoom] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showFullIntro, setShowFullIntro] = useState(false);
+
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false); // Modal state
+  const [selectedReview, setSelectedReview] = useState(null); // Selected review
 
   useEffect(() => {
     const fetchPensionDetail = async () => {
       try {
-        const response = await axios.get(`/api/pension-detail/${id}`);
+        const accessToken = localStorage.getItem("ACCESS_TOKEN");
+        const headers = { Accept: "application/json" };
+
+        if (accessToken) {
+          headers.Authorization = `Bearer ${accessToken}`;
+        }
+
+        const response = await axios.get(
+          `https://meong9.store/api/v1/pensions/detail/${id}`,
+          { headers }
+        );
         setPensionDetail(response.data.data);
       } catch (err) {
-        setError('데이터를 불러오는 중 오류가 발생했습니다.');
+        setError("펜션 정보를 불러오는 데 실패했습니다.");
       } finally {
         setLoading(false);
       }
@@ -28,49 +90,80 @@ const PensionDetailPage = () => {
     fetchPensionDetail();
   }, [id]);
 
-  const handleReservation = (roomId) => {
-    setSelectedRoom(roomId);
-    alert(`예약이 완료되었습니다: ${roomId}`);
+  if (loading) return <LoadingSpinner />;
+  if (error) return <div>{error}</div>;
+  if (!pensionDetail) return <div>유효한 펜션 정보가 없습니다.</div>;
+
+  const images = pensionDetail.images.slice(0, 5);
+
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: true,
+    prevArrow: <CustomPrevArrow />,
+    nextArrow: <CustomNextArrow />,
   };
 
-  if (loading) return <div className="p-4">로딩 중...</div>;
-  if (error) return <div className="p-4 text-red-500">{error}</div>;
+  const maxLines = 10;
+  const introductionLines = pensionDetail.introduction.split("\n");
 
-  if (!pensionDetail) {
-    return <div className="p-4">잘못된 데이터입니다.</div>;
-  }
+  const handleReviewClick = (review) => {
+    setSelectedReview(review);
+    setIsReviewModalOpen(true);
+  };
+
+  const scrollLeft = () => {
+    scrollRef.current.scrollBy({ left: -200, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    scrollRef.current.scrollBy({ left: 200, behavior: "smooth" });
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: "#f9fafb" }}>
       {/* Header */}
-      <header className="bg-white shadow-md p-4 flex items-center justify-between">
-        <button onClick={() => navigate(-1)} className="text-gray-600 text-lg">{`<`}</button>
+      <header className="bg-white shadow-md p-4 flex justify-between items-center">
+        <button onClick={() => navigate(-1)} className="text-gray-600 text-lg">
+          {"<"}
+        </button>
         <h1 className="text-xl font-bold">{pensionDetail.pensionName}</h1>
-        <div className="w-6"></div> {/* Spacer for alignment */}
+        <button className="text-gray-400"></button>
       </header>
 
-      {/* Image Section */}
-      <div className="bg-gray-300 h-64 w-full flex items-center justify-center">
-        {/* Replace with actual image */}
-        <span className="text-gray-500">이미지</span>
+      {/* Image Section (Carousel) */}
+      <div className="w-full h-[400px] overflow-hidden">
+        <Slider {...sliderSettings}>
+          {images.map((image, index) => (
+            <div key={index}>
+              <img
+                src={image}
+                alt={`Pension Image ${index + 1}`}
+                className="w-full h-[400px] object-cover"
+              />
+            </div>
+          ))}
+        </Slider>
       </div>
 
       {/* Info Section */}
-      <section className="p-4 bg-white">
+      <section className="p-4 bg-white mt-4">
         <h2 className="text-lg font-bold mb-2">{pensionDetail.pensionName}</h2>
         <p className="text-sm text-gray-500">{pensionDetail.address}</p>
-        <div className="flex items-center space-x-2 my-2">
-          <span className="text-yellow-500">
-            ⭐ {pensionDetail.reviewAvg} ({pensionDetail.reviewCount})
+        <div className="flex items-center mt-2">
+          <span className="text-yellow-500 mr-2">⭐ {pensionDetail.reviewAvg}</span>
+          <span className="text-sm text-gray-500">
+            ({pensionDetail.reviewCount})
           </span>
-          <button className="text-gray-500 hover:text-red-500">♥</button>
-          <button className="text-gray-500">공유하기</button>
         </div>
         <div className="flex flex-wrap gap-2 mt-2">
           {pensionDetail.tags.map((tag) => (
             <span
               key={tag}
-              className="px-3 py-1 bg-gray-200 text-sm rounded-full"
+              className="px-2 py-1 bg-gray-100 text-xs rounded-md"
             >
               {tag}
             </span>
@@ -81,99 +174,105 @@ const PensionDetailPage = () => {
       {/* Description Section */}
       <section className="p-4 bg-white mt-4">
         <h3 className="text-lg font-bold mb-2">소개글</h3>
-        <p className="text-sm text-gray-500">{pensionDetail.description}</p>
+        <p className="text-sm text-gray-700 whitespace-pre-line">
+          {showFullIntro
+            ? pensionDetail.introduction
+            : introductionLines.slice(0, maxLines).join("\n")}
+        </p>
+        {introductionLines.length > maxLines && (
+          <button
+            onClick={() => setShowFullIntro(!showFullIntro)}
+            className="text-blue-500 text-sm mt-2"
+          >
+            {showFullIntro ? "접기" : "더보기"}
+          </button>
+        )}
       </section>
 
       {/* Reservation Section */}
       <section className="p-4 bg-white mt-4">
-        <h3 className="text-lg font-bold mb-2">예약하기</h3>
-        <div className="flex items-center space-x-4 mb-4">
-          <input
-            type="text"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="flex-grow p-3 border border-gray-300 rounded-lg"
-          />
-        </div>
-        <div className="space-y-4">
-          {pensionDetail.rooms.map((room) => (
-            <div
-              key={room.id}
-              className="p-4 bg-white shadow-md rounded-lg flex justify-between items-center"
-            >
-              <div>
-                <h4 className="text-lg font-bold mb-1">{room.name}</h4>
-                <p className="text-sm text-gray-500">{room.size}</p>
-                <p className="text-sm text-gray-500">
-                  {room.checkIn} ~ {room.checkOut}
-                </p>
-                <p className="text-sm text-gray-500">{room.features}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-lg font-bold text-blue-500 mb-2">
-                  {room.price} / 1박
-                </p>
-                <button
-                  onClick={() => handleReservation(room.id)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-                >
-                  예약
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <h3 className="text-lg font-bold mb-2">예약 정보</h3>
+        <p className="text-sm text-gray-500 whitespace-pre-line">
+          {pensionDetail.limitInfo}
+        </p>
+        <ReservationRoomSection pensionId={id} />
       </section>
 
       {/* Basic Info Section */}
       <section className="p-4 bg-white mt-4">
         <h3 className="text-lg font-bold mb-2">기본 정보</h3>
-        <ul className="text-sm text-gray-500 list-disc pl-5">
-          {pensionDetail.basicInfo.map((info, index) => (
-            <li key={index}>{info}</li>
-          ))}
-        </ul>
+        <p className="text-sm text-gray-500 whitespace-pre-line">
+          {pensionDetail.info}
+        </p>
       </section>
 
-      {/* Policy Section */}
-      <section className="p-4 bg-white mt-4">
-        <h3 className="text-lg font-bold mb-2">이용 정책</h3>
-        <ul className="text-sm text-gray-500 list-disc pl-5">
-          {pensionDetail.policy.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
+      {/* Review Section */}
+      <section className="p-4 bg-white mt-4 relative">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-bold">리얼 포토 리뷰</h3>
+          <button
+            className="text-sm text-blue-500 hover:underline"
+            onClick={() => navigate(`/all-review/${id}`)}
+          >
+            전체보기 &gt;
+          </button>
+        </div>
+        <div className="relative">
+          <button
+            onClick={scrollLeft}
+            className="absolute left-0 top-1/2 -translate-y-1/2 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-blue-600 z-10"
+          >
+            ◀
+          </button>
+          <div
+            ref={scrollRef}
+            className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-sky-100"
+          >
+            {pensionDetail.review.slice(0, 20).map((review, index) => {
+              const firstFileUrl =
+                review.file && review.file.length > 0 ? review.file[0].fileUrl : null;
+
+              return (
+                <div
+                  key={index}
+                  onClick={() => handleReviewClick(review)}
+                  className="flex-none w-36 rounded-lg bg-gray-50 shadow-md p-2 cursor-pointer"
+                >
+                  <img
+                    src={firstFileUrl || "https://via.placeholder.com/150"}
+                    alt="리뷰 사진"
+                    className="w-full h-24 rounded-lg object-cover"
+                  />
+                  <p className="text-sm font-bold mt-2 truncate">
+                    {review.nickname}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {review.content.slice(0, 30)}...
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+          <button
+            onClick={scrollRight}
+            className="absolute right-0 top-1/2 -translate-y-1/2 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-blue-600 z-10"
+          >
+            ▶
+          </button>
+        </div>
       </section>
 
-      {/* Notice Section */}
-      <section className="p-4 bg-white mt-4">
-        <h3 className="text-lg font-bold mb-2">주의사항</h3>
-        <ul className="text-sm text-gray-500 list-disc pl-5">
-          {pensionDetail.notice.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
-      </section>
+      {/* Recommended Facility Section */}
+      <RecommendedFacility pensionId={id} />
 
-      {/* Footer Navigation */}
-      <footer className="fixed bottom-0 left-0 right-0 flex justify-around items-center h-14 bg-white border-t">
-        <button className="text-center text-sm">
-          <div className="text-lg">🏠</div>
-          홈
-        </button>
-        <button className="text-center text-sm">
-          <div className="text-lg">📍</div>
-          지도
-        </button>
-        <button className="text-center text-sm">
-          <div className="text-lg">🐾</div>
-          즐겨찾기
-        </button>
-        <button className="text-center text-sm">
-          <div className="text-lg">⚙️</div>
-          설정
-        </button>
-      </footer>
+      {/* Review Modal */}
+      {isReviewModalOpen && (
+        <ReviewDetailModal
+          isOpen={isReviewModalOpen}
+          onClose={() => setIsReviewModalOpen(false)}
+          reviewData={selectedReview}
+        />
+      )}
     </div>
   );
 };

@@ -10,9 +10,6 @@ const Main = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <header className="bg-white shadow-md p-4 text-center">
-        <h1 className="text-2xl font-bold text-blue-600">메인 페이지</h1>
-      </header>
 
       {/* Search */}
       <div className="p-4 bg-white">

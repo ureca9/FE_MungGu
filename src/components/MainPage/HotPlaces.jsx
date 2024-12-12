@@ -15,7 +15,6 @@ const HotPlaces = () => {
     const fetchPlaces = async () => {
       try {
         const response = await axios.get('/api/hot-places');
-        console.log('API 응답 데이터:', response.data);
         setPlaces(response.data.data || []); // 데이터가 없을 경우 빈 배열로 대체
       } catch (error) {
         console.error('데이터를 가져오는데 실패했습니다:', error.message);
