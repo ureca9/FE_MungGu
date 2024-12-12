@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { BasicInput } from '../../stories/Input/BasicInput';
@@ -12,9 +12,11 @@ import KakaoLogo from '../../assets/login/KakaoLogo.svg';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import ROUTER_PATHS from '../../utils/RouterPath';
+import { debounce } from 'lodash';
 
 const UserEdit = () => {
   const navigate = useNavigate();
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   const {
     register,
@@ -46,10 +48,19 @@ const UserEdit = () => {
         localStorage.setItem('PROFILE_IMAGE', data.profileImageUrl);
       } catch (error) {
         console.error('Error loading user details:', error);
+        Swal.fire({
+          icon: 'error',
+          title: '사용자 정보 로드 실패',
+          text: '사용자 정보를 불러오는데 실패했습니다.',
+          confirmButtonColor: '#3288FF',
+        });
       }
     };
 
     loadUserDetails();
+    return () => {
+      localStorage.removeItem('PROFILE_IMAGE');
+    };
   }, [setValue]);
 
   const handleProfileImageChange = (e) => {
@@ -79,9 +90,28 @@ const UserEdit = () => {
       }
 
       setValue('profileImage', file);
+      const newPreviewUrl = URL.createObjectURL(file);
+      setPreviewUrl(newPreviewUrl);
     }
   };
 
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
+  const debouncedCheckNickname = debounce(async (nickname) => {
+    try {
+      const message = await checkNickname(nickname.trim());
+      return message !== '중복된 닉네임입니다.';
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }, 500);
   const checkNicknameDuplicate = async () => {
     const nickname = watch('nickname');
 
@@ -106,8 +136,7 @@ const UserEdit = () => {
     }
 
     try {
-      const message = await checkNickname(nickname.trim());
-      const isAvailable = message !== '중복된 닉네임입니다.';
+      const isAvailable = await debouncedCheckNickname(nickname);
       Swal.fire({
         icon: isAvailable ? 'success' : 'error',
         text: isAvailable
@@ -129,6 +158,7 @@ const UserEdit = () => {
   };
 
   const onSubmit = async (data) => {
+    if (isSubmitting) return;
     try {
       const updatedData = await updateUserDetails(data.profileImage, {
         name: data.name,
