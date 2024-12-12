@@ -1,13 +1,9 @@
-import {
-  Description,
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-} from '@headlessui/react';
+import { Description, Dialog, DialogPanel } from '@headlessui/react';
 import { useState } from 'react';
 import { RxStarFilled } from 'react-icons/rx';
 import usericon from '../../assets/MypageImg/user.svg';
 import { BsChevronCompactLeft, BsChevronCompactRight } from 'react-icons/bs';
+import { CircularProgress } from '@mui/material';
 
 const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
   const {
@@ -33,7 +29,11 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
       prevIndex > 0 ? prevIndex - 1 : file.length - 1,
     );
   };
+  const [isLoading, setIsLoading] = useState(true); // 이미지 로딩 상태 추가
 
+  const handleImageLoad = () => {
+    setIsLoading(false); // 이미지 로딩 완료 시 상태 변경
+  };
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
@@ -44,9 +44,15 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
             <div className="relative overflow:hidden flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-full bg-[#D9D9D9]">
               {file.length > 0 ? (
                 <>
+                  {isLoading && (
+                    <div className="absolute inset-0 z-10 flex items-center justify-center">
+                      <CircularProgress size={60} />
+                    </div>
+                  )}
                   <img
                     className="flex object-contain w-full h-full"
                     src={file[currentImageIndex].fileUrl}
+                    onLoad={handleImageLoad}
                   />
                   <button
                     className="absolute text-6xl text-white transform -translate-y-1/2 left-4 top-1/2"
@@ -78,7 +84,6 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                 </div>
                 <div className="flex items-center justify-center">
                   <span className="text-[#FDBD00] text-2xl">
-                    {/* <IoIosStar /> */}
                     <RxStarFilled />
                   </span>
                   <span className="ml-1 font-semibold">{score}.0</span>

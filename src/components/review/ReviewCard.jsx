@@ -46,21 +46,16 @@ const ReviewCard = ({ review }) => {
         {file.length > 0 ? (
           <>
             {file.slice(0, 4).map((file, index) => (
-              // <img
-              //   key={index}
-              //   className="w-32 h-32  bg-[#D9D9D9] rounded-lg items-center justify-center flex-row flex  flex-wrap"
-              //   src={file.fileUrl}
-              // />
               <div
                 key={index}
                 className="w-32 h-32 bg-[#D9D9D9] rounded-lg items-center justify-center flex-row flex flex-wrap"
               >
-                {file.type.startsWith('image/') ? ( // 이미지 파일인 경우
+                {file.fileType === 'IMAGE' ? (
                   <img
                     src={file.fileUrl}
                     className="object-cover w-full h-full"
                   />
-                ) : file.type.startsWith('video/') ? ( // 비디오 파일인 경우
+                ) : file.fileType === 'VIDEO' ? (
                   <video
                     src={file.fileUrl}
                     className="object-cover w-full h-full"
