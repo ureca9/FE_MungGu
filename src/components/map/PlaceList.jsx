@@ -6,25 +6,16 @@ import { addLikePlace, getLikeList } from '../../api/map/map.js';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
 
 const PlaceList = ({ selectedCategory }) => {
-  const [placesToShow, setPlacesToShow] = useState([]);
+  const [likedPlaces, setLikedPlaces] = useState([]);
   const { searchResults } = useMapSearchStore();
   const { coords } = useCoordsStore();
   const { latitude, longitude } = coords;
-
-  const likedPlacesMap = useMemo(
-    () =>
-      placesToShow.reduce((acc, place) => {
-        acc[place.placeId] = place.isLike;
-        return acc;
-      }, {}),
-    [placesToShow],
-  );
 
   useEffect(() => {
     const fetchLikedPlaces = async () => {
       try {
         const response = await getLikeList('전체', latitude, longitude);
-        setPlacesToShow(response || []);
+        setLikedPlaces(response || []);
       } catch (error) {
         console.error('Failed to fetch liked places:', error);
       }
@@ -33,23 +24,23 @@ const PlaceList = ({ selectedCategory }) => {
     fetchLikedPlaces();
   }, [latitude, longitude]);
 
-  useEffect(() => {
-    if (searchResults.length > 0) setPlacesToShow(searchResults);
-    else if (selectedCategory !== '전체') {
-      setPlacesToShow((prevPlaces) =>
-        prevPlaces.filter((place) => place.category === selectedCategory),
-      );
-    }
-  }, [selectedCategory, searchResults]);
+  const likedPlacesMap = useMemo(
+    () =>
+      likedPlaces.reduce((acc, place) => {
+        acc[place.placeId] = place.isLike;
+        return acc;
+      }, {}),
+    [likedPlaces],
+  );
 
   const handleLikeClick = async (placeId) => {
-    const place = placesToShow.find((place) => place.placeId === placeId);
+    const place = likedPlaces.find((place) => place.placeId === placeId);
     if (!place) return;
 
     const originalIsLike = place.isLike;
-    const categoryName = place.categoryName; // place에서 category 가져오기
+    const categoryName = place.categoryName;
 
-    setPlacesToShow((prevPlaces) =>
+    setLikedPlaces((prevPlaces) =>
       prevPlaces.map((place) =>
         place.placeId === placeId ? { ...place, isLike: !place.isLike } : place,
       ),
@@ -60,7 +51,7 @@ const PlaceList = ({ selectedCategory }) => {
     } catch (error) {
       console.error(error);
 
-      setPlacesToShow((prevPlaces) =>
+      setLikedPlaces((prevPlaces) =>
         prevPlaces.map((place) =>
           place.placeId === placeId
             ? { ...place, isLike: originalIsLike }
@@ -69,6 +60,14 @@ const PlaceList = ({ selectedCategory }) => {
       );
     }
   };
+
+  const placesToShow = useMemo(() => {
+    if (searchResults.length > 0) return searchResults;
+    if (selectedCategory !== '전체') {
+      return likedPlaces.filter((place) => place.category === selectedCategory);
+    }
+    return likedPlaces;
+  }, [searchResults, selectedCategory, likedPlaces]);
 
   return (
     <div className="mt-4">
