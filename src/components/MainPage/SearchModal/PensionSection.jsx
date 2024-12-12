@@ -1,29 +1,30 @@
 import React, { useState } from "react";
 import Calendar from "react-calendar";
-import ProfileSection from "./ProfileSection";
+import ProfileSection from "./ProfileSection"; // ProfileSection 추가 import
 import "./PensionSection.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const PensionSection = ({ onClose }) => {
-  const [searchWord, setSearchWord] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState("");
-  const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
-  const [heaviestDogWeight, setHeaviestDogWeight] = useState(0);
-  const [weatherData, setWeatherData] = useState([]);
+  const [searchWord, setSearchWord] = useState(""); // 검색어
+  const [selectedRegion, setSelectedRegion] = useState(""); // 선택된 지역
+  const [selectedDateRange, setSelectedDateRange] = useState([null, null]); // 선택된 날짜
+  const [heaviestDogWeight, setHeaviestDogWeight] = useState(0); // 최대 반려동물 무게
+  const [weatherData, setWeatherData] = useState([]); // 날씨 데이터
   const navigate = useNavigate();
 
   const regions = ["서울", "경기", "인천", "강원", "충청", "전라", "경상", "제주"];
 
   const handleRegionSelect = (region) => {
-    setSelectedRegion(region === selectedRegion ? "" : region);
+    setSelectedRegion(region === selectedRegion ? "" : region); // 선택된 지역 토글
 
     if (region !== selectedRegion) {
-      fetchWeatherData(region);
+      fetchWeatherData(region); // 날씨 데이터 가져오기
     } else {
-      setWeatherData([]);
+      setWeatherData([]); // 선택 해제 시 데이터 초기화
     }
   };
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchWeatherData = async (region) => {
     try {
@@ -37,12 +38,14 @@ const PensionSection = ({ onClose }) => {
         }
       );
       const data = response.data.data;
-      const weather = Object.values(data).slice(1, 11);
+      const weather = Object.values(data).slice(1, 11); // day1~day10 날씨 데이터 추출
       setWeatherData(weather);
     } catch (error) {
       console.error("[PensionSection] 날씨 데이터 요청 실패:", error);
       alert("날씨 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해 주세요.");
       setWeatherData([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -56,8 +59,8 @@ const PensionSection = ({ onClose }) => {
         return "☀️";
       case "흐림":
         return "⛅";
-      case "구름많음":
-        return "⛅";
+        case "구름많음":
+          return "⛅";
       case "비/눈":
         return "🌧️";
       case "비":
@@ -80,7 +83,7 @@ const PensionSection = ({ onClose }) => {
     if (dayDifference >= 0 && dayDifference < weatherData.length) {
       const weather = weatherData[dayDifference];
       return (
-        <div className="text-center">
+        <div className="weather-icon">
           {weather && getWeatherIcon(weather)}
         </div>
       );
@@ -107,6 +110,7 @@ const PensionSection = ({ onClose }) => {
       );
 
     const url = `https://meong9.store/api/v1/search/pensions?${queryParams.toString()}`;
+
     axios
       .get(url)
       .then((response) => {
@@ -135,6 +139,7 @@ const PensionSection = ({ onClose }) => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
+      {/* 검색어 입력 */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold">어디로 놀러갈까요?</h3>
         <input
@@ -146,6 +151,7 @@ const PensionSection = ({ onClose }) => {
         />
       </div>
 
+      {/* 지역 선택 */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold">어디로 놀러갈까요?</h3>
         <div className="grid grid-cols-3 gap-2 mt-2">
@@ -166,29 +172,33 @@ const PensionSection = ({ onClose }) => {
         </p>
       </div>
 
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold">언제 갈 건가요?</h3>
-        <Calendar
-          onChange={handleDateChange}
-          value={selectedDateRange}
-          selectRange
-          tileContent={tileContent}
-          className="react-calendar" // CSS 클래스 적용
-        />
-
-        <div className="mt-4 p-4 bg-blue-100 rounded-md">
-          {selectedDateRange[0] && selectedDateRange[1]
-            ? `선택된 날짜: ${selectedDateRange[0].toLocaleDateString()} - ${selectedDateRange[1].toLocaleDateString()}`
-            : selectedDateRange[0]
-            ? `선택된 날짜: ${selectedDateRange[0].toLocaleDateString()}`
-            : "날짜를 선택하세요."}
+      {/* 달력 섹션 */}
+      { (
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold">언제 갈 건가요?</h3>
+          <Calendar
+            onChange={handleDateChange}
+            value={selectedDateRange}
+            selectRange
+            tileContent={tileContent}
+            className="react-calendar"
+          />
+          <div className="mt-2 text-sm text-gray-600">
+            {selectedDateRange[0] && selectedDateRange[1]
+              ? `선택된 날짜: ${selectedDateRange[0].toLocaleDateString()} - ${selectedDateRange[1].toLocaleDateString()}`
+              : selectedDateRange[0]
+              ? `선택된 날짜: ${selectedDateRange[0].toLocaleDateString()}`
+              : "날짜를 선택하세요."}
+          </div>
         </div>
-      </div>
+      )}
 
+      {/* 프로필 섹션 */}
       <div className="mb-6">
         <ProfileSection setMaxDogWeight={(weight) => setHeaviestDogWeight(weight)} />
       </div>
 
+      {/* 검색 버튼 */}
       <div className="mt-6">
         <button
           onClick={handleSearch}
