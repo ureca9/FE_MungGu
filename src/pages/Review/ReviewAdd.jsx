@@ -1,7 +1,6 @@
 import ReviewForm from '../../components/review/ReviewForm';
 import { PostPensionsReview } from '../../api/review';
 import Swal from 'sweetalert2';
-import ROUTER_PATHS from '../../utils/RouterPath';
 import { useParams } from 'react-router-dom';
 
 const ReviewAdd = () => {

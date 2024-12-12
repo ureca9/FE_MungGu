@@ -5,13 +5,13 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useTypeStore from '../../stores/review/useTypeStore';
 import useReviewEditStore from '../../stores/review/useReviewEditStore.Store';
+import ReviewEditForm from '../../components/review/ReviewEditForm';
 
 const ReviewEdit = () => {
   const { id: reviewId } = useParams();
-  // const { typePension, setTypePension } = useState();
-  // const { reviewBasic, setReviewBasic } = useState();
   const { typePension, setTypePension } = useTypeStore();
   const { reviewBasic, setReviewBasic } = useReviewEditStore();
+  // const [reviewBasic, setReviewBasic] = useState();
 
   useEffect(() => {
     const fetchReviewData = async () => {
@@ -19,9 +19,9 @@ const ReviewEdit = () => {
         const response = await GetReviewBasicData(reviewId);
         console.log('수정할 리뷰 정보:', response.data);
         setReviewBasic(response.data);
-        // setTypePension(response.data);
+        console.log('수정할 리뷰내용:', reviewBasic);
       } catch (error) {
-        console.error('반려동물 정보 가져오기 오류:', error);
+        console.error('수정할 리뷰 정보오류:', error);
       }
     };
 
@@ -69,7 +69,7 @@ const ReviewEdit = () => {
   };
   return (
     <div>
-      <ReviewForm buttonText="수정" onSubmit={reviewEdit} />
+      <ReviewEditForm buttonText="수정" onSubmit={reviewEdit} />
     </div>
   );
 };

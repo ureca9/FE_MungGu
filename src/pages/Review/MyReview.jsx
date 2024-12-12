@@ -6,6 +6,9 @@ import { FiSearch } from 'react-icons/fi';
 
 const MyReview = () => {
   const [myReviews, setMyReviews] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [sortState, setSortState] = useState('none'); // 정렬 상태 추가
+
   useEffect(() => {
     const getMyReviewData = async () => {
       try {
@@ -19,7 +22,30 @@ const MyReview = () => {
 
     getMyReviewData();
   }, []);
-  const [inputValue, setInputValue] = useState(''); // 입력 값 상태 관리
+
+  const sortReviews = () => {
+    // 정렬 함수
+    const sortedReviews = [...myReviews];
+    sortedReviews.sort((a, b) => {
+      const dateA = new Date(a.visitDate);
+      const dateB = new Date(b.visitDate);
+
+      if (sortState === 'latest') {
+        return dateB - dateA;
+      } else if (sortState === 'oldest') {
+        return dateA - dateB;
+      } else {
+        return 0;
+      }
+    });
+
+    setMyReviews(sortedReviews);
+  };
+
+  useEffect(() => {
+    sortReviews();
+  }, [sortState]); // sortState 변경 시 sortReviews 호출
+
   return (
     <div className="flex flex-col w-full gap-3 p-7">
       <div className="flex justify-between mb-5">
@@ -37,13 +63,25 @@ const MyReview = () => {
           )}
         </div>
         <span className="flex flex-row items-center">
-          <button className="flex items-center gap-1 mx-2">
+          <button
+            className={`flex items-center gap-1 mx-2 ${sortState === 'latest' ? 'border-b-2 border-black' : ''}`}
+            onClick={() => {
+              setSortState('latest');
+              sortReviews();
+            }}
+          >
             최신순
             <span>
               <GoArrowUp />
             </span>
           </button>
-          <button className="flex items-center gap-1">
+          <button
+            className={`flex items-center gap-1 ${sortState === 'oldest' ? 'border-b-2 border-black' : ''}`}
+            onClick={() => {
+              setSortState('oldest');
+              sortReviews();
+            }}
+          >
             오래된순
             <span>
               <GoArrowDown />

@@ -7,13 +7,14 @@ import { useParams } from 'react-router-dom';
 import useTypeStore from '../../stores/review/useTypeStore';
 import useReviewEditStore from '../../stores/review/useReviewEditStore.Store';
 
-const ReviewForm = ({ buttonText, onSubmit }) => {
-  const { id: pensionId } = useParams();
-  const [score, setScore] = useState('');
-  const [content, setContent] = useState('');
-  const [visitDate, setVisitDate] = useState('');
+const ReviewEditForm = ({ buttonText, onSubmit }) => {
+  const { reviewBasic } = useReviewEditStore();
+  // const [reviewBasic] = useState();
+  const [score, setScore] = useState(reviewBasic?.score ?? '');
+  const [type, setType] = useState(reviewBasic?.type ?? '');
+  const [content, setContent] = useState(reviewBasic?.content ?? '');
+  const [visitDate, setVisitDate] = useState(reviewBasic?.visitDate ?? '');
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const { typePension } = useTypeStore();
 
   const handleScoreChange = (newScore) => {
     setScore(newScore);
@@ -53,10 +54,10 @@ const ReviewForm = ({ buttonText, onSubmit }) => {
     e.preventDefault();
     if (!checkDataForm()) return;
     const reviewData = {
-      plcPenId: Number(pensionId),
+      plcPenId: Number(reviewBasic.plcPenId),
       content: content,
       score: score,
-      type: typePension,
+      type: type,
       visitDate: visitDate,
     };
     console.log('reviewData :', reviewData);
@@ -204,4 +205,4 @@ const ReviewForm = ({ buttonText, onSubmit }) => {
   );
 };
 
-export default ReviewForm;
+export default ReviewEditForm;
