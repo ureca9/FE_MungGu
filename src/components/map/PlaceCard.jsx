@@ -119,17 +119,17 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
         </div>
       </div>
       <div className="mt-4">
-        {place.mainImages && place.mainImages.length > 0 && (
+        {place.images && place.images.length > 0 && (
           <div
             className={`
       grid 
       gap-4 
-      ${place.mainImages.length === 1 ? 'grid-cols-1' : ''}
-      ${place.mainImages.length === 2 ? 'grid-cols-2' : ''}
-      ${place.mainImages.length >= 3 ? 'grid-cols-3' : ''}
+      ${place.images.length === 1 ? 'grid-cols-1' : ''}
+      ${place.images.length === 2 ? 'grid-cols-2' : ''}
+      ${place.images.length >= 3 ? 'grid-cols-3' : ''}
     `}
           >
-            {place.mainImages.map((image, index) => (
+            {place.images.map((image, index) => (
               <img
                 key={index}
                 src={image}
@@ -151,7 +151,7 @@ PlaceCard.propTypes = {
     businessHour: PropTypes.string,
     distance: PropTypes.number,
     address: PropTypes.string.isRequired,
-    mainImages: PropTypes.arrayOf(PropTypes.string),
+    images: PropTypes.arrayOf(PropTypes.string),
   }),
   likedPlaces: PropTypes.object.isRequired,
   handleLikeClick: PropTypes.func.isRequired,

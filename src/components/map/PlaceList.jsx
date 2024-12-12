@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
 import PlaceCard from './PlaceCard';
-import { getLikeList } from '../../api/map/map.js';
+import { addLikePlace, getLikeList } from '../../api/map/map.js';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
 
 const PlaceList = ({ selectedCategory }) => {
@@ -14,7 +14,7 @@ const PlaceList = ({ selectedCategory }) => {
   const likedPlacesMap = useMemo(
     () =>
       placesToShow.reduce((acc, place) => {
-        acc[place.placeId] = place.isLiked;
+        acc[place.placeId] = place.isLike;
         return acc;
       }, {}),
     [placesToShow],
@@ -42,23 +42,41 @@ const PlaceList = ({ selectedCategory }) => {
     }
   }, [selectedCategory, searchResults]);
 
-  const handleLikeClick = (placeId) => {
+  const handleLikeClick = async (placeId) => {
+    const place = placesToShow.find((place) => place.placeId === placeId);
+    if (!place) return;
+
+    const originalIsLike = place.isLike;
+    const categoryName = place.categoryName; // place에서 category 가져오기
+
     setPlacesToShow((prevPlaces) =>
       prevPlaces.map((place) =>
-        place.placeId === placeId
-          ? { ...place, isLiked: !place.isLiked }
-          : place,
+        place.placeId === placeId ? { ...place, isLike: !place.isLike } : place,
       ),
     );
+
+    try {
+      await addLikePlace(placeId, categoryName);
+    } catch (error) {
+      console.error(error);
+
+      setPlacesToShow((prevPlaces) =>
+        prevPlaces.map((place) =>
+          place.placeId === placeId
+            ? { ...place, isLike: originalIsLike }
+            : place,
+        ),
+      );
+    }
   };
 
   return (
     <div className="mt-4">
       {placesToShow.length > 0 ? (
         <ul className="space-y-6">
-          {placesToShow.map((place) => (
+          {placesToShow.map((place, idx) => (
             <PlaceCard
-              key={place.id}
+              key={idx}
               place={place}
               likedPlaces={likedPlacesMap}
               handleLikeClick={handleLikeClick}
