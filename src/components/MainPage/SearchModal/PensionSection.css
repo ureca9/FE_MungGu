@@ -2,51 +2,64 @@
   width: 100%;
   max-width: 100%;
   background-color: white;
-  border: none;
+  border: 1px solid #ddd; /* 전체 테두리 */
+  border-radius: 10px; /* 모서리를 둥글게 */
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1.125em;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+}
+
+.react-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f8f9fa; /* 네비게이션 배경 */
+  border-bottom: 1px solid #ddd;
+}
+
+.react-calendar__navigation button {
+  font-size: 1.1em;
+  color: #333;
+  background: none;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.2s, color 0.2s;
+  cursor: pointer;
+}
+
+.react-calendar__navigation button:hover {
+  background-color: #e9ecef; /* 버튼 hover 색상 */
 }
 
 .react-calendar__tile {
-  height: 60px; /* 날짜 셀의 높이 */
-  font-size: 1.1em; /* 글자 크기 */
+  height: 50px;
+  font-size: 1em;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%; /* 기본적으로 둥근 셀 */
-  transition: background-color 0.3s, color 0.3s;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
 .react-calendar__tile--now {
-  background-color: #e3f2fd; /* 오늘 날짜 */
-  border-radius: 50%;
+  background-color: #ffedcc; /* 오늘 날짜 배경색 */
+  border-radius: 8px;
 }
 
 .react-calendar__tile--active {
-  background-color: #4caf50; /* 선택된 날짜 */
+  background-color: #50bcdf; /* 선택된 날짜 배경 */
   color: white;
-  border-radius: 50%;
+  font-weight: bold;
+  border-radius: 8px;
 }
 
-.start-date {
-  background-color: #4caf50 !important; /* 시작 날짜 */
-  color: white !important;
-  border-radius: 50% !important;
+.react-calendar__tile:hover {
+  background-color: #f0f8ff; /* hover 상태 */
+  border-radius: 8px;
 }
 
-.end-date {
-  background-color: #f44336 !important; /* 종료 날짜 */
-  color: white !important;
-  border-radius: 50% !important;
-}
-
-.single-date {
-  background-color: #2196f3 !important; /* 단일 날짜 */
-  color: white !important;
-  border-radius: 50% !important;
-}
-
-.in-range {
-  background-color: #e0f7fa !important; /* 범위 내 날짜 */
-  color: #00796b !important;
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: #ddd; /* 다른 달 날짜 색상 */
 }

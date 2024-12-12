@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import SearchModal from "../../components/MainPage/SearchModal/SearchModal"; // SearchModal 경로를 프로젝트 구조에 맞게 수정
+import SearchModal from "../../components/MainPage/SearchModal/SearchModal"; 
+import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 const ListPage = () => {
   const navigate = useNavigate();
@@ -18,60 +19,83 @@ const ListPage = () => {
   // 초기 데이터 설정
   useEffect(() => {
     if (location.state) {
+      const initialFilters = {
+        ...location.state.filters,
+        regionList: location.state.filters.regionList?.includes("전체")
+          ? []
+          : location.state.filters.regionList || [],
+        placeTypes: location.state.filters.placeTypes?.includes("전체")
+          ? []
+          : location.state.filters.placeTypes || [],
+      };
       setResults(location.state.results || []);
-      setFilters(location.state.filters || {});
+      setFilters(initialFilters);
       sessionStorage.setItem(
         "facilityListData",
         JSON.stringify({
           results: location.state.results || [],
-          filters: location.state.filters || {},
+          filters: initialFilters,
         })
       );
     } else {
       const savedData = JSON.parse(sessionStorage.getItem("facilityListData"));
       if (savedData) {
+        const savedFilters = {
+          ...savedData.filters,
+          regionList: savedData.filters.regionList?.includes("전체")
+            ? []
+            : savedData.filters.regionList || [],
+          placeTypes: savedData.filters.placeTypes?.includes("전체")
+            ? []
+            : savedData.filters.placeTypes || [],
+        };
         setResults(savedData.results || []);
-        setFilters(savedData.filters || {});
+        setFilters(savedFilters); // filters 값 유지
       }
     }
   }, [location.state]);
 
-  useEffect(() => {
-    console.log("Results:", results);
-  }, [results]);
-
   // 무한 스크롤 구현
   useEffect(() => {
     const handleScroll = () => {
-      if (
+      const bottomReached =
         window.innerHeight + document.documentElement.scrollTop >=
-          document.documentElement.offsetHeight - 100 &&
-        !isFetching &&
-        hasNext
-      ) {
-        fetchMoreData();
+        document.documentElement.offsetHeight - 100;
+  
+      if (bottomReached && !isFetching && hasNext) {
+        fetchMoreData(filters); // 항상 최신 필터 상태를 전달
       }
     };
-
+  
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [isFetching, hasNext]);
+  }, [isFetching, hasNext, filters]); // 의존성 배열에 상태 포함
+  
 
-  // 서버에서 데이터 가져오기
-  const fetchMoreData = async () => {
+  const fetchMoreData = async (currentFilters = filters) => {
+    if (isFetching || !hasNext) return; // 이미 요청 중이거나 데이터가 더 이상 없으면 종료
+  
     setIsFetching(true);
     try {
+      const params = {
+        page: currentPage + 1, // 현재 페이지 + 1
+        size: 10,
+        searchWord: currentFilters.searchWord || "",
+        regionList: currentFilters.regionList?.includes("전체")
+          ? []
+          : currentFilters.regionList || [],
+        placeTypes: currentFilters.placeTypes?.includes("전체")
+          ? []
+          : currentFilters.placeTypes || [],
+        heaviestDogWeight: currentFilters.heaviestDogWeight || 0,
+      };
+  
+      console.log("Fetching data with params:", params);
+  
       const response = await axios.get("https://meong9.store/api/v1/search/places", {
-        params: {
-          page: currentPage + 1,
-          size: 10,
-          searchWord: filters.searchWord || "",
-          regionList: filters.regionList || [],
-          placeTypes: filters.placeTypes || [],
-          heaviestDogWeight: filters.heaviestDogWeight || 0,
-        },
+        params,
         paramsSerializer: (params) => {
           const searchParams = new URLSearchParams();
           for (const key in params) {
@@ -84,9 +108,9 @@ const ListPage = () => {
           return searchParams.toString();
         },
       });
-
+  
       const newResults = response.data.data.placeInfo;
-
+  
       setResults((prevResults) => {
         const uniqueResults = new Map();
         [...prevResults, ...newResults].forEach((item) => {
@@ -94,15 +118,16 @@ const ListPage = () => {
         });
         return Array.from(uniqueResults.values());
       });
-
-      setCurrentPage((prevPage) => prevPage + 1);
-      setHasNext(response.data.data.hasNext); // 다음 데이터가 있는지 확인
+  
+      setCurrentPage((prevPage) => prevPage + 1); // 페이지 증가
+      setHasNext(response.data.data.hasNext); // 다음 데이터 여부 설정
     } catch (error) {
       console.error("Error fetching more data:", error);
     } finally {
-      setIsFetching(false);
+      setIsFetching(false); // 요청 상태 초기화
     }
   };
+  
 
   // 시설 클릭 핸들러
   const handlePlaceClick = (placeId) => {
@@ -174,7 +199,7 @@ const ListPage = () => {
       </div>
 
       {/* 로딩 표시 */}
-      {isFetching && <p className="text-center text-gray-500">로딩 중...</p>}
+      {isFetching && <p className="text-center text-gray-500"> <LoadingSpinner />  </p>}
     </div>
   );
 };

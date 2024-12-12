@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import SearchModal from "../../components/MainPage/SearchModal/SearchModal";
@@ -14,6 +14,58 @@ const PensionListPage = () => {
   const [hasNext, setHasNext] = useState(true); // 추가 데이터 유무
   const [isModalOpen, setIsModalOpen] = useState(false); // 검색 모달 상태
 
+  // 무한 스크롤 데이터 요청 함수
+  const fetchMorePensions = useCallback(async () => {
+    if (isFetching || !hasNext) return;
+
+    setIsFetching(true);
+    try {
+      const response = await axios.get("https://meong9.store/api/v1/search/pensions", {
+        params: {
+          page: currentPage + 1,
+          size: 10,
+          searchWord: filters.searchWord || "",
+          regionList: filters.regionList || [],
+          heaviestDogWeight: filters.heaviestDogWeight || 0,
+          startDate: filters.startDate || undefined,
+          endDate: filters.endDate || undefined,
+        },
+        paramsSerializer: (params) => {
+          const searchParams = new URLSearchParams();
+          for (const key in params) {
+            if (params[key] === undefined || params[key] === "") continue;
+            if (Array.isArray(params[key])) {
+              params[key].forEach((value) =>
+                searchParams.append(`${key}[]`, value)
+              );
+            } else {
+              searchParams.append(key, params[key]);
+            }
+          }
+          return searchParams.toString();
+        },
+      });
+
+      const newPensions = response.data.data.pensionInfo;
+
+      setPensions((prevPensions) => {
+        const uniquePensions = new Map();
+        [...prevPensions, ...newPensions].forEach((item) => {
+          uniquePensions.set(item.pensionId, item);
+        });
+        return Array.from(uniquePensions.values());
+      });
+
+      setCurrentPage((prevPage) => prevPage + 1);
+      setHasNext(newPensions.length > 0);
+    } catch (error) {
+      console.error("Error fetching more data:", error);
+    } finally {
+      setIsFetching(false);
+    }
+  }, [currentPage, filters, hasNext, isFetching]);
+
+  // 초기 데이터 설정
   useEffect(() => {
     if (location.state) {
       setPensions(location.state.results || []);
@@ -35,14 +87,14 @@ const PensionListPage = () => {
     }
   }, [location.state]);
 
+  // 무한 스크롤 구현
   useEffect(() => {
     const handleScroll = () => {
-      if (
+      const bottomReached =
         window.innerHeight + document.documentElement.scrollTop >=
-          document.documentElement.offsetHeight - 100 &&
-        !isFetching &&
-        hasNext
-      ) {
+        document.documentElement.offsetHeight - 100;
+
+      if (bottomReached && !isFetching && hasNext) {
         fetchMorePensions();
       }
     };
@@ -51,57 +103,7 @@ const PensionListPage = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [isFetching, hasNext]);
-
-  const fetchMorePensions = async () => {
-    setIsFetching(true);
-    try {
-      const response = await axios.get(
-        "https://meong9.store/api/v1/search/pensions",
-        {
-          params: {
-            page: currentPage + 1,
-            size: 10,
-            searchWord: filters.searchWord || "",
-            regionList: filters.regionList || [],
-            heaviestDogWeight: filters.heaviestDogWeight || 0,
-            startDate: filters.startDate || "",
-            endDate: filters.endDate || "",
-          },
-          paramsSerializer: (params) => {
-            const searchParams = new URLSearchParams();
-            for (const key in params) {
-              if (Array.isArray(params[key])) {
-                params[key].forEach((value) =>
-                  searchParams.append(`${key}[]`, value)
-                );
-              } else {
-                searchParams.append(key, params[key]);
-              }
-            }
-            return searchParams.toString();
-          },
-        }
-      );
-
-      const newPensions = response.data.data.pensionInfo;
-
-      setPensions((prevPensions) => {
-        const uniquePensions = new Map();
-        [...prevPensions, ...newPensions].forEach((item) => {
-          uniquePensions.set(item.pensionId, item);
-        });
-        return Array.from(uniquePensions.values());
-      });
-
-      setCurrentPage((prevPage) => prevPage + 1);
-      setHasNext(response.data.data.hasNext);
-    } catch (error) {
-      console.error("Error fetching more data:", error);
-    } finally {
-      setIsFetching(false);
-    }
-  };
+  }, [isFetching, hasNext, fetchMorePensions]);
 
   const handlePensionClick = (pensionId) => {
     if (!pensionId) {

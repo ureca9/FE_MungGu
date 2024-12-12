@@ -102,4 +102,17 @@
     @apply w-[24px] h-[24px];
     background: url('src/assets/MypageImg/MyPageImg.png') -142px -133px;
 }
+/* 커스텀 스크롤바 스타일 */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #87ceeb; 
+  border-radius: 10px; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #f0f8ff; 
+}
 }
