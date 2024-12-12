@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ReservationRoomSection from "../../components/DetailPage/ReservationRoomSection";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
+import RecommendedFacility from "../../components/DetailPage/RecommendedFacility";
+import ReviewDetailModal from "../../components/review/ReviewDetailModal"; // Modal import
 
 // Custom Previous Arrow
 const CustomPrevArrow = (props) => {
@@ -19,7 +22,7 @@ const CustomPrevArrow = (props) => {
         borderRadius: "50%",
         padding: "10px",
         zIndex: 2,
-        left: "10px", // Position adjustment
+        left: "10px",
       }}
       onClick={onClick}
     >
@@ -41,7 +44,7 @@ const CustomNextArrow = (props) => {
         borderRadius: "50%",
         padding: "10px",
         zIndex: 2,
-        right: "10px", // Position adjustment
+        right: "10px",
       }}
       onClick={onClick}
     >
@@ -53,22 +56,23 @@ const CustomNextArrow = (props) => {
 const PensionDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-
+  const scrollRef = useRef(null);
   const [pensionDetail, setPensionDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showFullIntro, setShowFullIntro] = useState(false); // 추가된 상태
+  const [showFullIntro, setShowFullIntro] = useState(false);
+
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false); // Modal state
+  const [selectedReview, setSelectedReview] = useState(null); // Selected review
 
   useEffect(() => {
     const fetchPensionDetail = async () => {
       try {
         const accessToken = localStorage.getItem("ACCESS_TOKEN");
-        const headers = {
-          Accept: "application/json",
-        };
-        
-         if (accessToken) {
-           headers.Authorization = `Bearer ${accessToken}`;
+        const headers = { Accept: "application/json" };
+
+        if (accessToken) {
+          headers.Authorization = `Bearer ${accessToken}`;
         }
 
         const response = await axios.get(
@@ -86,16 +90,12 @@ const PensionDetailPage = () => {
     fetchPensionDetail();
   }, [id]);
 
-  if (loading) return <div>로딩 중...</div>;
+  if (loading) return <LoadingSpinner />;
   if (error) return <div>{error}</div>;
+  if (!pensionDetail) return <div>유효한 펜션 정보가 없습니다.</div>;
 
-  if (!pensionDetail) {
-    return <div>유효한 펜션 정보가 없습니다.</div>;
-  }
+  const images = pensionDetail.images.slice(0, 5);
 
-  const images = pensionDetail.images.slice(0, 5); // 첫 5개 이미지만 사용
-
-  // React Slick 설정
   const sliderSettings = {
     dots: true,
     infinite: true,
@@ -107,43 +107,42 @@ const PensionDetailPage = () => {
     nextArrow: <CustomNextArrow />,
   };
 
-  const maxLines = 10; // 최대 표시 줄 수
+  const maxLines = 10;
   const introductionLines = pensionDetail.introduction.split("\n");
+
+  const handleReviewClick = (review) => {
+    setSelectedReview(review);
+    setIsReviewModalOpen(true);
+  };
+
+  const scrollLeft = () => {
+    scrollRef.current.scrollBy({ left: -200, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    scrollRef.current.scrollBy({ left: 200, behavior: "smooth" });
+  };
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#f9fafb" }}>
       {/* Header */}
-      <header
-        style={{
-          backgroundColor: "#fff",
-          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-          padding: "16px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <button
-          onClick={() => navigate(-1)}
-          style={{ fontSize: "18px", color: "#4a5568" }}
-        >
+      <header className="flex items-center justify-between p-4 bg-white shadow-md">
+        <button onClick={() => navigate(-1)} className="text-lg text-gray-600">
           {"<"}
         </button>
-        <h1 style={{ fontSize: "20px", fontWeight: "bold" }}>
-          {pensionDetail.pensionName}
-        </h1>
-        <button style={{ color: "#718096" }}></button>
+        <h1 className="text-xl font-bold">{pensionDetail.pensionName}</h1>
+        <button className="text-gray-400"></button>
       </header>
 
       {/* Image Section (Carousel) */}
-      <div style={{ width: "100%", height: "400px", overflow: "hidden" }}>
+      <div className="w-full h-[400px] overflow-hidden">
         <Slider {...sliderSettings}>
           {images.map((image, index) => (
             <div key={index}>
               <img
                 src={image}
                 alt={`Pension Image ${index + 1}`}
-                style={{ width: "100%", height: "400px", objectFit: "cover" }}
+                className="w-full h-[400px] object-cover"
               />
             </div>
           ))}
@@ -151,37 +150,20 @@ const PensionDetailPage = () => {
       </div>
 
       {/* Info Section */}
-      <section
-        style={{
-          padding: "16px",
-          backgroundColor: "#fff",
-          marginTop: "16px",
-        }}
-      >
-        <h2 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "8px" }}>
-          {pensionDetail.pensionName}
-        </h2>
-        <p style={{ fontSize: "14px", color: "#718096" }}>
-          {pensionDetail.address}
-        </p>
-        <div style={{ display: "flex", alignItems: "center", marginTop: "8px" }}>
-          <span style={{ color: "#ecc94b", marginRight: "8px" }}>
-            ⭐ {pensionDetail.reviewAvg}
-          </span>
-          <span style={{ fontSize: "14px", color: "#718096" }}>
+      <section className="p-4 mt-4 bg-white">
+        <h2 className="mb-2 text-lg font-bold">{pensionDetail.pensionName}</h2>
+        <p className="text-sm text-gray-500">{pensionDetail.address}</p>
+        <div className="flex items-center mt-2">
+          <span className="mr-2 text-yellow-500">⭐ {pensionDetail.reviewAvg}</span>
+          <span className="text-sm text-gray-500">
             ({pensionDetail.reviewCount})
           </span>
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "8px" }}>
+        <div className="flex flex-wrap gap-2 mt-2">
           {pensionDetail.tags.map((tag) => (
             <span
               key={tag}
-              style={{
-                padding: "4px 8px",
-                backgroundColor: "#edf2f7",
-                fontSize: "12px",
-                borderRadius: "8px",
-              }}
+              className="px-2 py-1 text-xs bg-gray-100 rounded-md"
             >
               {tag}
             </span>
@@ -190,24 +172,9 @@ const PensionDetailPage = () => {
       </section>
 
       {/* Description Section */}
-      <section
-        style={{
-          padding: "16px",
-          backgroundColor: "#fff",
-          marginTop: "16px",
-        }}
-      >
-        <h3 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "8px" }}>
-          소개글
-        </h3>
-        <p
-          style={{
-            fontSize: "14px",
-            color: "#4a5568",
-            whiteSpace: "pre-line",
-            overflow: "hidden",
-          }}
-        >
+      <section className="p-4 mt-4 bg-white">
+        <h3 className="mb-2 text-lg font-bold">소개글</h3>
+        <p className="text-sm text-gray-700 whitespace-pre-line">
           {showFullIntro
             ? pensionDetail.introduction
             : introductionLines.slice(0, maxLines).join("\n")}
@@ -215,29 +182,22 @@ const PensionDetailPage = () => {
         {introductionLines.length > maxLines && (
           <button
             onClick={() => setShowFullIntro(!showFullIntro)}
-            style={{
-              marginTop: "8px",
-              fontSize: "14px",
-              color: "#3182ce",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: "0",
-            }}
+            className="mt-2 text-sm text-blue-500"
           >
             {showFullIntro ? "접기" : "더보기"}
           </button>
         )}
       </section>
 
-            {/* Reservation Section */}
-            <section className="p-4 mt-4 bg-white">
+      {/* Reservation Section */}
+      <section className="p-4 mt-4 bg-white">
         <h3 className="mb-2 text-lg font-bold">예약 정보</h3>
         <p className="text-sm text-gray-500 whitespace-pre-line">
           {pensionDetail.limitInfo}
         </p>
+        <ReservationRoomSection pensionId={id} />
       </section>
-        <ReservationRoomSection pensionId= {id}/>
+
       {/* Basic Info Section */}
       <section className="p-4 mt-4 bg-white">
         <h3 className="mb-2 text-lg font-bold">기본 정보</h3>
@@ -246,101 +206,73 @@ const PensionDetailPage = () => {
         </p>
       </section>
 
-      <section
-  style={{
-    padding: "16px",
-    backgroundColor: "#fff",
-    marginTop: "16px",
-    overflowX: "auto",
-    whiteSpace: "nowrap",
-  }}
->
-  <div
-    style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: "8px",
-    }}
-  >
-    <h3 style={{ fontSize: "18px", fontWeight: "bold" }}>리얼 포토 리뷰</h3>
-    <button
-  style={{
-    fontSize: "14px",
-    color: "#3182ce",
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    padding: "0",
-  }}
-  onClick={() => navigate(`/pension-all-review/${id}`)} // ID를 포함해 리뷰 페이지로 이동
->
-  전체보기 >
-</button>
-  </div>
-
-  <div
-    style={{
-      display: "inline-flex",
-      gap: "16px",
-    }}
-  >
-    {pensionDetail.review.slice(0, 20).map((review, index) => {
-      // Get the first file URL if available
-      const firstFileUrl =
-        review.file && review.file.length > 0 ? review.file[0].fileUrl : null;
-
-      return (
-        <div
-          key={index}
-          style={{
-            flex: "0 0 auto",
-            width: "150px",
-            borderRadius: "8px",
-            backgroundColor: "#f9fafb",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            padding: "8px",
-          }}
-        >
-          <img
-            src={firstFileUrl || "https://via.placeholder.com/150"}
-            alt="리뷰 사진"
-            style={{
-              width: "100%",
-              height: "100px",
-              borderRadius: "8px",
-              objectFit: "cover",
-            }}
-          />
-          <p
-            style={{
-              fontSize: "14px",
-              fontWeight: "bold",
-              marginTop: "8px",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
+      {/* Review Section */}
+      <section className="relative p-4 mt-4 bg-white">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-lg font-bold">리얼 포토 리뷰</h3>
+          <button
+            className="text-sm text-blue-500 hover:underline"
+            onClick={() => navigate(`/all-review/${id}`)}
           >
-            {review.nickname}
-          </p>
-          <p
-            style={{
-              fontSize: "12px",
-              color: "#718096",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {review.content.slice(0, 30)}...
-          </p>
+            전체보기 &gt;
+          </button>
         </div>
-      );
-    })}
-  </div>
-</section>
+        <div className="relative">
+          <button
+            onClick={scrollLeft}
+            className="absolute left-0 z-10 flex items-center justify-center w-8 h-8 text-white -translate-y-1/2 bg-blue-500 rounded-full shadow-md top-1/2 hover:bg-blue-600"
+          >
+            ◀
+          </button>
+          <div
+            ref={scrollRef}
+            className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-sky-100"
+          >
+            {pensionDetail.review.slice(0, 20).map((review, index) => {
+              const firstFileUrl =
+                review.file && review.file.length > 0 ? review.file[0].fileUrl : null;
 
+              return (
+                <div
+                  key={index}
+                  onClick={() => handleReviewClick(review)}
+                  className="flex-none p-2 rounded-lg shadow-md cursor-pointer w-36 bg-gray-50"
+                >
+                  <img
+                    src={firstFileUrl || "https://via.placeholder.com/150"}
+                    alt="리뷰 사진"
+                    className="object-cover w-full h-24 rounded-lg"
+                  />
+                  <p className="mt-2 text-sm font-bold truncate">
+                    {review.nickname}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {review.content.slice(0, 30)}...
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+          <button
+            onClick={scrollRight}
+            className="absolute right-0 z-10 flex items-center justify-center w-8 h-8 text-white -translate-y-1/2 bg-blue-500 rounded-full shadow-md top-1/2 hover:bg-blue-600"
+          >
+            ▶
+          </button>
+        </div>
+      </section>
+
+      {/* Recommended Facility Section */}
+      <RecommendedFacility pensionId={id} />
+
+      {/* Review Modal */}
+      {isReviewModalOpen && (
+        <ReviewDetailModal
+          isOpen={isReviewModalOpen}
+          onClose={() => setIsReviewModalOpen(false)}
+          reviewData={selectedReview}
+        />
+      )}
     </div>
   );
 };

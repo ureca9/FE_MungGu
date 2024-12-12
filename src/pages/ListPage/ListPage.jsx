@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import SearchModal from "../../components/MainPage/SearchModal/SearchModal"; // SearchModal 경로를 프로젝트 구조에 맞게 수정
+import SearchModal from "../../components/MainPage/SearchModal/SearchModal";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 const ListPage = () => {
   const navigate = useNavigate();
@@ -15,41 +16,66 @@ const ListPage = () => {
   const [hasNext, setHasNext] = useState(true); // 다음 데이터가 있는지 확인
   const [isModalOpen, setIsModalOpen] = useState(false); // 검색 모달 상태
 
+  const isFetchingRef = useRef(isFetching);
+
+  // 최신 `isFetching` 상태 동기화
+  useEffect(() => {
+    isFetchingRef.current = isFetching;
+  }, [isFetching]);
+
   // 초기 데이터 설정
   useEffect(() => {
-    if (location.state) {
-      setResults(location.state.results || []);
-      setFilters(location.state.filters || {});
-      sessionStorage.setItem(
-        "facilityListData",
-        JSON.stringify({
-          results: location.state.results || [],
-          filters: location.state.filters || {},
-        })
-      );
-    } else {
-      const savedData = JSON.parse(sessionStorage.getItem("facilityListData"));
-      if (savedData) {
-        setResults(savedData.results || []);
-        setFilters(savedData.filters || {});
+    const initializeFilters = () => {
+      if (location.state) {
+        const initialFilters = {
+          ...location.state.filters,
+          regionList: location.state.filters.regionList?.includes("전체")
+            ? []
+            : location.state.filters.regionList || [],
+          placeTypes: location.state.filters.placeTypes?.includes("전체")
+            ? []
+            : location.state.filters.placeTypes || [],
+        };
+        setResults(location.state.results || []);
+        setFilters(initialFilters);
+        sessionStorage.setItem(
+          "facilityListData",
+          JSON.stringify({
+            results: location.state.results || [],
+            filters: initialFilters,
+          })
+        );
+      } else {
+        const savedData = JSON.parse(sessionStorage.getItem("facilityListData"));
+        if (savedData) {
+          const savedFilters = {
+            ...savedData.filters,
+            regionList: savedData.filters.regionList?.includes("전체")
+              ? []
+              : savedData.filters.regionList || [],
+            placeTypes: savedData.filters.placeTypes?.includes("전체")
+              ? []
+              : savedData.filters.placeTypes || [],
+          };
+          setResults(savedData.results || []);
+          setFilters(savedFilters);
+        }
       }
-    }
-  }, [location.state]);
+    };
 
-  useEffect(() => {
-    console.log("Results:", results);
-  }, [results]);
+    initializeFilters();
+    setIsFetching(false); // 초기화 후 fetch 상태 초기화
+  }, [location.state]);
 
   // 무한 스크롤 구현
   useEffect(() => {
     const handleScroll = () => {
-      if (
+      const bottomReached =
         window.innerHeight + document.documentElement.scrollTop >=
-          document.documentElement.offsetHeight - 100 &&
-        !isFetching &&
-        hasNext
-      ) {
-        fetchMoreData();
+        document.documentElement.offsetHeight - 100;
+
+      if (bottomReached && !isFetchingRef.current && hasNext) {
+        fetchMoreData(filters);
       }
     };
 
@@ -57,21 +83,29 @@ const ListPage = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [isFetching, hasNext]);
+  }, [filters, hasNext]);
 
-  // 서버에서 데이터 가져오기
-  const fetchMoreData = async () => {
+  // 추가 데이터 요청
+  const fetchMoreData = async (currentFilters = filters) => {
+    if (isFetchingRef.current || !hasNext) return;
+
     setIsFetching(true);
     try {
+      const params = {
+        page: currentPage + 1,
+        size: 10,
+        searchWord: currentFilters.searchWord || "",
+        regionList: currentFilters.regionList?.includes("전체")
+          ? []
+          : currentFilters.regionList || [],
+        placeTypes: currentFilters.placeTypes?.includes("전체")
+          ? []
+          : currentFilters.placeTypes || [],
+        heaviestDogWeight: currentFilters.heaviestDogWeight || 0,
+      };
+
       const response = await axios.get("https://meong9.store/api/v1/search/places", {
-        params: {
-          page: currentPage + 1,
-          size: 10,
-          searchWord: filters.searchWord || "",
-          regionList: filters.regionList || [],
-          placeTypes: filters.placeTypes || [],
-          heaviestDogWeight: filters.heaviestDogWeight || 0,
-        },
+        params,
         paramsSerializer: (params) => {
           const searchParams = new URLSearchParams();
           for (const key in params) {
@@ -96,7 +130,7 @@ const ListPage = () => {
       });
 
       setCurrentPage((prevPage) => prevPage + 1);
-      setHasNext(response.data.data.hasNext); // 다음 데이터가 있는지 확인
+      setHasNext(response.data.data.hasNext);
     } catch (error) {
       console.error("Error fetching more data:", error);
     } finally {
@@ -106,7 +140,7 @@ const ListPage = () => {
 
   // 시설 클릭 핸들러
   const handlePlaceClick = (placeId) => {
-    navigate(`/place/${placeId}`); // placeId를 기반으로 상세 페이지로 이동
+    navigate(`/place/${placeId}`);
   };
 
   return (
@@ -116,10 +150,7 @@ const ListPage = () => {
 
       {/* Header */}
       <header className="bg-white shadow-md p-4 flex items-center justify-between">
-        <button
-          onClick={() => navigate(-1)}
-          className="text-gray-600 text-lg"
-        >{`<`}</button>
+        <button onClick={() => navigate(-1)} className="text-gray-600 text-lg">{`<`}</button>
         <h1 className="text-xl font-bold">시설 목록</h1>
         <div className="w-6"></div>
       </header>
@@ -145,9 +176,9 @@ const ListPage = () => {
         {results.length > 0 ? (
           results.map((item, index) => (
             <div
-              key={`${item.placeId}-${index}`} // 고유 키로 중복 방지
+              key={`${item.placeId}-${index}`}
               className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer"
-              onClick={() => handlePlaceClick(item.placeId)} // 클릭 핸들러 추가
+              onClick={() => handlePlaceClick(item.placeId)}
             >
               <img
                 src={item.images?.[0] || "/default-image.jpg"}
@@ -156,9 +187,7 @@ const ListPage = () => {
               />
               <div className="p-4">
                 <h2 className="text-lg font-bold">{item.placeName}</h2>
-                <p className="text-sm text-gray-500">
-                  {item.address || "주소 정보 없음"}
-                </p>
+                <p className="text-sm text-gray-500">{item.address || "주소 정보 없음"}</p>
                 <p className="text-sm text-gray-500">
                   {item.businessHour || "운영 시간 정보 없음"}
                 </p>
@@ -174,7 +203,11 @@ const ListPage = () => {
       </div>
 
       {/* 로딩 표시 */}
-      {isFetching && <p className="text-center text-gray-500">로딩 중...</p>}
+      {isFetching && (
+        <div className="text-center">
+          <LoadingSpinner />
+        </div>
+      )}
     </div>
   );
 };

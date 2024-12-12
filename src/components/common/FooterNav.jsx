@@ -83,14 +83,14 @@ const FooterNav = () => {
   };
 
   return (
-    <footer className="fixed bottom-0 z-40 w-[768px] h-16 bg-white border-t border-gray-300">
-      <nav className="max-w-[768px] mx-auto flex justify-between items-center h-full px-8 lg:px-16">
+    <footer className="fixed bottom-0 z-40 max-w-[768px] w-full h-16 bg-white border-t border-[#F3F4F5]">
+      <nav className="flex items-center justify-between h-full px-8 mx-auto lg:px-16">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
-              `flex flex-col items-center text-xs ${
+              `flex flex-col items-center justify-center text-xs w-11 h-11 ${
                 isActive ? 'text-black font-bold' : 'text-gray-500'
               } hover:text-blue-500`
             }
@@ -103,7 +103,7 @@ const FooterNav = () => {
                 <div className="mt-1 text-xs">{item.label}</div>
               </div>
             ) : item.path === '/' ? (
-              <img src={FooterLogo} alt="메인 로고" className="w-auto h-11" />
+              <img src={FooterLogo} alt="메인 로고" className="w-11 h-11" />
             ) : (
               <>
                 {item.icon && typeof item.icon === 'object'

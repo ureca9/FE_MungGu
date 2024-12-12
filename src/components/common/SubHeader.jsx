@@ -8,8 +8,11 @@ const SubHeader = () => {
 
   const PAGE_TITLES = {
     [ROUTER_PATHS.MAP]: '강아지도',
+    [ROUTER_PATHS.MAP_SEARCH]: '지도 검색',
+    [ROUTER_PATHS.DIRECTIONS]: '', // 수정 필요
     [ROUTER_PATHS.MY_PAGE]: '마이페이지',
     [ROUTER_PATHS.LOGIN]: '로그인',
+    [ROUTER_PATHS.SEARCH]: '검색',
     [ROUTER_PATHS.LIVE_REVIEW]: '실시간 리뷰',
     [ROUTER_PATHS.USER_REGISTER]: '회원 등록',
     [ROUTER_PATHS.REVIEW_ADD]: '강아지 등록',
@@ -21,21 +24,25 @@ const SubHeader = () => {
     [ROUTER_PATHS.PENSION_ALL_REVIEW]: '펜션 리뷰 전체보기',
     [ROUTER_PATHS.PET_EDIT_ID]: '강아지 수정',
     [ROUTER_PATHS.PET_ADD]: '강아지 추가',
-    [ROUTER_PATHS.USER_UPDATE]: '회원 정보 수정',
+    [ROUTER_PATHS.USER_EDIT]: '회원 정보 수정',
+    [ROUTER_PATHS.PLANT_EDIT]: '선호 시설 수정',
+    [ROUTER_PATHS.REGION_EDIT]: '선호 지역 수정',
     [ROUTER_PATHS.MY_REVIEW]: '내가 쓴 후기',
     [ROUTER_PATHS.MY_REVIEW_EDIT]: '후기 수정',
     [ROUTER_PATHS.RECENT_VIEW_LIST]: '최근 본 목록',
-    [ROUTER_PATHS.RESERVATION]: '예약',
-    [ROUTER_PATHS.RESERVATION_COMPLETE]: '예약완료',
-    [ROUTER_PATHS.RESERVATION_LIST]: '예약 내역',
     [ROUTER_PATHS.MEONGSENGNEACUT]: '멍생네컷',
+    [ROUTER_PATHS.SEARCH_MODAL]: '검색', // 수정 필요
+    [ROUTER_PATHS.FACILITY_LIST]: '', // 수정 필요
+    [ROUTER_PATHS.PENSION_LIST]: '펜션 목록', // 수정 필요
+    [ROUTER_PATHS.PLACE_DETAIL]: '시설 목록',
+    [ROUTER_PATHS.PENSION_DETAIL]: '펜션 상세',
     [ROUTER_PATHS.REVIEW_ADD]: '후기 작성',
   };
 
   const pageTitle = PAGE_TITLES[location.pathname] || '페이지 없음';
 
   return (
-    <header className="fixed top-0 z-10 w-[768px] border-b border-gray-300 backdrop-blur-md">
+    <header className="fixed top-0 z-10 w-full backdrop-blur-md max-w-[768px]">
       <div className="container flex items-center justify-between h-16 px-4 mx-auto">
         <button onClick={() => navigate(-1)} className="text-xl">
           <IoIosArrowBack />

@@ -3,18 +3,25 @@ import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 import { getMarkers } from '../../api/map/map.js';
 import heartMarker from '../../assets/common/heartMarker.png';
+import useCoordsStore from '../../stores/map/useCoordsStore.js';
+import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
 
 const MapContainer = ({ onMapLoaded }) => {
   const mapContainer = useRef(null);
+  const mapRef = useRef(null);
+  const { setCoords } = useCoordsStore();
+  const { searchResults } = useMapSearchStore();
 
   const initMap = async (latitude, longitude) => {
     const map = new window.kakao.maps.Map(mapContainer.current, {
       center: new window.kakao.maps.LatLng(latitude, longitude),
-      level: 10,
+      level: 4,
     });
+    mapRef.current = map;
 
     addCurrentMarker(map, latitude, longitude);
     await addLikedMarker(map);
+    addSearchResultMarker(map);
   };
 
   const addCurrentMarker = (map, latitude, longitude) => {
@@ -58,11 +65,32 @@ const MapContainer = ({ onMapLoaded }) => {
     }
   };
 
+  const addSearchResultMarker = (map) => {
+    searchResults.forEach((place) => {
+      const marker = new window.kakao.maps.Marker({
+        position: new window.kakao.maps.LatLng(
+          Number(place.latitude),
+          Number(place.longitude),
+        ),
+        map,
+      });
+
+      const infoWindow = new window.kakao.maps.InfoWindow({
+        content: `<div style="padding:5px;">${place.name}</div>`,
+      });
+
+      window.kakao.maps.event.addListener(marker, 'click', () => {
+        infoWindow.open(map, marker);
+      });
+    });
+  };
+
   const waitForKakaoMaps = (retries = 10) => {
     if (window.kakao && window.kakao.maps) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
+          setCoords(latitude, longitude);
           initMap(latitude, longitude);
           if (onMapLoaded) onMapLoaded();
         },
@@ -87,6 +115,19 @@ const MapContainer = ({ onMapLoaded }) => {
     waitForKakaoMaps();
   }, []);
 
+  useEffect(() => {
+    if (searchResults.length > 0) {
+      const { latitude, longitude } = searchResults[0];
+      setCoords(latitude, longitude);
+
+      if (mapRef.current) {
+        mapRef.current.setCenter(
+          new window.kakao.maps.LatLng(latitude, longitude),
+        );
+        addSearchResultMarker(mapRef.current);
+      }
+    }
+  }, [searchResults, setCoords]);
   return <div ref={mapContainer} id="map" className="w-full h-full"></div>;
 };
 
