@@ -30,21 +30,21 @@ const ReviewForm = ({ buttonText, onSubmit }) => {
             text: `${file.name} 파일의 용량이 너무 큽니다. (${maxFileSize / 1024 / 1024}MB 이하)`,
             icon: 'error',
           });
-          return null; // 용량 초과 시 null 반환
+          return null;
         } else {
           return {
-            file: file, // File 객체
-            fileUrl: URL.createObjectURL(file), // fileUrl 추가
+            file: file,
+            fileUrl: URL.createObjectURL(file),
             fileType: file.type.startsWith('image/')
               ? 'IMAGE'
               : file.type.startsWith('video/')
                 ? 'VIDEO'
-                : null, // fileType 추가
-            fileName: file.name, // fileName 추가
+                : null,
+            fileName: file.name,
           };
         }
       })
-      .filter((file) => file !== null); // null 값 제거
+      .filter((file) => file !== null);
 
     setSelectedFiles(processedFiles);
   };
@@ -86,7 +86,6 @@ const ReviewForm = ({ buttonText, onSubmit }) => {
         onSubmit={handleSubmit}
         className="bg-[#F3F4F5] h-full p-7 gap-5 flex flex-col"
       >
-        {/* <PlaceData /> */}
         <div className="flex justify-center w-full h-auto p-4 bg-white rounded-lg">
           <div className="flex flex-col items-center justify-center w-3/5 gap-7">
             <div className="text-2xl font-semibold">
@@ -142,7 +141,7 @@ const ReviewForm = ({ buttonText, onSubmit }) => {
                   alt={file.fileName}
                   className="object-cover w-full h-full"
                 />
-              ) : file.fileType === 'VIDEO' ? ( // 비디오 파일인 경우
+              ) : file.fileType === 'VIDEO' ? (
                 <video
                   src={file.fileUrl}
                   alt={file.fileName}

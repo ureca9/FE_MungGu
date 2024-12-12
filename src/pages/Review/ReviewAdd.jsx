@@ -2,6 +2,7 @@ import ReviewForm from '../../components/review/ReviewForm';
 import { PostPensionsReview } from '../../api/review';
 import Swal from 'sweetalert2';
 import { useParams } from 'react-router-dom';
+import PlaceData from '../../components/review/reviewAdd/PlaceData';
 
 const ReviewAdd = () => {
   const { id: Id } = useParams();
@@ -19,7 +20,6 @@ const ReviewAdd = () => {
         'data',
         new Blob([JSON.stringify(reviewAdd)], { type: 'application/json' }),
       );
-
       // `Data.file`이 배열인지 확인
       if (Array.isArray(Data.file)) {
         Data.file.forEach((file) => {
@@ -35,15 +35,18 @@ const ReviewAdd = () => {
       Swal.fire({
         title: '추가 성공!',
         icon: 'success',
-      }).then(() => {
-        window.location.href = `/pension-all-review/${Id}`;
-      });
+      })
+      // .then(() => {
+      //   window.location.href = `/pension-all-review/${Id}`;
+      // });
     } catch (error) {
       console.error('추가 중 오류 발생:', error);
     }
   };
+  const type={Data.type}
   return (
     <div className="">
+      <PlaceData type={Data.type} id={Id}/>
       <ReviewForm buttonText="저장" onSubmit={reviewAdd} />
     </div>
   );

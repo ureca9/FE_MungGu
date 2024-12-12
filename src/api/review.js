@@ -144,11 +144,11 @@ export const GetReviewBasicData = async (reviewId) => {
   }
 };
 
-export const PatchReviewEdit = async (selectedPetId, puppyFormData) => {
+export const PatchReviewEdit = async (reviewFormData, reviewId) => {
   try {
     const response = await instance.patch(
-      `/puppies?puppyId=${selectedPetId}`,
-      puppyFormData,
+      `/reviews/${reviewId}`,
+      reviewFormData,
       {
         headers: {
           Accept: 'application/json',
@@ -156,8 +156,9 @@ export const PatchReviewEdit = async (selectedPetId, puppyFormData) => {
         },
       },
     );
+    console.log('리뷰수정 성공:', response);
     return response.data;
   } catch (error) {
-    console.error('반려동물 수정 오류 :', error);
+    console.error('리뷰 수정 오류 :', error);
   }
 };

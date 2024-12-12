@@ -1,5 +1,5 @@
 import { GoArrowDown, GoArrowUp } from 'react-icons/go';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GetMyReviewData } from '../../api/review';
 import MyReviewCard from '../../components/review/MyReviewCard';
 import { FiSearch } from 'react-icons/fi';
@@ -8,20 +8,25 @@ const MyReview = () => {
   const [myReviews, setMyReviews] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [sortState, setSortState] = useState('none'); // 정렬 상태 추가
+  const myReviewRef = useRef(null)
+
+  const getMyReviewData = async () => {
+    try {
+      const response = await GetMyReviewData();
+      console.log('내가쓴 리뷰:', response.data);
+      setMyReviews(response.data);
+    } catch (error) {
+      console.error('내가쓴 리뷰 오류:', error);
+    }
+  };
 
   useEffect(() => {
-    const getMyReviewData = async () => {
-      try {
-        const response = await GetMyReviewData();
-        console.log('내가쓴 리뷰:', response.data);
-        setMyReviews(response.data);
-      } catch (error) {
-        console.error('내가쓴 리뷰 오류:', error);
-      }
-    };
-
     getMyReviewData();
   }, []);
+
+  const handleReviewDataUpdate = () => {
+    getMyReviewData();
+  };
 
   const sortReviews = () => {
     // 정렬 함수
@@ -47,7 +52,7 @@ const MyReview = () => {
   }, [sortState]); // sortState 변경 시 sortReviews 호출
 
   return (
-    <div className="flex flex-col w-full gap-3 p-7">
+    <div className="flex flex-col w-full h-full gap-3 p-7 " ref={myReviewRef}>
       <div className="flex justify-between mb-5">
         <div className="relative flex w-1/3">
           <input
@@ -89,9 +94,15 @@ const MyReview = () => {
           </button>
         </span>
       </div>
-      {myReviews.map((myReview, index) => (
-        <MyReviewCard key={index} myReview={myReview} />
-      ))}
+      {myReviews.length === 0 ? ( // myReviews가 비어있는지 확인
+        <div className="flex items-center justify-center h-full">
+          작성한 리뷰가 없습니다.
+        </div>
+      ) : (
+        myReviews.map((myReview, index) => (
+          <MyReviewCard key={index} myReview={myReview} />
+        ))
+      )}
     </div>
   );
 };

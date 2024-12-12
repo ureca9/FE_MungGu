@@ -6,8 +6,7 @@ import Swal from 'sweetalert2';
 import { DeleteReview } from '../../api/review';
 
 const MyReviewCard = ({ myReview }) => {
-  const { file, score, plcPenName, content, visitDate, reviewId } =
-    myReview;
+  const { file, score, plcPenName, content, visitDate, reviewId } = myReview;
   const navigate = useNavigate();
 
   const handleDelete = async () => {
@@ -15,16 +14,30 @@ const MyReviewCard = ({ myReview }) => {
       const response = await DeleteReview(reviewId);
       console.log('리뷰 삭제 성공 :', response);
       Swal.fire({
-        title: '삭제 성공!',
-        icon: 'success',
+        title: '후기를 삭제할까요?',
+        text: '한번 삭제되면 복구되지 않습니다.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3288FF',
+        cancelButtonColor: '#646464',
+        cancelButtonText: '취소',
+        confirmButtonText: '삭제',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: '삭제 성공!',
+            icon: 'success',
+          }).then(() => {
+            if (myReviewRef.current) {
+              myReviewRef.current.handleReviewDataUpdate();
+            }
+          });
+        }
       });
-      // .then(() => {
-      //   window.location.href = ROUTER_PATHS.MY_PAGE;
-      // });
     } catch (error) {
       console.error('리뷰 삭제 오류 :', error);
       Swal.fire({
-        title: '삭제 실패!',
+        title: '삭제중 오류!',
         icon: 'error',
       });
     }

@@ -40,8 +40,8 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
 
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <DialogPanel className="flex bg-white h-4/5 w-full min-w-[375px] md:max-w-6xl md:h-2/4">
-          <Description as="div" className="flex flex-col md:flex-row ">
-            <div className="relative overflow:hidden flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-full bg-[#D9D9D9]">
+          <Description as="div" className="flex flex-col w-full h-full md:flex-row ">
+            <div className="relative overflow:hidden flex items-center justify-center w-full h-2/5 md:w-1/2 md:h-full bg-[#D9D9D9]">
               {file.length > 0 ? (
                 <>
                   {isLoading && (
@@ -73,7 +73,7 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                 </div>
               )}
             </div>
-            <div className="flex flex-col w-full p-5 h-1/2 md:w-1/2 md:h-full">
+            <div className="flex flex-col w-full p-5 h-3/5 md:w-1/2 md:h-full">
               <div className="flex flex-row justify-between">
                 <div className="flex items-center">
                   <img
@@ -93,12 +93,12 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                 </div>
               </div>
               <div className="flex flex-col justify-between flex-grow h-full mt-5 overflow-y-auto">
-                <div className="mb-2 overflow-y-auto">{content}</div>
-                <div className="flex gap-1">
-                  {file.slice(0, 5).map((file, index) => (
+                <div className="flex mb-2 overflow-y-auto">{content}</div>
+                <div className="flex items-end w-full gap-1 overflow-y-auto min-h-28">
+                  {file.map((file, index) => (
                     <img
                       key={index}
-                      className="w-20 h-20  bg-[#D9D9D9] rounded-lg items-center justify-center"
+                      className="min-w-20 h-20 bg-[#D9D9D9] rounded-lg items-center justify-center"
                       src={file.fileUrl || usericon}
                     />
                   ))}
