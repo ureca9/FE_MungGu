@@ -38,7 +38,7 @@ const PlaceList = ({ selectedCategory }) => {
     if (!place) return;
 
     const originalIsLike = place.isLike;
-    const categoryName = place.categoryName;
+    const type = place.type;
 
     setLikedPlaces((prevPlaces) =>
       prevPlaces.map((place) =>
@@ -47,7 +47,7 @@ const PlaceList = ({ selectedCategory }) => {
     );
 
     try {
-      await addLikePlace(placeId, categoryName);
+      await addLikePlace(placeId, type);
     } catch (error) {
       console.error(error);
 

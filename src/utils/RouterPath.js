@@ -24,11 +24,11 @@ const ROUTER_PATHS = {
   RESERVATION_COMPLETE: '/reservation-complete',
   RESERVATION_LIST: '/reservation-list',
   MEONGSENGNEACUT: '/meongsengneacut',
-  SEARCH_MODAL: '/search-modal', 
-  FACILITY_LIST: '/facility-list', 
-  PENSION_LIST: '/pension-list', 
-  PLACE_DETAIL: '/place/:id', 
-  PENSION_DETAIL: '/pension-detail/:id', 
+  SEARCH_MODAL: '/search-modal',
+  FACILITY_LIST: '/facility-list',
+  PENSION_LIST: '/pension-list',
+  PLACE_DETAIL: '/place/:id',
+  PENSION_DETAIL: '/pension-detail/:id',
   REVIEW_ADD: '/review-add',
 };
 
