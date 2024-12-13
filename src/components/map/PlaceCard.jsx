@@ -1,13 +1,18 @@
 import PropTypes from 'prop-types';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
+  const navigate = useNavigate();
+
   const formatDistance = (distance) => {
     if (distance == null) return '';
     return distance >= 1000
       ? `${(distance / 1000).toFixed(1)}km`
       : `${distance}m`;
   };
+
+  const { type, placeId, name, images } = place;
 
   const getBusinessStatus = (businessHour) => {
     if (!businessHour || businessHour.trim() === '정보없음') {
@@ -80,13 +85,18 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
     };
   };
 
+  const handleLinkClick = () => {
+    if (type === 'PENSION') navigate(`/pension-detail/${placeId}`);
+    else navigate(`/place/${placeId}`);
+  };
+
   const { status, color, message } = getBusinessStatus(place.businessHour);
 
   return (
     <li className="bg-white p-4 rounded-lg shadow relative">
       <div className="absolute top-4 right-4">
-        <button onClick={() => handleLikeClick(place.id)}>
-          {likedPlaces[place.id] ? (
+        <button onClick={() => handleLikeClick(placeId)}>
+          {likedPlaces[placeId] ? (
             <FaHeart
               size={22}
               className="text-red-500 transition-colors duration-200"
@@ -101,13 +111,13 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
       </div>
       <div className="flex-col">
         <div className="flex">
-          <a
-            href={`/place/${place.id}`}
-            aria-label={`${place.name} 상세정보 보기`}
+          <button
+            onClick={handleLinkClick}
+            aria-label={`${name} 상세정보 보기`}
             className="text-blue-600 text-xl font-semibold hover:underline"
           >
-            {place.name}
-          </a>
+            {name}
+          </button>
         </div>
         <div className="flex py-1">
           <p className={`font-bold ${color}`}>{status}</p>
@@ -119,21 +129,21 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
         </div>
       </div>
       <div className="mt-4">
-        {place.mainImages && place.mainImages.length > 0 && (
+        {images && images.length > 0 && (
           <div
             className={`
       grid 
       gap-4 
-      ${place.mainImages.length === 1 ? 'grid-cols-1' : ''}
-      ${place.mainImages.length === 2 ? 'grid-cols-2' : ''}
-      ${place.mainImages.length >= 3 ? 'grid-cols-3' : ''}
+      ${images.length === 1 ? 'grid-cols-1' : ''}
+      ${images.length === 2 ? 'grid-cols-2' : ''}
+      ${images.length >= 3 ? 'grid-cols-3' : ''}
     `}
           >
-            {place.mainImages.map((image, index) => (
+            {images.map((image, index) => (
               <img
                 key={index}
                 src={image}
-                alt={`${place.name}-${index}`}
+                alt={`${name}-${index}`}
                 className="w-full h-32 object-cover rounded-lg"
               />
             ))}
@@ -146,12 +156,13 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
 
 PlaceCard.propTypes = {
   place: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    placeId: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
+    type: PropTypes.string,
     businessHour: PropTypes.string,
     distance: PropTypes.number,
     address: PropTypes.string.isRequired,
-    mainImages: PropTypes.arrayOf(PropTypes.string),
+    images: PropTypes.arrayOf(PropTypes.string),
   }),
   likedPlaces: PropTypes.object.isRequired,
   handleLikeClick: PropTypes.func.isRequired,
