@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
-import { getMarkers } from '../../api/map/map.js';
+import { getMarkers, searchSpot } from '../../api/map/map.js';
 import heartMarker from '../../assets/common/heartMarker.png';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
 import usePlaceStore from '../../stores/map/usePlaceStore.js';
@@ -22,6 +22,11 @@ const MapContainer = ({ onMapLoaded }) => {
     addCurrentMarker(map, latitude, longitude);
     await addLikedMarker(map);
     addSearchResultMarker(map);
+  };
+
+  const handleMarkerClick = async (place) => {
+    const data = await searchSpot(place.name, place.latitude, place.longitude);
+    setSelectedPlace(data.content);
   };
 
   const addCurrentMarker = (map, latitude, longitude) => {
@@ -49,7 +54,7 @@ const MapContainer = ({ onMapLoaded }) => {
         });
 
         window.kakao.maps.event.addListener(marker, 'click', () => {
-          setSelectedPlace(place);
+          handleMarkerClick(place);
         });
       });
     } catch (error) {
@@ -72,7 +77,7 @@ const MapContainer = ({ onMapLoaded }) => {
       });
 
       window.kakao.maps.event.addListener(marker, 'click', () => {
-        setSelectedPlace(place);
+        handleMarkerClick(place);
       });
     });
   };
