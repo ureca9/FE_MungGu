@@ -1,7 +1,7 @@
 import LikeListCategory from './LikeListCategory';
 import PlaceList from './PlaceList.jsx';
 import { useState } from 'react';
-import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
+import usePlaceStore from '../../stores/map/usePlaceStore.js';
 import usePanelStateStore from '../../stores/map/usePanelStateStore.js';
 
 const MapPanel = () => {
@@ -12,7 +12,7 @@ const MapPanel = () => {
   };
 
   const [selectedCategory, setSelectedCategory] = useState('전체');
-  const { searchResults } = useMapSearchStore();
+  const { searchResults } = usePlaceStore();
   const { panelState, setPanelState } = usePanelStateStore();
 
   const handleCategorySelect = (category) => {
