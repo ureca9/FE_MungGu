@@ -6,7 +6,8 @@ import { addLikePlace, getLikeList } from '../../api/map/map.js';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
 
 const PlaceList = ({ selectedCategory }) => {
-  const { searchResults, likedPlaces, setLikedPlaces } = usePlaceStore();
+  const { searchResults, likedPlaces, selectedPlace, setLikedPlaces } =
+    usePlaceStore();
   const { coords } = useCoordsStore();
   const { latitude, longitude } = coords;
 
@@ -67,12 +68,13 @@ const PlaceList = ({ selectedCategory }) => {
   };
 
   const placesToShow = useMemo(() => {
+    if (selectedPlace) return [selectedPlace];
     if (searchResults.length > 0) return searchResults;
     if (selectedCategory !== '전체') {
       return likedPlaces.filter((place) => place.category === selectedCategory);
     }
     return likedPlaces;
-  }, [searchResults, selectedCategory, likedPlaces]);
+  }, [searchResults, selectedCategory, likedPlaces, selectedPlace]);
 
   return (
     <div className="mt-4">

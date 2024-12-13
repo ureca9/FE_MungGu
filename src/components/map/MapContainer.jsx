@@ -10,7 +10,7 @@ const MapContainer = ({ onMapLoaded }) => {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const { setCoords } = useCoordsStore();
-  const { searchResults } = usePlaceStore();
+  const { searchResults, setSelectedPlace } = usePlaceStore();
 
   const initMap = async (latitude, longitude) => {
     const map = new window.kakao.maps.Map(mapContainer.current, {
@@ -48,12 +48,8 @@ const MapContainer = ({ onMapLoaded }) => {
           ),
         });
 
-        const infoWindow = new window.kakao.maps.InfoWindow({
-          content: `<div style="padding:5px;">${place.name}</div>`,
-        });
-
         window.kakao.maps.event.addListener(marker, 'click', () => {
-          infoWindow.open(map, marker);
+          setSelectedPlace(place);
         });
       });
     } catch (error) {
@@ -75,12 +71,8 @@ const MapContainer = ({ onMapLoaded }) => {
         map,
       });
 
-      const infoWindow = new window.kakao.maps.InfoWindow({
-        content: `<div style="padding:5px;">${place.name}</div>`,
-      });
-
       window.kakao.maps.event.addListener(marker, 'click', () => {
-        infoWindow.open(map, marker);
+        setSelectedPlace(place);
       });
     });
   };
