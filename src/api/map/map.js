@@ -35,7 +35,7 @@ export const getLikeList = async (categoryName, latitude, longitude) => {
 
 export const addLikePlace = async (placeId, type) => {
   try {
-    if (type === '"PENSION"') {
+    if (type === 'PENSION') {
       const response = await instance.post(`/pensions/likes/${placeId}`);
       return response.data;
     } else {
