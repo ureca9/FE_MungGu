@@ -7,6 +7,8 @@ import { FaCamera } from 'react-icons/fa';
 import { RxStarFilled } from 'react-icons/rx';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import PlaceData from '../../components/review/reviewAdd/PlaceData';
+import useTypeStore from '../../stores/review/useTypeStore';
+import { CircularProgress } from '@mui/material';
 
 const ReviewEdit = () => {
   const { id: reviewId } = useParams();
@@ -17,7 +19,9 @@ const ReviewEdit = () => {
   const [content, setContent] = useState('');
   const [visitDate, setVisitDate] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const { setPlcPenIdType, setPensionId, setPlaceId } = useTypeStore();
 
   useEffect(() => {
     const fetchReviewData = async () => {
@@ -31,11 +35,11 @@ const ReviewEdit = () => {
         setIsLoading(false); // 로딩 완료 후 isLoading 상태 변경
       }
     };
-
     if (reviewId) {
       fetchReviewData();
     }
   }, [reviewId]);
+
   useEffect(() => {
     if (reviewBasic) {
       setScore(reviewBasic.score);
@@ -43,7 +47,11 @@ const ReviewEdit = () => {
       setType(reviewBasic.type);
       setContent(reviewBasic.content);
       setVisitDate(reviewBasic.visitDate || '');
-      setSelectedFiles(reviewBasic.file); // 초기 파일 설정
+      setSelectedFiles(reviewBasic.file);
+      setPensionId(reviewBasic.plcPenId);
+      setPlaceId(reviewBasic.plcPenId);
+      setPlcPenIdType(reviewBasic.type);
+      setIsDataLoaded(true);
     }
   }, [reviewBasic]);
 
@@ -69,7 +77,7 @@ const ReviewEdit = () => {
       new Blob([JSON.stringify(reviewData)], { type: 'application/json' }),
     );
     selectedFiles.forEach((file) => {
-      reviewFormData.append('file', file.file); // file 객체만 추가
+      reviewFormData.append('file', file.file);
     });
     console.log('리뷰 저장:', [...reviewFormData.entries()]);
 
@@ -118,7 +126,7 @@ const ReviewEdit = () => {
           };
         }
       })
-      .filter((file) => file !== null); // null 값 제거
+      .filter((file) => file !== null);
 
     setSelectedFiles(processedFiles);
   };
@@ -135,11 +143,16 @@ const ReviewEdit = () => {
     return true;
   };
   if (isLoading) {
-    return <div>로딩 중...</div>; // 로딩 중일 때 표시
+    return (
+      <div>
+        <CircularProgress size={60} />
+        로딩 중...
+      </div>
+    );
   }
   return (
     <div className="">
-      <PlaceData type={type} id={plcPenId} />
+      {isDataLoaded ? <PlaceData /> : <CircularProgress size={60} />}
       {reviewBasic ? (
         <form
           onSubmit={handleSubmit}
@@ -194,13 +207,13 @@ const ReviewEdit = () => {
                 key={index}
                 className="w-36 h-36 bg-[#D9D9D9] flex rounded-lg items-center justify-center overflow-hidden"
               >
-                {file.fileType === 'IMAGE' ? ( // 이미지 파일인 경우
+                {file.fileType === 'IMAGE' ? (
                   <img
                     src={file.fileUrl}
                     alt={file.fileName}
                     className="object-cover w-full h-full"
                   />
-                ) : file.fileType === 'VIDEO' ? ( // 비디오 파일인 경우
+                ) : file.fileType === 'VIDEO' ? (
                   <video
                     src={file.fileUrl}
                     alt={file.fileName}
@@ -240,9 +253,10 @@ const ReviewEdit = () => {
             </div>
             <div className="flex bg-white rounded-lg p-7 h-52">
               <textarea
-                className="w-full"
+                className="w-full h-full text-xl resize-none"
                 placeholder="내용을 작성해 주세요."
                 value={content}
+                maxLength="400"
                 onChange={(e) => setContent(e.target.value)}
               ></textarea>
             </div>

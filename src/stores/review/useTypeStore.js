@@ -1,9 +1,13 @@
 import { create } from 'zustand';
 
 const useTypeStore = create((set) => ({
-  typePension: null,
   pensionId: null,
-  setTypePension: (newTypePension) => set({ typePension: newTypePension }),
-  setPensionId: (newPensionId) => set({ pensionId: newPensionId }),
+  setPensionId: (pensionId) => set({ pensionId: pensionId }),
+  plcPenType: null,
+  setPlcPenIdType: (type) => set({ plcPenType: type }),
+  placeId: null,
+  setPlaceId: (placeId) => set({ placeId: placeId }),
+  // placeType: null,
+  // setPlaceType: (type) => set({ placeType: type }),
 }));
 export default useTypeStore;

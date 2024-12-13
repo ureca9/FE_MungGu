@@ -32,10 +32,10 @@ export const GetPlaceReviews = async (placeId, page = 0) => {
         },
       },
     );
-    console.log('펜션 리뷰 목록 :', response);
+    console.log('시설 리뷰 목록 :', response);
     return response.data;
   } catch (error) {
-    console.error('리뷰 가져오기 실패:', error);
+    console.error('시설 리뷰 가져오기 실패:', error);
     throw error;
   }
 };
@@ -63,7 +63,7 @@ export const GetPensionsSummary = async (pensionId) => {
 export const GetPlacesSummary = async (placeId) => {
   try {
     const response = await axios.get(
-      `https://meong9.store/api/v1/${placeId}/summary`,
+      `https://meong9.store/api/v1/places/${placeId}/summary`,
       {
         headers: {
           Accept: 'application/json',
@@ -71,7 +71,6 @@ export const GetPlacesSummary = async (placeId) => {
         },
       },
     );
-    console.log('시설 요약 :', response);
     return response.data;
   } catch (error) {
     console.error('시설 요약 가져오기 실패:', error);
@@ -84,7 +83,6 @@ export const PostPensionsReview = async (reviewFormData) => {
     const response = await instance.post('/reviews', reviewFormData, {
       headers: {
         Accept: 'application/json',
-        // 'Content-Type': 'multipart/form-data',
       },
     });
     return response;
@@ -100,13 +98,11 @@ export const GetPentionData = async ({ type, id }) => {
         Accept: 'application/json',
       },
     });
-    console.log('get받음:', response);
     return response.data;
   } catch (error) {
     console.error('리뷰작성 펜션정보 오류:', error);
   }
 };
-// 내가쓴리뷰 가져오기
 export const GetMyReviewData = async (lastReviewId) => {
   try {
     const response = await instance.get(`/reviews?${lastReviewId}=30`, {
@@ -115,7 +111,6 @@ export const GetMyReviewData = async (lastReviewId) => {
         'Content-Type': 'application/json',
       },
     });
-    console.log('내 리뷰 :', response);
     return response.data;
   } catch (error) {
     console.error('내 리뷰 가져오기 실패:', error);
@@ -156,7 +151,6 @@ export const PatchReviewEdit = async (reviewFormData, reviewId) => {
         },
       },
     );
-    console.log('리뷰수정 성공:', response);
     return response.data;
   } catch (error) {
     console.error('리뷰 수정 오류 :', error);

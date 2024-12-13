@@ -8,9 +8,8 @@ import { TbParkingCircleFilled } from 'react-icons/tb';
 import { GetPentionData } from '../../../api/review';
 import { useParams } from 'react-router-dom';
 import useTypeStore from '../../../stores/review/useTypeStore';
-const PlaceData = ({ type, id }) => {
-  // const { id: pensionId } = useParams();
-  // const { typePension } = useTypeStore();
+const PlaceData = () => {
+  const { plcPenType, pensionId, placeId } = useTypeStore();
   const [basicPension, setBasicPension] = useState({});
   const placeInfo = [
     { icon: <FaWeightHanging className="text-xl" />, text: '무게 제한 없음' },
@@ -19,7 +18,9 @@ const PlaceData = ({ type, id }) => {
     { icon: <GiWoodenFence className="text-xl" />, text: '울타리 있음' },
     { icon: <TbParkingCircleFilled className="text-xl" />, text: '주차 가능' },
   ];
- 
+  const type = plcPenType;
+  const id = plcPenType === '020' ? pensionId : placeId;
+
   useEffect(() => {
     const fetchPentionData = async () => {
       console.log('장소 확인용:', type, id);
@@ -31,7 +32,6 @@ const PlaceData = ({ type, id }) => {
         console.error('장소정보 오류:', error);
       }
     };
-
     // if (pensionId) {
     fetchPentionData();
     // }
