@@ -4,13 +4,13 @@ import Swal from 'sweetalert2';
 import { getMarkers } from '../../api/map/map.js';
 import heartMarker from '../../assets/common/heartMarker.png';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
-import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
+import usePlaceStore from '../../stores/map/usePlaceStore.js';
 
 const MapContainer = ({ onMapLoaded }) => {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const { setCoords } = useCoordsStore();
-  const { searchResults } = useMapSearchStore();
+  const { searchResults } = usePlaceStore();
 
   const initMap = async (latitude, longitude) => {
     const map = new window.kakao.maps.Map(mapContainer.current, {

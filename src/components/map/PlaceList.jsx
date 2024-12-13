@@ -1,13 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
+import usePlaceStore from '../../stores/map/usePlaceStore.js';
 import PlaceCard from './PlaceCard';
 import { addLikePlace, getLikeList } from '../../api/map/map.js';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
 
 const PlaceList = ({ selectedCategory }) => {
-  const [likedPlaces, setLikedPlaces] = useState([]);
-  const { searchResults } = useMapSearchStore();
+  const { searchResults, likedPlaces, setLikedPlaces } = usePlaceStore();
   const { coords } = useCoordsStore();
   const { latitude, longitude } = coords;
 
@@ -24,40 +23,46 @@ const PlaceList = ({ selectedCategory }) => {
     fetchLikedPlaces();
   }, [latitude, longitude]);
 
-  const likedPlacesMap = useMemo(
-    () =>
-      likedPlaces.reduce((acc, place) => {
-        acc[place.placeId] = place.isLike;
-        return acc;
-      }, {}),
-    [likedPlaces],
-  );
+  const likedPlacesMap = useMemo(() => {
+    const combinedPlaces = [...likedPlaces, ...searchResults];
+    return combinedPlaces.reduce((acc, place) => {
+      acc[place.placeId] = place.isLike;
+      return acc;
+    }, {});
+  }, [likedPlaces, searchResults]);
 
   const handleLikeClick = async (placeId) => {
-    const place = likedPlaces.find((place) => place.placeId === placeId);
+    const place =
+      searchResults.find((place) => place.placeId === placeId) ||
+      likedPlaces.find((place) => place.placeId === placeId);
+
     if (!place) return;
 
-    const originalIsLike = place.isLike;
+    const originalIsLike = place.isLike || false;
     const type = place.type;
 
-    setLikedPlaces((prevPlaces) =>
-      prevPlaces.map((place) =>
-        place.placeId === placeId ? { ...place, isLike: !place.isLike } : place,
+    usePlaceStore.setState((state) => ({
+      searchResults: state.searchResults.map((p) =>
+        p.placeId === placeId ? { ...p, isLike: !p.isLike } : p,
       ),
-    );
+      likedPlaces: state.likedPlaces.map((p) =>
+        p.placeId === placeId ? { ...p, isLike: !p.isLike } : p,
+      ),
+    }));
 
     try {
       await addLikePlace(placeId, type);
     } catch (error) {
-      console.error(error);
+      console.error('Failed to like place:', error);
 
-      setLikedPlaces((prevPlaces) =>
-        prevPlaces.map((place) =>
-          place.placeId === placeId
-            ? { ...place, isLike: originalIsLike }
-            : place,
+      usePlaceStore.setState((state) => ({
+        searchResults: state.searchResults.map((p) =>
+          p.placeId === placeId ? { ...p, isLike: originalIsLike } : p,
         ),
-      );
+        likedPlaces: state.likedPlaces.map((p) =>
+          p.placeId === placeId ? { ...p, isLike: originalIsLike } : p,
+        ),
+      }));
     }
   };
 
