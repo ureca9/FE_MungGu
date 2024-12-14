@@ -24,6 +24,7 @@ const ROUTER_PATHS = {
   RECENT_VIEW_LIST: '/recent-view-list',
   MUNGSENGNEACUT: '/mungsengneacut',
   CHOOSE_FRAME: '/choose-frame',
+  UPLOAD_PHOTOS: '/upload-photos',
   SEARCH_MODAL: '/search-modal',
   FACILITY_LIST: '/facility-list',
   PENSION_LIST: '/pension-list',

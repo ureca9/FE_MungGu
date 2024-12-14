@@ -31,6 +31,7 @@ const SubHeader = () => {
     [ROUTER_PATHS.RECENT_VIEW_LIST]: '최근 본 목록',
     [ROUTER_PATHS.MUNGSENGNEACUT]: '멍생네컷',
     [ROUTER_PATHS.CHOOSE_FRAME]: '멍생네컷',
+    [ROUTER_PATHS.UPLOAD_PHOTOS]: '멍생네컷',
     [ROUTER_PATHS.SEARCH_MODAL]: '검색', // 수정 필요
     [ROUTER_PATHS.FACILITY_LIST]: '', // 수정 필요
     [ROUTER_PATHS.PENSION_LIST]: '펜션 목록', // 수정 필요

@@ -26,6 +26,7 @@ import AllReviews from '../pages/Review/ALlReviews.jsx';
 import ReviewAdd from '../pages/Review/ReviewAdd.jsx';
 import Mungsengneacut from '../pages/Mungsengneacut.jsx/Mungsengneacut.jsx';
 import ChooseFrame from '../pages/Mungsengneacut.jsx/ChooseFrame.jsx';
+import UploadPhotos from '../pages/Mungsengneacut.jsx/UploadPhotos.jsx';
 
 const routes = [
   {
@@ -103,6 +104,10 @@ const routes = [
   {
     path: ROUTER_PATHS.CHOOSE_FRAME,
     element: <ChooseFrame />,
+  },
+  {
+    path: ROUTER_PATHS.UPLOAD_PHOTOS,
+    element: <UploadPhotos />,
   },
   {
     path: ROUTER_PATHS.PREFERENCE_PLANT,
