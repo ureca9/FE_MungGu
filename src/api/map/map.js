@@ -20,3 +20,29 @@ export const searchSpot = async (keyword, latitude, longitude) => {
     console.error(error);
   }
 };
+
+export const getLikeList = async (categoryName, latitude, longitude) => {
+  try {
+    const response = await instance.get(
+      `/map/likes/detail?categoryName=${categoryName}&latitude=${latitude}&longitude=${longitude}&page=${0}&size=${20}`,
+    );
+    return response.data.data.places;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+export const addLikePlace = async (placeId, type) => {
+  try {
+    if (type === 'PENSION') {
+      const response = await instance.post(`/pensions/likes/${placeId}`);
+      return response.data;
+    } else {
+      const response = await instance.post(`/places/likes/${placeId}`);
+      return response.data;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};

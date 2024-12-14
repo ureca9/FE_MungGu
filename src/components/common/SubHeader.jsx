@@ -1,6 +1,7 @@
 import { IoIosArrowBack } from 'react-icons/io';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ROUTER_PATHS from '../../utils/RouterPath';
+import usePlaceStore from '../../stores/map/usePlaceStore.js';
 
 const SubHeader = () => {
   const location = useLocation();
@@ -41,11 +42,22 @@ const SubHeader = () => {
   };
 
   const pageTitle = PAGE_TITLES[location.pathname] || '페이지 없음';
+  const { setSelectedPlace, setSearchResults } = usePlaceStore();
+  const handleBackClick = () => {
+    setSelectedPlace(null);
+    setSearchResults([]);
+  };
 
   return (
     <header className="fixed top-0 z-10 w-full backdrop-blur-md max-w-[768px]">
       <div className="container flex items-center justify-between h-16 px-4 mx-auto">
-        <button onClick={() => navigate(-1)} className="text-xl">
+        <button
+          onClick={() => {
+            navigate(-1);
+            handleBackClick();
+          }}
+          className="text-xl"
+        >
           <IoIosArrowBack />
         </button>
         <div className="text-xl font-bold">{pageTitle}</div>
