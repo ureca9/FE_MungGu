@@ -6,7 +6,6 @@ import { PiShareNetworkThin } from 'react-icons/pi';
 import { RxStarFilled } from 'react-icons/rx';
 import { TbParkingCircleFilled } from 'react-icons/tb';
 import { GetPentionData } from '../../../api/review';
-import { useParams } from 'react-router-dom';
 import useTypeStore from '../../../stores/review/useTypeStore';
 const PlaceData = () => {
   const { plcPenType, pensionId, placeId } = useTypeStore();
@@ -16,7 +15,10 @@ const PlaceData = () => {
     { icon: <GiBarbecue className="text-2xl" />, text: '바베큐' },
     { icon: <GiCampfire className="text-xl" />, text: '불멍' },
     { icon: <GiWoodenFence className="text-xl" />, text: '울타리 있음' },
-    { icon: <TbParkingCircleFilled className="text-xl" />, text: '주차 가능' },
+    {
+      icon: <TbParkingCircleFilled className="text-xl" />,
+      text: '주차 가능',
+    },
   ];
   const type = plcPenType;
   const id = plcPenType === '020' ? pensionId : placeId;
@@ -37,16 +39,16 @@ const PlaceData = () => {
     // }
   }, []);
   return (
-    <div className="bg-[#F3F4F5] h-full px-7 pt-7 gap-5 flex flex-col">
-      <div className="flex items-center p-4 bg-white rounded-lg">
+    <div className="bg-[#F3F4F5] h-40 sm:h-full px-2 sm:px-7 pt-2 sm:pt-7 gap-5 flex flex-col">
+      <div className="flex items-center h-full p-2 bg-white rounded-lg sm:p-4">
         {basicPension.fileUrl ? (
           <img
             src={basicPension.fileUrl}
             alt="펜션 이미지"
-            className="h-40 rounded-lg min-w-40"
+            className="w-24 rounded-lg h-28 sm:h-40 sm:min-w-40"
           />
         ) : (
-          <div className="min-w-40 h-40 bg-[#D9D9D9] flex rounded-lg items-center justify-center ">
+          <div className="sm:min-w-40 sm:h-40 w-24 h-28 bg-[#D9D9D9] flex rounded-lg items-center justify-center ">
             <div className="text-[#8A8A8A] text-4xl flex">
               <FaCamera />
             </div>
@@ -54,7 +56,7 @@ const PlaceData = () => {
         )}
         <div className="flex flex-col w-full h-full pl-5">
           <div className="flex flex-row justify-between">
-            <div className="flex mb-1 text-2xl font-semibold">
+            <div className="flex mb-1 text-lg font-semibold sm:text-2xl">
               {basicPension.name}
             </div>
             <div className="flex items-center justify-center gap-2 text-xl">
@@ -72,22 +74,21 @@ const PlaceData = () => {
               <RxStarFilled />
             </span>
             <span className="ml-2 font-semibold">{basicPension.reviewAvg}</span>
-            {/* <span className="ml-1 text-[#8A8A8A]">내용</span> */}
             <span className="ml-1 text-[#8A8A8A]">
               {'('}
               {basicPension.reviewCount}
               {')'}
             </span>
           </div>
-          <div className="flex justify-around mt-6">
-            <div className="flex gap-2">
+          <div className="flex mt-6 sm:justify-around">
+            <div className="flex h-full gap-2 ">
               {placeInfo.map((info, index) => (
                 <div
                   key={index}
                   className="flex ml-1 gap-1 text-[#8A8A8A] items-center justify-center"
                 >
-                  <span>{info.icon}</span>
-                  <span>{info.text}</span>
+                  <span className="hidden sm:block sm:text-base">{info.icon}</span>
+                  <span className="text-xs sm:text-base">{info.text}</span>
                 </div>
               ))}
             </div>

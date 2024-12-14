@@ -7,7 +7,5 @@ const useTypeStore = create((set) => ({
   setPlcPenIdType: (type) => set({ plcPenType: type }),
   placeId: null,
   setPlaceId: (placeId) => set({ placeId: placeId }),
-  // placeType: null,
-  // setPlaceType: (type) => set({ placeType: type }),
 }));
 export default useTypeStore;

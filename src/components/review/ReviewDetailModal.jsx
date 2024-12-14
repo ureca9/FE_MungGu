@@ -98,7 +98,7 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                   {file.map((file, index) => (
                     <img
                       key={index}
-                      className="min-w-20 h-20 bg-[#D9D9D9] rounded-lg items-center justify-center"
+                      className="min-w-20 max-w-20 h-20 bg-[#D9D9D9] rounded-lg items-center justify-center"
                       src={file.fileUrl || usericon}
                     />
                   ))}

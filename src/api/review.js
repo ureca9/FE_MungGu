@@ -13,7 +13,6 @@ export const GetPensionsReviews = async (pensionId, page = 0) => {
         },
       },
     );
-    console.log('펜션 리뷰 목록 :', response);
     return response.data;
   } catch (error) {
     console.error('리뷰 가져오기 실패:', error);
@@ -21,7 +20,7 @@ export const GetPensionsReviews = async (pensionId, page = 0) => {
   }
 };
 // 시설 리뷰 목록 가져오기
-export const GetPlaceReviews = async (placeId, page = 0) => {
+export const GetPlaceReviews = async (placeId, page) => {
   try {
     const response = await axios.get(
       `https://meong9.store/api/v1/places/${placeId}/reviews?page=${page}`,
@@ -32,7 +31,6 @@ export const GetPlaceReviews = async (placeId, page = 0) => {
         },
       },
     );
-    console.log('시설 리뷰 목록 :', response);
     return response.data;
   } catch (error) {
     console.error('시설 리뷰 가져오기 실패:', error);
@@ -52,7 +50,6 @@ export const GetPensionsSummary = async (pensionId) => {
         },
       },
     );
-    console.log('펜션 요약 :', response);
     return response.data;
   } catch (error) {
     console.error('펜션 요약 가져오기 실패:', error);

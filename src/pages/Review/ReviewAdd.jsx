@@ -6,7 +6,7 @@ import useTypeStore from '../../stores/review/useTypeStore';
 import { RxStarFilled } from 'react-icons/rx';
 import { FaCamera } from 'react-icons/fa';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const ReviewAdd = () => {
   const { id: pensionId } = useParams();
@@ -98,15 +98,15 @@ const ReviewAdd = () => {
   };
 
   return (
-    <div className="">
+    <div className="h-full min-w-96">
       <PlaceData />
       <form
         onSubmit={handleSubmit}
-        className="bg-[#F3F4F5] h-full p-7 gap-5 flex flex-col"
+        className="bg-[#F3F4F5] h-full sm:w-full sm:p-7 px-2 py-3 sm:gap-5 gap-3 flex flex-col"
       >
         <div className="flex justify-center w-full h-auto p-4 bg-white rounded-lg">
-          <div className="flex flex-col items-center justify-center w-3/5 gap-7">
-            <div className="text-2xl font-semibold">
+          <div className="flex flex-col items-center justify-center w-4/5 sm:w-3/5 sm:gap-7">
+            <div className="font-semibold sm:text-2xl">
               이 방문 장소를 추천하시겠어요?
             </div>
             <div className="flex flex-col justify-around w-full">
@@ -126,8 +126,7 @@ const ReviewAdd = () => {
             </div>
           </div>
         </div>
-        {/* 파일 */}
-        <div className="flex items-center h-auto gap-5">
+        <div className="flex items-center gap-2 overflow-x-auto h-aout sm:gap-5">
           <div>
             <label>
               <input
@@ -137,12 +136,12 @@ const ReviewAdd = () => {
                 multiple
                 accept="image/*, video/*"
               />
-              <div className="flex-col p-2 w-36 h-36 bg-[#EBF4FF] flex rounded-lg items-center border border-[#3288FF] justify-center text-[#8A8A8A] ">
-                <p className="text-lg">
+              <div className="flex-col p-1 sm:p-2 w-24 h-24 sm:w-36 sm:h-36 bg-[#EBF4FF] flex rounded-lg items-center border border-[#3288FF] justify-center text-[#8A8A8A] ">
+                <p className="sm:mb-2 sm:text-lg">
                   사진첨부
                   <span className="text-2xl text-red-600">*</span>
                 </p>
-                <span className="text-sm">
+                <span className="sm:text-sm text-[12px]">
                   영수증 사진이 없으면 후기가 삭제될수 있습니다.
                 </span>
               </div>
@@ -151,9 +150,9 @@ const ReviewAdd = () => {
           {selectedFiles.map((file, index) => (
             <div
               key={index}
-              className="w-36 h-36 bg-[#D9D9D9] flex rounded-lg items-center justify-center overflow-hidden"
+              className="min-w-24 max-w-24 h-24 sm:min-w-36 sm:h-36 bg-[#D9D9D9] flex rounded-lg items-center justify-center overflow-hidden"
             >
-              {file.fileType === 'IMAGE' ? ( // 이미지 파일인 경우
+              {file.fileType === 'IMAGE' ? (
                 <img
                   src={file.fileUrl}
                   alt={file.fileName}
@@ -172,7 +171,7 @@ const ReviewAdd = () => {
           {selectedFiles.length > 0 ? (
             ''
           ) : (
-            <div className="w-36 h-36 bg-[#D9D9D9] flex rounded-lg items-center justify-center ">
+            <div className="sm:w-36 sm:h-36 w-24 h-24 bg-[#D9D9D9] flex rounded-lg items-center justify-center ">
               <div className="text-[#8A8A8A] text-4xl flex">
                 <FaCamera />
               </div>
@@ -189,22 +188,21 @@ const ReviewAdd = () => {
               type="date"
               value={visitDate}
               onChange={(e) => setVisitDate(e.target.value)}
-              className="w-full p-5 text-[#8A8A8A] text-xl rounded-lg h-14 focus:outline-none"
+              className="w-full p-2 sm:p-5 text-[#8A8A8A] sm:text-xl rounded-lg h-14 focus:outline-none"
             />
           </div>
         </div>
-        {/* 후기 내용 */}
-        <div className="mt-4">
+        <div className="sm:mt-4">
           <div className="flex items-center">
             <span className="mr-1 text-lg">후기 내용</span>
             <span className="mt-0.5 text-2xl text-red-600">*</span>
           </div>
-          <div className="flex p-5 bg-white rounded-lg h-52">
+          <div className="flex p-4 bg-white rounded-lg sm:p-7 h-52">
             <textarea
-              className="w-full h-full text-xl resize-none"
+              className="w-full h-full resize-none sm:text-xl"
               placeholder="내용을 작성해 주세요."
               value={content}
-              maxLength="100"
+              maxLength="400"
               onChange={(e) => setContent(e.target.value)}
             ></textarea>
           </div>
