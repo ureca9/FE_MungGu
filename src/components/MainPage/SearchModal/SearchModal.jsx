@@ -11,12 +11,17 @@ const SearchModal = ({ onClose, defaultTab = "facility" }) => {
   }, [defaultTab]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end z-50">
-      <div className="bg-white w-full max-w-2xl rounded-t-lg p-6 overflow-y-auto max-h-[85vh]">
+    <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-end z-50">
+      <div
+        className="bg-gray-100 w-full rounded-t-lg p-6 overflow-y-auto max-h-[85vh]"
+        style={{ maxWidth: "800px" }} // 좌우 크기를 늘리기 위해 maxWidth 조정
+      >
         {/* 모달 헤더 */}
         <div className="flex justify-between items-center border-b pb-4">
           <h2 className="text-xl font-bold">검색</h2>
-          <button onClick={onClose} className="text-gray-500 text-lg">✖</button>
+          <button onClick={onClose} className="text-gray-500 text-lg">
+            ✖
+          </button>
         </div>
 
         {/* 탭 메뉴 */}

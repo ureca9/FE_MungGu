@@ -118,11 +118,8 @@ const PensionListPage = () => {
       {isModalOpen && <SearchModal onClose={() => setIsModalOpen(false)} />}
 
       <header className="bg-white shadow-md p-4 flex items-center justify-between">
-        <button
-          onClick={() => navigate(-1)}
-          className="text-gray-600 text-lg"
-        >{`<`}</button>
-        <h1 className="text-xl font-bold">펜션 목록</h1>
+
+
         <div className="w-6"></div>
       </header>
 

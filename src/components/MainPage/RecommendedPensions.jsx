@@ -31,9 +31,12 @@ const RecommendedPensions = () => {
           headers.Authorization = `Bearer ${token}`;
         }
 
-        const response = await axios.get("https://meong9.store/api/v1/spots/recommendations", {
-          headers,
-        });
+        const response = await axios.get(
+          "https://meong9.store/api/v1/spots/recommendations",
+          {
+            headers,
+          }
+        );
 
         const { data } = response.data;
 
@@ -121,7 +124,7 @@ const RecommendedPensions = () => {
         </button>
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-sky-100"
+          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200"
         >
           {pensions.map((pension) => (
             <div

@@ -63,20 +63,21 @@ const HotPlaces = () => {
       <h2 className="text-lg font-bold mb-4">지금 핫한 장소 🔥</h2>
 
       <div className="flex gap-2 mb-4 overflow-x-auto">
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`px-4 py-2 rounded-full ${
-              selectedCategory === category
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-600'
-            }`}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
+  {categories.map((category) => (
+    <button
+      key={category}
+      onClick={() => setSelectedCategory(category)}
+      className={`px-4 py-2 border rounded-full ${
+        selectedCategory === category
+          ? 'border-blue-500 text-blue-500 font-semibold'
+          : 'border-gray-300 text-gray-600'
+      } hover:bg-gray-100`}
+    >
+      {category}
+    </button>
+  ))}
+</div>
+
 
       <div className="flex gap-4 overflow-x-auto">
         {Array.isArray(filteredPlaces) && filteredPlaces.length > 0 ? (

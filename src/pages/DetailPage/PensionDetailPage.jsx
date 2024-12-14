@@ -127,14 +127,10 @@ const PensionDetailPage = () => {
     <div className="min-h-screen" style={{ backgroundColor: "#f9fafb" }}>
       {/* Header */}
       <header className="bg-white shadow-md p-4 flex justify-between items-center">
-        <button onClick={() => navigate(-1)} className="text-gray-600 text-lg">
-          {"<"}
-        </button>
-        <h1 className="text-xl font-bold">{pensionDetail.pensionName}</h1>
+
         <button className="text-gray-400"></button>
       </header>
 
-      {/* Image Section (Carousel) */}
       <div className="w-full h-[400px] overflow-hidden">
         <Slider {...sliderSettings}>
           {images.map((image, index) => (

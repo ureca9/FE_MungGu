@@ -9,16 +9,15 @@ const ListPage = () => {
   const location = useLocation();
 
   // 상태
-  const [results, setResults] = useState([]); // 전체 데이터
-  const [filters, setFilters] = useState({}); // 검색 필터
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-  const [isFetching, setIsFetching] = useState(false); // 데이터 요청 중인지 확인
-  const [hasNext, setHasNext] = useState(true); // 다음 데이터가 있는지 확인
-  const [isModalOpen, setIsModalOpen] = useState(false); // 검색 모달 상태
+  const [results, setResults] = useState([]);
+  const [filters, setFilters] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isFetching, setIsFetching] = useState(false);
+  const [hasNext, setHasNext] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const isFetchingRef = useRef(isFetching);
 
-  // 최신 `isFetching` 상태 동기화
   useEffect(() => {
     isFetchingRef.current = isFetching;
   }, [isFetching]);
@@ -64,10 +63,12 @@ const ListPage = () => {
     };
 
     initializeFilters();
-    setIsFetching(false); // 초기화 후 fetch 상태 초기화
+    setIsFetching(false);
+    setCurrentPage(1); // 페이지 초기화
+    setHasNext(true); // 다음 데이터 가능 여부 초기화
   }, [location.state]);
 
-  // 무한 스크롤 구현
+  // 무한 스크롤
   useEffect(() => {
     const handleScroll = () => {
       const bottomReached =
@@ -75,7 +76,7 @@ const ListPage = () => {
         document.documentElement.offsetHeight - 100;
 
       if (bottomReached && !isFetchingRef.current && hasNext) {
-        fetchMoreData(filters);
+        fetchMoreData(currentPage + 1, filters); // 다음 페이지 요청
       }
     };
 
@@ -83,16 +84,16 @@ const ListPage = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [filters, hasNext]);
+  }, [filters, hasNext, currentPage]);
 
   // 추가 데이터 요청
-  const fetchMoreData = async (currentFilters = filters) => {
+  const fetchMoreData = async (page, currentFilters = filters) => {
     if (isFetchingRef.current || !hasNext) return;
 
     setIsFetching(true);
     try {
       const params = {
-        page: currentPage + 1,
+        page,
         size: 10,
         searchWord: currentFilters.searchWord || "",
         regionList: currentFilters.regionList?.includes("전체")
@@ -120,7 +121,6 @@ const ListPage = () => {
       });
 
       const newResults = response.data.data.placeInfo;
-
       setResults((prevResults) => {
         const uniqueResults = new Map();
         [...prevResults, ...newResults].forEach((item) => {
@@ -129,8 +129,8 @@ const ListPage = () => {
         return Array.from(uniqueResults.values());
       });
 
-      setCurrentPage((prevPage) => prevPage + 1);
-      setHasNext(response.data.data.hasNext);
+      setCurrentPage(page); // 페이지 업데이트
+      setHasNext(response.data.data.hasNext); // 다음 데이터 여부 확인
     } catch (error) {
       console.error("Error fetching more data:", error);
     } finally {
@@ -150,8 +150,6 @@ const ListPage = () => {
 
       {/* Header */}
       <header className="bg-white shadow-md p-4 flex items-center justify-between">
-        <button onClick={() => navigate(-1)} className="text-gray-600 text-lg">{`<`}</button>
-        <h1 className="text-xl font-bold">시설 목록</h1>
         <div className="w-6"></div>
       </header>
 

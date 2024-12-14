@@ -64,7 +64,7 @@ const LiveReviews = ({ accessToken }) => {
           </button>
           <ul
             ref={scrollRef}
-            className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-sky-100"
+            className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200"
           >
             {reviews.map((review) => (
               <li
@@ -77,19 +77,25 @@ const LiveReviews = ({ accessToken }) => {
                   className="w-full h-32 rounded-lg object-cover mb-4"
                 />
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-800">
+                  {/* 이름 고정 높이 및 잘림 처리 */}
+                  <h3 className="text-base font-semibold text-gray-800 truncate h-6">
                     {review.name}
                   </h3>
-                  <p className="text-sm text-gray-500">{review.address}</p>
-                  <p className="text-gray-700 mt-2 text-sm line-clamp-3">
+                  {/* 주소 고정 높이 및 잘림 처리 */}
+                  <p className="text-sm text-gray-500 truncate h-5">
+                    {review.address}
+                  </p>
+                  {/* 내용 고정 높이 및 말줄임 처리 */}
+                  <p className="text-gray-700 mt-2 text-sm line-clamp-3 h-[60px]">
                     {review.reviewContent}
                   </p>
+                  {/* 리뷰와 닉네임 영역 고정 */}
                   <div className="flex items-center justify-between mt-4">
                     <div className="flex items-center space-x-2 text-sm text-gray-500">
                       <span>⭐ {review.reviewAvg}</span>
                       <span>({review.reviewCount} 리뷰)</span>
                     </div>
-                    <span className="text-sm italic text-gray-400">
+                    <span className="text-sm italic text-gray-400 truncate h-5">
                       {review.nickname}
                     </span>
                   </div>

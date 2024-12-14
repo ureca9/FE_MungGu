@@ -23,7 +23,7 @@ import PreferencePlant from '../pages/UserPage/PreferencePlant.jsx';
 import PreferenceRegion from '../pages/UserPage/PreferenceRegion.jsx';
 import PlantEdit from '../pages/UserPage/PlantEdit.jsx';
 import RegionEdit from '../pages/UserPage/RegionEdit.jsx';
-import AllReviews from '../pages/Review/ALlReviews.jsx';
+import AllReviews from '../pages/Review/AllReviews.jsx';
 import ReviewAdd from '../pages/Review/ReviewAdd.jsx';
 
 const routes = [
