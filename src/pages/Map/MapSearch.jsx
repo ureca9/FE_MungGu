@@ -3,7 +3,7 @@ import { FaArrowLeft, FaSearch } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import SearchHistory from '../../components/map/SearchHistory.jsx';
 import useSearchHistoryStore from '../../stores/map/useSearchHistoryStore.js';
-import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
+import usePlaceStore from '../../stores/map/usePlaceStore.js';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
 import { searchSpot } from '../../api/map/map.js';
 import Swal from 'sweetalert2';
@@ -12,7 +12,7 @@ const MapSearch = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const { searchHistory, setSearchHistory } = useSearchHistoryStore();
-  const { setSearchResults } = useMapSearchStore();
+  const { setSearchResults } = usePlaceStore();
   const { coords } = useCoordsStore();
   const { latitude, longitude } = coords;
 
@@ -69,6 +69,7 @@ const MapSearch = () => {
     setSearchTerm(historyTerm);
     if (historyTerm.trim()) handleSearch();
   };
+
   return (
     <div className="relative w-full h-[calc(100vh-8rem)] bg-white">
       <div className="absolute top-4 left-4 right-4 z-10 p-4 bg-transparent">
