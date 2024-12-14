@@ -14,6 +14,7 @@ import Frame3Black from '../../assets/mungsengneacut/FrameDesign/Frame3-black.sv
 import Frame3Sky from '../../assets/mungsengneacut/FrameDesign/Frame3-sky.svg';
 import Frame3Christmas from '../../assets/mungsengneacut/FrameDesign/Frame3-christmas.svg';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
+import { instance } from '../../api/axios';
 
 const frameImages = {
   Frame1: {
@@ -43,6 +44,7 @@ const UploadPhotos = () => {
   const [frameImage, setFrameImage] = useState(
     frameImages[selectedFrame].white,
   );
+  const [uploadStatus, setUploadStatus] = useState(null);
 
   const handleImageUpload = (e, index) => {
     const file = e.target.files[0];
@@ -52,7 +54,7 @@ const UploadPhotos = () => {
         const newImages = [...images];
         newImages[index] = reader.result;
         setImages(newImages);
-        e.target.value = ''; // Reset input value to allow re-upload
+        e.target.value = '';
       };
       reader.readAsDataURL(file);
     }
@@ -62,10 +64,35 @@ const UploadPhotos = () => {
     const element = document.getElementById('frame');
     const canvas = await html2canvas(element);
     const image = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.href = image;
-    link.download = '멍생네컷.png';
-    link.click();
+
+    try {
+      const response = await instance.post('/photos', {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ image }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && !result.data.processing) {
+        setUploadStatus({
+          message: '이미지가 성공적으로 업로드되었습니다!',
+          imageUrl: result.data.imageUrl,
+        });
+      } else if (result.data.processing) {
+        setUploadStatus({
+          message: 'S3 처리 중입니다. 다운로드를 시도하세요.',
+          downloadUrl: result.data.imageDownloadUrl,
+        });
+      } else {
+        setUploadStatus({ message: '업로드 중 오류가 발생했습니다.' });
+      }
+    } catch (error) {
+      console.error(error);
+      setUploadStatus({ message: '서버 요청 중 오류가 발생했습니다.' });
+    }
   };
 
   const handleFrameColorChange = (color) => {
@@ -74,10 +101,155 @@ const UploadPhotos = () => {
 
   const isNextButtonDisabled = images.some((image) => image === null);
 
+  const renderFrame = () => {
+    if (selectedFrame === 'Frame1') {
+      return (
+        <div className="relative w-1/2 mt-6">
+          <div className="relative block" id="frame">
+            <img
+              src={frameImage}
+              alt="Selected frame"
+              className="w-full max-w-full"
+            />
+            {images.map((image, index) => (
+              <div
+                key={index}
+                className={`absolute ${
+                  index === 0
+                    ? 'top-[10%] left-[5%]'
+                    : index === 1
+                      ? 'top-[10%] right-[5%]'
+                      : index === 2
+                        ? 'top-[55%] left-[5%]'
+                        : 'top-[55%] right-[5%]'
+                } w-[43%] h-[42%] flex justify-center items-center border bg-white`}
+              >
+                {image ? (
+                  <img
+                    src={image}
+                    alt={`Uploaded ${index}`}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <label
+                    htmlFor={`file-upload-${index}`}
+                    className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
+                  >
+                    이미지 업로드
+                  </label>
+                )}
+                <input
+                  id={`file-upload-${index}`}
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => handleImageUpload(e, index)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    } else if (selectedFrame === 'Frame2') {
+      return (
+        <div className="relative w-1/2 mt-6">
+          <div className="relative block" id="frame">
+            <img
+              src={frameImage}
+              alt="Selected frame"
+              className="w-full max-w-full"
+            />
+            {images.map((image, index) => (
+              <div
+                key={index}
+                className={`absolute ${
+                  index === 0
+                    ? 'top-[18%] left-[5%]'
+                    : index === 1
+                      ? 'top-[4.5%] right-[5%]'
+                      : index === 2
+                        ? 'top-[59%] left-[5%]'
+                        : 'top-[45.5%] right-[5%]'
+                } w-[42.5%] h-[37.5%] flex justify-center items-center border bg-white`}
+              >
+                {image ? (
+                  <img
+                    src={image}
+                    alt={`Uploaded ${index}`}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <label
+                    htmlFor={`file-upload-${index}`}
+                    className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
+                  >
+                    이미지 업로드
+                  </label>
+                )}
+                <input
+                  id={`file-upload-${index}`}
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => handleImageUpload(e, index)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    } else if (selectedFrame === 'Frame3') {
+      return (
+        <div className="relative w-1/2 mt-6">
+          <div className="relative block" id="frame">
+            <img
+              src={frameImage}
+              alt="Selected frame"
+              className="w-1/2 max-w-full mx-auto"
+            />
+            {images.map((image, index) => (
+              <div
+                key={index}
+                className={`absolute ${
+                  index === 0
+                    ? 'top-[6%] left-[29%]'
+                    : index === 1
+                      ? 'top-[29%] left-[29%]'
+                      : index === 2
+                        ? 'top-[52%] left-[29%]'
+                        : 'top-[75%] left-[29%]'
+                } w-[42.5%] h-[22%] flex justify-center items-center border bg-white`}
+              >
+                {image ? (
+                  <img
+                    src={image}
+                    alt={`Uploaded ${index}`}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <label
+                    htmlFor={`file-upload-${index}`}
+                    className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
+                  >
+                    이미지 업로드
+                  </label>
+                )}
+                <input
+                  id={`file-upload-${index}`}
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => handleImageUpload(e, index)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+  };
+
   return (
     <div className="flex flex-col items-center">
       <div className="px-10 mt-5 text-lg text-center">
-        프레임 디자인 선택 후, <b className="text-[#3288ff]">사진을 업로드</b>
+        프레임 디자인 선택 후, <b className="text-[#3288ff]">사진을 업로드</b>{' '}
         해주세요!
       </div>
       <div className="flex items-center gap-4 mt-8">
@@ -91,50 +263,7 @@ const UploadPhotos = () => {
           />
         ))}
       </div>
-      <div className="relative w-1/2 mt-6">
-        <div className="relative block" id="frame">
-          <img
-            src={frameImage}
-            alt="Selected frame"
-            className="w-1/2 max-w-full mx-auto"
-          />
-          {images.map((image, index) => (
-            <div
-              key={index}
-              className={`absolute ${
-                index === 0
-                  ? 'top-[6%] left-[29%]'
-                  : index === 1
-                    ? 'top-[29%] left-[29%]'
-                    : index === 2
-                      ? 'top-[52%] left-[29%]'
-                      : 'top-[75%] left-[29%]'
-              } w-[42.5%] h-[22%] flex justify-center items-center border bg-white`}
-            >
-              {image ? (
-                <img
-                  src={image}
-                  alt={`Uploaded ${index}`}
-                  className="object-cover w-full h-full"
-                />
-              ) : (
-                <label
-                  htmlFor={`file-upload-${index}`}
-                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
-                >
-                  이미지 업로드
-                </label>
-              )}
-              <input
-                id={`file-upload-${index}`}
-                type="file"
-                className="hidden"
-                onChange={(e) => handleImageUpload(e, index)}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+      {renderFrame()}
       <div className="w-4/5 px-10 mt-12 mb-16">
         <BasicBtn
           styleType={`${isNextButtonDisabled ? 'gray' : 'blue'}`}
@@ -145,6 +274,20 @@ const UploadPhotos = () => {
           disabled={isNextButtonDisabled}
         />
       </div>
+      {uploadStatus && (
+        <div className="mt-5 text-center">
+          <p>{uploadStatus.message}</p>
+          {uploadStatus.downloadUrl && (
+            <a
+              href={uploadStatus.downloadUrl}
+              className="text-blue-500 underline"
+              download
+            >
+              여기에서 다운로드
+            </a>
+          )}
+        </div>
+      )}
     </div>
   );
 };
