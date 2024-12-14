@@ -25,6 +25,7 @@ import PlantEdit from '../pages/UserPage/PlantEdit.jsx';
 import RegionEdit from '../pages/UserPage/RegionEdit.jsx';
 import AllReviews from '../pages/Review/AllReviews.jsx';
 import ReviewAdd from '../pages/Review/ReviewAdd.jsx';
+import MapSearchResults from '../pages/Map/MapSearchResults.jsx';
 
 const routes = [
   {
@@ -50,6 +51,10 @@ const routes = [
   {
     path: ROUTER_PATHS.SEARCH,
     element: <Search />,
+  },
+  {
+    path: ROUTER_PATHS.MAP_SEARCH_RESULTS,
+    element: <MapSearchResults />,
   },
   {
     path: ROUTER_PATHS.USER_EDIT,

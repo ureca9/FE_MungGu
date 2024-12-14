@@ -7,12 +7,14 @@ import usePlaceStore from '../../stores/map/usePlaceStore.js';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
 import { searchSpot } from '../../api/map/map.js';
 import Swal from 'sweetalert2';
+import ROUTER_PATHS from '../../utils/RouterPath.js';
+import { SearchType } from '../../utils/SearchType.js';
 
 const MapSearch = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const { searchHistory, setSearchHistory } = useSearchHistoryStore();
-  const { setSearchResults } = usePlaceStore();
+  const { searchType, setSearchResults } = usePlaceStore();
   const { coords } = useCoordsStore();
   const { latitude, longitude } = coords;
 
@@ -48,7 +50,8 @@ const MapSearch = () => {
         else {
           handleSaveSearchHistory(searchTerm);
           setSearchResults(response.content);
-          navigate('/map');
+          if (searchType === SearchType.SEARCH) navigate(ROUTER_PATHS.MAP);
+          else navigate(ROUTER_PATHS.MAP_SEARCH_RESULTS);
         }
       } catch (error) {
         console.error(error);
