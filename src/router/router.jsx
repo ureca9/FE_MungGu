@@ -23,8 +23,11 @@ import PreferencePlant from '../pages/UserPage/PreferencePlant.jsx';
 import PreferenceRegion from '../pages/UserPage/PreferenceRegion.jsx';
 import PlantEdit from '../pages/UserPage/PlantEdit.jsx';
 import RegionEdit from '../pages/UserPage/RegionEdit.jsx';
-import AllReviews from '../pages/Review/ALlReviews.jsx';
 import ReviewAdd from '../pages/Review/ReviewAdd.jsx';
+import MyReview from '../pages/Review/MyReview.jsx';
+import ReviewEdit from '../pages/Review/ReviewEdit.jsx';
+import PensionAllReview from '../pages/Review/PensionAllReview.jsx';
+import PlaceAllReview from '../pages/Review/PlaceAllReview.jsx';
 
 const routes = [
   {
@@ -116,12 +119,24 @@ const routes = [
     element: <RegionEdit />,
   },
   {
-    path: ROUTER_PATHS.ALL_REVIEW,
-    element: <AllReviews />,
+    path: ROUTER_PATHS.PLACE_ALL_REVIEW,
+    element: <PlaceAllReview />,
+  },
+  {
+    path: ROUTER_PATHS.PENSION_ALL_REVIEW,
+    element: <PensionAllReview />,
   },
   {
     path: ROUTER_PATHS.REVIEW_ADD,
     element: <ReviewAdd />,
+  },
+  {
+    path: ROUTER_PATHS.MY_REVIEW,
+    element: <MyReview />,
+  },
+  {
+    path: ROUTER_PATHS.MY_REVIEW_EDIT,
+    element: <ReviewEdit />,
   },
 ];
 

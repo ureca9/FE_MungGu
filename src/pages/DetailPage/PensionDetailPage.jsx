@@ -126,8 +126,8 @@ const PensionDetailPage = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#f9fafb" }}>
       {/* Header */}
-      <header className="bg-white shadow-md p-4 flex justify-between items-center">
-        <button onClick={() => navigate(-1)} className="text-gray-600 text-lg">
+      <header className="flex items-center justify-between p-4 bg-white shadow-md">
+        <button onClick={() => navigate(-1)} className="text-lg text-gray-600">
           {"<"}
         </button>
         <h1 className="text-xl font-bold">{pensionDetail.pensionName}</h1>
@@ -150,11 +150,11 @@ const PensionDetailPage = () => {
       </div>
 
       {/* Info Section */}
-      <section className="p-4 bg-white mt-4">
-        <h2 className="text-lg font-bold mb-2">{pensionDetail.pensionName}</h2>
+      <section className="p-4 mt-4 bg-white">
+        <h2 className="mb-2 text-lg font-bold">{pensionDetail.pensionName}</h2>
         <p className="text-sm text-gray-500">{pensionDetail.address}</p>
         <div className="flex items-center mt-2">
-          <span className="text-yellow-500 mr-2">⭐ {pensionDetail.reviewAvg}</span>
+          <span className="mr-2 text-yellow-500">⭐ {pensionDetail.reviewAvg}</span>
           <span className="text-sm text-gray-500">
             ({pensionDetail.reviewCount})
           </span>
@@ -163,7 +163,7 @@ const PensionDetailPage = () => {
           {pensionDetail.tags.map((tag) => (
             <span
               key={tag}
-              className="px-2 py-1 bg-gray-100 text-xs rounded-md"
+              className="px-2 py-1 text-xs bg-gray-100 rounded-md"
             >
               {tag}
             </span>
@@ -172,8 +172,8 @@ const PensionDetailPage = () => {
       </section>
 
       {/* Description Section */}
-      <section className="p-4 bg-white mt-4">
-        <h3 className="text-lg font-bold mb-2">소개글</h3>
+      <section className="p-4 mt-4 bg-white">
+        <h3 className="mb-2 text-lg font-bold">소개글</h3>
         <p className="text-sm text-gray-700 whitespace-pre-line">
           {showFullIntro
             ? pensionDetail.introduction
@@ -182,7 +182,7 @@ const PensionDetailPage = () => {
         {introductionLines.length > maxLines && (
           <button
             onClick={() => setShowFullIntro(!showFullIntro)}
-            className="text-blue-500 text-sm mt-2"
+            className="mt-2 text-sm text-blue-500"
           >
             {showFullIntro ? "접기" : "더보기"}
           </button>
@@ -190,8 +190,8 @@ const PensionDetailPage = () => {
       </section>
 
       {/* Reservation Section */}
-      <section className="p-4 bg-white mt-4">
-        <h3 className="text-lg font-bold mb-2">예약 정보</h3>
+      <section className="p-4 mt-4 bg-white">
+        <h3 className="mb-2 text-lg font-bold">예약 정보</h3>
         <p className="text-sm text-gray-500 whitespace-pre-line">
           {pensionDetail.limitInfo}
         </p>
@@ -199,16 +199,16 @@ const PensionDetailPage = () => {
       </section>
 
       {/* Basic Info Section */}
-      <section className="p-4 bg-white mt-4">
-        <h3 className="text-lg font-bold mb-2">기본 정보</h3>
+      <section className="p-4 mt-4 bg-white">
+        <h3 className="mb-2 text-lg font-bold">기본 정보</h3>
         <p className="text-sm text-gray-500 whitespace-pre-line">
           {pensionDetail.info}
         </p>
       </section>
 
       {/* Review Section */}
-      <section className="p-4 bg-white mt-4 relative">
-        <div className="flex justify-between items-center mb-2">
+      <section className="relative p-4 mt-4 bg-white">
+        <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-bold">리얼 포토 리뷰</h3>
           <button
             className="text-sm text-blue-500 hover:underline"
@@ -220,7 +220,7 @@ const PensionDetailPage = () => {
         <div className="relative">
           <button
             onClick={scrollLeft}
-            className="absolute left-0 top-1/2 -translate-y-1/2 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-blue-600 z-10"
+            className="absolute left-0 z-10 flex items-center justify-center w-8 h-8 text-white -translate-y-1/2 bg-blue-500 rounded-full shadow-md top-1/2 hover:bg-blue-600"
           >
             ◀
           </button>
@@ -236,14 +236,14 @@ const PensionDetailPage = () => {
                 <div
                   key={index}
                   onClick={() => handleReviewClick(review)}
-                  className="flex-none w-36 rounded-lg bg-gray-50 shadow-md p-2 cursor-pointer"
+                  className="flex-none p-2 rounded-lg shadow-md cursor-pointer w-36 bg-gray-50"
                 >
                   <img
                     src={firstFileUrl || "https://via.placeholder.com/150"}
                     alt="리뷰 사진"
-                    className="w-full h-24 rounded-lg object-cover"
+                    className="object-cover w-full h-24 rounded-lg"
                   />
-                  <p className="text-sm font-bold mt-2 truncate">
+                  <p className="mt-2 text-sm font-bold truncate">
                     {review.nickname}
                   </p>
                   <p className="text-xs text-gray-500 truncate">
@@ -255,7 +255,7 @@ const PensionDetailPage = () => {
           </div>
           <button
             onClick={scrollRight}
-            className="absolute right-0 top-1/2 -translate-y-1/2 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-blue-600 z-10"
+            className="absolute right-0 z-10 flex items-center justify-center w-8 h-8 text-white -translate-y-1/2 bg-blue-500 rounded-full shadow-md top-1/2 hover:bg-blue-600"
           >
             ▶
           </button>
