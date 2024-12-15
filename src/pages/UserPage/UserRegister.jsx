@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { BasicInput } from '../../stories/Input/BasicInput';
@@ -39,27 +39,32 @@ const UserRegister = () => {
     formState: { errors, isSubmitting },
   } = useForm();
 
+  const isInitialRender = useRef(true);
+
   useEffect(() => {
-    try {
-      reset({
-        profileImage: localStorage.getItem('PROFILE_IMAGE') ?? null,
-        email: localStorage.getItem('EMAIL') ?? '',
-        ...userInfo,
-        ...agreements,
-      });
-    } catch (error) {
-      console.error('로컬 스토리지 접근 중 오류 발생:', error);
-      reset({ ...userInfo, ...agreements });
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+      try {
+        reset({
+          profileImage: localStorage.getItem('PROFILE_IMAGE') ?? null,
+          email: localStorage.getItem('EMAIL') ?? '',
+          ...userInfo,
+          ...agreements,
+        });
+      } catch (error) {
+        console.error('로컬 스토리지 접근 중 오류 발생:', error);
+        reset({ ...userInfo, ...agreements });
+      }
     }
   }, [userInfo, agreements, reset]);
 
   const handleChange = (field, value) => {
     if (field in userInfo) {
-      setUserInfo({ [field]: value });
+      setUserInfo((prev) => ({ ...prev, [field]: value }));
     } else if (field in agreements) {
-      setAgreements({ [field]: value });
+      setAgreements((prev) => ({ ...prev, [field]: value }));
     }
-    setValue(field, value);
+    setValue(field, value, { shouldDirty: true });
   };
 
   const profileImage = watch('profileImage');
@@ -214,150 +219,156 @@ const UserRegister = () => {
   };
 
   return (
-    <form
-      className="w-full max-w-md mx-auto mt-10"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className="mb-1 text-[15px] font-bold">프로필 이미지</div>
-      <div className="flex flex-col items-center mb-6">
-        <label
-          htmlFor="profileImage"
-          className="flex items-center justify-center w-32 h-32 bg-gray-100 border rounded-full cursor-pointer"
-          style={{
-            backgroundImage: profileImage
-              ? `url(${typeof profileImage === 'string' ? profileImage : URL.createObjectURL(profileImage)})`
-              : 'none',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          {!profileImage && <span className="text-blue-500">등록</span>}
-        </label>
-        <input
-          type="file"
-          id="profileImage"
-          className="hidden"
-          accept="image/*"
-          onChange={handleProfileImageChange}
-        />
+    <>
+      <div className="flex">
+        <div className="h-1 w-1/4 bg-[#3288ff]"></div>
+        <div className="h-1 w-3/4 bg-[#3288ff] opacity-20"></div>
       </div>
-      <BasicInput
-        label="이메일"
-        id="email"
-        type="text"
-        value={watch('email') || ''}
-        style="disabled"
-        readOnly
-        disabled
+      <form
+        className="w-full max-w-md px-10 mx-auto mt-10 md:px-0"
+        onSubmit={handleSubmit(onSubmit)}
       >
-        <img src={KakaoLogo} alt="Kakao Logo" className="w-5 h-5" />
-      </BasicInput>
-      <BasicInput
-        label="이름"
-        id="name"
-        type="text"
-        value={watch('name') || ''}
-        onChange={(e) => handleChange('name', e.target.value)}
-        placeholder="이름을 입력해주세요."
-        {...register('name', { required: '이름은 필수 입력 항목입니다.' })}
-      />
-      {errors.name && (
-        <p className="text-xs text-red-500">{errors.name.message}</p>
-      )}
-      <BasicInput
-        label="닉네임"
-        id="nickname"
-        type="text"
-        value={watch('nickname') || ''}
-        onChange={(e) => handleChange('nickname', e.target.value)}
-        placeholder="2~8자의 한글, 영문, 숫자만 입력 가능합니다."
-        {...register('nickname', {
-          required: '닉네임은 필수 입력 항목입니다.',
-        })}
-      >
-        <button
-          type="button"
-          className="absolute right-1 w-[65px] top-1/2 transform -translate-y-1/2 py-1 text-xs text-[#3288FF] border border-[#3288FF] rounded transition"
-          onClick={checkNicknameDuplicate}
-        >
-          중복 확인
-        </button>
-      </BasicInput>
-
-      {errors.nickname && (
-        <p className="text-xs text-red-500">{errors.nickname.message}</p>
-      )}
-      <BasicInput
-        label="휴대폰 번호"
-        id="phone"
-        type="text"
-        value={watch('phone') || ''}
-        onChange={(e) => handleChange('phone', e.target.value)}
-        placeholder="휴대폰 번호를 입력해주세요."
-        {...register('phone', {
-          required: '휴대폰 번호는 필수 입력 항목입니다.',
-          validate: (value) => {
-            const phoneRegex = /^01[0-9]-\d{4}-\d{4}$/;
-            if (!phoneRegex.test(value)) {
-              return '휴대폰 번호는 11자리여야 합니다.';
-            }
-            return true;
-          },
-        })}
-        maxLength={13}
-        onInput={(e) => {
-          let value = e.target.value.replace(/\D/g, '');
-
-          if (value.length > 3 && value.length <= 7) {
-            value = value.replace(/(\d{3})(\d{1,4})/, '$1-$2');
-          } else if (value.length > 7) {
-            value = value.replace(/(\d{3})(\d{4})(\d{1,4})/, '$1-$2-$3');
-          }
-
-          e.target.value = value;
-          setValue('phoneNumber', value);
-        }}
-      />
-
-      {errors.phone && (
-        <p className="text-xs text-red-500">{errors.phone.message}</p>
-      )}
-      <div className="flex flex-col w-full mt-8 space-y-2 text-sm">
-        <div className="flex items-center">
+        <div className="mb-1 text-[15px] font-bold">프로필 이미지</div>
+        <div className="flex flex-col items-center mb-6">
+          <label
+            htmlFor="profileImage"
+            className="flex items-center justify-center w-32 h-32 bg-gray-100 border rounded-full cursor-pointer"
+            style={{
+              backgroundImage: profileImage
+                ? `url(${typeof profileImage === 'string' ? profileImage : URL.createObjectURL(profileImage)})`
+                : 'none',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            {!profileImage && <span className="text-blue-500">등록</span>}
+          </label>
           <input
-            type="checkbox"
-            id="agreeAll"
-            checked={agreementsList.every(({ id }) => agreements[id])}
-            onChange={handleCheckAll}
-            className="w-4 h-4 mr-2 text-blue-500 border-gray-300 rounded"
+            type="file"
+            id="profileImage"
+            className="hidden"
+            accept="image/*"
+            onChange={handleProfileImageChange}
           />
-          <label htmlFor="agreeAll">모두 동의합니다.</label>
         </div>
-        <div className="flex flex-col pl-6 space-y-1">
-          {agreementsList.map(({ id, label }) => (
-            <div key={id} className="flex items-center">
-              <input
-                type="checkbox"
-                id={id}
-                {...register(id)}
-                onChange={(e) => handleChange(id, e.target.checked)}
-                className="w-4 h-4 mr-2 text-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor={id}>{label}</label>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="w-full mt-6 mb-16">
-        <BasicBtn
-          styleType={!isSubmitting ? 'blue' : 'gray'}
-          size="md"
-          label="다음"
-          type="submit"
-          disabled={isSubmitting}
+        <BasicInput
+          label="이메일"
+          id="email"
+          type="text"
+          value={watch('email') || ''}
+          style="disabled"
+          readOnly
+          disabled
+        >
+          <img src={KakaoLogo} alt="Kakao Logo" className="w-5 h-5" />
+        </BasicInput>
+        <BasicInput
+          label="이름"
+          id="name"
+          type="text"
+          value={watch('name') || ''}
+          onChange={(e) => handleChange('name', e.target.value)}
+          placeholder="이름을 입력해주세요."
+          {...register('name', { required: '이름은 필수 입력 항목입니다.' })}
         />
-      </div>
-    </form>
+        {errors.name && (
+          <p className="text-xs text-red-500">{errors.name.message}</p>
+        )}
+        <BasicInput
+          label="닉네임"
+          id="nickname"
+          type="text"
+          value={watch('nickname') || ''}
+          onChange={(e) => handleChange('nickname', e.target.value)}
+          placeholder="2~8자의 한글, 영문, 숫자만 입력 가능합니다."
+          {...register('nickname', {
+            required: '닉네임은 필수 입력 항목입니다.',
+          })}
+        >
+          <button
+            type="button"
+            className="absolute right-1 w-[65px] top-1/2 transform -translate-y-1/2 py-1 text-xs text-[#3288FF] border border-[#3288FF] rounded transition"
+            onClick={checkNicknameDuplicate}
+          >
+            중복 확인
+          </button>
+        </BasicInput>
+
+        {errors.nickname && (
+          <p className="text-xs text-red-500">{errors.nickname.message}</p>
+        )}
+        <BasicInput
+          label="휴대폰 번호"
+          id="phone"
+          type="text"
+          value={watch('phone') || ''}
+          onChange={(e) => handleChange('phone', e.target.value)}
+          placeholder="휴대폰 번호를 입력해주세요."
+          {...register('phone', {
+            required: '휴대폰 번호는 필수 입력 항목입니다.',
+            validate: (value) => {
+              const phoneRegex = /^01[0-9]-\d{4}-\d{4}$/;
+              if (!phoneRegex.test(value)) {
+                return '휴대폰 번호는 11자리여야 합니다.';
+              }
+              return true;
+            },
+          })}
+          maxLength={13}
+          onInput={(e) => {
+            let value = e.target.value.replace(/\D/g, '');
+
+            if (value.length > 3 && value.length <= 7) {
+              value = value.replace(/(\d{3})(\d{1,4})/, '$1-$2');
+            } else if (value.length > 7) {
+              value = value.replace(/(\d{3})(\d{4})(\d{1,4})/, '$1-$2-$3');
+            }
+
+            e.target.value = value;
+            setValue('phoneNumber', value);
+          }}
+        />
+
+        {errors.phone && (
+          <p className="text-xs text-red-500">{errors.phone.message}</p>
+        )}
+        <div className="flex flex-col w-full mt-8 space-y-2 text-sm">
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="agreeAll"
+              checked={agreementsList.every(({ id }) => agreements[id])}
+              onChange={handleCheckAll}
+              className="w-4 h-4 mr-2 text-blue-500 border-gray-300 rounded"
+            />
+            <label htmlFor="agreeAll">모두 동의합니다.</label>
+          </div>
+          <div className="flex flex-col pl-6 space-y-1">
+            {agreementsList.map(({ id, label }) => (
+              <div key={id} className="flex items-center">
+                <input
+                  type="checkbox"
+                  id={id}
+                  {...register(id)}
+                  onChange={(e) => handleChange(id, e.target.checked)}
+                  className="w-4 h-4 mr-2 text-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor={id}>{label}</label>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="w-full mt-6 mb-16">
+          <BasicBtn
+            styleType={!isSubmitting ? 'blue' : 'gray'}
+            size="md"
+            label="다음"
+            type="submit"
+            disabled={isSubmitting}
+          />
+        </div>
+      </form>
+    </>
   );
 };
 

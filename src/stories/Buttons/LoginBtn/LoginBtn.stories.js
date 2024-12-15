@@ -19,15 +19,3 @@ export const LoginPrimary = {
     styleType: 'kakao',
   },
 };
-
-export const LoginGoogle = {
-  args: {
-    styleType: 'google',
-  },
-};
-
-export const LoginNaver = {
-  args: {
-    styleType: 'naver',
-  },
-};
