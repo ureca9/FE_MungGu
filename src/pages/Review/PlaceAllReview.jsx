@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReviewCard from '../../components/review/ReviewCard';
 import { GetPlaceReviews } from '../../api/review';
 import { useParams } from 'react-router-dom';
@@ -13,7 +13,6 @@ const PlaceAllReview = () => {
   const [page, setPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [hasNext, setHasNext] = useState(true);
-  const observerRef = useRef(null);
   const { ref, inView } = useInView({
     threshold: 0.5,
     triggerOnce: false,
@@ -49,24 +48,6 @@ const PlaceAllReview = () => {
     console.log('inView', inView);
   }, [inView, !isLoading, hasNext]);
 
-  // useEffect(() => {
-  //   if (observerRef.current) {
-  //     const observer = new IntersectionObserver(
-  //       (entries) => {
-  //         entries.forEach((entry) => {
-  //           if (entry.isIntersecting && hasNext && !isLoading) {
-  //             setPage((prevPage) => prevPage + 1);
-  //           }
-  //         });
-  //       },
-  //       { threshold: 0.5 },
-  //     );
-  //     observer.observe(observerRef.current);
-
-  //     return () => observer.disconnect();
-  //   }
-  // }, [hasNext, isLoading]);
-
   return (
     <div className="flex flex-col min-w-96 sm:w-full">
       <AllReviewHeader />
@@ -83,7 +64,7 @@ const PlaceAllReview = () => {
           ))
         )}
         {isLoading && <div>Loading...</div>}
-        <div ref={observerRef} className="h-4 root"></div>
+        <div ref={ref} className="h-4 root"></div>
       </div>
     </div>
   );
