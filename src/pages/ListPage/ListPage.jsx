@@ -9,14 +9,13 @@ const ListPage = () => {
   const location = useLocation();
 
   const [results, setResults] = useState([]);
-  const [filteredResults, setFilteredResults] = useState([]); // 필터링된 결과 상태 추가
+  const [filteredResults, setFilteredResults] = useState([]); 
   const [filters, setFilters] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [isFetching, setIsFetching] = useState(false);
   const [hasNext, setHasNext] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 상태 추가
-
+  const [selectedTags, setSelectedTags] = useState([]); 
   const isFetchingRef = useRef(isFetching);
 
   const tags = [
@@ -29,7 +28,7 @@ const ListPage = () => {
     "바비큐",
     "금연",
     "무게 제한 없음",
-  ]; // 필터 태그 배열
+  ]; 
 
   useEffect(() => {
     isFetchingRef.current = isFetching;
@@ -109,7 +108,7 @@ const ListPage = () => {
         )
       );
     }
-  }, [selectedTags, results]); // 선택된 태그와 결과 변경 시 필터링
+  }, [selectedTags, results]);
 
   const fetchMoreData = async (page, currentFilters = filters) => {
     if (isFetchingRef.current || !hasNext) return;
@@ -167,7 +166,6 @@ const ListPage = () => {
       setCurrentPage(page);
       setHasNext(response.data.data.hasNext);
 
-      // 필터링된 결과도 업데이트
       if (selectedTags.length === 0 || selectedTags.includes("전체")) {
         setFilteredResults((prevFilteredResults) => [
           ...prevFilteredResults,
@@ -185,6 +183,42 @@ const ListPage = () => {
       console.error("Error fetching more data:", error);
     } finally {
       setIsFetching(false);
+    }
+  };
+
+  const toggleLike = async (placeId) => {
+    try {
+      setResults((prevResults) =>
+        prevResults.map((place) =>
+          place.placeId === placeId
+            ? { ...place, likeStatus: !place.likeStatus }
+            : place
+        )
+      );
+
+      const accessToken = localStorage.getItem("ACCESS_TOKEN");
+
+      await axios.post(
+        `https://meong9.store/api/v1/places/likes/${placeId}`,
+        {},
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Failed to toggle like status:", error);
+
+      setResults((prevResults) =>
+        prevResults.map((place) =>
+          place.placeId === placeId
+            ? { ...place, likeStatus: !place.likeStatus }
+            : place
+        )
+      );
     }
   };
 
@@ -274,8 +308,24 @@ const ListPage = () => {
                 className="w-full h-48 object-cover"
               />
               <div className="p-4 relative">
+                <div className="absolute top-0 right-0">
+                  <button
+                    className={`w-10 h-10 ${
+                      item.likeStatus ? "text-red-500" : "text-gray-400"
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleLike(item.placeId);
+                    }}
+                  >
+                    {item.likeStatus ? "❤️" : "🤍"}
+                  </button>
+                </div>
                 <h2 className="text-lg font-bold">{item.placeName}</h2>
                 <p className="text-sm text-gray-500">{item.address || "주소 정보 없음"}</p>
+                <span className="text-yellow-500 font-semibold">
+                  ⭐ {item.reviewAvg || "0"} ({item.reviewCount || "0"})
+                </span>
               </div>
             </div>
           ))
