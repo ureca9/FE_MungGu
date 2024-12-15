@@ -15,6 +15,7 @@ import Frame3Sky from '../../assets/mungsengneacut/FrameDesign/Frame3-sky.svg';
 import Frame3Christmas from '../../assets/mungsengneacut/FrameDesign/Frame3-christmas.svg';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
 import { instance } from '../../api/axios';
+import Swal from 'sweetalert2';
 
 const frameImages = {
   Frame1: {
@@ -66,32 +67,59 @@ const UploadPhotos = () => {
     const image = canvas.toDataURL('image/png');
 
     try {
-      const response = await instance.post('/photos', {
+      const imageBlob = await (await fetch(image)).blob();
+      const formData = new FormData();
+      formData.append(
+        'ImageInfoDto',
+        new Blob([JSON.stringify({ description: 'Frame Image Upload' })], {
+          type: 'multipart/form-data',
+        }),
+      );
+      formData.append('ImageFile', imageBlob, 'capture.png');
+
+      const response = await instance.post('/photos', formData, {
         headers: {
           Accept: 'application/json',
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
         body: JSON.stringify({ image }),
       });
 
-      const result = await response.json();
-
-      if (response.ok && !result.data.processing) {
-        setUploadStatus({
-          message: '이미지가 성공적으로 업로드되었습니다!',
-          imageUrl: result.data.imageUrl,
-        });
-      } else if (result.data.processing) {
-        setUploadStatus({
-          message: 'S3 처리 중입니다. 다운로드를 시도하세요.',
-          downloadUrl: result.data.imageDownloadUrl,
-        });
+      if (response.status === 200) {
+        if (response.data.message === 'success') {
+          setUploadStatus({
+            message: '이미지가 성공적으로 업로드되었습니다!',
+            imageUrl: response.data.imageUrl,
+          });
+          Swal.fire({
+            icon: 'success',
+            title: '업로드 성공',
+            text: '이미지가 성공적으로 저장되었습니다.',
+            confirmButtonColor: '#3288FF',
+          });
+        } else if (response.data.processing) {
+          setUploadStatus({
+            message: 'S3 처리 중입니다. 다운로드를 시도하세요.',
+            downloadUrl: response.data.imageDownloadUrl,
+          });
+        } else {
+          throw new Error(
+            response.data.message || '서버에서 오류가 발생했습니다.',
+          );
+        }
       } else {
-        setUploadStatus({ message: '업로드 중 오류가 발생했습니다.' });
+        throw new Error(`서버 오류: ${response.status}`);
       }
     } catch (error) {
-      console.error(error);
-      setUploadStatus({ message: '서버 요청 중 오류가 발생했습니다.' });
+      console.error('Error during image upload:', error);
+      setUploadStatus({ message: '이미지 업로드 중 오류가 발생했습니다.' });
+
+      Swal.fire({
+        icon: 'error',
+        title: '업로드 실패',
+        text: '이미지 업로드 중 문제가 발생했습니다.',
+        confirmButtonColor: '#3288FF',
+      });
     }
   };
 
