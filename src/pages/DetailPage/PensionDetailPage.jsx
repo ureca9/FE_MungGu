@@ -226,11 +226,11 @@ const PensionDetailPage = () => {
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-bold">리얼 포토 리뷰</h3>
           <button
-            className="text-sm text-blue-500 hover:underline"
-            onClick={() => navigate(`/all-review/${id}`)}
-          >
-            전체보기 &gt;
-          </button>
+  className="text-sm text-blue-500 hover:underline"
+  onClick={() => navigate(`/pension-all-review/${id}`)}
+>
+  전체보기 &gt;
+</button>
         </div>
         <div className="relative">
           <button
