@@ -43,7 +43,7 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
       gender: gender,
       neutered: neutered,
       weight: Number(weightFront) + Number(weightBack) / 10,
-      profileImageUrl: previewUrl, // 이미지 URL 추가
+      profileImageUrl: previewUrl,
     };
 
     const formData = new FormData();
@@ -96,7 +96,6 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
   const checkDataForm = () => {
     if (
       !puppyName ||
-      !previewUrl ||
       !breedId ||
       !birthDate ||
       !weightFront ||
@@ -113,12 +112,26 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
     return true;
   };
 
+  const handleBirthDateChange = (e) => {
+    let input = e.target.value.replace(/-/g, '');
+    if (input.length > 8) {
+      input = input.slice(0, 8);
+    }
+    if (input.length >= 5) {
+      input = input.slice(0, 4) + '-' + input.slice(4);
+    }
+    if (input.length >= 7) {
+      input = input.slice(0, 7) + '-' + input.slice(7);
+    }
+    setBirthDate(input);
+  };
+
   return (
-    <div className="flex flex-col my-5 mx-28">
+    <div className="flex flex-col m-5 my-5 sm:mx-28">
       <div className="flex w-48 mb-5 text-2xl font-semibold leading-normal">
         {title}
       </div>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6 ">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-6 ">
         <div className="text-red">
           <BasicInput
             label="이름"
@@ -157,7 +170,7 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
             </label>
           </MotionDiv>
         )}
-        {puppyName && previewUrl && (
+        {puppyName && (
           <MotionDiv>
             <BreedsPanel
               onBreedSelect={handleBreedSelect}
@@ -167,20 +180,20 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
             />
           </MotionDiv>
         )}
-        {puppyName && previewUrl && breedId && (
+        {puppyName && breedId && (
           <MotionDiv>
             <BasicInput
               label="생년월일"
               id="breed"
               placeholder="YYYY-MM-DD"
               value={birthDate}
-              onChange={(e) => setBirthDate(e.target.value)}
+              onChange={handleBirthDateChange}
               max={new Date().toISOString().split('T')[0]}
               required
             />
           </MotionDiv>
         )}
-        {puppyName && previewUrl && breedId && birthDate && (
+        {puppyName && breedId && birthDate && (
           <MotionDiv>
             <div>
               <div className="mb-1 text-[15px] font-bold">성별</div>
@@ -215,7 +228,7 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
             </div>
           </MotionDiv>
         )}
-        {puppyName && previewUrl && breedId && birthDate && gender && (
+        {puppyName && breedId && birthDate && gender && (
           <MotionDiv>
             <div>
               <div className="mb-1 text-[15px] font-bold">중성화 수술 여부</div>
@@ -251,7 +264,6 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
           </MotionDiv>
         )}
         {puppyName &&
-          previewUrl &&
           breedId &&
           birthDate &&
           gender &&
@@ -286,7 +298,6 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
             </MotionDiv>
           )}
         {puppyName &&
-          previewUrl &&
           breedId &&
           birthDate &&
           gender &&

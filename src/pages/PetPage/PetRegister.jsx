@@ -47,7 +47,10 @@ const PetRegister = () => {
   return (
     <>
       <div className="flex flex-col w-full">
-        <div className="flex w-1/2 h-2 bg-[#3288FF]"></div>
+        <div className="flex">
+          <div className="h-1 w-1/2 bg-[#3288ff]"></div>
+          <div className="h-1 w-1/2 bg-[#3288ff] opacity-20"></div>
+        </div>
         <PetForm
           title="우리 강아지 정보를 입력해 주세요."
           buttonText="다음"
