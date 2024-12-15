@@ -96,20 +96,21 @@ const RegionEdit = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full sm:max-w-[768px] mx-auto shadow-2xl">
+    <div className="flex flex-col w-full ">
       <div className="pt-8 mb-4 text-xl text-center">
-        <strong>선호하는 지역 2개</strong>를 선택해주세요!
+        <strong className="text-[#3288ff]">선호하는 지역 2개</strong>를
+        선택해주세요!
       </div>
       <main className="flex flex-col items-center pt-16 pb-16">
         <div className="grid grid-rows-[auto] gap-10">
-          <div className="flex justify-center gap-8">
+          <div className="flex justify-center gap-8 md:gap-16">
             {regions.slice(0, 3).map((option, index) => (
               <button
                 key={index}
                 aria-label={`${option} 선택하기`}
                 role="button"
                 onClick={() => toggleSelect(option)}
-                className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
+                className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
                     selected.includes(option)
@@ -125,14 +126,14 @@ const RegionEdit = () => {
               </button>
             ))}
           </div>
-          <div className="flex justify-center gap-16">
+          <div className="flex justify-center gap-8 md:gap-16">
             {regions.slice(3, 5).map((option, index) => (
               <button
                 key={index}
                 aria-label={`${option} 선택하기`}
                 role="button"
                 onClick={() => toggleSelect(option)}
-                className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
+                className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
                     selected.includes(option)
@@ -148,14 +149,14 @@ const RegionEdit = () => {
               </button>
             ))}
           </div>
-          <div className="flex justify-center gap-8">
+          <div className="flex justify-center gap-8 md:gap-16">
             {regions.slice(5).map((option, index) => (
               <button
                 key={index}
                 aria-label={`${option} 선택하기`}
                 role="button"
                 onClick={() => toggleSelect(option)}
-                className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
+                className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
                     selected.includes(option)
