@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReviewCard from '../../components/review/ReviewCard';
 import { GetPlaceReviews } from '../../api/review';
 import { useParams } from 'react-router-dom';
@@ -7,34 +7,30 @@ import { useInView } from 'react-intersection-observer';
 import AllReviewHeader from '../../components/review/AllReviewHeader';
 const PlaceAllReview = () => {
   const { id: placeId } = useParams();
-  // const { pensionsReviewData, setPensionsReviewData } = useAllReviewsStore();
-  const [pensionsReviewData, setPensionsReviewData] = useState({
-    reviews: [],
-    totalPages: 1,
-  });
+  const [reviews, setReviews] = useState([]);
   const { setPlaceId } = useTypeStore();
 
-  const [page, setPage] = useState(0); // 페이지 번호 상태 추가
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
-  const { ref, inView } = useInView({ rootMargin: '200px' }); // Intersection Observer 훅 사용
+  const [page, setPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasNext, setHasNext] = useState(true);
+  const observerRef = useRef(null);
+  const { ref, inView } = useInView({
+    threshold: 0.5,
+    triggerOnce: false,
+  });
 
   useEffect(() => {
     setPlaceId(placeId);
-  }, []);
+  }, [placeId]);
 
   const fetchPlaceReviews = async (page) => {
-    if (isLoading) return; // 이미 로딩 중이면 함수 종료
+    if (isLoading) return;
     setIsLoading(true);
     try {
-      const reviews = await GetPlaceReviews(placeId, page);
-      console.log('시설 리뷰 목록 :', reviews);
-      setPensionsReviewData((prevData) => ({
-        ...prevData,
-        reviews: [...prevData.reviews, ...reviews.reviews], // 기존 리뷰에 새로운 리뷰 추가
-        totalPages: reviews.totalPages, // 전체 페이지 수 업데이트
-      }));
-      console.log('추가 시설', pensionsReviewData.totalPages);
-      console.log('시설 리뷰 목록2 :', reviews);
+      const response = await GetPlaceReviews(placeId, page);
+      setReviews((prevReviews) => [...prevReviews, ...response.reviews]);
+      setHasNext(response.hasNext);
+      console.log('시설 리뷰 목록2 :', response);
     } catch (error) {
       console.error('시설 리뷰 가져오기 실패 :', error);
     } finally {
@@ -47,11 +43,29 @@ const PlaceAllReview = () => {
   }, [placeId, page]);
 
   useEffect(() => {
-    if (inView && pensionsReviewData.totalPages > page + 1) {
+    if (inView && hasNext && !isLoading) {
       setPage((prevPage) => prevPage + 1);
     }
-    console.log('추가 페이지', page);
-  }, [inView, page, pensionsReviewData.totalPages]);
+    console.log('inView', inView);
+  }, [inView, !isLoading, hasNext]);
+
+  // useEffect(() => {
+  //   if (observerRef.current) {
+  //     const observer = new IntersectionObserver(
+  //       (entries) => {
+  //         entries.forEach((entry) => {
+  //           if (entry.isIntersecting && hasNext && !isLoading) {
+  //             setPage((prevPage) => prevPage + 1);
+  //           }
+  //         });
+  //       },
+  //       { threshold: 0.5 },
+  //     );
+  //     observer.observe(observerRef.current);
+
+  //     return () => observer.disconnect();
+  //   }
+  // }, [hasNext, isLoading]);
 
   return (
     <div className="flex flex-col min-w-96 sm:w-full">
@@ -61,7 +75,7 @@ const PlaceAllReview = () => {
         {isLoading ? (
           <div>Loading...</div>
         ) : (
-          pensionsReviewData.reviews.map((review, index) => (
+          reviews.map((review, index) => (
             <div key={index}>
               <ReviewCard key={index} review={review} />
               <div className="mt-3 h-1 bg-[#D9D9D9] "></div>
@@ -69,7 +83,7 @@ const PlaceAllReview = () => {
           ))
         )}
         {isLoading && <div>Loading...</div>}
-        <div ref={ref} className="root"></div>
+        <div ref={observerRef} className="h-4 root"></div>
       </div>
     </div>
   );
