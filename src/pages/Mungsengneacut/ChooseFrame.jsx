@@ -36,7 +36,7 @@ const ChooseFrame = () => {
     >
       <img src={frameSrc} alt={`멍생네컷 프레임 ${frameKey}`} />
       {selectedFrame === frameKey && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="absolute inset-0 flex items-center justify-center bg-[#3288ff] bg-opacity-50">
           <FaCheck size={40} className="text-white" />
         </div>
       )}

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import HeaderImg from '../../assets/mungsengneacut/HeaderImg.svg';
-import { instance } from './../../api/axios';
+import { instance } from '../../api/axios';
 
 const CustomTabPanel = ({ children, value, index }) => {
   return (
@@ -29,12 +29,41 @@ const tabs = [
   { label: 'MY', content: 'Loading...' },
 ];
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const yy = String(date.getFullYear()).slice(2);
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yy}.${mm}.${dd}`;
+};
+
 const Mungsengneacut = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [allPhotos, setAllPhotos] = useState([]);
   const [myPhotos, setMyPhotos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [nickname, setNickname] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchNickname = async () => {
+      try {
+        const response = await instance.get('/members/detail', {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        if (response.status === 200 && response.data.message === 'success') {
+          setNickname(response.data.data.nickname);
+        }
+      } catch (error) {
+        console.error('Error fetching nickname:', error);
+      }
+    };
+
+    fetchNickname();
+  }, []);
 
   useEffect(() => {
     const fetchPhotos = async () => {
@@ -107,36 +136,65 @@ const Mungsengneacut = () => {
             </button>
           ))}
         </div>
-        {selectedTab === 0 && (
-          <CustomTabPanel value={selectedTab} index={0}>
-            {isLoading ? (
-              'Loading...'
-            ) : (
-              <ul>
+        <CustomTabPanel value={selectedTab} index={0}>
+          {isLoading ? (
+            <div className="font-bold">로딩 중..</div>
+          ) : (
+            <div>
+              <div className="mb-2 text-lg ">
+                <b className="text-[#3288ff]">멍티비티 회원님</b>들의 멍생네컷
+              </div>
+              <ul className="grid grid-cols-2 gap-4">
                 {allPhotos.map((photo) => (
-                  <li key={photo.photoId}>
-                    <img src={photo.meongPhotoUrl} alt={photo.nickname} />
-                    <p>{photo.nickname}</p>
-                    <p>{photo.createdAt}</p>
+                  <li key={photo.photoId} className="p-4 border rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="font-bold text-center">
+                        {photo.nickname}님
+                      </p>
+                      <p className="text-sm text-center text-gray-500">
+                        {formatDate(photo.createdAt)}
+                      </p>
+                    </div>
+                    <img
+                      src={photo.meongPhotoUrl}
+                      alt={photo.nickname}
+                      className="w-full h-auto rounded-lg"
+                    />
                   </li>
                 ))}
               </ul>
-            )}
-          </CustomTabPanel>
-        )}
+            </div>
+          )}
+        </CustomTabPanel>
         {selectedTab === 1 && (
           <CustomTabPanel value={selectedTab} index={1}>
             {isLoading ? (
-              'Loading...'
+              <div className="font-bold">로딩 중..</div>
+            ) : myPhotos.length === 0 ? (
+              <p className="text-center">아직 사진이 없어요..</p>
             ) : (
-              <ul>
-                {myPhotos.map((photo) => (
-                  <li key={photo.photoId}>
-                    <img src={photo.meongPhotoUrl} alt="My Photo" />
-                    <p>{photo.createdAt}</p>
-                  </li>
-                ))}
-              </ul>
+              <div>
+                <div className="mb-2 text-lg">
+                  <b className="text-[#3288ff]">{nickname}</b>님의 멍생네컷
+                </div>
+                <ul className="grid grid-cols-2 gap-4">
+                  {myPhotos.map((photo) => (
+                    <li
+                      key={photo.photoId}
+                      className="px-4 pt-2 pb-4 border rounded"
+                    >
+                      <p className="text-sm text-gray-500 text-end">
+                        {formatDate(photo.createdAt)}
+                      </p>
+                      <img
+                        src={photo.meongPhotoUrl}
+                        alt="My Photo"
+                        className="w-full h-auto"
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </CustomTabPanel>
         )}

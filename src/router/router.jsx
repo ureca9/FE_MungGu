@@ -23,9 +23,10 @@ import PreferenceRegion from '../pages/UserPage/PreferenceRegion.jsx';
 import PlantEdit from '../pages/UserPage/PlantEdit.jsx';
 import RegionEdit from '../pages/UserPage/RegionEdit.jsx';
 import ReviewAdd from '../pages/Review/ReviewAdd.jsx';
-import Mungsengneacut from '../pages/Mungsengneacut.jsx/Mungsengneacut.jsx';
-import ChooseFrame from '../pages/Mungsengneacut.jsx/ChooseFrame.jsx';
-import UploadPhotos from '../pages/Mungsengneacut.jsx/UploadPhotos.jsx';
+import Mungsengneacut from '../pages/Mungsengneacut/Mungsengneacut.jsx';
+import ChooseFrame from '../pages/Mungsengneacut/ChooseFrame.jsx';
+import UploadPhotos from '../pages/Mungsengneacut/UploadPhotos.jsx';
+import DownloadPhotos from '../pages/Mungsengneacut/DownloadPhoto.jsx';
 import MyReview from '../pages/Review/MyReview.jsx';
 import ReviewEdit from '../pages/Review/ReviewEdit.jsx';
 import PensionAllReview from '../pages/Review/PensionAllReview.jsx';
@@ -111,6 +112,10 @@ const routes = [
   {
     path: ROUTER_PATHS.UPLOAD_PHOTOS,
     element: <UploadPhotos />,
+  },
+  {
+    path: ROUTER_PATHS.DOWNLOAD_PHOTOS,
+    element: <DownloadPhotos />,
   },
   {
     path: ROUTER_PATHS.PREFERENCE_PLANT,

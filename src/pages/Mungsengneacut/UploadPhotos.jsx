@@ -16,6 +16,8 @@ import Frame3Christmas from '../../assets/mungsengneacut/FrameDesign/Frame3-chri
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
 import { instance } from '../../api/axios';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
+import ROUTER_PATHS from '../../utils/RouterPath';
 
 const frameImages = {
   Frame1: {
@@ -45,7 +47,7 @@ const UploadPhotos = () => {
   const [frameImage, setFrameImage] = useState(
     frameImages[selectedFrame].white,
   );
-  const [uploadStatus, setUploadStatus] = useState(null);
+  const navigate = useNavigate();
 
   const handleImageUpload = (e, index) => {
     const file = e.target.files[0];
@@ -64,56 +66,34 @@ const UploadPhotos = () => {
   const handleCapture = async () => {
     const element = document.getElementById('frame');
     const canvas = await html2canvas(element);
-    const image = canvas.toDataURL('image/png');
+    const imageDataURL = canvas.toDataURL('image/png');
 
     try {
-      const imageBlob = await (await fetch(image)).blob();
+      const imageBlob = await (await fetch(imageDataURL)).blob();
+
       const formData = new FormData();
-      formData.append(
-        'ImageInfoDto',
-        new Blob([JSON.stringify({ description: 'Frame Image Upload' })], {
-          type: 'multipart/form-data',
-        }),
-      );
-      formData.append('ImageFile', imageBlob, 'capture.png');
+      formData.append('image', imageBlob, '멍생네컷.png');
 
       const response = await instance.post('/photos', formData, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
         },
-        body: JSON.stringify({ image }),
       });
 
-      if (response.status === 200) {
-        if (response.data.message === 'success') {
-          setUploadStatus({
-            message: '이미지가 성공적으로 업로드되었습니다!',
-            imageUrl: response.data.imageUrl,
-          });
-          Swal.fire({
-            icon: 'success',
-            title: '업로드 성공',
-            text: '이미지가 성공적으로 저장되었습니다.',
-            confirmButtonColor: '#3288FF',
-          });
-        } else if (response.data.processing) {
-          setUploadStatus({
-            message: 'S3 처리 중입니다. 다운로드를 시도하세요.',
-            downloadUrl: response.data.imageDownloadUrl,
-          });
-        } else {
-          throw new Error(
-            response.data.message || '서버에서 오류가 발생했습니다.',
-          );
-        }
+      if (response.status === 200 && response.data.message === 'success') {
+        const { imageUrl, imageDownloadUrl } = response.data.data;
+
+        navigate(ROUTER_PATHS.DOWNLOAD_PHOTOS, {
+          state: { imageUrl, imageDownloadUrl },
+        });
       } else {
-        throw new Error(`서버 오류: ${response.status}`);
+        throw new Error(
+          response.data.message || '서버에서 오류가 발생했습니다.',
+        );
       }
     } catch (error) {
       console.error('Error during image upload:', error);
-      setUploadStatus({ message: '이미지 업로드 중 오류가 발생했습니다.' });
-
       Swal.fire({
         icon: 'error',
         title: '업로드 실패',
@@ -302,20 +282,6 @@ const UploadPhotos = () => {
           disabled={isNextButtonDisabled}
         />
       </div>
-      {uploadStatus && (
-        <div className="mt-5 text-center">
-          <p>{uploadStatus.message}</p>
-          {uploadStatus.downloadUrl && (
-            <a
-              href={uploadStatus.downloadUrl}
-              className="text-blue-500 underline"
-              download
-            >
-              여기에서 다운로드
-            </a>
-          )}
-        </div>
-      )}
     </div>
   );
 };
