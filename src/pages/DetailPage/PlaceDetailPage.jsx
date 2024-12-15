@@ -9,8 +9,6 @@ const PlaceDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  
-
   const fetchPlaceDetail = async () => {
     try {
       setLoading(true);
@@ -18,16 +16,16 @@ const PlaceDetailPage = () => {
       const headers = {
         Accept: "application/json",
       };
-  
+
       if (accessToken) {
         headers.Authorization = `Bearer ${accessToken}`;
       }
-  
+
       const response = await axios.get(
         `https://meong9.store/api/v1/places/detail/${id}`,
         { headers }
       );
-  
+
       const data = response.data.data || {};
       setPlaceDetail({
         placeName: data.placeName || "정보 없음",
@@ -41,11 +39,12 @@ const PlaceDetailPage = () => {
         description: data.description || "정보 없음",
         images: data.images || [],
         photoReviewList: data.photoReviewList || [],
-        review: data.review || [], // Add this line to include the review data
+        review: data.review || [],
       });
     } catch (error) {
       if (error.response?.status === 404) {
-        const errorMessage = error.response.data?.message || "데이터를 찾을 수 없습니다.";
+        const errorMessage =
+          error.response.data?.message || "데이터를 찾을 수 없습니다.";
         setError(errorMessage);
       } else {
         console.error("API 요청 에러:", error);
@@ -55,7 +54,6 @@ const PlaceDetailPage = () => {
       setLoading(false);
     }
   };
-  
 
   useEffect(() => {
     fetchPlaceDetail();
@@ -123,7 +121,6 @@ const PlaceDetailPage = () => {
           <span className="text-yellow-500 text-sm">
             ⭐ {reviewAvg} ({reviewCount} 리뷰)
           </span>
-
         </div>
         <div className="flex flex-wrap gap-2">
           {tags.map((tag, index) => (
@@ -142,7 +139,12 @@ const PlaceDetailPage = () => {
         {hmpgUrl && (
           <p>
             홈페이지:{" "}
-            <a href={hmpgUrl} target="_blank" rel="noopener noreferrer">
+            <a
+              href={hmpgUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 underline"
+            >
               {hmpgUrl}
             </a>
           </p>
@@ -155,108 +157,49 @@ const PlaceDetailPage = () => {
         <p className="text-gray-600 text-sm">{description || "설명 없음"}</p>
       </section>
 
+      {/* Photo Review Section */}
       {photoReviewList.length > 0 && (
-  <section
-    style={{
-      padding: "16px",
-      backgroundColor: "#fff",
-      marginTop: "16px",
-      overflowX: "auto",
-      whiteSpace: "nowrap",
-    }}
-  >
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "8px",
-      }}
-    >
-      <h3 style={{ fontSize: "18px", fontWeight: "bold" }}>리얼 포토 리뷰</h3>
-      <button
-        style={{
-          fontSize: "14px",
-          color: "#3182ce",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          padding: "0",
-        }}
-        onClick={() => alert("전체보기 기능 연결 예정입니다!")}
-      >
-        전체보기 >
-      </button>
-    </div>
-
-    <div
-      style={{
-        display: "inline-flex",
-        gap: "16px",
-      }}
-    >
-      {photoReviewList.map((photoReview) => {
-        // 리뷰 데이터에서 해당 reviewId를 기반으로 추가 정보를 찾음
-        const matchingReview = review.find(
-          (r) => String(r.reviewId) === String(photoReview.reviewId) // String으로 변환하여 비교
-        );
-
-        return (
-          <div
-            key={photoReview.reviewId}
-            style={{
-              flex: "0 0 auto",
-              width: "150px",
-              borderRadius: "8px",
-              backgroundColor: "#f9fafb",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-              padding: "8px",
-              textAlign: "center", // 텍스트 가운데 정렬
-            }}
-          >
-            <img
-              src={photoReview.representativeImageUrl || "https://via.placeholder.com/150"}
-              alt="포토 리뷰"
-              style={{
-                width: "100%",
-                height: "100px",
-                borderRadius: "8px",
-                objectFit: "cover",
-                marginBottom: "8px",
-              }}
-            />
-            {/* 작성자 닉네임 */}
-            <p
-              style={{
-                fontSize: "14px",
-                fontWeight: "bold",
-                marginBottom: "4px",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
+        <section className="p-4 bg-white mt-4">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-bold">리얼 포토 리뷰</h3>
+            <button
+              className="text-sm text-blue-500 hover:underline"
+              onClick={() => navigate(`/all-review/${id}`)}
             >
-              {matchingReview?.nickname || "작성자 없음"}
-            </p>
-            {/* 리뷰 내용 */}
-            <p
-              style={{
-                fontSize: "12px",
-                color: "#718096",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {matchingReview?.content || "리뷰 내용 없음"}
-            </p>
+              전체보기 &gt;
+            </button>
           </div>
-        );
-      })}
-    </div>
-  </section>
-)}
+          <div className="flex overflow-x-auto space-x-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200">
+            {photoReviewList.map((photoReview) => {
+              const matchingReview = review.find(
+                (r) => String(r.reviewId) === String(photoReview.reviewId)
+              );
 
+              return (
+                <div
+                  key={photoReview.reviewId}
+                  className="flex-none w-36 bg-gray-50 rounded-lg shadow-md p-2 text-center"
+                >
+                  <img
+                    src={
+                      photoReview.representativeImageUrl ||
+                      "https://via.placeholder.com/150"
+                    }
+                    alt="포토 리뷰"
+                    className="w-full h-24 rounded-lg object-cover mb-2"
+                  />
+                  <p className="text-sm font-bold truncate">
+                    {matchingReview?.nickname || "작성자 없음"}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {matchingReview?.content || "리뷰 내용 없음"}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
     </div>
   );
 };
