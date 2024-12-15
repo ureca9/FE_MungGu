@@ -37,7 +37,7 @@ const MyPet = ({ memberD, navigate }) => {
           }}
         />
       </div>
-      <div className="flex justify-center w-full gap-3 sm:justify-start sm:gap-5">
+      <div className="flex w-full gap-3 overflow-x-auto sm:justify-start sm:gap-5">
         {memberD?.puppyList.map((puppy) => (
           <div
             key={puppy.puppyId}

@@ -194,7 +194,7 @@ const PlaceDetailPage = () => {
             <h3 className="text-lg font-bold">리얼 포토 리뷰</h3>
             <button
               className="text-sm text-blue-500 hover:underline"
-              onClick={() => navigate(`/palce-all-review/${id}`)}
+              onClick={() => navigate(`/place-all-review/${id}`)}
             >
               전체보기 &gt;
             </button>
