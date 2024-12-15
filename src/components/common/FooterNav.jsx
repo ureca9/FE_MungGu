@@ -40,21 +40,21 @@ const navItems = [
         <img
           src={meongsengneacutOn}
           alt="멍생네컷 활성화"
-          className="w-6 h-6"
+          className="w-5 h-5"
         />
       ),
       inactive: (
         <img
           src={meongsengneacutOff}
           alt="멍생네컷 비활성화"
-          className="w-6 h-6"
+          className="w-5 h-5"
         />
       ),
       hover: (
         <img
           src={meongsengneacutHover}
           alt="멍생네컷 호버"
-          className="w-6 h-6"
+          className="w-5 h-5"
         />
       ),
     },
@@ -113,7 +113,9 @@ const FooterNav = () => {
                       ? item.icon.active
                       : item.icon.inactive
                   : null}
-                <span className="mt-1 text-xs">{item.label}</span>
+                <span className="mt-1 text-xs whitespace-nowrap">
+                  {item.label}
+                </span>
               </>
             )}
           </NavLink>
