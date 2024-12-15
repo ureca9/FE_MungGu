@@ -43,6 +43,7 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
       gender: gender,
       neutered: neutered,
       weight: Number(weightFront) + Number(weightBack) / 10,
+      profileImageUrl: previewUrl, // 이미지 URL 추가
     };
 
     const formData = new FormData();
