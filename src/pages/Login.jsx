@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LoginBtn } from '../stories/Buttons/LoginBtn/LoginBtn';
 import { fetchAccessToken } from '../api/auth/auth.js';
 import useLoginStore from '../stores/Auth/useLoginStore';
 import LoadingSpinner from './../components/common/LoadingSpinner';
 import Swal from 'sweetalert2';
 import ROUTER_PATHS from '../utils/RouterPath.js';
+import loginImage from '../assets/login/LoginImgSprite.png';
 
 const Login = () => {
   const REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
@@ -53,7 +53,7 @@ const Login = () => {
   }
 
   return (
-    <div className="flex flex-col items-center min-h-screen px-6 mt-8">
+    <div className="flex flex-col items-center px-6 mt-8">
       <span className="mb-4 text-lg text-gray-600">
         우리 댕댕이와{' '}
         <span className="font-bold text-[#3288FF]">함께 하는 활동!</span>
@@ -64,21 +64,31 @@ const Login = () => {
       <div
         className="mb-4 w-[200px] h-[243px]"
         style={{
-          backgroundImage: "url('src/assets/login/LoginImgSprite.png')",
+          backgroundImage: `url(${loginImage})`,
           backgroundPosition: '-10px -10px',
         }}
       ></div>
       <div className="flex items-center w-2/3 gap-4 my-4">
         <div className="w-full h-[1px] border-[1px] border-[#8a8a8a]"></div>
-        <div className="w-full text-sm text-center text-gray-600">
+        <div className="w-full text-sm text-center text-gray-600 whitespace-nowrap">
           SNS 계정으로 로그인
         </div>
         <div className="w-full h-[1px] border-[1px] border-[#8a8a8a]"></div>
       </div>
-      <div className="flex justify-between w-[200px] mt-4 text-center">
-        <LoginBtn styleType="kakao" onClick={handleKakaoLogin} />
-        <LoginBtn styleType="google" />
-        <LoginBtn styleType="naver" />
+      <div className="flex flex-col justify-center w-2/3 mt-4 text-center md:w-1/2">
+        <button
+          className="bg-[#FEE500] text-[#371D1E] text-sm px-4 whitespace-nowrap rounded-[8px] w-full font-bold rounded-lg py-2 flex justify-center items-center"
+          onClick={handleKakaoLogin}
+        >
+          <div
+            className="w-6 h-6 mr-2"
+            style={{
+              backgroundImage: `url(${loginImage})`,
+              backgroundPosition: '-230px -10px',
+            }}
+          ></div>
+          카카오로 로그인하기
+        </button>
       </div>
     </div>
   );
