@@ -4,7 +4,7 @@ import ROUTER_PATHS from '../../utils/RouterPath';
 const ServiceList = () => {
   const navigate = useNavigate();
   const serviceList = [
-    { name: '이벤트', path: '/', icon: 'bg-이벤트_아이콘' },
+    { name: '멍생네컷', path: '/', icon: 'bg-이벤트_아이콘' },
     { name: '내 예약', path: '/', icon: 'bg-예약_아이콘' },
     {
       name: '내가 쓴 후기',
