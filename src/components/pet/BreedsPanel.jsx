@@ -31,8 +31,6 @@ const BreedsPanel = ({
   };
   useEffect(() => {
     const token = localStorage.getItem('ACCESS_TOKEN');
-    console.log('페널 토큰 :', token);
-
     if (token) {
       setIsLoggedIn(true);
     }
@@ -85,8 +83,9 @@ const BreedsPanel = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 1, y: -200 }}
             transition={{ duration: 0.5 }}
+            className="flex justify-center w-full"
           >
-            <DialogPanel className="w-[768px] px-10 py-7 h-[580px] flex flex-col rounded-t-[50px] bg-white border">
+            <DialogPanel className="sm:max-w-[768px] w-full px-10 py-7 h-[580px] flex flex-col rounded-t-[50px] bg-white border">
               <div className="flex justify-center">
                 <div className="flex w-64 h-[10px]  mb-6 bg-black rounded-full "></div>
               </div>
@@ -99,7 +98,7 @@ const BreedsPanel = ({
                   className="cursor-pointer absolute right-0 size-9 text-[#D9D9D9]"
                 />
               </div>
-              <div className="flex flex-col px-20">
+              <div className="flex flex-col px-2 sm:px-20">
                 <div className="flex justify-end">
                   <input
                     type="search"
@@ -111,18 +110,34 @@ const BreedsPanel = ({
                     <IoMdSearch className="flex absolute mr-2 mt-3 size-8 text-[#8A8A8A]" />
                   )}
                 </div>
-                <Description className="text-lg font-semibold">
-                  많이 찾는 견종
-                </Description>
-                <ul>
-                  {breedsType
-                    .filter((breed) => {
-                      if (!searchValue) return breed.isFrequented;
-                      return breed.name
-                        .toLowerCase()
-                        .includes(searchValue.toLowerCase());
-                    })
-                    .map((breeds) => (
+                <div className="overflow-y-auto h-1/6">
+                  <Description className="text-lg font-semibold">
+                    많이 찾는 견종
+                  </Description>
+                  <ul className="">
+                    {breedsType
+                      .filter((breed) => {
+                        if (!searchValue) return breed.isFrequented;
+                        return breed.name
+                          .toLowerCase()
+                          .includes(searchValue.toLowerCase());
+                      })
+                      .map((breeds) => (
+                        <li
+                          key={breeds.breedId}
+                          value={breeds.breedId}
+                          onClick={() =>
+                            handleBreedClick(breeds.breedId, breeds.name)
+                          }
+                          className="my-3 cursor-pointer"
+                        >
+                          {breeds.name}
+                        </li>
+                      ))}
+                  </ul>
+                  <div className="mt-5 text-xl font-semibold">전체 견종</div>
+                  <ul className="">
+                    {breedsType.map((breeds) => (
                       <li
                         key={breeds.breedId}
                         value={breeds.breedId}
@@ -134,7 +149,8 @@ const BreedsPanel = ({
                         {breeds.name}
                       </li>
                     ))}
-                </ul>
+                  </ul>
+                </div>
               </div>
             </DialogPanel>
           </motion.div>
