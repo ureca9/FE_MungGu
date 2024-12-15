@@ -5,7 +5,7 @@ import axios from "axios";
 const RecommendedFacility = ({ pensionId }) => {
   const [recommendations, setRecommendations] = useState([]);
   const [error, setError] = useState(null);
-  const scrollRef = useRef(null); // 스크롤 컨테이너 참조
+  const scrollRef = useRef(null); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,7 +53,6 @@ const RecommendedFacility = ({ pensionId }) => {
       </div>
 
       <div className="relative">
-        {/* 좌우 스크롤 버튼 */}
         <button
           onClick={scrollLeft}
           className="absolute left-0 top-1/2 -translate-y-1/2 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-blue-600 z-10"

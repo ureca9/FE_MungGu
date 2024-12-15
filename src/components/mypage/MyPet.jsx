@@ -12,7 +12,7 @@ const MyPet = ({ memberD, navigate }) => {
     setSelectedPetId(puppyId);
   };
   return (
-    <div className="flex flex-col h-auto py-8 bg-white border rounded-lg px-9 border-borderlineGray">
+    <div className="flex flex-col w-full h-auto p-3 bg-white border rounded-lg sm:p-8 border-borderlineGray">
       <div className="flex items-center justify-between mb-6">
         <span>
           <span className="text-xl text-textGray">마이펫</span>
@@ -37,19 +37,19 @@ const MyPet = ({ memberD, navigate }) => {
           }}
         />
       </div>
-      <div className="flex gap-5">
+      <div className="flex justify-center w-full gap-3 sm:justify-start sm:gap-5">
         {memberD?.puppyList.map((puppy) => (
           <div
             key={puppy.puppyId}
             onClick={() => handleClick(puppy.puppyId)}
-            className="relative flex flex-col items-center cursor-pointer"
+            className="relative flex flex-col items-center cursor-pointer max-w-16 min-w-16"
           >
             <img
               src={puppy.puppyImageUrl || petgray}
               alt="마이펫 이미지"
               className="bg-[#F5F5F5] border border-[#8A8A8A] rounded-full size-16"
             />
-            <span className="flex justify-center mt-2 text-textGray">
+            <span className="justify-center mt-2 text-textGray line-clamp-1">
               {puppy.puppyName}
             </span>
             {selectedPetId === puppy.puppyId && (

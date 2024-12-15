@@ -8,7 +8,7 @@ const Main = () => {
   const [isSearchModalOpen, setSearchModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen white">
       {/* Header */}
 
       {/* Search */}

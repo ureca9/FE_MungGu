@@ -2,13 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const ProfileSection = ({ setMaxDogWeight }) => {
-  const [dogList, setDogList] = useState([]); // 강아지 리스트 상태
-  const [loading, setLoading] = useState(true); // 로딩 상태
-  const [selectedDogInfo, setSelectedDogInfo] = useState(null); // 선택된 반려동물 정보
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
-  const [selectedDogsCount, setSelectedDogsCount] = useState(0); // 선택된 강아지 수
-  const [humanCount, setHumanCount] = useState(0); // 인원 수
+const ProfileSection = ({ setMaxDogWeight, onComplete }) => {
+  const [dogList, setDogList] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [selectedDogInfo, setSelectedDogInfo] = useState(null); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
 
   const fetchDogs = async () => {
     try {
@@ -64,7 +62,6 @@ const ProfileSection = ({ setMaxDogWeight }) => {
       );
 
       const selectedDogs = updatedList.filter((dog) => dog.selected);
-      setSelectedDogsCount(selectedDogs.length);
 
       if (selectedDogs.length > 0) {
         const maxWeightDog = selectedDogs.reduce(
@@ -111,84 +108,50 @@ const ProfileSection = ({ setMaxDogWeight }) => {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-4">누구랑 함께 가나요?</h2>
-      <div className="flex items-center space-x-4 mb-4">
+      <div className="flex overflow-x-auto space-x-4 mb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
         {dogList.map((dog) => (
           <div
             key={dog.id}
             onClick={() => handleDogSelect(dog.id)}
-            className={`relative w-16 h-16 rounded-full overflow-hidden cursor-pointer ${
-              dog.selected ? "border-2 border-blue-500" : "border-2 border-gray-300"
-            }`}
+            className="relative flex flex-col items-center cursor-pointer"
           >
             {dog.imageUrl ? (
               <img
                 src={dog.imageUrl}
                 alt={dog.name}
-                className="w-full h-full object-cover"
+                className={`w-16 h-16 rounded-full object-cover border-2 ${
+                  dog.selected ? "border-blue-500" : "border-gray-300"
+                }`}
               />
             ) : (
-              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <div
+                className={`w-16 h-16 bg-gray-200 flex items-center justify-center rounded-full border-2 ${
+                  dog.selected ? "border-blue-500" : "border-gray-300"
+                }`}
+              >
                 🐾
               </div>
             )}
+            <p className="text-sm font-medium text-gray-700 mt-1">{dog.name}</p>
             {dog.selected && (
-              <div className="absolute inset-0 flex items-center justify-center bg-blue-500 bg-opacity-50">
-                <span className="text-white text-lg font-bold">✓</span>
+              <div className="absolute top-0 right-0 bg-blue-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">
+                ✓
               </div>
             )}
           </div>
         ))}
-        <button
+        <div
           onClick={handleAddDogClick}
-          className="w-16 h-16 flex items-center justify-center border-2 border-gray-300 rounded-full text-gray-500 text-lg"
+          className="flex flex-col items-center cursor-pointer"
         >
-          +
-        </button>
-      </div>
-
-      <div className="flex justify-between items-center mb-4">
-        <div>
-          <p className="text-sm text-gray-600">총 강아지 수</p>
-          <div className="flex items-center">
-            <button
-              onClick={() =>
-                setSelectedDogsCount((count) => Math.max(count - 1, 0))
-              }
-              className="px-2 py-1 bg-gray-200 rounded-l-lg"
-            >
-              -
-            </button>
-            <span className="px-4 py-1 border">{selectedDogsCount}</span>
-            <button
-              onClick={() => setSelectedDogsCount((count) => count + 1)}
-              className="px-2 py-1 bg-gray-200 rounded-r-lg"
-            >
-              +
-            </button>
+          <div className="w-16 h-16 bg-gray-200 flex items-center justify-center rounded-full border-2 border-gray-300">
+            +
           </div>
-        </div>
-        <div>
-          <p className="text-sm text-gray-600">인원</p>
-          <div className="flex items-center">
-            <button
-              onClick={() => setHumanCount((count) => Math.max(count - 1, 0))}
-              className="px-2 py-1 bg-gray-200 rounded-l-lg"
-            >
-              -
-            </button>
-            <span className="px-4 py-1 border">{humanCount}</span>
-            <button
-              onClick={() => setHumanCount((count) => count + 1)}
-              className="px-2 py-1 bg-gray-200 rounded-r-lg"
-            >
-              +
-            </button>
-          </div>
+          <p className="text-sm font-medium text-gray-500 mt-1">추가</p>
         </div>
       </div>
 
-      {/* 가장 무거운 강아지 메시지 */}
+
       {selectedDogInfo && (
         <div className="mt-4 p-4 bg-blue-100 rounded-md">
           <p className="text-blue-700 font-medium">
@@ -196,6 +159,19 @@ const ProfileSection = ({ setMaxDogWeight }) => {
           </p>
         </div>
       )}
+
+
+      <div className="mt-6">
+        <button
+          onClick={() => {
+            setMaxDogWeight(0); 
+            onComplete(); 
+          }}
+          className="w-full bg-white border border-[#3288FF] text-[#3288FF] py-2 rounded-lg text-lg font-bold hover:bg-[#f0f8ff] transition-colors duration-200"
+        >
+          완료
+        </button>
+      </div>
     </div>
   );
 };

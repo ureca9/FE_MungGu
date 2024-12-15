@@ -1,16 +1,16 @@
 import { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
-import { getMarkers } from '../../api/map/map.js';
+import { getMarkers, searchSpot } from '../../api/map/map.js';
 import heartMarker from '../../assets/common/heartMarker.png';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
-import useMapSearchStore from '../../stores/map/useMapSearchStore.js';
+import usePlaceStore from '../../stores/map/usePlaceStore.js';
 
 const MapContainer = ({ onMapLoaded }) => {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const { setCoords } = useCoordsStore();
-  const { searchResults } = useMapSearchStore();
+  const { searchResults, setSelectedPlace } = usePlaceStore();
 
   const initMap = async (latitude, longitude) => {
     const map = new window.kakao.maps.Map(mapContainer.current, {
@@ -22,6 +22,11 @@ const MapContainer = ({ onMapLoaded }) => {
     addCurrentMarker(map, latitude, longitude);
     await addLikedMarker(map);
     addSearchResultMarker(map);
+  };
+
+  const handleMarkerClick = async (place) => {
+    const data = await searchSpot(place.name, place.latitude, place.longitude);
+    setSelectedPlace(data.content);
   };
 
   const addCurrentMarker = (map, latitude, longitude) => {
@@ -48,12 +53,8 @@ const MapContainer = ({ onMapLoaded }) => {
           ),
         });
 
-        const infoWindow = new window.kakao.maps.InfoWindow({
-          content: `<div style="padding:5px;">${place.name}</div>`,
-        });
-
         window.kakao.maps.event.addListener(marker, 'click', () => {
-          infoWindow.open(map, marker);
+          handleMarkerClick(place);
         });
       });
     } catch (error) {
@@ -75,12 +76,8 @@ const MapContainer = ({ onMapLoaded }) => {
         map,
       });
 
-      const infoWindow = new window.kakao.maps.InfoWindow({
-        content: `<div style="padding:5px;">${place.name}</div>`,
-      });
-
       window.kakao.maps.event.addListener(marker, 'click', () => {
-        infoWindow.open(map, marker);
+        handleMarkerClick(place);
       });
     });
   };
