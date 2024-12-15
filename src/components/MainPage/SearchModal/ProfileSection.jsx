@@ -3,10 +3,10 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 const ProfileSection = ({ setMaxDogWeight, onComplete }) => {
-  const [dogList, setDogList] = useState([]); // 강아지 리스트 상태
-  const [loading, setLoading] = useState(true); // 로딩 상태
-  const [selectedDogInfo, setSelectedDogInfo] = useState(null); // 선택된 반려동물 정보
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
+  const [dogList, setDogList] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [selectedDogInfo, setSelectedDogInfo] = useState(null); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
 
   const fetchDogs = async () => {
     try {
@@ -113,7 +113,7 @@ const ProfileSection = ({ setMaxDogWeight, onComplete }) => {
           <div
             key={dog.id}
             onClick={() => handleDogSelect(dog.id)}
-            className="flex flex-col items-center cursor-pointer"
+            className="relative flex flex-col items-center cursor-pointer"
           >
             {dog.imageUrl ? (
               <img
@@ -133,6 +133,11 @@ const ProfileSection = ({ setMaxDogWeight, onComplete }) => {
               </div>
             )}
             <p className="text-sm font-medium text-gray-700 mt-1">{dog.name}</p>
+            {dog.selected && (
+              <div className="absolute top-0 right-0 bg-blue-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">
+                ✓
+              </div>
+            )}
           </div>
         ))}
         <div
@@ -146,7 +151,7 @@ const ProfileSection = ({ setMaxDogWeight, onComplete }) => {
         </div>
       </div>
 
-      {/* 가장 무거운 강아지 메시지 */}
+
       {selectedDogInfo && (
         <div className="mt-4 p-4 bg-blue-100 rounded-md">
           <p className="text-blue-700 font-medium">
@@ -155,12 +160,12 @@ const ProfileSection = ({ setMaxDogWeight, onComplete }) => {
         </div>
       )}
 
-      {/* 완료 버튼 */}
+
       <div className="mt-6">
         <button
           onClick={() => {
-            setMaxDogWeight(0); // 무게 초기화
-            onComplete(); // 모든 탭 닫기
+            setMaxDogWeight(0); 
+            onComplete(); 
           }}
           className="w-full bg-white border border-[#3288FF] text-[#3288FF] py-2 rounded-lg text-lg font-bold hover:bg-[#f0f8ff] transition-colors duration-200"
         >

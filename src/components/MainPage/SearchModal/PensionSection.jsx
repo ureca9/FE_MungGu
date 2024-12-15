@@ -4,7 +4,7 @@ import ProfileSection from "./ProfileSection";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "react-calendar/dist/Calendar.css";
-import "./PensionSection.css"; // 사용자 정의 CSS
+import "./PensionSection.css"; 
 
 const PensionSection = ({ onClose }) => {
   const [searchWord, setSearchWord] = useState("");
@@ -111,11 +111,18 @@ const PensionSection = ({ onClose }) => {
         "endDate",
         selectedDateRange[1].toISOString().split("T")[0]
       );
-
+  
     const url = `https://meong9.store/api/v1/search/pensions?${queryParams.toString()}`;
-
+  
+    const accessToken = localStorage.getItem("ACCESS_TOKEN");
+    const headers = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+    };
+  
     axios
-      .get(url)
+      .get(url, { headers })
       .then((response) => {
         const results = response.data.data.pensionInfo;
         navigate("/pension-list", {
@@ -130,14 +137,16 @@ const PensionSection = ({ onClose }) => {
             },
           },
         });
-
-        if (onClose) onClose();
+  
+        if (onClose) onClose(); 
       })
       .catch((error) => {
         console.error("Error during search:", error);
         alert("검색 중 문제가 발생했습니다. 다시 시도해주세요.");
       });
   };
+  
+  
 
   const renderSelectedSummary = (section) => {
     if (activeSection === section || activeSection === "none") return null;
@@ -159,7 +168,6 @@ const PensionSection = ({ onClose }) => {
 
   return (
     <div className="flex flex-col h-full bg-gray-100 rounded-lg shadow-md">
-      {/* 검색어 입력 섹션 */}
       <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
         <h3 className="text-lg font-semibold mb-2">어디로 놀러갈까요?</h3>
         <input
@@ -171,7 +179,6 @@ const PensionSection = ({ onClose }) => {
         />
       </div>
 
-      {/* 지역 선택 섹션 */}
       <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
         <h3
           className="text-lg font-semibold mb-2 cursor-pointer flex justify-between items-center"
@@ -209,7 +216,7 @@ const PensionSection = ({ onClose }) => {
         </div>
       </div>
 
-      {/* 달력 섹션 */}
+
       <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
         <h3
           className="text-lg font-semibold mb-2 cursor-pointer flex justify-between items-center"

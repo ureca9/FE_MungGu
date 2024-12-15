@@ -58,6 +58,23 @@ const FacilitySection = ({ onClose }) => {
     });
   };
 
+  const renderSelectedSummary = (section) => {
+    if (activeSection === section) return null; // 탭이 열려 있으면 표시하지 않음
+
+    switch (section) {
+      case "region":
+        return searchData.regionList.join(", "); // 선택된 모든 지역 표시
+      case "category":
+        return searchData.placeTypes.join(", "); // 선택된 모든 카테고리 표시
+      case "profile":
+        return searchData.heaviestDogWeight > 0
+          ? `최대 ${searchData.heaviestDogWeight}kg`
+          : "선택되지 않음";
+      default:
+        return null;
+    }
+  };
+
   const handleSearch = () => {
     const queryParams = new URLSearchParams();
     if (searchData.searchWord) queryParams.append("searchWord", searchData.searchWord);
@@ -81,8 +98,20 @@ const FacilitySection = ({ onClose }) => {
 
     const url = `https://meong9.store/api/v1/search/places?${queryParams.toString()}`;
 
+
+    const accessToken = localStorage.getItem("ACCESS_TOKEN");
+
+    const headers = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    };
+
+    if (accessToken) {
+      headers.Authorization = `Bearer ${accessToken}`;
+    }
+
     axios
-      .get(url)
+      .get(url, { headers })
       .then((response) => {
         const results = response.data.data.placeInfo;
         navigate("/facility-list", {
@@ -96,26 +125,9 @@ const FacilitySection = ({ onClose }) => {
       });
   };
 
-  const renderSelectedSummary = (section) => {
-    if (activeSection === section) return null; // 탭이 열려 있으면 표시하지 않음
-
-    switch (section) {
-      case "region":
-        return searchData.regionList.join(", "); // 선택된 모든 지역 표시
-      case "category":
-        return searchData.placeTypes.join(", "); // 선택된 모든 카테고리 표시
-      case "profile":
-        return searchData.heaviestDogWeight > 0
-          ? `최대 ${searchData.heaviestDogWeight}kg`
-          : "선택되지 않음";
-      default:
-        return null;
-    }
-  };
-
   return (
     <div className="flex flex-col h-full bg-gray-100 rounded-lg shadow-md">
-      {/* 검색어 입력 */}
+
       <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
         <h3 className="text-lg font-semibold mb-2">어디로 놀러갈까요?</h3>
         <input
@@ -129,7 +141,7 @@ const FacilitySection = ({ onClose }) => {
         />
       </div>
 
-      {/* 지역 선택 */}
+
       <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
         <h3
           className="text-lg font-semibold mb-2 cursor-pointer flex justify-between items-center"
@@ -179,7 +191,7 @@ const FacilitySection = ({ onClose }) => {
         </div>
       </div>
 
-      {/* 카테고리 선택 */}
+
       <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
         <h3
           className="text-lg font-semibold mb-2 cursor-pointer flex justify-between items-center"
@@ -229,7 +241,6 @@ const FacilitySection = ({ onClose }) => {
         </div>
       </div>
 
-      {/* 프로필 섹션 */}
       <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
         <h3
           className="text-lg font-semibold mb-2 cursor-pointer flex justify-between items-center"
@@ -247,11 +258,11 @@ const FacilitySection = ({ onClose }) => {
             setMaxDogWeight={(weight) =>
               setSearchData((prev) => ({ ...prev, heaviestDogWeight: weight }))
             }
+            onComplete={() => setActiveSection(null)} 
           />
         </div>
       </div>
 
-      {/* 검색하기 버튼 */}
       <div className="p-3 border-t bg-white">
         <button
           onClick={handleSearch}

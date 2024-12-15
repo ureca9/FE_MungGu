@@ -7,9 +7,8 @@ import "slick-carousel/slick/slick-theme.css";
 import ReservationRoomSection from "../../components/DetailPage/ReservationRoomSection";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import RecommendedFacility from "../../components/DetailPage/RecommendedFacility";
-import ReviewDetailModal from "../../components/review/ReviewDetailModal"; // Modal import
+import ReviewDetailModal from "../../components/review/ReviewDetailModal"; 
 
-// Custom Previous Arrow
 const CustomPrevArrow = (props) => {
   const { className, style, onClick } = props;
   return (
@@ -31,7 +30,6 @@ const CustomPrevArrow = (props) => {
   );
 };
 
-// Custom Next Arrow
 const CustomNextArrow = (props) => {
   const { className, style, onClick } = props;
   return (
@@ -61,9 +59,31 @@ const PensionDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showFullIntro, setShowFullIntro] = useState(false);
+  const [likeStatus, setLikeStatus] = useState(false);
 
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false); // Modal state
-  const [selectedReview, setSelectedReview] = useState(null); // Selected review
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
+
+  const toggleLike = async () => {
+    try {
+      const accessToken = localStorage.getItem("ACCESS_TOKEN");
+      const headers = {
+        Accept: "application/json",
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+      };
+
+      await axios.post(
+        `https://meong9.store/api/v1/pensions/likes/${id}`,
+        {},
+        { headers }
+      );
+
+      setLikeStatus((prev) => !prev); // 상태 업데이트
+    } catch (error) {
+      console.error("찜 상태 업데이트 실패:", error);
+      alert("찜 상태를 업데이트하는 중 문제가 발생했습니다.");
+    }
+  };
 
   useEffect(() => {
     const fetchPensionDetail = async () => {
@@ -80,6 +100,7 @@ const PensionDetailPage = () => {
           { headers }
         );
         setPensionDetail(response.data.data);
+        setLikeStatus(response.data.data.likeStatus || false); // 찜 상태 설정
       } catch (err) {
         setError("펜션 정보를 불러오는 데 실패했습니다.");
       } finally {
@@ -125,10 +146,10 @@ const PensionDetailPage = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#f9fafb" }}>
-      {/* Header */}
       <header className="bg-white shadow-md p-4 flex justify-between items-center">
-
-        <button className="text-gray-400"></button>
+        <button onClick={() => navigate(-1)} className="text-gray-600">
+          {"<"} 
+        </button>
       </header>
 
       <div className="w-full h-[400px] overflow-hidden">
@@ -145,9 +166,18 @@ const PensionDetailPage = () => {
         </Slider>
       </div>
 
-      {/* Info Section */}
       <section className="p-4 bg-white mt-4">
-        <h2 className="text-lg font-bold mb-2">{pensionDetail.pensionName}</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-bold">{pensionDetail.pensionName}</h2>
+          <button
+            onClick={toggleLike}
+            className={`w-10 h-10 flex items-center justify-center rounded-full ${
+              likeStatus ? "text-red-500" : "text-gray-400"
+            }`}
+          >
+            {likeStatus ? "❤️" : "🤍"}
+          </button>
+        </div>
         <p className="text-sm text-gray-500">{pensionDetail.address}</p>
         <div className="flex items-center mt-2">
           <span className="text-yellow-500 mr-2">⭐ {pensionDetail.reviewAvg}</span>
@@ -167,7 +197,6 @@ const PensionDetailPage = () => {
         </div>
       </section>
 
-      {/* Description Section */}
       <section className="p-4 bg-white mt-4">
         <h3 className="text-lg font-bold mb-2">소개글</h3>
         <p className="text-sm text-gray-700 whitespace-pre-line">
@@ -185,24 +214,14 @@ const PensionDetailPage = () => {
         )}
       </section>
 
-      {/* Reservation Section */}
       <section className="p-4 bg-white mt-4">
         <h3 className="text-lg font-bold mb-2">예약 정보</h3>
         <p className="text-sm text-gray-500 whitespace-pre-line">
-          {pensionDetail.limitInfo}
+          {pensionDetail.limitInfo || "제한 정보가 없습니다."}
         </p>
         <ReservationRoomSection pensionId={id} />
       </section>
 
-      {/* Basic Info Section */}
-      <section className="p-4 bg-white mt-4">
-        <h3 className="text-lg font-bold mb-2">기본 정보</h3>
-        <p className="text-sm text-gray-500 whitespace-pre-line">
-          {pensionDetail.info}
-        </p>
-      </section>
-
-      {/* Review Section */}
       <section className="p-4 bg-white mt-4 relative">
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-bold">리얼 포토 리뷰</h3>
@@ -258,10 +277,8 @@ const PensionDetailPage = () => {
         </div>
       </section>
 
-      {/* Recommended Facility Section */}
       <RecommendedFacility pensionId={id} />
 
-      {/* Review Modal */}
       {isReviewModalOpen && (
         <ReviewDetailModal
           isOpen={isReviewModalOpen}

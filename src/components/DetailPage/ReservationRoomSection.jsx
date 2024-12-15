@@ -16,8 +16,8 @@ const ReservationRoomSection = ({ pensionId }) => {
 
   const [startDate, setStartDate] = useState(formatDate(today));
   const [endDate, setEndDate] = useState(formatDate(tomorrow));
-  const [peopleCount, setPeopleCount] = useState(1); // Default people count
-  const [dogCount, setDogCount] = useState(0); // Default dog count
+  const [peopleCount, setPeopleCount] = useState(1); 
+  const [dogCount, setDogCount] = useState(0); 
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,7 +48,7 @@ const ReservationRoomSection = ({ pensionId }) => {
           .filter(
             (room) =>
               room.guestCount >= peopleCount && room.petCount >= dogCount
-          ); // Filter rooms based on people and dog count
+          ); 
         setRooms(parsedRooms);
       }
     } catch (err) {

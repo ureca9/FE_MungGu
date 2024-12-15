@@ -10,7 +10,7 @@ const SubHeader = () => {
   const PAGE_TITLES = {
     [ROUTER_PATHS.MAP]: '강아지도',
     [ROUTER_PATHS.MAP_SEARCH]: '지도 검색',
-    [ROUTER_PATHS.DIRECTIONS]: '', // 수정 필요
+    [ROUTER_PATHS.DIRECTIONS]: '', 
     [ROUTER_PATHS.MY_PAGE]: '마이페이지',
     [ROUTER_PATHS.LOGIN]: '로그인',
     [ROUTER_PATHS.SEARCH]: '검색',
@@ -19,8 +19,8 @@ const SubHeader = () => {
     [ROUTER_PATHS.PET_REGISTER]: '강아지 정보 입력',
     [ROUTER_PATHS.PREFERENCE_PLANT]: '선호 시설 선택',
     [ROUTER_PATHS.PREFERENCE_REGION]: '선호 지역 선택',
-    [ROUTER_PATHS.REGION_NAME]: '지역명', // 해당 지역으로 수정 필요
-    [ROUTER_PATHS.PLACE_NAME]: '장소명', // 해당 장소로 수정 필요
+    [ROUTER_PATHS.REGION_NAME]: '지역명', 
+    [ROUTER_PATHS.PLACE_NAME]: '장소명', 
     [ROUTER_PATHS.ALL_REVIEW]: '리뷰 전체보기',
     [ROUTER_PATHS.PET_EDIT_ID]: '강아지 수정',
     [ROUTER_PATHS.PET_ADD]: '강아지 추가',
@@ -31,9 +31,9 @@ const SubHeader = () => {
     [ROUTER_PATHS.MY_REVIEW_MODIFY]: '후기 수정',
     [ROUTER_PATHS.RECENT_VIEW_LIST]: '최근 본 목록',
     [ROUTER_PATHS.MEONGSENGNEACUT]: '멍생네컷',
-    [ROUTER_PATHS.SEARCH_MODAL]: '검색', // 수정 필요
-    [ROUTER_PATHS.FACILITY_LIST]: '시설 목록', // 수정 필요
-    [ROUTER_PATHS.PENSION_LIST]: '펜션 목록', // 수정 필요
+    [ROUTER_PATHS.SEARCH_MODAL]: '검색', 
+    [ROUTER_PATHS.FACILITY_LIST]: '시설 목록', 
+    [ROUTER_PATHS.PENSION_LIST]: '펜션 목록', 
     [ROUTER_PATHS.PLACE_DETAIL]: '시설 상세',
     [ROUTER_PATHS.PENSION_DETAIL]: '펜션 상세',
     [ROUTER_PATHS.REVIEW_ADD]: '후기 작성',

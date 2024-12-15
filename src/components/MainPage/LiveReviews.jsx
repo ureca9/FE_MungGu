@@ -5,7 +5,7 @@ const LiveReviews = ({ accessToken }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const scrollRef = useRef(null); // 스크롤 컨테이너 참조
+  const scrollRef = useRef(null); 
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -52,10 +52,25 @@ const LiveReviews = ({ accessToken }) => {
 
   return (
     <div className="p-6 bg-gray-50 rounded-lg shadow-md relative">
-      <h2 className="text-xl font-bold text-gray-800 mb-4">실시간 리뷰</h2>
+      <div className="flex items-center mb-4">
+        <h2 className="text-xl font-bold text-gray-800">실시간 리뷰</h2>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth="2"
+          stroke="currentColor"
+          className="w-6 h-6 text-blue-500 ml-2"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M13 16h-1v-4h-1m3 4v-4h-1m-3 8a9 9 0 100-18 9 9 0 000 18zm7-9h-2a1 1 0 00-1 1v3m-4-4H8m8 0h-3m-4 0h-.01"
+          />
+        </svg>
+      </div>
       {reviews.length > 0 ? (
         <div className="relative">
-          {/* 좌우 스크롤 버튼 */}
           <button
             onClick={scrollLeft}
             className="absolute left-0 top-1/2 -translate-y-1/2 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-blue-600 z-10"
@@ -77,19 +92,15 @@ const LiveReviews = ({ accessToken }) => {
                   className="w-full h-32 rounded-lg object-cover mb-4"
                 />
                 <div className="flex-1">
-                  {/* 이름 고정 높이 및 잘림 처리 */}
                   <h3 className="text-base font-semibold text-gray-800 truncate h-6">
                     {review.name}
                   </h3>
-                  {/* 주소 고정 높이 및 잘림 처리 */}
                   <p className="text-sm text-gray-500 truncate h-5">
                     {review.address}
                   </p>
-                  {/* 내용 고정 높이 및 말줄임 처리 */}
                   <p className="text-gray-700 mt-2 text-sm line-clamp-3 h-[60px]">
                     {review.reviewContent}
                   </p>
-                  {/* 리뷰와 닉네임 영역 고정 */}
                   <div className="flex items-center justify-between mt-4">
                     <div className="flex items-center space-x-2 text-sm text-gray-500">
                       <span>⭐ {review.reviewAvg}</span>
