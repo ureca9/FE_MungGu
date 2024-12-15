@@ -23,16 +23,13 @@ import PreferenceRegion from '../pages/UserPage/PreferenceRegion.jsx';
 import PlantEdit from '../pages/UserPage/PlantEdit.jsx';
 import RegionEdit from '../pages/UserPage/RegionEdit.jsx';
 import ReviewAdd from '../pages/Review/ReviewAdd.jsx';
-<<<<<<< HEAD
 import Mungsengneacut from '../pages/Mungsengneacut.jsx/Mungsengneacut.jsx';
 import ChooseFrame from '../pages/Mungsengneacut.jsx/ChooseFrame.jsx';
 import UploadPhotos from '../pages/Mungsengneacut.jsx/UploadPhotos.jsx';
-=======
 import MyReview from '../pages/Review/MyReview.jsx';
 import ReviewEdit from '../pages/Review/ReviewEdit.jsx';
 import PensionAllReview from '../pages/Review/PensionAllReview.jsx';
 import PlaceAllReview from '../pages/Review/PlaceAllReview.jsx';
->>>>>>> 9080cf9a71fb636b66467f436313f9792d973704
 
 const routes = [
   {
