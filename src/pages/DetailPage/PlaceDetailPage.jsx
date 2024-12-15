@@ -88,7 +88,7 @@ const PlaceDetailPage = () => {
         <p>{error}</p>
         <button
           onClick={() => navigate(-1)}
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg"
+          className="px-4 py-2 mt-4 text-white bg-blue-500 rounded-lg"
         >
           이전 페이지로 돌아가기
         </button>
@@ -116,25 +116,25 @@ const PlaceDetailPage = () => {
   } = placeDetail;
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <header className="bg-white shadow-md p-4 flex items-center">
+    <div className="min-h-screen bg-gray-100">
+      <header className="flex items-center p-4 bg-white shadow-md">
         <button
           onClick={() => navigate(-1)}
-          className="mr-4 text-gray-600 text-lg"
+          className="mr-4 text-lg text-gray-600"
         >
           {"<"}
         </button>
       </header>
 
-      <div className="bg-gray-300 h-48 w-full flex items-center justify-center">
+      <div className="flex items-center justify-center w-full h-48 bg-gray-300">
         <img
           src={images[0] || "https://via.placeholder.com/800x300"}
           alt={placeName}
-          className="h-full w-full object-cover"
+          className="object-cover w-full h-full"
         />
       </div>
 
-      <section className="bg-white p-4">
+      <section className="p-4 bg-white">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold">{placeName}</h2>
           <button
@@ -146,9 +146,9 @@ const PlaceDetailPage = () => {
             {likeStatus ? "❤️" : "🤍"}
           </button>
         </div>
-        <p className="text-gray-600 text-sm mb-2">{address}</p>
-        <div className="flex items-center space-x-2 mb-4">
-          <span className="text-yellow-500 text-sm">
+        <p className="mb-2 text-sm text-gray-600">{address}</p>
+        <div className="flex items-center mb-4 space-x-2">
+          <span className="text-sm text-yellow-500">
             ⭐ {reviewAvg} ({reviewCount} 리뷰)
           </span>
         </div>
@@ -156,7 +156,7 @@ const PlaceDetailPage = () => {
           {tags.map((tag, index) => (
             <span
               key={index}
-              className="px-3 py-1 bg-gray-200 text-sm rounded-full"
+              className="px-3 py-1 text-sm bg-gray-200 rounded-full"
             >
               {tag}
             </span>
@@ -164,8 +164,8 @@ const PlaceDetailPage = () => {
         </div>
       </section>
 
-      <section className="bg-white mt-4 p-4">
-        <h3 className="text-lg font-bold mb-2">운영 정보</h3>
+      <section className="p-4 mt-4 bg-white">
+        <h3 className="mb-2 text-lg font-bold">운영 정보</h3>
         <p>운영 시간: {businessHour || "정보 없음"}</p>
         <p>전화 번호: {telNo || "정보 없음"}</p>
         {hmpgUrl && (
@@ -183,18 +183,18 @@ const PlaceDetailPage = () => {
         )}
       </section>
 
-      <section className="bg-white mt-4 p-4">
-        <h3 className="text-lg font-bold mb-2">시설 정보</h3>
-        <p className="text-gray-600 text-sm">{description || "설명 없음"}</p>
+      <section className="p-4 mt-4 bg-white">
+        <h3 className="mb-2 text-lg font-bold">시설 정보</h3>
+        <p className="text-sm text-gray-600">{description || "설명 없음"}</p>
       </section>
 
       {photoReviewList.length > 0 && (
-        <section className="p-4 bg-white mt-4">
-          <div className="flex justify-between items-center mb-4">
+        <section className="p-4 mt-4 bg-white">
+          <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold">리얼 포토 리뷰</h3>
             <button
               className="text-sm text-blue-500 hover:underline"
-              onClick={() => navigate(`/all-review/${id}`)}
+              onClick={() => navigate(`/palce-all-review/${id}`)}
             >
               전체보기 &gt;
             </button>
@@ -208,7 +208,7 @@ const PlaceDetailPage = () => {
               return (
                 <div
                   key={photoReview.reviewId}
-                  className="flex-none w-36 bg-gray-50 rounded-lg shadow-md p-2 text-center"
+                  className="flex-none p-2 text-center rounded-lg shadow-md w-36 bg-gray-50"
                 >
                   <img
                     src={
@@ -216,7 +216,7 @@ const PlaceDetailPage = () => {
                       "https://via.placeholder.com/150"
                     }
                     alt="포토 리뷰"
-                    className="w-full h-24 rounded-lg object-cover mb-2"
+                    className="object-cover w-full h-24 mb-2 rounded-lg"
                   />
                   <p className="text-sm font-bold truncate">
                     {matchingReview?.nickname || "작성자 없음"}
