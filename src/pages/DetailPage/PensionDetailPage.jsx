@@ -1,280 +1,320 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import ReservationRoomSection from "../../components/DetailPage/ReservationRoomSection";
+import SearchModal from "../../components/MainPage/SearchModal/SearchModal";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
-import RecommendedFacility from "../../components/DetailPage/RecommendedFacility";
-import ReviewDetailModal from "../../components/review/ReviewDetailModal"; // Modal import
+import useLoadingStore from "../../stores/common/useLoadingStore";
 
-// Custom Previous Arrow
-const CustomPrevArrow = (props) => {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={className}
-      style={{
-        ...style,
-        display: "block",
-        background: "rgba(0, 0, 0, 0.5)",
-        borderRadius: "50%",
-        padding: "10px",
-        zIndex: 2,
-        left: "10px",
-      }}
-      onClick={onClick}
-    >
-      ❮
-    </div>
-  );
-};
-
-// Custom Next Arrow
-const CustomNextArrow = (props) => {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={className}
-      style={{
-        ...style,
-        display: "block",
-        background: "rgba(0, 0, 0, 0.5)",
-        borderRadius: "50%",
-        padding: "10px",
-        zIndex: 2,
-        right: "10px",
-      }}
-      onClick={onClick}
-    >
-      ❯
-    </div>
-  );
-};
-
-const PensionDetailPage = () => {
+const PensionListPage = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const scrollRef = useRef(null);
-  const [pensionDetail, setPensionDetail] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showFullIntro, setShowFullIntro] = useState(false);
+  const location = useLocation();
+  const { setIsLoading } = useLoadingStore();
 
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false); // Modal state
-  const [selectedReview, setSelectedReview] = useState(null); // Selected review
+  const [pensions, setPensions] = useState([]);
+  const [filteredPensions, setFilteredPensions] = useState([]);
+  const [filters, setFilters] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isFetching, setIsFetching] = useState(false);
+  const [hasNext, setHasNext] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  const tags = [
+    "전체",
+    "주차 가능",
+    "반려동물 전용",
+    "실내공간",
+    "실외공간",
+    "무게 제한 없음",
+    "수영장",
+    "바비큐",
+    "불멍",
+    "울타리 있음",
+    "짖음 OK",
+    "금연",
+  ];
+
+  const fetchMorePensions = async () => {
+    if (isFetching || !hasNext) return;
+
+    setIsFetching(true);
+    setIsLoading(true);
+    try {
+      const accessToken = localStorage.getItem("ACCESS_TOKEN");
+
+      const response = await axios.get("https://meong9.store/api/v1/search/pensions", {
+        params: {
+          page: currentPage + 1,
+          size: 10,
+          searchWord: filters.searchWord || "",
+          regionList: filters.regionList || [],
+          heaviestDogWeight: filters.heaviestDogWeight || 0,
+          startDate: filters.startDate || undefined,
+          endDate: filters.endDate || undefined,
+        },
+        paramsSerializer: (params) => {
+          const searchParams = new URLSearchParams();
+          for (const key in params) {
+            if (params[key] === undefined || params[key] === "") continue;
+            if (Array.isArray(params[key])) {
+              params[key].forEach((value) =>
+                searchParams.append(`${key}[]`, value)
+              );
+            } else {
+              searchParams.append(key, params[key]);
+            }
+          }
+          return searchParams.toString();
+        },
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+        },
+      });
+
+      const newPensions = response.data.data.pensionInfo;
+
+      setPensions((prevPensions) => {
+        const uniquePensions = new Map();
+        [...prevPensions, ...newPensions].forEach((item) => {
+          uniquePensions.set(item.pensionId, item);
+        });
+        return Array.from(uniquePensions.values());
+      });
+
+      setCurrentPage((prevPage) => prevPage + 1);
+      setHasNext(response.data.hasNext);
+    } catch (error) {
+      console.error("Error fetching more data:", error);
+    } finally {
+      setIsFetching(false);
+      setIsLoading(false);
+    }
+  };
+
+  const toggleLike = async (pensionId) => {
+    try {
+      setPensions((prevPensions) =>
+        prevPensions.map((pension) =>
+          pension.pensionId === pensionId
+            ? { ...pension, likeStatus: !pension.likeStatus }
+            : pension
+        )
+      );
+
+      const accessToken = localStorage.getItem("ACCESS_TOKEN");
+
+      await axios.post(
+        `https://meong9.store/api/v1/pensions/likes/${pensionId}`,
+        {},
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Failed to toggle like status:", error);
+
+      setPensions((prevPensions) =>
+        prevPensions.map((pension) =>
+          pension.pensionId === pensionId
+            ? { ...pension, likeStatus: !pension.likeStatus }
+            : pension
+        )
+      );
+    }
+  };
 
   useEffect(() => {
-    const fetchPensionDetail = async () => {
+    const loadInitialData = async () => {
+      setIsLoading(true);
       try {
-        const accessToken = localStorage.getItem("ACCESS_TOKEN");
-        const headers = { Accept: "application/json" };
-
-        if (accessToken) {
-          headers.Authorization = `Bearer ${accessToken}`;
+        if (location.state) {
+          setPensions(location.state.results || []);
+          setFilters(location.state.filters || {});
+          sessionStorage.setItem(
+            "pensionListData",
+            JSON.stringify({
+              results: location.state.results || [],
+              filters: location.state.filters || {},
+            })
+          );
+        } else {
+          const savedData = sessionStorage.getItem("pensionListData");
+          if (savedData) {
+            const parsedData = JSON.parse(savedData);
+            setPensions(parsedData.results || []);
+            setFilters(parsedData.filters || []);
+          }
         }
-
-        const response = await axios.get(
-          `https://meong9.store/api/v1/pensions/detail/${id}`,
-          { headers }
-        );
-        setPensionDetail(response.data.data);
-      } catch (err) {
-        setError("펜션 정보를 불러오는 데 실패했습니다.");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
-    fetchPensionDetail();
-  }, [id]);
+    loadInitialData();
+  }, [location.state]);
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <div>{error}</div>;
-  if (!pensionDetail) return <div>유효한 펜션 정보가 없습니다.</div>;
+  useEffect(() => {
+    const handleScroll = () => {
+      const bottomReached =
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 100;
 
-  const images = pensionDetail.images.slice(0, 5);
+      if (bottomReached && !isFetching && hasNext) {
+        fetchMorePensions();
+      }
+    };
 
-  const sliderSettings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: true,
-    prevArrow: <CustomPrevArrow />,
-    nextArrow: <CustomNextArrow />,
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isFetching, hasNext]);
+
+  useEffect(() => {
+    if (selectedTags.length === 0 || selectedTags.includes("전체")) {
+      setFilteredPensions(pensions);
+    } else {
+      setFilteredPensions(
+        pensions.filter(
+          (pension) =>
+            pension.tags &&
+            selectedTags.every((tag) => pension.tags.includes(tag))
+        )
+      );
+    }
+  }, [selectedTags, pensions]);
+
+  const toggleTag = (tag) => {
+    if (tag === "전체") {
+      setSelectedTags(["전체"]);
+    } else {
+      setSelectedTags((prevTags) =>
+        prevTags.includes("전체")
+          ? [tag]
+          : prevTags.includes(tag)
+          ? prevTags.filter((t) => t !== tag)
+          : [...prevTags, tag]
+      );
+    }
   };
 
-  const maxLines = 10;
-  const introductionLines = pensionDetail.introduction.split("\n");
-
-  const handleReviewClick = (review) => {
-    setSelectedReview(review);
-    setIsReviewModalOpen(true);
+  const handlePensionClick = (pensionId) => {
+    if (!pensionId) {
+      console.error("Invalid pensionId:", pensionId);
+      return;
+    }
+    navigate(`/pension-detail/${pensionId}`);
   };
 
-  const scrollLeft = () => {
-    scrollRef.current.scrollBy({ left: -200, behavior: "smooth" });
-  };
-
-  const scrollRight = () => {
-    scrollRef.current.scrollBy({ left: 200, behavior: "smooth" });
+  const handleSearchComplete = (newResults, newFilters) => {
+    setPensions(newResults);
+    setFilters(newFilters);
+    setCurrentPage(1);
+    setHasNext(true);
+    setIsModalOpen(false);
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#f9fafb" }}>
-      {/* Header */}
-      <header className="flex items-center justify-between p-4 bg-white shadow-md">
-        <button onClick={() => navigate(-1)} className="text-lg text-gray-600">
-          {"<"}
-        </button>
-        <h1 className="text-xl font-bold">{pensionDetail.pensionName}</h1>
-        <button className="text-gray-400"></button>
-      </header>
+    <div className="min-h-screen bg-gray-50">
+      <LoadingSpinner />
 
-      {/* Image Section (Carousel) */}
-      <div className="w-full h-[400px] overflow-hidden">
-        <Slider {...sliderSettings}>
-          {images.map((image, index) => (
-            <div key={index}>
-              <img
-                src={image}
-                alt={`Pension Image ${index + 1}`}
-                className="w-full h-[400px] object-cover"
-              />
-            </div>
-          ))}
-        </Slider>
-      </div>
-
-      {/* Info Section */}
-      <section className="p-4 mt-4 bg-white">
-        <h2 className="mb-2 text-lg font-bold">{pensionDetail.pensionName}</h2>
-        <p className="text-sm text-gray-500">{pensionDetail.address}</p>
-        <div className="flex items-center mt-2">
-          <span className="mr-2 text-yellow-500">⭐ {pensionDetail.reviewAvg}</span>
-          <span className="text-sm text-gray-500">
-            ({pensionDetail.reviewCount})
-          </span>
-        </div>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {pensionDetail.tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2 py-1 text-xs bg-gray-100 rounded-md"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      {/* Description Section */}
-      <section className="p-4 mt-4 bg-white">
-        <h3 className="mb-2 text-lg font-bold">소개글</h3>
-        <p className="text-sm text-gray-700 whitespace-pre-line">
-          {showFullIntro
-            ? pensionDetail.introduction
-            : introductionLines.slice(0, maxLines).join("\n")}
-        </p>
-        {introductionLines.length > maxLines && (
-          <button
-            onClick={() => setShowFullIntro(!showFullIntro)}
-            className="mt-2 text-sm text-blue-500"
-          >
-            {showFullIntro ? "접기" : "더보기"}
-          </button>
-        )}
-      </section>
-
-      {/* Reservation Section */}
-      <section className="p-4 mt-4 bg-white">
-        <h3 className="mb-2 text-lg font-bold">예약 정보</h3>
-        <p className="text-sm text-gray-500 whitespace-pre-line">
-          {pensionDetail.limitInfo}
-        </p>
-        <ReservationRoomSection pensionId={id} />
-      </section>
-
-      {/* Basic Info Section */}
-      <section className="p-4 mt-4 bg-white">
-        <h3 className="mb-2 text-lg font-bold">기본 정보</h3>
-        <p className="text-sm text-gray-500 whitespace-pre-line">
-          {pensionDetail.info}
-        </p>
-      </section>
-
-      {/* Review Section */}
-      <section className="relative p-4 mt-4 bg-white">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-bold">리얼 포토 리뷰</h3>
-          <button
-            className="text-sm text-blue-500 hover:underline"
-            onClick={() => navigate(`/all-review/${id}`)}
-          >
-            전체보기 &gt;
-          </button>
-        </div>
-        <div className="relative">
-          <button
-            onClick={scrollLeft}
-            className="absolute left-0 z-10 flex items-center justify-center w-8 h-8 text-white -translate-y-1/2 bg-blue-500 rounded-full shadow-md top-1/2 hover:bg-blue-600"
-          >
-            ◀
-          </button>
-          <div
-            ref={scrollRef}
-            className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-sky-100"
-          >
-            {pensionDetail.review.slice(0, 20).map((review, index) => {
-              const firstFileUrl =
-                review.file && review.file.length > 0 ? review.file[0].fileUrl : null;
-
-              return (
-                <div
-                  key={index}
-                  onClick={() => handleReviewClick(review)}
-                  className="flex-none p-2 rounded-lg shadow-md cursor-pointer w-36 bg-gray-50"
-                >
-                  <img
-                    src={firstFileUrl || "https://via.placeholder.com/150"}
-                    alt="리뷰 사진"
-                    className="object-cover w-full h-24 rounded-lg"
-                  />
-                  <p className="mt-2 text-sm font-bold truncate">
-                    {review.nickname}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">
-                    {review.content.slice(0, 30)}...
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-          <button
-            onClick={scrollRight}
-            className="absolute right-0 z-10 flex items-center justify-center w-8 h-8 text-white -translate-y-1/2 bg-blue-500 rounded-full shadow-md top-1/2 hover:bg-blue-600"
-          >
-            ▶
-          </button>
-        </div>
-      </section>
-
-      {/* Recommended Facility Section */}
-      <RecommendedFacility pensionId={id} />
-
-      {/* Review Modal */}
-      {isReviewModalOpen && (
-        <ReviewDetailModal
-          isOpen={isReviewModalOpen}
-          onClose={() => setIsReviewModalOpen(false)}
-          reviewData={selectedReview}
+      {isModalOpen && (
+        <SearchModal
+          onClose={() => setIsModalOpen(false)}
+          onSearchComplete={handleSearchComplete}
         />
       )}
+
+      <header className="bg-white shadow-md p-4 flex items-center justify-between">
+        <div
+          className="flex items-center gap-2 p-3 border border-gray-300 rounded-lg cursor-pointer flex-grow"
+          onClick={() => setIsModalOpen(true)}
+        >
+          <input
+            type="text"
+            placeholder="검색어를 입력하세요"
+            className="flex-grow text-gray-600 bg-transparent focus:outline-none"
+            readOnly
+          />
+        </div>
+      </header>
+
+      <div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+        {tags.map((tag) => (
+          <button
+            key={tag}
+            onClick={() => toggleTag(tag)}
+            className={`px-4 py-2 whitespace-nowrap border rounded-full ${
+              selectedTags.includes(tag)
+                ? "border-blue-500 text-blue-500 font-semibold"
+                : "border-gray-300 text-gray-600"
+            } hover:bg-gray-100`}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+
+      <div className="p-4 space-y-4">
+        {filteredPensions.length > 0 ? (
+          filteredPensions.map((pension) => (
+            <div
+              key={pension.pensionId}
+              className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer"
+              onClick={() => handlePensionClick(pension.pensionId)}
+            >
+              <img
+                src={pension.images?.[0] || "/placeholder-image.jpg"}
+                alt={pension.pensionName || "이미지 없음"}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4 relative">
+                <div className="absolute top-0 right-0 flex items-center space-x-1">
+                  <button
+                    className={`w-10 h-10 flex items-center justify-center rounded-full ${
+                      pension.likeStatus ? "text-red-500" : "text-gray-400"
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleLike(pension.pensionId);
+                    }}
+                  >
+                    {pension.likeStatus ? "❤️" : "🤍"}
+                  </button>
+                </div>
+                <h2 className="text-lg font-bold">{pension.pensionName}</h2>
+                <p className="text-sm text-gray-500">{pension.address || "주소 정보 없음"}</p>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-yellow-500 font-semibold text-lg">
+                    ⭐ {pension.reviewAvg || "0"} ({pension.reviewCount || "0"})
+                  </span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-blue-500 font-bold text-2xl">
+                      {pension.lowestPrice
+                        ? `${pension.lowestPrice.toLocaleString()} ~`
+                        : "가격 미정"}
+                    </span>
+                    <span className="text-sm text-gray-500">/ 1박</span>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500 mt-1">
+                  입실: {pension.startTime || "정보 없음"} / 퇴실: {pension.endTime || "정보 없음"}
+                </p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500">조건에 맞는 펜션이 없습니다.</p>
+        )}
+      </div>
     </div>
   );
 };
 
-export default PensionDetailPage;
+export default PensionListPage;

@@ -16,8 +16,8 @@ const ReservationRoomSection = ({ pensionId }) => {
 
   const [startDate, setStartDate] = useState(formatDate(today));
   const [endDate, setEndDate] = useState(formatDate(tomorrow));
-  const [peopleCount, setPeopleCount] = useState(1); // Default people count
-  const [dogCount, setDogCount] = useState(0); // Default dog count
+  const [peopleCount, setPeopleCount] = useState(1); 
+  const [dogCount, setDogCount] = useState(0); 
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,7 +48,7 @@ const ReservationRoomSection = ({ pensionId }) => {
           .filter(
             (room) =>
               room.guestCount >= peopleCount && room.petCount >= dogCount
-          ); // Filter rooms based on people and dog count
+          ); 
         setRooms(parsedRooms);
       }
     } catch (err) {
@@ -98,7 +98,7 @@ const ReservationRoomSection = ({ pensionId }) => {
 
   return (
     <section className="p-4 bg-white mt-4">
-      <h3 className="text-lg font-bold mb-4">예약하기</h3>
+      <h3 className="text-lg font-bold mb-4">방 정보 보기</h3>
 
       <div className="flex flex-wrap gap-2 mb-4">
         <input

@@ -10,7 +10,7 @@ const SubHeader = () => {
   const PAGE_TITLES = {
     [ROUTER_PATHS.MAP]: '강아지도',
     [ROUTER_PATHS.MAP_SEARCH]: '지도 검색',
-    [ROUTER_PATHS.DIRECTIONS]: '', // 수정 필요
+    [ROUTER_PATHS.DIRECTIONS]: '', 
     [ROUTER_PATHS.MY_PAGE]: '마이페이지',
     [ROUTER_PATHS.LOGIN]: '로그인',
     [ROUTER_PATHS.SEARCH]: '검색',
@@ -32,10 +32,10 @@ const SubHeader = () => {
     [ROUTER_PATHS.MY_REVIEW_EDIT]: '후기 수정',
     [ROUTER_PATHS.RECENT_VIEW_LIST]: '최근 본 목록',
     [ROUTER_PATHS.MEONGSENGNEACUT]: '멍생네컷',
-    [ROUTER_PATHS.SEARCH_MODAL]: '검색', // 수정 필요
-    [ROUTER_PATHS.FACILITY_LIST]: '', // 수정 필요
-    [ROUTER_PATHS.PENSION_LIST]: '펜션 목록', // 수정 필요
-    [ROUTER_PATHS.PLACE_DETAIL]: '시설 목록',
+    [ROUTER_PATHS.SEARCH_MODAL]: '검색', 
+    [ROUTER_PATHS.FACILITY_LIST]: '시설 목록', 
+    [ROUTER_PATHS.PENSION_LIST]: '펜션 목록', 
+    [ROUTER_PATHS.PLACE_DETAIL]: '시설 상세',
     [ROUTER_PATHS.PENSION_DETAIL]: '펜션 상세',
     [ROUTER_PATHS.REVIEW_ADD]: '후기 작성',
   };
