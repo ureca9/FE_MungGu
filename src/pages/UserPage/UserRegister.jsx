@@ -283,6 +283,10 @@ const UserRegister = () => {
           placeholder="2~8자의 한글, 영문, 숫자만 입력 가능합니다."
           {...register('nickname', {
             required: '닉네임은 필수 입력 항목입니다.',
+            pattern: {
+              value: /^[가-힣a-zA-Z0-9]{2,8}$/,
+              message: '2~8자의 한글, 영문, 숫자만 사용 가능합니다.',
+            },
           })}
         >
           <button
@@ -325,7 +329,7 @@ const UserRegister = () => {
             }
 
             e.target.value = value;
-            setValue('phoneNumber', value);
+            setValue('phone', value);
           }}
         />
 
