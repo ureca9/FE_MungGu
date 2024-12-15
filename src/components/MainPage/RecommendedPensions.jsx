@@ -7,8 +7,8 @@ const RecommendedPensions = () => {
   const [pensions, setPensions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 체크
-  const scrollRef = useRef(null); // 스크롤 컨테이너 참조
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const scrollRef = useRef(null); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,7 +18,6 @@ const RecommendedPensions = () => {
 
         const token = localStorage.getItem("ACCESS_TOKEN");
 
-        // 로그인 상태 체크
         setIsLoggedIn(!!token);
 
         const headers = {
@@ -26,14 +25,16 @@ const RecommendedPensions = () => {
           "Content-Type": "application/json",
         };
 
-        // `Authorization` 헤더는 토큰이 있는 경우에만 추가
         if (token) {
           headers.Authorization = `Bearer ${token}`;
         }
 
-        const response = await axios.get("https://meong9.store/api/v1/spots/recommendations", {
-          headers,
-        });
+        const response = await axios.get(
+          "https://meong9.store/api/v1/spots/recommendations",
+          {
+            headers,
+          }
+        );
 
         const { data } = response.data;
 
@@ -64,7 +65,7 @@ const RecommendedPensions = () => {
   };
 
   const handleLoginRedirect = () => {
-    navigate("/login"); // 로그인 페이지로 이동
+    navigate("/login"); 
   };
 
   const scrollLeft = () => {
@@ -112,7 +113,6 @@ const RecommendedPensions = () => {
 
       <h2 className="text-lg font-bold mb-2">추천 펜션 ✨</h2>
       <div className="relative">
-        {/* 좌우 스크롤 버튼 */}
         <button
           onClick={scrollLeft}
           className="absolute left-0 top-1/2 -translate-y-1/2 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-blue-600 z-10"
@@ -121,7 +121,7 @@ const RecommendedPensions = () => {
         </button>
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-sky-100"
+          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200"
         >
           {pensions.map((pension) => (
             <div
