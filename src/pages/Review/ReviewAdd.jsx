@@ -96,6 +96,7 @@ const ReviewAdd = () => {
     }
     return true;
   };
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <div className="h-full min-w-96">
@@ -187,6 +188,7 @@ const ReviewAdd = () => {
             <input
               type="date"
               value={visitDate}
+              max={today}
               onChange={(e) => setVisitDate(e.target.value)}
               className="w-full p-2 sm:p-5 text-[#8A8A8A] sm:text-xl rounded-lg h-14 focus:outline-none"
             />
