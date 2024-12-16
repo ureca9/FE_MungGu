@@ -18,6 +18,12 @@ const ViewHistoryCard = ({ data }) => {
     pensionId,
   } = data;
   const handleCardClick = () => {
+    if (!placeid && !pensionId) {
+      console.error(
+        '유효하지 않은 항목입니다: placeid 또는 pensionId가 필요합니다',
+      );
+      return;
+    }
     const path = placeid ? `/place/${placeid}` : `/pension-detail/${pensionId}`;
     navigate(path);
   };
@@ -34,7 +40,7 @@ const ViewHistoryCard = ({ data }) => {
             className="object-cover w-1/3 rounded-lg md:w-56 h-36"
           />
         ) : (
-          <div className="w-1/3 rounded-lg h-36 bg-[#D9D9D9] flex items-center justify-center text-[#8A8A8A] text-3xl">
+          <div className="w-1/3 md:w-56 rounded-lg h-36 bg-[#D9D9D9] flex items-center justify-center text-[#8A8A8A] text-3xl">
             <FaCamera />
           </div>
         )}

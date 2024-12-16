@@ -1,6 +1,11 @@
+import { useRef, useState } from 'react';
 import ReviewCard from '../../components/review/ReviewCard';
 
 const LiveReviewList = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const ref = useRef(null);
+
   return (
     <div className="flex flex-col min-w-96 sm:w-full">
       <h1>실시간 리뷰</h1>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import WhachedHistory from '../../components/review/WhachedHistory';
 
 const PlaceDetailPage = () => {
   const { id } = useParams();
@@ -14,25 +15,18 @@ const PlaceDetailPage = () => {
   // 최근본 장소
   useEffect(() => {
     if (placeDetail) {
-      const watchedPlace = JSON.parse(localStorage.getItem('watched')) || [];
-      const isExisting = watchedPlace.some((item) => item.placeid === id);
-      if (!isExisting) {
-        const updatedWatched = [
-          {
-            placeid: id,
-            placeName: placeDetail.placeName,
-            image: placeDetail.images[0],
-            reviewAvg: placeDetail.reviewAvg,
-            reviewCount: placeDetail.reviewCount,
-            address: placeDetail.address,
-            businessHour: placeDetail.businessHour,
-            closedDays: placeDetail.closedDays,
-            description: placeDetail.description,
-          },
-          ...watchedPlace,
-        ].slice(0, 10);
-        localStorage.setItem('watched', JSON.stringify(updatedWatched));
-      }
+      const watchedData = {
+        placeid: id,
+        placeName: placeDetail.placeName,
+        image: placeDetail.images[0],
+        reviewAvg: placeDetail.reviewAvg,
+        reviewCount: placeDetail.reviewCount,
+        address: placeDetail.address,
+        businessHour: placeDetail.businessHour,
+        closedDays: placeDetail.closedDays,
+        description: placeDetail.description,
+      };
+      <WhachedHistory id={id} data={watchedData} type="place" />;
     }
   }, [placeDetail, id]);
 
