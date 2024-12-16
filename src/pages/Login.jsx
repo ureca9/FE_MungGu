@@ -68,7 +68,7 @@ const Login = () => {
           backgroundPosition: '-10px -10px',
         }}
       ></div>
-      <div className="flex items-center w-2/3 gap-4 my-4">
+      <div className="flex items-center w-2/3 gap-4 my-4 md:w-1/2">
         <div className="w-full h-[1px] border-[1px] border-[#8a8a8a]"></div>
         <div className="w-full text-sm text-center text-gray-600 whitespace-nowrap">
           SNS 계정으로 로그인
@@ -89,6 +89,7 @@ const Login = () => {
           ></div>
           카카오로 로그인하기
         </button>
+        <button className="mt-4 text-sm text-gray-400">건너뛰기</button>
       </div>
     </div>
   );

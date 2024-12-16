@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import HeaderImg from '../../assets/mungsengneacut/HeaderImg.svg';
 import { instance } from '../../api/axios';
+import LoadingSpinner from './../../components/common/LoadingSpinner';
 
 const CustomTabPanel = ({ children, value, index }) => {
   return (
@@ -70,27 +71,21 @@ const Mungsengneacut = () => {
       try {
         setIsLoading(true);
         if (selectedTab === 0) {
-          const response = await instance.get(
-            '/photos?lastPhotoId=12&size=10',
-            {
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-              },
+          const response = await instance.get('/photos?size=10', {
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
             },
-          );
+          });
           setAllPhotos(response.data.data.meongPhotoList);
         } else if (selectedTab === 1) {
-          const response = await instance.get(
-            '/photos/mine?lastPhotoId=12&size=10',
-            {
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: `Bearer {access_token}`,
-              },
+          const response = await instance.get('/photos/mine?size=10', {
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              Authorization: `Bearer {access_token}`,
             },
-          );
+          });
           setMyPhotos(response.data.data.myMeongPhotoList);
         }
       } catch (error) {
@@ -138,7 +133,9 @@ const Mungsengneacut = () => {
         </div>
         <CustomTabPanel value={selectedTab} index={0}>
           {isLoading ? (
-            <div className="font-bold">로딩 중..</div>
+            <div className="mx-auto mt-16">
+              <LoadingSpinner />
+            </div>
           ) : (
             <div>
               <div className="mb-2 text-lg ">
@@ -148,10 +145,10 @@ const Mungsengneacut = () => {
                 {allPhotos.map((photo) => (
                   <li key={photo.photoId} className="p-4 border rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="font-bold text-center">
+                      <p className="text-sm font-bold text-center md:text-base">
                         {photo.nickname}님
                       </p>
-                      <p className="text-sm text-center text-gray-500">
+                      <p className="text-xs text-center text-gray-500 md:text-sm">
                         {formatDate(photo.createdAt)}
                       </p>
                     </div>
@@ -169,7 +166,9 @@ const Mungsengneacut = () => {
         {selectedTab === 1 && (
           <CustomTabPanel value={selectedTab} index={1}>
             {isLoading ? (
-              <div className="font-bold">로딩 중..</div>
+              <div className="mx-auto mt-16">
+                <LoadingSpinner />
+              </div>
             ) : myPhotos.length === 0 ? (
               <p className="text-center">아직 사진이 없어요..</p>
             ) : (

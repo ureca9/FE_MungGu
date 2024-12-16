@@ -117,3 +117,10 @@
 .animate-bounce-grow {
   animation: bounce-grow 1.5s infinite;
 }
+
+.swalCancelBtn {
+  border: 2px solid #3288ff;
+  color: #3288ff;
+  background-color: white;
+  border-radius: 8px;
+}
