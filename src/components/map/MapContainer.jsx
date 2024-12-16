@@ -21,7 +21,7 @@ const MapContainer = ({ onMapLoaded }) => {
       level: 3,
     });
     mapRef.current = map;
-
+    console.log('내 위치:', latitude, longitude);
     addCurrentMarker(map, latitude, longitude);
     await addLikedMarker(map);
   };
@@ -73,7 +73,7 @@ const MapContainer = ({ onMapLoaded }) => {
         ),
         map,
       });
-      searchResults.push(marker);
+      searchMarkersRef.current.push(marker);
       window.kakao.maps.event.addListener(marker, 'click', () => {
         handleMarkerClick(place);
       });

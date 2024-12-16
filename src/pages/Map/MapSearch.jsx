@@ -50,8 +50,11 @@ const MapSearch = () => {
         else {
           handleSaveSearchHistory(searchTerm);
           setSearchResults(response.content);
-          if (searchType === SearchType.SEARCH) navigate(ROUTER_PATHS.MAP);
-          else navigate(ROUTER_PATHS.MAP_SEARCH_RESULTS);
+          const routePath =
+            searchType === SearchType.SEARCH
+              ? ROUTER_PATHS.MAP
+              : ROUTER_PATHS.MAP_SEARCH_RESULTS;
+          navigate(routePath);
         }
       } catch (error) {
         console.error(error);
