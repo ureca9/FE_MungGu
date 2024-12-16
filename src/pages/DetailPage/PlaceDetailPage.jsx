@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import Swal from 'sweetalert2';
 
 const PlaceDetailPage = () => {
   const { id } = useParams();
@@ -95,7 +96,10 @@ const PlaceDetailPage = () => {
       setLikeStatus((prevStatus) => !prevStatus);
     } catch (error) {
       console.error('찜 상태 업데이트 실패:', error);
-      alert('찜 상태를 업데이트하는 중 오류가 발생했습니다.');
+      Swal.fire({
+        title: '찜 상태를 업데이트하는 중 문제가 발생했습니다.',
+        icon: 'error',
+      });
     }
   };
 
