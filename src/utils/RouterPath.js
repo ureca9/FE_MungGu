@@ -6,7 +6,7 @@ const ROUTER_PATHS = {
   MY_PAGE: '/my-page',
   LOGIN: '/login',
   SEARCH: '/search',
-  LIVE_REVIEW: '/live-review',
+  LIVE_REVIEW_LIST: '/live-review-list',
   USER_REGISTER: '/user-register',
   PET_REGISTER: '/pet-register',
   PREFERENCE_PLANT: '/preference-plant',
@@ -30,6 +30,7 @@ const ROUTER_PATHS = {
   PLACE_DETAIL: '/place/:id',
   PENSION_DETAIL: '/pension-detail/:id',
   REVIEW_ADD: '/review-add/:id',
+  VIEW_HISTORY: '/view-history',
 };
 
 export default ROUTER_PATHS;

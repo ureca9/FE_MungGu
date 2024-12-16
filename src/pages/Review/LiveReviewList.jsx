@@ -1,6 +1,6 @@
 import ReviewCard from '../../components/review/ReviewCard';
 
-const LiveReview = () => {
+const LiveReviewList = () => {
   return (
     <div className="flex flex-col min-w-96 sm:w-full">
       <h1>실시간 리뷰</h1>
@@ -23,4 +23,4 @@ const LiveReview = () => {
   );
 };
 
-export default LiveReview;
+export default LiveReviewList;
