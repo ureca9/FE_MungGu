@@ -31,12 +31,14 @@ const ViewHistory = () => {
       {watched.length === 0 ? (
         ''
       ) : (
-        <button
-          onClick={clearWatched}
-          className="px-4 py-2 mt-4 text-white bg-[#3288FF] rounded-lg"
-        >
-          최근 본 장소 초기화
-        </button>
+        <div className="flex justify-end">
+          <button
+            onClick={clearWatched}
+            className="px-4 py-2 my-4 border border-[#3288FF] border-spacing-1 text-[#3288FF] rounded-lg"
+          >
+            최근 본 장소 초기화
+          </button>
+        </div>
       )}
     </div>
   );

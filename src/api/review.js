@@ -100,9 +100,9 @@ export const GetPentionData = async ({ type, id }) => {
     console.error('리뷰작성 펜션정보 오류:', error);
   }
 };
-export const GetMyReviewData = async (lastReviewId) => {
+export const GetMyReviewData = async () => {
   try {
-    const response = await instance.get(`/reviews?${lastReviewId}=30`, {
+    const response = await instance.get(`/reviews`, {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',

@@ -164,7 +164,6 @@ const ReviewAdd = () => {
                   src={file.fileUrl}
                   alt={file.fileName}
                   className="object-cover w-full h-full"
-                  controls
                 />
               ) : null}
             </div>

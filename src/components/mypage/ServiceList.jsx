@@ -1,17 +1,34 @@
 import { useNavigate } from 'react-router-dom';
 import ROUTER_PATHS from '../../utils/RouterPath';
-
+import petFourPic from '../../assets/MypageImg/petFourpic.svg';
+import { IoHeartCircleSharp } from 'react-icons/io5';
 const ServiceList = () => {
   const navigate = useNavigate();
   const serviceList = [
-    { name: '멍생네컷', path: '/', icon: 'bg-이벤트_아이콘' },
-    { name: '내 예약', path: '/', icon: 'bg-예약_아이콘' },
+    {
+      name: '멍생네컷',
+      path: '/',
+      icon: <img src={petFourPic} alt="멍생네컷" />,
+    },
+    {
+      name: '즐겨찾기',
+      path: '/',
+      icon: (
+        <div className="text-[#F54B6A] -ml-1">
+          <IoHeartCircleSharp />
+        </div>
+      ),
+    },
     {
       name: '내가 쓴 후기',
       path: ROUTER_PATHS.MY_REVIEW,
       icon: 'bg-후기_아이콘',
     },
-    { name: '최근 본 장소', path: '/', icon: 'bg-최근_본_장소_아이콘' },
+    {
+      name: '최근 본 장소',
+      path: ROUTER_PATHS.VIEW_HISTORY,
+      icon: 'bg-최근_본_장소_아이콘',
+    },
   ];
   return (
     <div className="h-auto py-8 bg-white border rounded-lg px-9 border-borderlineGray">
@@ -20,7 +37,11 @@ const ServiceList = () => {
         {serviceList.map((service) => (
           <label key={service.name} className="flex items-center my-3 w-52">
             <div className="flex text-3xl cursor-pointer">
-              <div className={service.icon}></div>
+              {service.name === '멍생네컷' || service.name === '즐겨찾기' ? (
+                <div>{service.icon}</div>
+              ) : (
+                <div className={service.icon}></div>
+              )}
             </div>
             <button
               onClick={() => {
