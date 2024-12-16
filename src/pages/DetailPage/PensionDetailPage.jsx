@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Slider from 'react-slick';
@@ -8,7 +8,6 @@ import ReservationRoomSection from '../../components/DetailPage/ReservationRoomS
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import RecommendedFacility from '../../components/DetailPage/RecommendedFacility';
 import ReviewDetailModal from '../../components/review/ReviewDetailModal';
-import WhachedHistory from '../../components/review/WhachedHistory';
 
 const CustomPrevArrow = (props) => {
   const { className, style, onClick } = props;
@@ -68,16 +67,23 @@ const PensionDetailPage = () => {
   // 최근본 장소
   useEffect(() => {
     if (pensionDetail) {
-      const watchedData = {
-        pensionId: id,
-        pensionName: pensionDetail.pensionName,
-        image: pensionDetail.images[0],
-        reviewAvg: pensionDetail.reviewAvg,
-        reviewCount: pensionDetail.reviewCount,
-        address: pensionDetail.address,
-        introduction: pensionDetail.introduction,
-      };
-      <WhachedHistory id={id} data={watchedData} type="pension" />;
+      const watchedPlace = JSON.parse(localStorage.getItem('watched')) || [];
+      const isExisting = watchedPlace.some((item) => item.pensionId === id);
+      if (!isExisting) {
+        const updatedWatched = [
+          {
+            pensionId: id,
+            pensionName: pensionDetail.pensionName,
+            image: pensionDetail.images[0],
+            reviewAvg: pensionDetail.reviewAvg,
+            reviewCount: pensionDetail.reviewCount,
+            address: pensionDetail.address,
+            introduction: pensionDetail.introduction,
+          },
+          ...watchedPlace,
+        ].slice(0, 10);
+        localStorage.setItem('watched', JSON.stringify(updatedWatched));
+      }
     }
   }, [pensionDetail, id]);
 
