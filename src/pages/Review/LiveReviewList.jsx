@@ -14,9 +14,9 @@ const LiveReviewList = () => {
         {isLoading ? (
           <div>Loading...</div>
         ) : (
-          reviews.map((review, index) => (
-            <div key={index}>
-              <ReviewCard key={index} review={review} />
+          reviews.map((review) => (
+            <div key={review.id}>
+              <ReviewCard review={review} />
               <div className="mt-3 h-1 bg-[#D9D9D9] "></div>
             </div>
           ))
