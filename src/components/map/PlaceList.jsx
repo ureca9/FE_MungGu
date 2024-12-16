@@ -97,7 +97,7 @@ const PlaceList = ({ selectedCategory }) => {
 };
 
 PlaceList.propTypes = {
-  selectedCategory: PropTypes.string.isRequired,
+  selectedCategory: PropTypes.string,
 };
 
 export default PlaceList;

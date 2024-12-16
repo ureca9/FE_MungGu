@@ -1,4 +1,6 @@
+import PlaceList from '../../components/map/PlaceList.jsx';
+
 const MapSearchResults = () => {
-  return <h1>검색 결과</h1>;
+  return <PlaceList />;
 };
 export default MapSearchResults;

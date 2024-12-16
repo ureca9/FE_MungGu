@@ -1,9 +1,15 @@
 import PropTypes from 'prop-types';
-import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaHeart, FaRegMap, FaRegHeart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import useCoordsStore from '../../stores/map/useCoordsStore.js';
+import usePlaceStore from '../../stores/map/usePlaceStore.js';
+import { SearchType } from '../../utils/SearchType.js';
+import ROUTER_PATHS from '../../utils/RouterPath.js';
 
 const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
   const navigate = useNavigate();
+  const { searchType } = usePlaceStore();
+  const { coords, setCoords } = useCoordsStore();
 
   const formatDistance = (distance) => {
     if (distance == null) return '';
@@ -12,7 +18,7 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
       : `${distance}m`;
   };
 
-  const { type, placeId, name, images } = place;
+  const { type, placeId, name, images, latitude, longitude } = place;
 
   const getBusinessStatus = (businessHour) => {
     if (!businessHour || businessHour.trim() === '정보없음') {
@@ -90,22 +96,32 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
     else navigate(`/place/${placeId}`);
   };
 
+  const handleMapClick = () => {
+    setCoords(latitude, longitude);
+    console.log(coords);
+    navigate(ROUTER_PATHS.MAP);
+  };
+
   const { status, color, message } = getBusinessStatus(place.businessHour);
 
   return (
     <li className="bg-white p-4 rounded-lg shadow relative">
       <div className="absolute top-4 right-4">
         <button onClick={() => handleLikeClick(placeId)}>
-          {likedPlaces[placeId] ? (
-            <FaHeart
-              size={22}
-              className="text-red-500 transition-colors duration-200"
-            />
+          {searchType === SearchType.SEARCH ? (
+            likedPlaces[placeId] ? (
+              <FaHeart
+                size={22}
+                className="text-red-500 transition-colors duration-200"
+              />
+            ) : (
+              <FaRegHeart
+                size={22}
+                className="text-black transition-colors duration-200"
+              />
+            )
           ) : (
-            <FaRegHeart
-              size={22}
-              className="text-black transition-colors duration-200"
-            />
+            <FaRegMap size={22} onClick={handleMapClick} />
           )}
         </button>
       </div>

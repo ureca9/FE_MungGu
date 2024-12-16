@@ -9,31 +9,29 @@ import usePlaceStore from '../../stores/map/usePlaceStore.js';
 const MapContainer = ({ onMapLoaded }) => {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
-  const { setCoords } = useCoordsStore();
+  const currentLocationMarkerRef = useRef(null);
+  const likedMarkersRef = useRef([]);
+  const searchMarkersRef = useRef([]);
+  const { coords, setCoords } = useCoordsStore();
   const { searchResults, setSelectedPlace } = usePlaceStore();
 
   const initMap = async (latitude, longitude) => {
     const map = new window.kakao.maps.Map(mapContainer.current, {
       center: new window.kakao.maps.LatLng(latitude, longitude),
-      level: 4,
+      level: 3,
     });
     mapRef.current = map;
 
     addCurrentMarker(map, latitude, longitude);
     await addLikedMarker(map);
-    addSearchResultMarker(map);
-  };
-
-  const handleMarkerClick = async (place) => {
-    const data = await searchSpot(place.name, place.latitude, place.longitude);
-    setSelectedPlace(data.content);
   };
 
   const addCurrentMarker = (map, latitude, longitude) => {
-    new window.kakao.maps.Marker({
+    const marker = new window.kakao.maps.Marker({
       position: new window.kakao.maps.LatLng(latitude, longitude),
       map,
     });
+    currentLocationMarkerRef.current = marker;
   };
 
   const addLikedMarker = async (map) => {
@@ -52,7 +50,7 @@ const MapContainer = ({ onMapLoaded }) => {
             { offset: new window.kakao.maps.Point(16, 34) },
           ),
         });
-
+        likedMarkersRef.current.push(marker);
         window.kakao.maps.event.addListener(marker, 'click', () => {
           handleMarkerClick(place);
         });
@@ -75,11 +73,21 @@ const MapContainer = ({ onMapLoaded }) => {
         ),
         map,
       });
-
+      searchResults.push(marker);
       window.kakao.maps.event.addListener(marker, 'click', () => {
         handleMarkerClick(place);
       });
     });
+  };
+
+  const clearSearchMarkers = () => {
+    searchMarkersRef.current.forEach((marker) => marker.setMap(null));
+    searchMarkersRef.current = [];
+  };
+
+  const handleMarkerClick = async (place) => {
+    const data = await searchSpot(place.name, place.latitude, place.longitude);
+    setSelectedPlace(data.content);
   };
 
   const waitForKakaoMaps = (retries = 10) => {
@@ -121,6 +129,8 @@ const MapContainer = ({ onMapLoaded }) => {
         mapRef.current.setCenter(
           new window.kakao.maps.LatLng(latitude, longitude),
         );
+        console.log(latitude, longitude);
+        clearSearchMarkers();
         addSearchResultMarker(mapRef.current);
       }
     }
