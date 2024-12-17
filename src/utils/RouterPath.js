@@ -6,7 +6,7 @@ const ROUTER_PATHS = {
   MY_PAGE: '/my-page',
   LOGIN: '/login',
   SEARCH: '/search',
-  LIVE_REVIEW: '/live-review',
+  LIVE_REVIEW_LIST: '/live-review-list',
   USER_REGISTER: '/user-register',
   PET_REGISTER: '/pet-register',
   PREFERENCE_PLANT: '/preference-plant',
@@ -23,13 +23,17 @@ const ROUTER_PATHS = {
   MY_REVIEW: '/my-review',
   MY_REVIEW_EDIT: '/my-review-edit/:id',
   RECENT_VIEW_LIST: '/recent-view-list',
-  MEONGSENGNEACUT: '/meongsengneacut',
+  MUNGSENGNEACUT: '/mungsengneacut',
+  CHOOSE_FRAME: '/choose-frame',
+  UPLOAD_PHOTOS: '/upload-photos',
+  DOWNLOAD_PHOTOS: '/download-photos',
   SEARCH_MODAL: '/search-modal',
   FACILITY_LIST: '/facility-list',
   PENSION_LIST: '/pension-list',
   PLACE_DETAIL: '/place/:id',
   PENSION_DETAIL: '/pension-detail/:id',
   REVIEW_ADD: '/review-add/:id',
+  VIEW_HISTORY: '/view-history',
 };
 
 export default ROUTER_PATHS;

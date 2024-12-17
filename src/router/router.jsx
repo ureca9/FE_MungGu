@@ -16,7 +16,6 @@ import ListPage from '../pages/ListPage/ListPage.jsx';
 import PensionListPage from '../pages/ListPage/PensionListPage.jsx';
 import PensionDetailPage from '../pages/DetailPage/PensionDetailPage.jsx';
 import Login from '../pages/Login.jsx';
-import Meongsengneacut from '../pages/Meongsengneacut.jsx';
 import UserRegister from './../pages/UserPage/UserRegister';
 import PetRegister from '../pages/PetPage/PetRegister.jsx';
 import PreferencePlant from '../pages/UserPage/PreferencePlant.jsx';
@@ -24,10 +23,16 @@ import PreferenceRegion from '../pages/UserPage/PreferenceRegion.jsx';
 import PlantEdit from '../pages/UserPage/PlantEdit.jsx';
 import RegionEdit from '../pages/UserPage/RegionEdit.jsx';
 import ReviewAdd from '../pages/Review/ReviewAdd.jsx';
+import Mungsengneacut from '../pages/Mungsengneacut/Mungsengneacut.jsx';
+import ChooseFrame from '../pages/Mungsengneacut/ChooseFrame.jsx';
+import UploadPhotos from '../pages/Mungsengneacut/UploadPhotos.jsx';
+import DownloadPhotos from '../pages/Mungsengneacut/DownloadPhoto.jsx';
 import MyReview from '../pages/Review/MyReview.jsx';
 import ReviewEdit from '../pages/Review/ReviewEdit.jsx';
 import PensionAllReview from '../pages/Review/PensionAllReview.jsx';
 import PlaceAllReview from '../pages/Review/PlaceAllReview.jsx';
+import LiveReviewList from '../pages/Review/LiveReviewList.jsx';
+import ViewHistory from '../pages/Review/ViewHistory.jsx';
 
 const routes = [
   {
@@ -99,8 +104,20 @@ const routes = [
     element: <UserRegister />,
   },
   {
-    path: ROUTER_PATHS.MEONGSENGNEACUT,
-    element: <Meongsengneacut />,
+    path: ROUTER_PATHS.MUNGSENGNEACUT,
+    element: <Mungsengneacut />,
+  },
+  {
+    path: ROUTER_PATHS.CHOOSE_FRAME,
+    element: <ChooseFrame />,
+  },
+  {
+    path: ROUTER_PATHS.UPLOAD_PHOTOS,
+    element: <UploadPhotos />,
+  },
+  {
+    path: ROUTER_PATHS.DOWNLOAD_PHOTOS,
+    element: <DownloadPhotos />,
   },
   {
     path: ROUTER_PATHS.PREFERENCE_PLANT,
@@ -137,6 +154,14 @@ const routes = [
   {
     path: ROUTER_PATHS.MY_REVIEW_EDIT,
     element: <ReviewEdit />,
+  },
+  {
+    path: ROUTER_PATHS.LIVE_REVIEW_LIST,
+    element: <LiveReviewList />,
+  },
+  {
+    path: ROUTER_PATHS.VIEW_HISTORY,
+    element: <ViewHistory />,
   },
 ];
 
