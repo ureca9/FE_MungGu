@@ -19,7 +19,7 @@ const MyPage = () => {
   };
 
   useEffect(() => {
-    if (!memberD?.nickname) {
+    if (!memberD.nickname) {
       userData();
     }
   }, [memberD]);
