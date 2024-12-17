@@ -50,10 +50,10 @@ const PensionAllReview = () => {
   }, [inView, !isLoading, hasNext]);
 
   return (
-    <div className="flex flex-col min-w-96 sm:w-full">
+    <div className="flex flex-col min-w-96 md:w-full">
       <AllReviewHeader />
       <div className="h-2 mt-1 mb-5 bg-[#D9D9D9]"></div>
-      <div className="flex flex-col gap-3 px-2 min-w-96 sm:w-full sm:px-6">
+      <div className="flex flex-col gap-3 px-5 min-w-96 md:w-full md:px-6">
         {isLoading ? (
           <div>Loading...</div>
         ) : (

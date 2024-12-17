@@ -63,20 +63,20 @@ const ReviewCard = ({ review }) => {
                 <RxStarFilled />
               </span>
               <span className="ml-1 font-semibold">{score}.0</span>
-              <span className="font-extralight text-[#8A8A8A] text-sm ml-3">
+              <span className="font-extralight text-[#8A8A8A] text-md ml-3">
                 {visitDate}
               </span>
             </div>
           </div>
           <div className="mt-3 font-light line-clamp-2">{content}</div>
         </div>
-        <div className="flex flex-row items-center justify-start gap-1 mt-3 sm:gap-3">
+        <div className="flex flex-row items-center justify-start gap-1 mt-3 md:gap-3">
           {file.length > 0 ? (
             <>
               {file.slice(0, 4).map((file, index) => (
                 <div
                   key={index}
-                  className="w-20 h-20 sm:w-32 sm:h-32 overflow-hidden bg-[#D9D9D9] rounded-lg items-center justify-center flex-row flex flex-wrap"
+                  className="w-20 h-20 md:w-32 md:h-32 overflow-hidden bg-[#D9D9D9] rounded-lg items-center justify-center flex-row flex flex-wrap transition duration-300 transform hover:scale-110"
                 >
                   {file.fileType === 'IMAGE' ? (
                     <img
@@ -87,13 +87,12 @@ const ReviewCard = ({ review }) => {
                     <video
                       src={file.fileUrl}
                       className="object-cover w-full h-full"
-                      controls
                     />
                   ) : null}
                 </div>
               ))}
               {file.length > 4 && (
-                <div className="flex w-20 min-h-20 sm:w-32 sm:h-32  bg-[#808080] rounded-lg items-center justify-center text-white poi">
+                <div className="flex w-20 min-h-20 md:w-32 md:h-32  bg-[#808080] rounded-lg items-center justify-center text-white poi transition duration-300 transform hover:scale-110">
                   더보기
                 </div>
               )}
