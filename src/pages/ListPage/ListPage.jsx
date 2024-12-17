@@ -11,7 +11,7 @@ const ListPage = () => {
   const [results, setResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]); 
   const [filters, setFilters] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
   const [hasNext, setHasNext] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,7 +75,7 @@ const ListPage = () => {
 
     initializeFilters();
     setIsFetching(false);
-    setCurrentPage(1);
+    setCurrentPage(0);
     setHasNext(true);
   }, [location.state]);
 
@@ -278,21 +278,21 @@ const ListPage = () => {
         <SearchModal onClose={() => setIsModalOpen(false)} filters={filters} />
       )}
 
-      <div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200">
-        {tags.map((tag) => (
-          <button
-            key={tag}
-            onClick={() => toggleTag(tag)}
-            className={`px-4 py-2 whitespace-nowrap border rounded-full ${
-              selectedTags.includes(tag)
-                ? "border-blue-500 text-blue-500 font-semibold"
-                : "border-gray-300 text-gray-600"
-            } hover:bg-gray-100`}
-          >
-            {tag}
-          </button>
-        ))}
-      </div>
+<div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-hidden">
+  {tags.map((tag) => (
+    <button
+      key={tag}
+      onClick={() => toggleTag(tag)}
+      className={`px-4 py-2 whitespace-nowrap border rounded-full ${
+        selectedTags.includes(tag)
+          ? "border-blue-500 text-blue-500 font-semibold"
+          : "border-gray-300 text-gray-600"
+      } hover:bg-gray-100`}
+    >
+      {tag}
+    </button>
+  ))}
+</div>
 
       <div className="px-6 py-4 space-y-4">
   {filteredResults.length > 0 ? (

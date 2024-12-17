@@ -108,49 +108,55 @@ const ProfileSection = ({ setMaxDogWeight, onComplete }) => {
 
   return (
     <div>
-      <div className="flex overflow-x-auto space-x-4 mb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-        
-        {dogList.map((dog) => (
-          <div
-            key={dog.id}
-            onClick={() => handleDogSelect(dog.id)}
-            className="relative flex flex-col items-center cursor-pointer"
-          >
-            {dog.imageUrl ? (
-              <img
-                src={dog.imageUrl}
-                alt={dog.name}
-                className={`w-16 h-16 rounded-full object-cover border-2 ${
-                  dog.selected ? "border-blue-500" : "border-gray-300"
-                }`}
-              />
-            ) : (
-              <div
-                className={`w-16 h-16 bg-gray-200 flex items-center justify-center rounded-full border-2 ${
-                  dog.selected ? "border-blue-500" : "border-gray-300"
-                }`}
-              >
-                🐾
-              </div>
-            )}
-            <p className="text-sm font-medium text-gray-700 mt-1">{dog.name}</p>
-            {dog.selected && (
-              <div className="absolute top-0 right-0 bg-blue-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">
-                ✓
-              </div>
-            )}
-          </div>
-        ))}
+      <div className="flex overflow-x-auto space-x-4 mb-4 px-2 scrollbar-hide">
+  {dogList.map((dog) => (
+    <div
+      key={dog.id}
+      onClick={() => handleDogSelect(dog.id)}
+      className="relative flex flex-col items-center cursor-pointer flex-shrink-0"
+    >
+      {dog.imageUrl ? (
+        <img
+          src={dog.imageUrl}
+          alt={dog.name}
+          className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 ${
+            dog.selected ? "border-blue-500" : "border-gray-300"
+          }`}
+        />
+      ) : (
         <div
-          onClick={handleAddDogClick}
-          className="flex flex-col items-center cursor-pointer"
+          className={`w-16 h-16 sm:w-20 sm:h-20 bg-gray-200 flex items-center justify-center rounded-full border-2 ${
+            dog.selected ? "border-blue-500" : "border-gray-300"
+          }`}
         >
-          <div className="w-16 h-16 bg-gray-200 flex items-center justify-center rounded-full border-2 border-gray-300">
-            +
-          </div>
-          <p className="text-sm font-medium text-gray-500 mt-1">추가</p>
+          🐾
         </div>
-      </div>
+      )}
+      <p
+        className="text-sm font-medium text-gray-700 mt-1 truncate"
+        style={{ maxWidth: "4rem" }} // 이름 영역 너비 제한
+      >
+        {dog.name}
+      </p>
+      {dog.selected && (
+        <div className="absolute top-0 right-0 bg-blue-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">
+          ✓
+        </div>
+      )}
+    </div>
+  ))}
+  <div
+    onClick={handleAddDogClick}
+    className="flex flex-col items-center cursor-pointer flex-shrink-0"
+  >
+    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-200 flex items-center justify-center rounded-full border-2 border-gray-300">
+      +
+    </div>
+    <p className="text-sm font-medium text-gray-500 mt-1">추가</p>
+  </div>
+</div>
+
+
 
 
       {selectedDogInfo && (

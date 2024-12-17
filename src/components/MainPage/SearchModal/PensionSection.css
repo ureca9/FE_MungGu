@@ -43,6 +43,10 @@
   transition: all 0.2s ease;
 }
 
+.highlight-saturday {
+  color: blue; /* 파란색 텍스트 */
+}
+
 .react-calendar__tile--now {
   background-color: #ffedcc; /* 오늘 날짜 배경색 */
   border-radius: 8px;
@@ -62,4 +66,10 @@
 
 .react-calendar__month-view__days__day--neighboringMonth {
   color: #ddd; /* 다른 달 날짜 색상 */
+}
+
+.past-date {
+  color: gray; /* 회색 텍스트 */
+  pointer-events: none; /* 선택 불가 */
+  opacity: 0.5; /* 투명도 추가 */
 }

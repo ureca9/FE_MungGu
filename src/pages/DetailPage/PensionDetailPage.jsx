@@ -142,7 +142,7 @@ const PensionDetailPage = () => {
     
     <div className="min-h-screen" style={{ backgroundColor: '#f9fafb' }}>
       
-      <SubHeader />
+      <SubHeader title={pensionDetail.pensionName || "펜션 상세" }/>
       <div className="w-full h-[400px] overflow-hidden">
       <Slider {...sliderSettings}>
   {images.map((image, index) => (
@@ -216,9 +216,9 @@ const PensionDetailPage = () => {
         <ReservationRoomSection pensionId={id} />
       </section>
 
-      <section className="relative p-4 mt-4 bg-white">
+      <section className="relative pr-4 pt-4 pb-4 mt-4 bg-white">
   <div className="flex items-center justify-between mb-2">
-    <h3 className="text-lg font-bold">리얼 포토 리뷰</h3>
+    <h3 className="pl-4 text-lg font-bold">리얼 포토 리뷰</h3>
     <button
       className="text-sm text-blue-500 hover:underline"
       onClick={() => navigate(`/pension-all-review/${id}`)}
@@ -227,10 +227,7 @@ const PensionDetailPage = () => {
     </button>
   </div>
   <div className="relative">
-    <div
-      ref={scrollRef}
-      className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-sky-100"
-    >
+  <div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-hidden">
       {pensionDetail.review.slice(0, 20).map((review, index) => {
         const firstFileUrl =
           review.file && review.file.length > 0

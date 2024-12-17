@@ -7,6 +7,8 @@ import ReviewDetailModal from '../../components/review/ReviewDetailModal'; // �
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
+import SubHeader from '../../components/common/SubHeader';
+
 
 
 const PlaceDetailPage = () => {
@@ -166,14 +168,7 @@ const PlaceDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="flex items-center p-4 bg-white shadow-md">
-        <button
-          onClick={() => navigate(-1)}
-          className="mr-4 text-lg text-gray-600"
-        >
-          {'<'}
-        </button>
-      </header>
+      <SubHeader title={placeName || "시설 상세"} />
 
       <div className="w-full h-80">
       <Slider
@@ -222,6 +217,29 @@ const PlaceDetailPage = () => {
             </span>
           ))}
         </div>
+      </section>
+
+      <section className="p-4 mt-4 bg-white">
+        <h3 className="mb-2 text-lg font-bold">운영 정보</h3>
+        <p>운영 시간: {businessHour || '정보 없음'}</p>
+        <p>전화 번호: {telNo || '정보 없음'}</p>
+        {hmpgUrl && (
+          <p>
+            홈페이지:{' '}
+            <a
+              href={hmpgUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 underline"
+            >
+              {hmpgUrl}
+            </a>
+          </p>
+        )}
+      </section>
+      <section className="p-4 mt-4 bg-white">
+        <h3 className="mb-2 text-lg font-bold">시설 정보</h3>
+        <p className="text-sm text-gray-600">{description || '설명 없음'}</p>
       </section>
 
       <section className="p-4 mt-4 bg-white">

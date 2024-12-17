@@ -70,7 +70,7 @@ const ReservationRoomSection = ({ pensionId }) => {
   }, [startDate, endDate, peopleCount, dogCount]);
 
   return (
-    <section className="p-4 bg-white mt-4">
+    <section className="pr-4 pt-4 pb-4 bg-white mt-4">
       {/* 제목 */}
       <h3 className="text-lg font-bold mb-4">예약하기</h3>
 

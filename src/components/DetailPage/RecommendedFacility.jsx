@@ -47,22 +47,13 @@ const RecommendedFacility = ({ pensionId }) => {
   if (recommendations.length === 0) return null;
 
   return (
-    <section className="p-4 bg-white mt-4 relative">
+    <section className="pr-4 pb-4 pt-4 bg-white mt-4 relative">
       <div className="flex justify-between items-center mb-2">
-        <h3 className="text-lg font-bold">추천 시설</h3>
+        <h3 className="pl-4 text-lg font-bold">추천 시설</h3>
       </div>
 
       <div className="relative">
-        <button
-          onClick={scrollLeft}
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-blue-600 z-10"
-        >
-          ◀
-        </button>
-        <div
-          ref={scrollRef}
-          className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-sky-100"
-        >
+      <div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-hidden">
           {recommendations.map((facility) => (
             <div
               key={facility.id}
@@ -85,12 +76,6 @@ const RecommendedFacility = ({ pensionId }) => {
             </div>
           ))}
         </div>
-        <button
-          onClick={scrollRight}
-          className="absolute right-0 top-1/2 -translate-y-1/2 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-blue-600 z-10"
-        >
-          ▶
-        </button>
       </div>
     </section>
   );
