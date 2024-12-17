@@ -114,12 +114,12 @@ const UserEdit = () => {
       return false;
     }
 
-    const nicknameRegex = /^[가-힣a-zA-Z0-9]{2,8}$/;
+    const nicknameRegex = /^[가-힣a-zA-Z0-9 ]{2,10}$/;
     if (!nicknameRegex.test(nickname.trim())) {
       Swal.fire({
         icon: 'warning',
         title: '닉네임 형식 오류',
-        text: '2~8자의 한글, 영문, 숫자만 입력 가능합니다.',
+        text: '2~10자의 한글, 영문, 숫자, 띄어쓰기만 입력 가능합니다.',
         confirmButtonColor: '#3288FF',
       });
       return false;
@@ -229,7 +229,7 @@ const UserEdit = () => {
         label="닉네임"
         id="nickname"
         type="text"
-        placeholder="2~8자의 한글, 영문, 숫자만 입력 가능합니다."
+        placeholder="2~10자의 한글, 영문, 숫자만 입력 가능합니다."
         {...register('nickname', {
           required: '닉네임은 필수 입력 항목입니다.',
         })}
