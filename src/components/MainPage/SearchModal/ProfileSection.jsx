@@ -109,6 +109,7 @@ const ProfileSection = ({ setMaxDogWeight, onComplete }) => {
   return (
     <div>
       <div className="flex overflow-x-auto space-x-4 mb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+        
         {dogList.map((dog) => (
           <div
             key={dog.id}
@@ -161,17 +162,16 @@ const ProfileSection = ({ setMaxDogWeight, onComplete }) => {
       )}
 
 
-      <div className="mt-6">
-        <button
-          onClick={() => {
-            setMaxDogWeight(0); 
-            onComplete(); 
-          }}
-          className="w-full bg-white border border-[#3288FF] text-[#3288FF] py-2 rounded-lg text-lg font-bold hover:bg-[#f0f8ff] transition-colors duration-200"
-        >
-          완료
-        </button>
-      </div>
+<div className="mt-6">
+  <button
+    onClick={() => {
+      onComplete(selectedDogInfo); // 선택된 강아지 정보 전달
+    }}
+    className="w-full bg-white border border-[#3288FF] text-[#3288FF] py-2 rounded-lg text-lg font-bold hover:bg-[#f0f8ff] transition-colors duration-200"
+  >
+    완료
+  </button>
+</div>
     </div>
   );
 };

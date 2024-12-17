@@ -9,47 +9,17 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import RecommendedFacility from '../../components/DetailPage/RecommendedFacility';
 import ReviewDetailModal from '../../components/review/ReviewDetailModal';
 import Swal from 'sweetalert2';
+import SubHeader from '../../components/common/SubHeader';
 
-const CustomPrevArrow = (props) => {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={className}
-      style={{
-        ...style,
-        display: 'block',
-        background: 'rgba(0, 0, 0, 0.5)',
-        borderRadius: '50%',
-        padding: '10px',
-        zIndex: 2,
-        left: '10px',
-      }}
-      onClick={onClick}
-    >
-      ❮
-    </div>
-  );
-};
 
-const CustomNextArrow = (props) => {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={className}
-      style={{
-        ...style,
-        display: 'block',
-        background: 'rgba(0, 0, 0, 0.5)',
-        borderRadius: '50%',
-        padding: '10px',
-        zIndex: 2,
-        right: '10px',
-      }}
-      onClick={onClick}
-    >
-      ❯
-    </div>
-  );
+const sliderSettings = {
+  dots: false, // 하단 네비게이션 점 비활성화
+  infinite: true, // 무한 스크롤 활성화
+  speed: 500, // 슬라이더 전환 속도
+  slidesToShow: 1, // 한 번에 보여줄 슬라이드 개수
+  slidesToScroll: 1, // 한 번에 스크롤할 슬라이드 개수
+  autoplay: true, // 자동 슬라이드 활성화
+  autoplaySpeed: 3000, // 3초마다 슬라이드 (3000ms)
 };
 
 const PensionDetailPage = () => {
@@ -150,9 +120,6 @@ const PensionDetailPage = () => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    arrows: true,
-    prevArrow: <CustomPrevArrow />,
-    nextArrow: <CustomNextArrow />,
   };
 
   const maxLines = 10;
@@ -172,25 +139,23 @@ const PensionDetailPage = () => {
   };
 
   return (
+    
     <div className="min-h-screen" style={{ backgroundColor: '#f9fafb' }}>
-      <header className="flex items-center justify-between p-4 bg-white shadow-md">
-        <button onClick={() => navigate(-1)} className="text-gray-600">
-          {'<'}
-        </button>
-      </header>
-
+      
+      <SubHeader />
       <div className="w-full h-[400px] overflow-hidden">
-        <Slider {...sliderSettings}>
-          {images.map((image, index) => (
-            <div key={index}>
-              <img
-                src={image}
-                alt={`Pension Image ${index + 1}`}
-                className="w-full h-[400px] object-cover"
-              />
-            </div>
-          ))}
-        </Slider>
+      <Slider {...sliderSettings}>
+  {images.map((image, index) => (
+    <div key={index}>
+      <img
+        src={image}
+        alt={`Pension Image ${index + 1}`}
+        className="w-full h-[400px] object-cover"
+      />
+    </div>
+  ))}
+</Slider>
+
       </div>
 
       <section className="p-4 mt-4 bg-white">
@@ -252,61 +217,67 @@ const PensionDetailPage = () => {
       </section>
 
       <section className="relative p-4 mt-4 bg-white">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-bold">리얼 포토 리뷰</h3>
-          <button
-            className="text-sm text-blue-500 hover:underline"
-            onClick={() => navigate(`/pension-all-review/${id}`)}
-          >
-            전체보기 &gt;
-          </button>
-        </div>
-        <div className="relative">
-          <button
-            onClick={scrollLeft}
-            className="absolute left-0 z-10 flex items-center justify-center w-8 h-8 text-white -translate-y-1/2 bg-blue-500 rounded-full shadow-md top-1/2 hover:bg-blue-600"
-          >
-            ◀
-          </button>
-          <div
-            ref={scrollRef}
-            className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-sky-100"
-          >
-            {pensionDetail.review.slice(0, 20).map((review, index) => {
-              const firstFileUrl =
-                review.file && review.file.length > 0
-                  ? review.file[0].fileUrl
-                  : null;
+  <div className="flex items-center justify-between mb-2">
+    <h3 className="text-lg font-bold">리얼 포토 리뷰</h3>
+    <button
+      className="text-sm text-blue-500 hover:underline"
+      onClick={() => navigate(`/pension-all-review/${id}`)}
+    >
+      전체보기 &gt;
+    </button>
+  </div>
+  <div className="relative">
+    <div
+      ref={scrollRef}
+      className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-sky-100"
+    >
+      {pensionDetail.review.slice(0, 20).map((review, index) => {
+        const firstFileUrl =
+          review.file && review.file.length > 0
+            ? review.file[0].fileUrl
+            : null;
+        const fileType =
+          review.file && review.file.length > 0
+            ? review.file[0].fileType
+            : null;
 
-              return (
-                <div
-                  key={index}
-                  onClick={() => handleReviewClick(review)}
-                  className="flex-none p-2 rounded-lg shadow-md cursor-pointer w-36 bg-gray-50"
-                >
-                  <img
-                    src={firstFileUrl || 'https://via.placeholder.com/150'}
-                    alt="리뷰 사진"
-                    className="object-cover w-full h-24 rounded-lg"
-                  />
-                  <p className="mt-2 text-sm font-bold truncate">
-                    {review.nickname}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">
-                    {review.content.slice(0, 30)}...
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-          <button
-            onClick={scrollRight}
-            className="absolute right-0 z-10 flex items-center justify-center w-8 h-8 text-white -translate-y-1/2 bg-blue-500 rounded-full shadow-md top-1/2 hover:bg-blue-600"
+        return (
+          <div
+            key={index}
+            onClick={() => handleReviewClick(review)}
+            className="flex-none p-2 rounded-lg shadow-md cursor-pointer w-36 bg-gray-50"
           >
-            ▶
-          </button>
-        </div>
-      </section>
+            {fileType === 'IMAGE' ? (
+              <img
+                src={firstFileUrl || 'https://via.placeholder.com/150'}
+                alt="리뷰 사진"
+                className="object-cover w-full h-24 rounded-lg"
+              />
+            ) : fileType === 'VIDEO' ? (
+              <video
+                src={firstFileUrl}
+                className="object-cover w-full h-24 rounded-lg"
+                controls
+              />
+            ) : (
+              <div className="flex items-center justify-center w-full h-24 bg-gray-200 rounded-lg">
+                파일 없음
+              </div>
+            )}
+            <p className="mt-2 text-sm font-bold truncate">
+              {review.nickname}
+            </p>
+            <p className="text-xs text-gray-500 truncate">
+              {review.content.slice(0, 30)}...
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+
 
       <RecommendedFacility pensionId={id} />
 

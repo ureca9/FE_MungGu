@@ -2,22 +2,24 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../common/LoadingSpinner";
+import fireIcon from '../../stories/assets/fire.svg';
 
 const HotPlaces = ({ accessToken, refreshAccessToken }) => {
   const [places, setPlaces] = useState([]);
   const [error, setError] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(1); 
-  const scrollRef = useRef(null); 
+  const [selectedCategory, setSelectedCategory] = useState(7); // 기본값을 7(펜션)으로 설정
+  const scrollRef = useRef(null);
+  const categoryRef = useRef(null);
   const navigate = useNavigate();
 
   const categories = [
+    { id: 7, name: "펜션", apiPath: "/api/v1/pensions/top" }, // 펜션을 첫 번째로
+    { id: 6, name: "마당", apiPath: "/api/v1/places/6/top" }, // 마당을 두 번째로
     { id: 1, name: "공원", apiPath: "/api/v1/places/1/top" },
     { id: 2, name: "관광지", apiPath: "/api/v1/places/2/top" },
     { id: 3, name: "놀이터", apiPath: "/api/v1/places/3/top" },
     { id: 4, name: "카페", apiPath: "/api/v1/places/4/top" },
     { id: 5, name: "해수욕장", apiPath: "/api/v1/places/5/top" },
-    { id: 6, name: "마당", apiPath: "/api/v1/places/6/top" },
-    { id: 7, name: "펜션", apiPath: "/api/v1/pensions/top" },
   ];
 
   const fetchPlaces = async () => {
@@ -25,7 +27,6 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
       let token = accessToken || localStorage.getItem("ACCESS_TOKEN");
 
       if (!token) {
-        console.error("로그인이 필요합니다.");
         setError("로그인이 필요합니다.");
         return;
       }
@@ -40,39 +41,17 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
         (category) => category.id === selectedCategory
       )?.apiPath;
 
-      if (!selectedApiPath) {
-        throw new Error("유효하지 않은 카테고리입니다.");
-      }
+      if (!selectedApiPath) throw new Error("유효하지 않은 카테고리입니다.");
 
-      const response = await axios.get(`https://meong9.store${selectedApiPath}`, {
-        headers,
-      });
-
-      setPlaces(response.data.data || []);
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        console.error("401 Unauthorized: 토큰 만료 또는 인증 실패");
-        if (refreshAccessToken) {
-          try {
-            const newAccessToken = await refreshAccessToken();
-            if (newAccessToken) {
-              localStorage.setItem("ACCESS_TOKEN", newAccessToken);
-              console.log("새로운 토큰으로 재요청 시도");
-              await fetchPlaces();
-            } else {
-              setError("로그인이 필요합니다.");
-            }
-          } catch (refreshError) {
-            console.error("리프레시 토큰 오류:", refreshError);
-            setError("로그인이 필요합니다.");
-          }
-        } else {
-          setError("로그인이 필요합니다.");
-        }
+      const response = await axios.get(`https://meong9.store${selectedApiPath}`, { headers });
+      if (response.data && response.data.data) {
+        setPlaces(response.data.data);
       } else {
-        console.error("데이터를 가져오는데 실패했습니다:", error.message);
-        setError("데이터를 가져오는데 실패했습니다.");
+        setPlaces([]);
       }
+    } catch (error) {
+      setError("데이터를 가져오는데 실패했습니다.");
+      console.error(error);
     }
   };
 
@@ -83,98 +62,144 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
   const handleItemClick = (place) => {
     const routePath =
       selectedCategory === 7
-        ? `/pension-detail/${place.pensionId}` 
+        ? `/pension-detail/${place.pensionId}`
         : `/place/${place.placeId || place.pensionId}`;
     navigate(routePath);
   };
 
-  const scrollLeft = () => {
-    scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
+  // 드래그 스크롤 기능
+  const addDragScroll = (ref) => {
+    let isDragging = false;
+    let startX, scrollLeft;
+
+    const mouseDownHandler = (e) => {
+      isDragging = true;
+      startX = e.pageX - ref.current.offsetLeft;
+      scrollLeft = ref.current.scrollLeft;
+    };
+
+    const mouseMoveHandler = (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const x = e.pageX - ref.current.offsetLeft;
+      const walk = (x - startX) * 2; // 스크롤 속도
+      ref.current.scrollLeft = scrollLeft - walk;
+    };
+
+    const mouseUpHandler = () => {
+      isDragging = false;
+    };
+
+    ref.current.addEventListener("mousedown", mouseDownHandler);
+    ref.current.addEventListener("mousemove", mouseMoveHandler);
+    ref.current.addEventListener("mouseup", mouseUpHandler);
+    ref.current.addEventListener("mouseleave", mouseUpHandler);
   };
 
-  const scrollRight = () => {
-    scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
-  };
+  useEffect(() => {
+    if (scrollRef.current) addDragScroll(scrollRef);
+    if (categoryRef.current) addDragScroll(categoryRef);
+  }, []);
 
   return (
     <section className="p-4">
-      <LoadingSpinner /> 
-      <h2 className="text-lg font-bold mb-4">지금 핫한 장소 🔥</h2>
+      <LoadingSpinner />
+      <h2 className="text-lg font-bold mb-4">
+  지금 핫한 장소 
+  <img 
+    src={fireIcon} 
+    alt="불 아이콘" 
+    className="inline-block w-6 h-6 relative" 
+    style={{ top: '-5px' , left : '10px'}}
+  />
+</h2>
 
-      <div className="flex gap-2 mb-4 overflow-x-auto">
+      {/* 카테고리 버튼 */}
+      <div
+        ref={categoryRef}
+        className="flex gap-2 mb-4 overflow-x-auto cursor-grab"
+        style={{ scrollbarWidth: "none" }}
+      >
+        <style>{`div::-webkit-scrollbar { display: none; }`}</style>
         {categories.map((category) => (
           <button
             key={category.id}
             onClick={() => setSelectedCategory(category.id)}
-            className={`px-4 py-2 border rounded-full ${
+            className={`px-4 py-2 min-w-[100px] border rounded-lg ${
               selectedCategory === category.id
-                ? "border-blue-500 text-blue-500 font-semibold"
+                ? "border-[#3288ff] text-blue-500 font-semibold"
                 : "border-gray-300 text-gray-600"
-            } hover:bg-gray-100`}
+            } hover:bg-gray-100 text-center`}
           >
             {category.name}
           </button>
         ))}
       </div>
 
-      <div className="relative">
-        <button
-          onClick={scrollLeft}
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-blue-600 z-10"
-        >
-          ◀
-        </button>
-        <div
-          ref={scrollRef}
-          className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200"
-          style={{ scrollSnapType: "x mandatory" }}
-        >
-          {places.length > 0 &&
-            [...Array(Math.ceil(places.length / 9))].map((_, index) => {
-              const startIndex = index * 9;
-              const gridItems = places.slice(startIndex, startIndex + 9);
+      {/* 스크롤 가능한 그리드 */}
+      <div
+  ref={scrollRef}
+  className="
+    flex gap-x-[5px] overflow-x-auto snap-x snap-mandatory 
+    scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200
+    sm:scrollbar-none"
+  style={{ scrollSnapType: "x mandatory" }}
+>
+  {places.length > 0 &&
+    [...Array(Math.ceil(places.length / 3))].map((_, index) => {
+      const startIndex = index * 3;
+      const listItems = places.slice(startIndex, startIndex + 3);
 
-              return (
-                <div
-                  key={index}
-                  className="grid grid-cols-3 grid-rows-3 gap-6 min-w-[calc(100%+20%)] scroll-snap-align-start"
-                >
-                  {gridItems.map((place) => (
-                    <div
-                      key={place.placeId || place.pensionId}
-                      className="p-5 bg-white shadow-md rounded-lg text-center cursor-pointer w-100 h-100 flex flex-col justify-between"
-                      onClick={() => handleItemClick(place)}
-                    >
-                      <div
-                        className="bg-gray-300 w-full h-36 rounded-lg mb-2 flex-shrink-0"
-                        style={{
-                          backgroundImage: `url(${place.placeImageUrl || place.pensionImageUrl || "/default-image.jpg"})`,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                        }}
-                      ></div>
-                      <h3 className="text-sm font-bold line-clamp-2 h-12">
-                        {place.placeName || place.pensionName}
-                      </h3>
-                      <p className="text-xs text-gray-500 truncate h-5">
-                        {place.province} {place.cityDistrict} {place.subDistrict}
-                      </p>
-                      <p className="text-sm text-yellow-500 mt-1 h-5">
-                        ⭐ {place.reviewAvg.toFixed(1)} ({place.reviewCount} 리뷰)
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              );
-            })}
-        </div>
-        <button
-          onClick={scrollRight}
-          className="absolute right-0 top-1/2 -translate-y-1/2 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-blue-600 z-10"
+      return (
+        <div
+          key={index}
+          className="flex flex-col gap-y-4 w-[340px] scroll-snap-align-start"
+          style={{ flex: "0 0 auto" }}
         >
-          ▶
-        </button>
-      </div>
+          {listItems.map((place, idx) => (
+            <div
+              key={`place-${place.placeId || place.pensionId}-${idx}`}
+              className="flex items-center bg-white p-2 rounded-lg cursor-pointer"
+              style={{ width: "100%" }}
+              onClick={() => handleItemClick(place)}
+            >
+              {/* 이미지 영역 */}
+              <div
+                className="w-20 h-20 bg-gray-300 rounded-lg flex-shrink-0"
+                style={{
+                  backgroundImage: `url(${place.placeImageUrl || place.pensionImageUrl || "/default-image.jpg"})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              ></div>
+
+              {/* 텍스트 영역 */}
+              <div className="flex-1 ml-2">
+                {/* 주소 */}
+                <p className="text-xs text-gray-500 truncate mt-1">
+                  {place.address || "주소 정보 없음"}
+                </p>
+
+                {/* 제목 + 숫자 */}
+                <div className="flex items-center">
+                  <p className="text-lg font-bold mr-1">{idx + 1 + startIndex}.</p>
+                  <h3 className="text-sm font-bold truncate">
+                    {place.placeName || place.pensionName || "이름 정보 없음"}
+                  </h3>
+                </div>
+
+                {/* 별점 */}
+                <p className="text-sm text-gray-500 mt-1">
+                  ⭐ {place.reviewAvg?.toFixed(1)} ({place.reviewCount || 0})
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    })}
+</div>
+
     </section>
   );
 };
