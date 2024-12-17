@@ -1,19 +1,19 @@
 import { useRef, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 import { getMarkers, searchSpot } from '../../api/map/map.js';
 import heartMarker from '../../assets/common/heartMarker.png';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
 import usePlaceStore from '../../stores/map/usePlaceStore.js';
+import { SearchType } from '../../utils/SearchType.js';
 
-const MapContainer = ({ onMapLoaded }) => {
+const MapContainer = () => {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const currentLocationMarkerRef = useRef(null);
   const likedMarkersRef = useRef([]);
   const searchMarkersRef = useRef([]);
   const { coords, setCoords } = useCoordsStore();
-  const { searchResults, setSelectedPlace } = usePlaceStore();
+  const { searchResults, setSelectedPlace, searchType } = usePlaceStore();
 
   const initMap = async (latitude, longitude) => {
     const map = new window.kakao.maps.Map(mapContainer.current, {
@@ -21,7 +21,7 @@ const MapContainer = ({ onMapLoaded }) => {
       level: 3,
     });
     mapRef.current = map;
-    console.log('내 위치:', latitude, longitude);
+    console.log(mapRef.current);
     addCurrentMarker(map, latitude, longitude);
     await addLikedMarker(map);
   };
@@ -97,7 +97,6 @@ const MapContainer = ({ onMapLoaded }) => {
           const { latitude, longitude } = position.coords;
           setCoords(latitude, longitude);
           initMap(latitude, longitude);
-          if (onMapLoaded) onMapLoaded();
         },
         (error) => {
           console.error('현재 위치를 가져오지 못했습니다:', error);
@@ -122,8 +121,9 @@ const MapContainer = ({ onMapLoaded }) => {
 
   useEffect(() => {
     if (searchResults.length > 0) {
-      const { latitude, longitude } = searchResults[0];
-      setCoords(latitude, longitude);
+      const { latitude, longitude } =
+        searchType === SearchType.SEARCH ? searchResults[0] : coords;
+      // setCoords(latitude, longitude);
 
       if (mapRef.current) {
         mapRef.current.setCenter(
@@ -134,12 +134,9 @@ const MapContainer = ({ onMapLoaded }) => {
         addSearchResultMarker(mapRef.current);
       }
     }
-  }, [searchResults, setCoords]);
-  return <div ref={mapContainer} id="map" className="w-full h-full"></div>;
-};
+  }, [searchResults]);
 
-MapContainer.propTypes = {
-  onMapLoaded: PropTypes.func,
+  return <div ref={mapContainer} id="map" className="w-full h-full"></div>;
 };
 
 export default MapContainer;

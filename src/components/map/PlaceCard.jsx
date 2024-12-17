@@ -9,7 +9,7 @@ import ROUTER_PATHS from '../../utils/RouterPath.js';
 const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
   const navigate = useNavigate();
   const { searchType } = usePlaceStore();
-  const { coords, setCoords } = useCoordsStore();
+  const { setCoords } = useCoordsStore();
 
   const formatDistance = (distance) => {
     if (distance == null) return '';
@@ -98,7 +98,6 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
 
   const handleMapClick = () => {
     setCoords(latitude, longitude);
-    console.log(coords);
     navigate(ROUTER_PATHS.MAP);
   };
 
@@ -179,6 +178,8 @@ PlaceCard.propTypes = {
     distance: PropTypes.number,
     address: PropTypes.string.isRequired,
     images: PropTypes.arrayOf(PropTypes.string),
+    latitude: PropTypes.number.isRequired,
+    longitude: PropTypes.number.isRequired,
   }),
   likedPlaces: PropTypes.object.isRequired,
   handleLikeClick: PropTypes.func.isRequired,
