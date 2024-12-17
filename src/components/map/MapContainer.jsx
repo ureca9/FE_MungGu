@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { getMarkers, searchSpot } from '../../api/map/map.js';
+import { getCarDirection, getMarkers, searchSpot } from '../../api/map/map.js';
 import heartMarker from '../../assets/common/heartMarker.png';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
 import usePlaceStore from '../../stores/map/usePlaceStore.js';
@@ -12,6 +12,8 @@ const MapContainer = () => {
   const currentLocationMarkerRef = useRef(null);
   const likedMarkersRef = useRef([]);
   const searchMarkersRef = useRef([]);
+  const polylineRef = useRef(null);
+
   const { coords, setCoords } = useCoordsStore();
   const {
     searchResults,
@@ -22,49 +24,49 @@ const MapContainer = () => {
     setStartLocation,
   } = usePlaceStore();
 
-  const waitForKakaoMaps = (retries = 10) => {
+  const showError = (title, icon = 'error') => {
+    Swal.fire({ title, icon });
+  };
+
+  const waitForKakaoMaps = (callback, retries = 10) => {
     if (window.kakao && window.kakao.maps) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setCoords(latitude, longitude);
+      callback();
+    } else if (retries > 0) {
+      setTimeout(() => waitForKakaoMaps(callback, retries - 1), 100);
+    } else {
+      showError('Kakao Maps를 불러오지 못했습니다.');
+    }
+  };
 
-          const geocoder = new window.kakao.maps.services.Geocoder();
-          geocoder.coord2Address(longitude, latitude, (result, status) => {
-            if (status === window.kakao.maps.services.Status.OK) {
-              const address =
-                result[0]?.address?.address_name || '알 수 없는 위치';
-              setStartLocation({
-                name: `내 위치: ${address}`,
-                latitude,
-                longitude,
-              });
-            } else {
-              setStartLocation({
-                name: '내 위치: 주소를 가져올 수 없습니다.',
-                latitude,
-                longitude,
-              });
-            }
-          });
+  const setCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setCoords(latitude, longitude);
 
-          initMap(latitude, longitude);
-        },
-        (error) => {
-          console.error('현재 위치를 가져오지 못했습니다:', error);
-          Swal.fire({
-            title: '현재 위치를 가져오지 못했습니다. 위치 권한을 허용해주세요.',
-            icon: 'question',
+        const geocoder = new window.kakao.maps.services.Geocoder();
+        geocoder.coord2Address(longitude, latitude, (result, status) => {
+          const address =
+            status === window.kakao.maps.services.Status.OK
+              ? result[0]?.address?.address_name || '알 수 없는 위치'
+              : '주소를 가져올 수 없습니다.';
+          setStartLocation({
+            name: `내 위치: ${address}`,
+            latitude,
+            longitude,
           });
-        },
-      );
-    } else if (retries > 0)
-      setTimeout(() => waitForKakaoMaps(retries - 1), 100);
-    else
-      Swal.fire({
-        title: 'Kakao Maps를 불러오지 못했습니다.',
-        icon: 'error',
-      });
+        });
+
+        initMap(latitude, longitude);
+      },
+      (error) => {
+        console.error('현재 위치를 가져오지 못했습니다:', error);
+        showError(
+          '현재 위치를 가져오지 못했습니다. 위치 권한을 허용해주세요.',
+          'question',
+        );
+      },
+    );
   };
 
   const initMap = async (latitude, longitude) => {
@@ -88,7 +90,7 @@ const MapContainer = () => {
   const addLikedMarker = async (map) => {
     try {
       const places = await getMarkers();
-      places.forEach((place) => {
+      likedMarkersRef.current = places.map((place) => {
         const marker = new window.kakao.maps.Marker({
           position: new window.kakao.maps.LatLng(
             Number(place.latitude),
@@ -101,22 +103,19 @@ const MapContainer = () => {
             { offset: new window.kakao.maps.Point(16, 34) },
           ),
         });
-        likedMarkersRef.current.push(marker);
         window.kakao.maps.event.addListener(marker, 'click', () => {
           handleMarkerClick(place);
         });
+        return marker;
       });
     } catch (error) {
       console.error('찜한 장소를 불러오는 중 오류가 발생했습니다:', error);
-      Swal.fire({
-        title: '찜한 장소를 불러오는데 실패했습니다.',
-        icon: 'error',
-      });
+      showError('찜한 장소를 불러오는데 실패했습니다.');
     }
   };
 
   const addSearchResultMarker = (map) => {
-    searchResults.forEach((place) => {
+    searchMarkersRef.current = searchResults.map((place) => {
       const marker = new window.kakao.maps.Marker({
         position: new window.kakao.maps.LatLng(
           Number(place.latitude),
@@ -124,10 +123,10 @@ const MapContainer = () => {
         ),
         map,
       });
-      searchMarkersRef.current.push(marker);
       window.kakao.maps.event.addListener(marker, 'click', () => {
         handleMarkerClick(place);
       });
+      return marker;
     });
   };
 
@@ -141,76 +140,52 @@ const MapContainer = () => {
     setSelectedPlace(data.content);
   };
 
+  const drawRoute = async () => {
+    if (!startLocation || !endLocation || !mapRef.current) return;
+
+    try {
+      const data = await getCarDirection(startLocation, endLocation);
+      const linePath = data.routes[0].sections[0].roads.flatMap((road) => {
+        return road.vertexes.reduce((path, vertex, index, array) => {
+          if (index % 2 === 0) {
+            path.push(new kakao.maps.LatLng(array[index + 1], vertex));
+          }
+          return path;
+        }, []);
+      });
+
+      if (polylineRef.current) polylineRef.current.setMap(null);
+      polylineRef.current = new kakao.maps.Polyline({
+        path: linePath,
+        strokeWeight: 5,
+        strokeColor: '#000000',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid',
+      });
+      polylineRef.current.setMap(mapRef.current);
+    } catch (error) {
+      console.error('경로 데이터를 불러오는 중 오류가 발생했습니다:', error);
+    }
+  };
+
   useEffect(() => {
-    waitForKakaoMaps();
+    waitForKakaoMaps(setCurrentLocation);
   }, []);
 
   useEffect(() => {
-    if (searchResults.length > 0) {
+    if (searchResults.length > 0 && mapRef.current) {
       const { latitude, longitude } =
         searchType === SearchType.SEARCH ? searchResults[0] : coords;
-      // setCoords(latitude, longitude);
-
-      if (mapRef.current) {
-        mapRef.current.setCenter(
-          new window.kakao.maps.LatLng(latitude, longitude),
-        );
-        console.log(latitude, longitude);
-        clearSearchMarkers();
-        addSearchResultMarker(mapRef.current);
-      }
+      mapRef.current.setCenter(
+        new window.kakao.maps.LatLng(latitude, longitude),
+      );
+      clearSearchMarkers();
+      addSearchResultMarker(mapRef.current);
     }
   }, [searchResults]);
 
   useEffect(() => {
-    if (startLocation && endLocation && mapRef.current) {
-      console.log('hi');
-      const startCoord = new window.kakao.maps.LatLng(
-        startLocation.latitude,
-        startLocation.longitude,
-      );
-      const endCoord = new window.kakao.maps.LatLng(
-        endLocation.latitude,
-        endLocation.longitude,
-      );
-
-      mapRef.current.setCenter(startCoord);
-
-      new window.kakao.maps.Marker({
-        position: startCoord,
-        map: mapRef.current,
-      });
-      new window.kakao.maps.Marker({
-        position: endCoord,
-        map: mapRef.current,
-      });
-
-      const directionsService =
-        new window.kakao.maps.services.DirectionsService();
-      directionsService.route(
-        {
-          start: startCoord,
-          end: endCoord,
-          waypoints: [],
-          car: true,
-        },
-        (result, status) => {
-          if (status === window.kakao.maps.services.Status.OK) {
-            const path = result.routes[0].path;
-            const polyline = new window.kakao.maps.Polyline({
-              path,
-              strokeWeight: 5,
-              strokeColor: '#FF0000',
-              strokeOpacity: 1,
-              strokeStyle: 'solid',
-            });
-            polyline.setMap(mapRef.current);
-          } else {
-            console.error('길찾기 경로를 찾을 수 없습니다.');
-          }
-        },
-      );
-    }
+    drawRoute();
   }, [startLocation, endLocation]);
 
   return <div ref={mapContainer} id="map" className="w-full h-full"></div>;

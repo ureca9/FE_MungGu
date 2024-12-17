@@ -17,7 +17,7 @@ const Directions = () => {
   } = usePlaceStore();
   const navigate = useNavigate();
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     if (!startLocation || !endLocation) {
       Swal.fire({
         title: '출발지와 도착지를 모두 입력해주세요.',
@@ -25,7 +25,6 @@ const Directions = () => {
       });
       return;
     }
-    await getCarDirection(startLocation, endLocation);
     setSearchType(SearchType.SEARCH);
     navigate(ROUTER_PATHS.MAP);
   };

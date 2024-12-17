@@ -65,17 +65,12 @@ export const getCarDirection = async (startLocation, endLocation) => {
         destination: destination,
       },
     });
-    console.log(response.data);
+    return response.data;
   } catch (error) {
-    if (error.response) {
-      // 서버가 응답을 했지만 상태 코드가 2xx 범위를 벗어났을 경우
+    if (error.response)
       console.error('HTTP error!', error.response.status, error.response.data);
-    } else if (error.request) {
-      // 요청은 보내졌지만 응답이 없을 경우
+    else if (error.request)
       console.error('No response received:', error.request);
-    } else {
-      // 요청을 생성하는 과정에서 발생한 오류
-      console.error('Error setting up request:', error.message);
-    }
+    else console.error('Error setting up request:', error.message);
   }
 };
