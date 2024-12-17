@@ -4,6 +4,8 @@ import SearchHistory from '../../components/map/SearchHistory.jsx';
 import ROUTER_PATHS from '../../utils/RouterPath.js';
 import usePlaceStore from '../../stores/map/usePlaceStore.js';
 import { SearchType } from '../../utils/SearchType.js';
+import Swal from 'sweetalert2';
+import { getCarDirection } from '../../api/map/map.js';
 
 const Directions = () => {
   const {
@@ -15,8 +17,17 @@ const Directions = () => {
   } = usePlaceStore();
   const navigate = useNavigate();
 
-  const handleSearch = () => {
-    console.log('검색된 도착지:', endLocation);
+  const handleSearch = async () => {
+    if (!startLocation || !endLocation) {
+      Swal.fire({
+        title: '출발지와 도착지를 모두 입력해주세요.',
+        icon: 'warning',
+      });
+      return;
+    }
+    await getCarDirection(startLocation, endLocation);
+    setSearchType(SearchType.SEARCH);
+    navigate(ROUTER_PATHS.MAP);
   };
 
   return (
@@ -27,7 +38,7 @@ const Directions = () => {
             type="text"
             placeholder="출발지를 입력해주세요"
             className="flex-grow py-3 px-4 border border-gray-300 rounded-lg"
-            value={startLocation}
+            value={startLocation?.name}
             onClick={() => {
               setSearchType(SearchType.START);
               navigate(ROUTER_PATHS.MAP_SEARCH);
@@ -47,7 +58,7 @@ const Directions = () => {
             type="text"
             placeholder="도착지를 입력해주세요"
             className="flex-grow py-3 px-4 border border-gray-300 rounded-lg"
-            value={endLocation}
+            value={endLocation?.name}
             onClick={() => {
               setSearchType(SearchType.END);
               navigate(ROUTER_PATHS.MAP_SEARCH);

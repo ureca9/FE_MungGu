@@ -8,7 +8,7 @@ import ROUTER_PATHS from '../../utils/RouterPath.js';
 
 const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
   const navigate = useNavigate();
-  const { searchType } = usePlaceStore();
+  const { searchType, setStartLocation, setEndLocation } = usePlaceStore();
   const { setCoords } = useCoordsStore();
 
   const formatDistance = (distance) => {
@@ -101,10 +101,23 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
     navigate(ROUTER_PATHS.MAP);
   };
 
+  const handleListItemClick = (place) => {
+    if (searchType === SearchType.START) setStartLocation(place);
+    else if (searchType === SearchType.END) setEndLocation(place);
+    navigate(ROUTER_PATHS.DIRECTIONS);
+  };
+
   const { status, color, message } = getBusinessStatus(place.businessHour);
 
   return (
-    <li className="bg-white p-4 rounded-lg shadow relative">
+    <li
+      className="bg-white p-4 rounded-lg shadow relative"
+      onClick={() =>
+        searchType !== SearchType.SEARCH
+          ? handleListItemClick(place)
+          : undefined
+      }
+    >
       <div className="absolute top-4 right-4">
         <button onClick={() => handleLikeClick(placeId)}>
           {searchType === SearchType.SEARCH ? (

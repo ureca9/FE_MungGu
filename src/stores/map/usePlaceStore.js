@@ -8,10 +8,7 @@ const usePlaceStore = create((set) => ({
   selectedPlace: null,
   startLocation: null,
   endLocation: null,
-  setSearchResults: (searchResults) => {
-    set({ searchResults });
-    console.log(searchResults);
-  },
+  setSearchResults: (searchResults) => set({ searchResults }),
   setLikedPlaces: (likedPlaces) => set({ likedPlaces }),
   setSearchType: (searchType) => set({ searchType }),
   setSelectedPlace: (selectedPlace) => set({ selectedPlace }),
