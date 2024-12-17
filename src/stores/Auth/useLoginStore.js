@@ -5,9 +5,8 @@ import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 const useLoginStore = create(
   persist(
     (set) => ({
-      isLoggedIn: false, // 상태를 값으로 설정
+      isLoggedIn: false,
       checkIsLoggedIn: () => {
-        // 토큰 검증 함수
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
         if (!token) return false;
         try {
