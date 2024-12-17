@@ -269,65 +269,25 @@ const PensionSection = ({ onClose }) => {
   onChange={handleDateChange}
   value={selectedDateRange}
   selectRange
-  tileContent={({ date, view }) => {
+  tileContent={tileContent}
+  tileClassName={({ date, view }) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // 오늘 날짜의 시간을 00:00:00으로 설정
+    
     if (view === "month") {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const normalizedDate = new Date(date);
-      normalizedDate.setHours(0, 0, 0, 0);
-
-      const dayDifference = Math.floor(
-        (normalizedDate - today) / (1000 * 60 * 60 * 24)
-      );
-
-      // 날씨 아이콘 처리
-      if (dayDifference >= 0 && dayDifference < weatherData.length) {
-        const weather = weatherData[dayDifference];
-        return (
-          <div className="mt-1">
-            {weather && (
-              <span className="block text-md sm:text-sm">{getWeatherIcon(weather)}</span>
-            )}
-          </div>
-        );
+      if (date < today) {
+        // 오늘 이전 날짜
+        return "past-date";
+      }
+      if (date.getDay() === 6) {
+        // 토요일
+        return "highlight-saturday";
       }
     }
     return null;
   }}
-  tileClassName={({ date, view }) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const normalizedDate = new Date(date);
-    normalizedDate.setHours(0, 0, 0, 0);
-
-    const baseClasses = "text-base sm:text-sm"; // 기본 날짜 크기 설정
-
-    // 토요일은 파란색으로 표시
-    if (date.getDay() === 6) {
-      return `${baseClasses} text-blue-500`;
-    }
-
-    // 일요일은 빨간색으로 표시
-    if (date.getDay() === 0) {
-      return `${baseClasses} text-red-500`;
-    }
-
-    // 오늘 이전 날짜 회색 처리
-    if (normalizedDate < today) {
-      return `${baseClasses} text-gray-400`;
-    }
-
-    // 다른 달 날짜 회색 처리
-    if (view === "month" && date.getMonth() !== today.getMonth()) {
-      return `${baseClasses} text-gray-400`;
-    }
-
-    return baseClasses; // 기본 클래스
-  }}
   className="react-calendar"
 />
-
-
 
 <button
   className="w-full mt-4 bg-white text-[#3288FF] border border-[#3288FF] py-2 rounded-lg"

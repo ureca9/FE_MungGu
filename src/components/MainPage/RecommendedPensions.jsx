@@ -11,7 +11,7 @@ const RecommendedPensions = () => {
   const scrollRef = useRef(null);
   const navigate = useNavigate();
 
-  // 데이터 가져오기
+
   useEffect(() => {
     const fetchRecommendedPensions = async () => {
       try {
@@ -60,7 +60,6 @@ const RecommendedPensions = () => {
     navigate(`/pension-detail/${id}`);
   };
   
-    // 드래그 스크롤 기능
     const addDragScroll = (ref) => {
       let isDragging = false;
       let startX, scrollLeft;
@@ -75,7 +74,7 @@ const RecommendedPensions = () => {
         if (!isDragging) return;
         e.preventDefault();
         const x = e.pageX - ref.current.offsetLeft;
-        const walk = (x - startX) * 2; // 스크롤 속도
+        const walk = (x - startX) * 2; 
         ref.current.scrollLeft = scrollLeft - walk;
       };
   

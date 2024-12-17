@@ -24,26 +24,28 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
 
   const fetchPlaces = async () => {
     try {
-      let token = accessToken || localStorage.getItem("ACCESS_TOKEN");
-
-      if (!token) {
-        setError("로그인이 필요합니다.");
-        return;
-      }
-
+      const token = accessToken || localStorage.getItem("ACCESS_TOKEN");
+  
       const headers = {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       };
-
+  
+      // 토큰이 있는 경우에만 Authorization 헤더 추가
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+  
       const selectedApiPath = categories.find(
         (category) => category.id === selectedCategory
       )?.apiPath;
-
+  
       if (!selectedApiPath) throw new Error("유효하지 않은 카테고리입니다.");
-
-      const response = await axios.get(`https://meong9.store${selectedApiPath}`, { headers });
+  
+      const response = await axios.get(`https://meong9.store${selectedApiPath}`, {
+        headers,
+      });
+  
       if (response.data && response.data.data) {
         setPlaces(response.data.data);
       } else {
@@ -54,6 +56,7 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
       console.error(error);
     }
   };
+  
 
   useEffect(() => {
     fetchPlaces();
@@ -104,12 +107,12 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
   return (
     <section className="p-4">
       <LoadingSpinner />
-      <h2 className="text-lg font-bold mb-4">
+      <h2 className="pl-2 text-lg font-bold mb-4">
   지금 핫한 장소 
   <img 
-    src={fireIcon} 
-    alt="불 아이콘" 
-    className="inline-block w-6 h-6 relative" 
+          src={fireIcon}
+          alt="불 아이콘"
+          className="inline-block w-6 h-6 relative"
     style={{ top: '-5px' , left : '10px'}}
   />
 </h2>
@@ -117,7 +120,7 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
       {/* 카테고리 버튼 */}
       <div
         ref={categoryRef}
-        className="flex gap-2 mb-4 overflow-x-auto cursor-grab"
+        className="pl-2 flex gap-2 mb-4 overflow-x-auto cursor-grab"
         style={{ scrollbarWidth: "none" }}
       >
         <style>{`div::-webkit-scrollbar { display: none; }`}</style>
