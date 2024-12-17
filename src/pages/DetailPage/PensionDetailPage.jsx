@@ -9,48 +9,16 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import RecommendedFacility from '../../components/DetailPage/RecommendedFacility';
 import ReviewDetailModal from '../../components/review/ReviewDetailModal';
 import Swal from 'sweetalert2';
+import SubHeader from '../../components/common/SubHeader';
 
-const CustomPrevArrow = (props) => {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={className}
-      style={{
-        ...style,
-        display: 'block',
-        background: 'rgba(0, 0, 0, 0.5)',
-        borderRadius: '50%',
-        padding: '10px',
-        zIndex: 2,
-        left: '10px',
-      }}
-      onClick={onClick}
-    >
-      ❮
-    </div>
-  );
-};
-
-const CustomNextArrow = (props) => {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={className}
-      style={{
-        ...style,
-        display: 'block',
-        background: 'rgba(0, 0, 0, 0.5)',
-        borderRadius: '50%',
-        padding: '10px',
-        zIndex: 2,
-        right: '10px',
-      }}
-      onClick={onClick}
-    >
-      ❯
-    </div>
-  );
-};
+<style>
+      {`
+        /* Header 숨기기 */
+        body .fixed.top-0.z-10.w-full.max-w-[768px].backdrop-blur-md {
+          display: none;
+        }
+      `}
+    </style>
 
 const PensionDetailPage = () => {
   const navigate = useNavigate();
@@ -150,9 +118,6 @@ const PensionDetailPage = () => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    arrows: true,
-    prevArrow: <CustomPrevArrow />,
-    nextArrow: <CustomNextArrow />,
   };
 
   const maxLines = 10;
@@ -172,13 +137,10 @@ const PensionDetailPage = () => {
   };
 
   return (
+    
     <div className="min-h-screen" style={{ backgroundColor: '#f9fafb' }}>
-      <header className="flex items-center justify-between p-4 bg-white shadow-md">
-        <button onClick={() => navigate(-1)} className="text-gray-600">
-          {'<'}
-        </button>
-      </header>
-
+      
+      <SubHeader />
       <div className="w-full h-[400px] overflow-hidden">
         <Slider {...sliderSettings}>
           {images.map((image, index) => (
@@ -262,12 +224,6 @@ const PensionDetailPage = () => {
           </button>
         </div>
         <div className="relative">
-          <button
-            onClick={scrollLeft}
-            className="absolute left-0 z-10 flex items-center justify-center w-8 h-8 text-white -translate-y-1/2 bg-blue-500 rounded-full shadow-md top-1/2 hover:bg-blue-600"
-          >
-            ◀
-          </button>
           <div
             ref={scrollRef}
             className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-sky-100"
@@ -299,12 +255,6 @@ const PensionDetailPage = () => {
               );
             })}
           </div>
-          <button
-            onClick={scrollRight}
-            className="absolute right-0 z-10 flex items-center justify-center w-8 h-8 text-white -translate-y-1/2 bg-blue-500 rounded-full shadow-md top-1/2 hover:bg-blue-600"
-          >
-            ▶
-          </button>
         </div>
       </section>
 
