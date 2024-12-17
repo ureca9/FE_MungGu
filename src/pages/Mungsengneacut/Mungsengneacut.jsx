@@ -21,7 +21,7 @@ const CustomTabPanel = ({ children, value, index }) => {
       id={`custom-tabpanel-${index}`}
       aria-labelledby={`custom-tab-${index}`}
     >
-      {value === index && <div className="p-6">{children}</div>}
+      {value === index && <div className="px-6 py-4 ">{children}</div>}
     </div>
   );
 };
@@ -50,6 +50,20 @@ const Mungsengneacut = () => {
   const [nickname, setNickname] = useState('');
   const navigate = useNavigate();
   const observerRef = useRef(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
+
+  const openModal = (photo) => {
+    setSelectedPhoto({
+      ...photo,
+      nickname: photo.nickname || '익명',
+    });
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedPhoto(null);
+  };
 
   useEffect(() => {
     const getNickname = async () => {
@@ -192,9 +206,13 @@ const Mungsengneacut = () => {
             allPhotos.length > 0 ? (
               <ul className="grid grid-cols-2 gap-4 md:grid-cols-3">
                 {allPhotos.map((photo, index) => (
-                  <li key={index} className="p-4 border rounded-lg">
+                  <li
+                    key={index}
+                    className="p-4 border rounded-lg cursor-pointer"
+                    onClick={() => openModal(photo)}
+                  >
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-sm font-bold text-center md:text-base">
+                      <p className="w-20 text-sm font-bold truncate text-start md:text-base">
                         {photo.nickname || '익명'}님
                       </p>
                       <p className="text-xs text-center text-gray-500 md:text-sm">
@@ -204,7 +222,7 @@ const Mungsengneacut = () => {
                     <img
                       src={photo.meongPhotoUrl}
                       alt={`전체 사진 ${index}`}
-                      className="w-full h-auto rounded-lg"
+                      className="w-auto h-40 mx-auto"
                     />
                   </li>
                 ))}
@@ -221,7 +239,8 @@ const Mungsengneacut = () => {
               {myPhotos.map((photo) => (
                 <li
                   key={photo.photoId}
-                  className="px-4 pt-2 pb-4 border rounded"
+                  className="px-4 pt-2 pb-4 border cursor-pointer"
+                  onClick={() => openModal(photo)}
                 >
                   <p className="text-sm text-gray-500 text-end">
                     {formatDate(photo.createdAt)}
@@ -229,7 +248,7 @@ const Mungsengneacut = () => {
                   <img
                     src={photo.meongPhotoUrl}
                     alt="My Photo"
-                    className="w-full h-auto"
+                    className="w-auto h-40 mx-auto"
                   />
                 </li>
               ))}
@@ -244,6 +263,32 @@ const Mungsengneacut = () => {
           {isLoading && <LoadingSpinner />}
           <div ref={observerRef} className="h-10"></div>
         </CustomTabPanel>
+        {isModalOpen && selectedPhoto && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg w-[90%] max-w-md">
+              <div className="flex items-center justify-between">
+                <div className="text-lg">
+                  {selectedTab === 0 ? (
+                    <b className="text-[#3288ff]">
+                      {selectedPhoto.nickname || '익명'}
+                    </b>
+                  ) : (
+                    <b className="text-[#3288ff]">{nickname || '익명'}</b>
+                  )}
+                  님의 멍생네컷
+                </div>
+                <button onClick={closeModal} className="text-2xl">
+                  &times;
+                </button>
+              </div>
+              <img
+                src={selectedPhoto.meongPhotoUrl}
+                alt="모달 이미지"
+                className="w-1/2 h-auto mx-auto mt-2"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

@@ -10,7 +10,7 @@ import { fetchDownloadUrl } from '../../api/mungsengneacut';
 
 const DownloadPhoto = () => {
   const location = useLocation();
-  const { capturedImage } = location.state || {};
+  const { capturedImage, selectedFrame } = location.state || {};
   const [imageDownloadUrl, setImageDownloadUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
@@ -115,8 +115,11 @@ const DownloadPhoto = () => {
               <img
                 src={imageDownloadUrl || capturedImage}
                 alt="Captured Photo"
-                className="w-full h-auto mb-4"
+                className={`${
+                  selectedFrame === 'Frame3' ? 'w-1/2' : 'w-full'
+                } h-auto mb-4 mx-auto`}
               />
+
               <div className="flex justify-center gap-4 mt-4">
                 <button
                   onClick={handleDownload}
