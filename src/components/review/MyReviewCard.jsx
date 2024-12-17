@@ -28,6 +28,7 @@ const MyReviewCard = ({ myReview, myReviews, setMyReviews }) => {
           Swal.fire({
             title: '삭제 성공!',
             icon: 'success',
+            confirmButtonColor: '#3288FF',
           }).then(() => {
             const updatedReviews = myReviews.filter(
               (review) => review.reviewId !== reviewId,

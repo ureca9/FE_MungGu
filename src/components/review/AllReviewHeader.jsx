@@ -44,7 +44,7 @@ const AllReviewHeader = () => {
   }, [plcPenType]);
 
   return (
-    <div className="p-2 sm:p-6 sm:pb-2">
+    <div className="p-5 pb-2 md:p-6 md:pb-2">
       <div className="flex justify-between">
         <h1 className="w-full text-xl font-semibold line-clamp-1">
           {summary.pensionName}
@@ -61,7 +61,7 @@ const AllReviewHeader = () => {
           />
         </div>
       </div>
-      <div className="flex border items-center justify-center flex-col border-[#8A8A8A] h-24 sm:h-32 rounded-lg my-1 sm:my-4">
+      <div className="flex border items-center justify-center flex-col border-[#8A8A8A] h-24 md:h-32 rounded-lg mb-1 mt-3 md:my-4">
         <div className="flex items-center">
           <span className="text-[#FDBD00] mr-2 text-3xl">
             <RxStarFilled />

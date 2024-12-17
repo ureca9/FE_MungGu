@@ -12,7 +12,7 @@ const ServiceList = () => {
     },
     {
       name: '즐겨찾기',
-      path: '/',
+      path: ROUTER_PATHS.MAP,
       icon: (
         <div className="text-[#F54B6A] -ml-1">
           <IoHeartCircleSharp />
