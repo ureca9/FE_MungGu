@@ -11,7 +11,7 @@ const ListPage = () => {
   const [results, setResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]); 
   const [filters, setFilters] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
   const [hasNext, setHasNext] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,7 +75,7 @@ const ListPage = () => {
 
     initializeFilters();
     setIsFetching(false);
-    setCurrentPage(1);
+    setCurrentPage(0);
     setHasNext(true);
   }, [location.state]);
 
@@ -112,7 +112,7 @@ const ListPage = () => {
 
   const fetchMoreData = async (page, currentFilters = filters) => {
     if (isFetchingRef.current || !hasNext) return;
-
+  
     setIsFetching(true);
     try {
       const params = {
@@ -127,24 +127,23 @@ const ListPage = () => {
           : currentFilters.placeTypes || [],
         heaviestDogWeight: currentFilters.heaviestDogWeight || 0,
       };
-
+  
       const accessToken = localStorage.getItem("ACCESS_TOKEN");
-
+  
       const headers = {
         Accept: "application/json",
         "Content-Type": "application/json",
         ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
       };
-
+  
       const response = await axios.get("https://meong9.store/api/v1/search/places", {
         params,
         paramsSerializer: (params) => {
           const searchParams = new URLSearchParams();
           for (const key in params) {
             if (Array.isArray(params[key])) {
-              params[key].forEach((value) =>
-                searchParams.append(`${key}[]`, value)
-              );
+              // Convert array to comma-separated string
+              searchParams.append(key, params[key].join(","));
             } else {
               searchParams.append(key, params[key]);
             }
@@ -153,7 +152,7 @@ const ListPage = () => {
         },
         headers,
       });
-
+  
       const newResults = response.data.data.placeInfo;
       setResults((prevResults) => {
         const uniqueResults = new Map();
@@ -162,10 +161,10 @@ const ListPage = () => {
         });
         return Array.from(uniqueResults.values());
       });
-
+  
       setCurrentPage(page);
       setHasNext(response.data.data.hasNext);
-
+  
       if (selectedTags.length === 0 || selectedTags.includes("전체")) {
         setFilteredResults((prevFilteredResults) => [
           ...prevFilteredResults,
@@ -185,6 +184,7 @@ const ListPage = () => {
       setIsFetching(false);
     }
   };
+  
 
   const toggleLike = async (placeId) => {
     try {
@@ -246,7 +246,7 @@ const ListPage = () => {
     <div className="min-h-screen bg-gray-50">
       <SubHeader title={pageTitle} />
 
-      <div className="p-4 bg-white shadow-md mt-16">
+      <div className="p-4 bg-white mt-2">
         <div
           className="flex items-center gap-2 p-3 border border-gray-300 rounded-lg cursor-pointer flex-grow"
           onClick={() => setIsModalOpen(true)}
@@ -278,61 +278,73 @@ const ListPage = () => {
         <SearchModal onClose={() => setIsModalOpen(false)} filters={filters} />
       )}
 
-      <div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200">
-        {tags.map((tag) => (
-          <button
-            key={tag}
-            onClick={() => toggleTag(tag)}
-            className={`px-4 py-2 whitespace-nowrap border rounded-full ${
-              selectedTags.includes(tag)
-                ? "border-blue-500 text-blue-500 font-semibold"
-                : "border-gray-300 text-gray-600"
-            } hover:bg-gray-100`}
-          >
-            {tag}
-          </button>
-        ))}
-      </div>
+<div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-hidden">
+  {tags.map((tag) => (
+    <button
+      key={tag}
+      onClick={() => toggleTag(tag)}
+      className={`px-4 py-2 whitespace-nowrap border rounded-full ${
+        selectedTags.includes(tag)
+          ? "border-blue-500 text-blue-500 font-semibold"
+          : "border-gray-300 text-gray-600"
+      } hover:bg-gray-100`}
+    >
+      {tag}
+    </button>
+  ))}
+</div>
 
-      <div className="p-4 space-y-4">
-        {filteredResults.length > 0 ? (
-          filteredResults.map((item) => (
-            <div
-              key={item.placeId}
-              className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer"
-              onClick={() => handleCardClick(item.placeId)}
-            >
-              <img
-                src={item.images?.[0] || "/default-image.jpg"}
-                alt={item.placeName || "이미지 없음"}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4 relative">
-                <div className="absolute top-0 right-0">
-                  <button
-                    className={`w-10 h-10 ${
-                      item.likeStatus ? "text-red-500" : "text-gray-400"
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleLike(item.placeId);
-                    }}
-                  >
-                    {item.likeStatus ? "❤️" : "🤍"}
-                  </button>
-                </div>
-                <h2 className="text-lg font-bold">{item.placeName}</h2>
-                <p className="text-sm text-gray-500">{item.address || "주소 정보 없음"}</p>
-                <span className="text-yellow-500 font-semibold">
-                  ⭐ {item.reviewAvg || "0"} ({item.reviewCount || "0"})
-                </span>
-              </div>
+      <div className="px-6 py-4 space-y-4">
+  {filteredResults.length > 0 ? (
+    filteredResults.map((item) => (
+      <div
+        key={item.placeId}
+        className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer"
+        onClick={() => handleCardClick(item.placeId)}
+      >
+        <img
+          src={item.images?.[0] || "/default-image.jpg"}
+          alt={item.placeName || "이미지 없음"}
+          className="w-full h-48 sm:h-80 object-cover"
+        />
+
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-bold text-gray-800 truncate">{item.placeName}</h2>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-500 font-medium">
+                ⭐ {item.reviewAvg || "0"} ({item.reviewCount || "0"})
+              </span>
+              <button
+                className={`w-10 h-10 flex items-center justify-center rounded-full ${
+                  item.likeStatus ? "text-red-500" : "text-gray-400"
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleLike(item.placeId);
+                }}
+              >
+                {item.likeStatus ? "❤️" : "🤍"}
+              </button>
             </div>
-          ))
-        ) : (
-          <p className="text-center text-gray-500">조건에 맞는 시설이 없습니다.</p>
-        )}
+          </div>
+
+          <p className="text-sm text-gray-600 mb-1">
+            {item.address || "주소 정보 없음"}
+          </p>
+
+          <p className="text-sm text-gray-500">
+            {item.businessHour
+              ? `운영시간: ${item.businessHour}`
+              : "운영시간 정보 없음"}
+          </p>
+        </div>
       </div>
+    ))
+  ) : (
+    <p className="text-center text-gray-500">조건에 맞는 시설이 없습니다.</p>
+  )}
+</div>
     </div>
   );
 };

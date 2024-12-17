@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import Calendar from "react-calendar";
 import ProfileSection from "./ProfileSection";
 import axios from "axios";
@@ -12,10 +12,14 @@ const PensionSection = ({ onClose }) => {
   const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
   const [heaviestDogWeight, setHeaviestDogWeight] = useState(0);
   const [weatherData, setWeatherData] = useState([]);
-  const [activeSection, setActiveSection] = useState("region");
+  const [activeSection, setActiveSection] = useState("combined");
   const navigate = useNavigate();
 
-  const regions = ["서울", "경기", "인천", "강원", "충청", "전라", "경상", "제주"];
+  const regions = ["서울", "경기", "인천", "강원권", "충청권", "전라권", "경상권", "제주권"];
+
+  useEffect(() => {
+    console.log("Updated heaviestDogWeight:", heaviestDogWeight);
+  }, [heaviestDogWeight]);
 
   const handleRegionSelect = async (region) => {
     setSelectedRegion(region === selectedRegion ? "" : region);
@@ -149,7 +153,6 @@ const PensionSection = ({ onClose }) => {
   
 
   const renderSelectedSummary = (section) => {
-    if (activeSection === section || activeSection === "none") return null;
     switch (section) {
       case "region":
         return selectedRegion || "선택되지 않음";
@@ -160,61 +163,93 @@ const PensionSection = ({ onClose }) => {
             }`
           : "선택되지 않음";
       case "profile":
-        return heaviestDogWeight > 0 ? `최대 ${heaviestDogWeight}kg` : "선택되지 않음";
+        return heaviestDogWeight > 0
+          ? `최대 ${heaviestDogWeight}kg`
+          : "선택되지 않음"; // 선택된 무게 반영
       default:
         return null;
     }
   };
 
+  
+
   return (
     <div className="flex flex-col h-full bg-gray-100 rounded-lg shadow-md">
       <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
-        <h3 className="text-lg font-semibold mb-2">어디로 놀러갈까요?</h3>
-        <input
-          type="text"
-          value={searchWord}
-          onChange={(e) => setSearchWord(e.target.value)}
-          placeholder="지역 또는 펜션 검색"
-          className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+  <h3
+    className="text-lg font-semibold mb-2 cursor-pointer flex justify-between items-center"
+    onClick={() =>
+      setActiveSection((prev) => (prev === "combined" ? null : "combined"))
+    }
+  >
+    어디로 놀러갈까요?
+    <span className="text-sm text-gray-500">
+      {renderSelectedSummary("region")}
+    </span>
+  </h3>
 
-      <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
-        <h3
-          className="text-lg font-semibold mb-2 cursor-pointer flex justify-between items-center"
-          onClick={() => setActiveSection("region")}
-        >
-          지역 선택
-          <span className="text-sm text-gray-500">{renderSelectedSummary("region")}</span>
-        </h3>
-        <div
-          className={`overflow-hidden transition-all duration-300 ${
-            activeSection === "region" ? "max-h-[500px]" : "max-h-0"
+  {/* 섹션 내용 */}
+  <div
+    className={`overflow-hidden transition-all duration-300 ${
+      activeSection === "combined" ? "max-h-[500px]" : "max-h-0"
+    }`}
+  >
+    {/* 검색창 */}
+    <div className="mb-4 relative">
+  <input
+    type="text"
+    value={searchWord}
+    onChange={(e) => setSearchWord(e.target.value)}
+    placeholder="지역 또는 펜션 검색"
+    className="w-full p-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+
+  {/* SVG 아이콘 추가 */}
+  <div className="absolute top-1/2 right-3 transform -translate-y-1/2">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth="2"
+      stroke="currentColor"
+      className="w-5 h-5 text-gray-500"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M21 21l-4.35-4.35M16.5 9.75a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0z"
+      />
+    </svg>
+  </div>
+</div>
+
+    {/* 지역 선택 */}
+    <div className="grid grid-cols-2 gap-2">
+      {regions.map((region) => (
+        <button
+          key={region}
+          onClick={() => handleRegionSelect(region)}
+          className={`p-2 text-sm rounded-lg border ${
+            selectedRegion === region
+              ? "bg-black text-white border-black"
+              : "bg-white text-black border-black"
           }`}
         >
-          <div className="grid grid-cols-2 gap-2">
-            {regions.map((region) => (
-              <button
-                key={region}
-                onClick={() => handleRegionSelect(region)}
-                className={`p-2 text-sm rounded-lg border ${
-                  selectedRegion === region
-                    ? "bg-black text-white border-black"
-                    : "bg-white text-black border-black"
-                }`}
-              >
-                {region}
-              </button>
-            ))}
-          </div>
-          <button
-            className="w-full mt-4 bg-white text-[#3288FF] border border-[#3288FF] py-2 rounded-lg"
-            onClick={() => setActiveSection("date")}
-          >
-            다음
-          </button>
-        </div>
-      </div>
+          {region}
+        </button>
+      ))}
+    </div>
+
+    {/* 다음 버튼 */}
+    <button
+      className="w-full mt-4 bg-white text-[#3288FF] border border-[#3288FF] py-2 rounded-lg"
+      onClick={() => setActiveSection("date")}
+    >
+      다음
+    </button>
+  </div>
+</div>
+
 
 
       <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
@@ -231,20 +266,38 @@ const PensionSection = ({ onClose }) => {
           }`}
         >
           <Calendar
-            onChange={handleDateChange}
-            value={selectedDateRange}
-            selectRange
-            tileContent={tileContent}
-            className="react-calendar"
-          />
-          <button
-            className="w-full mt-4 bg-white text-[#3288FF] border border-[#3288FF] py-2 rounded-lg"
-            onClick={() => setActiveSection("profile")}
-          >
-            다음
-          </button>
-        </div>
-      </div>
+  onChange={handleDateChange}
+  value={selectedDateRange}
+  selectRange
+  tileContent={tileContent}
+  tileClassName={({ date, view }) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // 오늘 날짜의 시간을 00:00:00으로 설정
+    
+    if (view === "month") {
+      if (date < today) {
+        // 오늘 이전 날짜
+        return "past-date";
+      }
+      if (date.getDay() === 6) {
+        // 토요일
+        return "highlight-saturday";
+      }
+    }
+    return null;
+  }}
+  className="react-calendar"
+/>
+
+<button
+  className="w-full mt-4 bg-white text-[#3288FF] border border-[#3288FF] py-2 rounded-lg"
+  onClick={() => setActiveSection("profile")}
+>
+  다음
+</button>
+
+</div>
+</div> {/* 닫히지 않은 div를 여기서 마무리 */}
 
       {/* 프로필 섹션 */}
       <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
@@ -261,9 +314,17 @@ const PensionSection = ({ onClose }) => {
           }`}
         >
           <ProfileSection
-            setMaxDogWeight={(weight) => setHeaviestDogWeight(weight)}
-            onComplete={() => setActiveSection("none")}
-          />
+  setMaxDogWeight={(weight) => setHeaviestDogWeight(weight)}
+  onComplete={(selectedProfile) => {
+    if (selectedProfile) {
+      setTimeout(() => { // 비동기 상태 업데이트
+        setHeaviestDogWeight(selectedProfile.weight);
+      }, 0);
+    }
+    setActiveSection("none");
+  }}
+/>
+
         </div>
       </div>
 

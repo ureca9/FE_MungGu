@@ -54,6 +54,68 @@ const ReviewAdd = () => {
     }
   };
 
+  // const handleFileChange = (event) => {
+  //   const files = [...event.target.files];
+  //   const maxFileSize = 5 * 1024 * 1024;
+
+  //   const processedFiles = files.map((file) => {
+  //     if (file.size > maxFileSize) {
+  //       Swal.fire({
+  //         title: 'Oops...',
+  //         text: `${file.name} 파일의 용량이 너무 큽니다. (${maxFileSize / 1024 / 1024}MB 이하)`,
+  //         icon: 'error',
+  //       });
+  //       return null;
+  //     } else if (file.type.startsWith('image/')) {
+  //       return new Promise((resolve) => {
+  //         const reader = new FileReader();
+  //         reader.onload = (e) => {
+  //           const img = new Image();
+  //           img.onload = () => {
+  //             const canvas = document.createElement('canvas');
+  //             const ctx = canvas.getContext('2d');
+  //             // 이미지 크기 조정 (선택 사항)
+  //             const maxWidth = 500; // 최대 너비 설정
+  //             const scaleFactor = maxWidth / img.width;
+  //             canvas.width = maxWidth;
+  //             canvas.height = img.height * scaleFactor;
+  //             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  //             // JPEG 또는 WebP로 압축
+  //             canvas.toBlob(
+  //               (blob) => {
+  //                 resolve({
+  //                   file: blob, // 압축된 이미지 Blob
+  //                   fileUrl: URL.createObjectURL(blob),
+  //                   fileType: 'IMAGE',
+  //                   fileName: file.name,
+  //                 });
+  //               },
+  //               'image/JPEG', // JPEG 형식으로 압축
+  //               0.8, // 압축률 (0 ~ 1)
+  //             );
+  //           };
+  //           img.src = e.target.result;
+  //         };
+  //         reader.readAsDataURL(file);
+  //       });
+  //     } else if (file.type.startsWith('video/')) {
+  //       // 비디오 압축은 ffmpeg 등의 라이브러리 활용
+  //       return {
+  //         file: file,
+  //         fileUrl: URL.createObjectURL(file),
+  //         fileType: 'VIDEO',
+  //         fileName: file.name,
+  //       };
+  //     } else {
+  //       return null;
+  //     }
+  //   });
+
+  //   Promise.all(processedFiles).then((files) => {
+  //     setSelectedFiles(files.filter((file) => file !== null));
+  //   });
+  // };
+
   const handleFileChange = (event) => {
     const files = [...event.target.files];
     const maxFileSize = 5 * 1024 * 1024;
@@ -164,7 +226,6 @@ const ReviewAdd = () => {
                   src={file.fileUrl}
                   alt={file.fileName}
                   className="object-cover w-full h-full"
-                  controls
                 />
               ) : null}
             </div>

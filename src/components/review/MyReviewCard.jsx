@@ -18,19 +18,23 @@ const MyReviewCard = ({ myReview, myReviews, setMyReviews }) => {
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3288FF',
-        cancelButtonColor: '#646464',
+        customClass: {
+          cancelButton: 'swalCancelBtn',
+        },
         cancelButtonText: '취소',
         confirmButtonText: '삭제',
       }).then((result) => {
-        const updatedReviews = myReviews.filter(
-          (review) => review.reviewId !== reviewId,
-        );
-        setMyReviews(updatedReviews); // Zustand store의 상태 업데이트
         if (result.isConfirmed) {
           Swal.fire({
             title: '삭제 성공!',
             icon: 'success',
-          }).then(() => {});
+            confirmButtonColor: '#3288FF',
+          }).then(() => {
+            const updatedReviews = myReviews.filter(
+              (review) => review.reviewId !== reviewId,
+            );
+            setMyReviews(updatedReviews);
+          });
         }
       });
     } catch (error) {
@@ -47,17 +51,17 @@ const MyReviewCard = ({ myReview, myReviews, setMyReviews }) => {
       <div className="flex">
         <div className=" flex  w-full h-32 rounded-2xl border border-[#8A8A8A] overflow-hidden">
           <div className="flex h-full min-w-32 max-w-32">
-            {file && file.length > 0 ? (
-              file[0].fileType === 'IMAGE' ? (
+            {file ? (
+              file.fileType === 'IMAGE' ? (
                 <img
-                  src={file[0].fileUrl}
-                  alt={file[0].fileName}
+                  src={file.fileUrl}
+                  alt={file.fileName}
                   className="object-fill w-full h-full"
                 />
-              ) : file[0].fileType === 'VIDEO' ? (
+              ) : file.fileType === 'VIDEO' ? (
                 <video
-                  src={file[0].fileUrl}
-                  alt={file[0].fileName}
+                  src={file.fileUrl}
+                  alt={file.fileName}
                   controls
                   className="object-fill w-full h-full"
                 />
