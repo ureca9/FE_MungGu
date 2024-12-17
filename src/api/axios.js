@@ -22,16 +22,7 @@ instance.interceptors.request.use((config) => {
 
 const handle401Error = async (error) => {
   const originalRequest = error.config;
-  const EXCEPTION_URLS = Object.freeze(['/members']);
-  const isExceptionUrl = (requestUrl) => {
-    const path = new URL(requestUrl, 'https://base').pathname;
-    return EXCEPTION_URLS.some(
-      (url) => path === url || path.startsWith(`${url}/`),
-    );
-  };
-  if (isExceptionUrl(originalRequest.url)) {
-    return Promise.resolve();
-  }
+
   try {
     const response = await getAuthToken();
     const newAccessToken = response.headers['authorization'].split(' ')[1];
@@ -55,7 +46,7 @@ const handle401Error = async (error) => {
     if (result.isConfirmed) {
       window.location.href = ROUTER_PATHS.LOGIN;
     } else if (result.dismiss === Swal.DismissReason.cancel) {
-      window.history.back();
+      window.location.href = ROUTER_PATHS.MAIN;
     }
     return Promise.reject(error);
   }
