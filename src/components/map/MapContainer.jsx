@@ -19,6 +19,7 @@ const MapContainer = () => {
     searchType,
     startLocation,
     endLocation,
+    setStartLocation,
   } = usePlaceStore();
 
   const waitForKakaoMaps = (retries = 10) => {
@@ -27,6 +28,26 @@ const MapContainer = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
           setCoords(latitude, longitude);
+
+          const geocoder = new window.kakao.maps.services.Geocoder();
+          geocoder.coord2Address(longitude, latitude, (result, status) => {
+            if (status === window.kakao.maps.services.Status.OK) {
+              const address =
+                result[0]?.address?.address_name || '알 수 없는 위치';
+              setStartLocation({
+                name: `내 위치: ${address}`,
+                latitude,
+                longitude,
+              });
+            } else {
+              setStartLocation({
+                name: '내 위치: 주소를 가져올 수 없습니다.',
+                latitude,
+                longitude,
+              });
+            }
+          });
+
           initMap(latitude, longitude);
         },
         (error) => {
