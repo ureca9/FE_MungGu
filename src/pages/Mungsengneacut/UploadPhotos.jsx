@@ -62,20 +62,21 @@ const UploadPhotos = () => {
     }
   };
 
-  const handleImageClick = (index) => {
-    if (fileInputRefs.current[index]) {
-      fileInputRefs.current[index].click();
-    }
-  };
-
   const handleCapture = async () => {
-    const element = document.getElementById('frame');
-    const canvas = await html2canvas(element);
-    const capturedImage = canvas.toDataURL('image/png', 1.0);
+    try {
+      const element = document.getElementById('frame');
+      if (!element) {
+        throw new Error('프레임을을 찾을 수 없습니다.');
+      }
+      const canvas = await html2canvas(element);
+      const capturedImage = canvas.toDataURL('image/png', 1.0);
 
-    navigate(ROUTER_PATHS.DOWNLOAD_PHOTOS, {
-      state: { capturedImage },
-    });
+      navigate(ROUTER_PATHS.DOWNLOAD_PHOTOS, {
+        state: { capturedImage },
+      });
+    } catch (error) {
+      console.error('이미지 캡처 중 오류 발생:', error);
+    }
   };
 
   const handleFrameColorChange = (color) => {
@@ -106,22 +107,21 @@ const UploadPhotos = () => {
                         ? 'top-[55%] left-[5%]'
                         : 'top-[55%] right-[5%]'
                 } w-[43%] h-[42%] flex justify-center items-center border bg-white`}
-                onClick={() => handleImageClick(index)}
               >
-                {image ? (
-                  <img
-                    src={image}
-                    alt={`Uploaded ${index}`}
-                    className="object-cover w-full h-full cursor-pointer"
-                  />
-                ) : (
-                  <label
-                    htmlFor={`file-upload-${index}`}
-                    className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
-                  >
-                    이미지 업로드
-                  </label>
-                )}
+                <label
+                  htmlFor={`file-upload-${index}`}
+                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
+                >
+                  {image ? (
+                    <img
+                      src={image}
+                      alt={`Uploaded ${index}`}
+                      className="object-cover w-full h-full cursor-pointer"
+                    />
+                  ) : (
+                    '이미지 업로드'
+                  )}
+                </label>
                 <input
                   id={`file-upload-${index}`}
                   type="file"
@@ -155,22 +155,21 @@ const UploadPhotos = () => {
                         ? 'top-[59%] left-[5%]'
                         : 'top-[45.5%] right-[5%]'
                 } w-[42.5%] h-[37.5%] flex justify-center items-center border bg-white`}
-                onClick={() => handleImageClick(index)}
               >
-                {image ? (
-                  <img
-                    src={image}
-                    alt={`Uploaded ${index}`}
-                    className="object-cover w-full h-full cursor-pointer"
-                  />
-                ) : (
-                  <label
-                    htmlFor={`file-upload-${index}`}
-                    className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
-                  >
-                    이미지 업로드
-                  </label>
-                )}
+                <label
+                  htmlFor={`file-upload-${index}`}
+                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
+                >
+                  {image ? (
+                    <img
+                      src={image}
+                      alt={`Uploaded ${index}`}
+                      className="object-cover w-full h-full cursor-pointer"
+                    />
+                  ) : (
+                    '이미지 업로드'
+                  )}
+                </label>
                 <input
                   id={`file-upload-${index}`}
                   type="file"
@@ -204,22 +203,21 @@ const UploadPhotos = () => {
                         ? 'top-[52%] left-[29%]'
                         : 'top-[75%] left-[29%]'
                 } w-[42.5%] h-[22%] flex justify-center items-center border bg-white`}
-                onClick={() => handleImageClick(index)}
               >
-                {image ? (
-                  <img
-                    src={image}
-                    alt={`Uploaded ${index}`}
-                    className="object-cover w-full h-full cursor-pointer"
-                  />
-                ) : (
-                  <label
-                    htmlFor={`file-upload-${index}`}
-                    className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
-                  >
-                    이미지 업로드
-                  </label>
-                )}
+                <label
+                  htmlFor={`file-upload-${index}`}
+                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
+                >
+                  {image ? (
+                    <img
+                      src={image}
+                      alt={`Uploaded ${index}`}
+                      className="object-cover w-full h-full cursor-pointer"
+                    />
+                  ) : (
+                    '이미지 업로드'
+                  )}
+                </label>
                 <input
                   id={`file-upload-${index}`}
                   type="file"
