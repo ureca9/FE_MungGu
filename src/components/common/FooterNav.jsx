@@ -100,9 +100,9 @@ const FooterNav = () => {
               onMouseEnter={() => handleMouseEnter(item.path)}
               onMouseLeave={handleMouseLeave}
               onClick={
-                item.path === ROUTER_PATHS.SEARCH // 검색 버튼 클릭 시 모달 열기
+                item.path === ROUTER_PATHS.SEARCH 
                   ? (e) => {
-                      e.preventDefault(); // 경로 이동 방지
+                      e.preventDefault(); 
                       setSearchModalOpen(true);
                     }
                   : undefined

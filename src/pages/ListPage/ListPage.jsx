@@ -302,16 +302,13 @@ const ListPage = () => {
         className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer"
         onClick={() => handleCardClick(item.placeId)}
       >
-        {/* 이미지 */}
         <img
           src={item.images?.[0] || "/default-image.jpg"}
           alt={item.placeName || "이미지 없음"}
           className="w-full h-48 sm:h-80 object-cover"
         />
 
-        {/* 설명 섹션 */}
         <div className="p-4">
-          {/* 제목 및 별점/좋아요 */}
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-lg font-bold text-gray-800 truncate">{item.placeName}</h2>
             <div className="flex items-center gap-2">
@@ -332,12 +329,10 @@ const ListPage = () => {
             </div>
           </div>
 
-          {/* 주소 */}
           <p className="text-sm text-gray-600 mb-1">
             {item.address || "주소 정보 없음"}
           </p>
 
-          {/* 운영시간 */}
           <p className="text-sm text-gray-500">
             {item.businessHour
               ? `운영시간: ${item.businessHour}`

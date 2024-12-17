@@ -134,7 +134,7 @@ const ProfileSection = ({ setMaxDogWeight, onComplete }) => {
       )}
       <p
         className="text-sm font-medium text-gray-700 mt-1 truncate"
-        style={{ maxWidth: "4rem" }} // 이름 영역 너비 제한
+        style={{ maxWidth: "4rem" }} 
       >
         {dog.name}
       </p>
@@ -171,7 +171,7 @@ const ProfileSection = ({ setMaxDogWeight, onComplete }) => {
 <div className="mt-6">
   <button
     onClick={() => {
-      onComplete(selectedDogInfo); // 선택된 강아지 정보 전달
+      onComplete(selectedDogInfo); 
     }}
     className="w-full bg-white border border-[#3288FF] text-[#3288FF] py-2 rounded-lg text-lg font-bold hover:bg-[#f0f8ff] transition-colors duration-200"
   >

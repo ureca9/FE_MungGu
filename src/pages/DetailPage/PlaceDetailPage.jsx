@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import Swal from 'sweetalert2';
-import ReviewDetailModal from '../../components/review/ReviewDetailModal'; // 리뷰 모달 추가
+import ReviewDetailModal from '../../components/review/ReviewDetailModal'; 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
@@ -19,11 +19,11 @@ const PlaceDetailPage = () => {
   const [error, setError] = useState(null);
   const [likeStatus, setLikeStatus] = useState(false);
 
-  // 리뷰 모달 상태 추가
+ 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
 
-  // 리뷰 클릭 시 모달 열기
+ 
   const handleReviewClick = (review) => {
     setSelectedReview({
       reviewId: review.reviewId || null,
@@ -172,12 +172,12 @@ const PlaceDetailPage = () => {
 
       <div className="w-full h-80">
       <Slider
-  dots={false} // 하단 네비게이션 점 비활성화
-  infinite={images.length > 1} // 이미지가 2개 이상일 때만 무한 스크롤
-  speed={500} // 슬라이더 전환 속도
-  slidesToShow={1} // 한 번에 보여줄 슬라이드 개수
-  slidesToScroll={1} // 한 번에 스크롤할 슬라이드 개수
-  arrows={images.length > 1} // 이미지가 2개 이상일 때만 화살표 표시
+  dots={false} 
+  infinite={images.length > 1} 
+  speed={500} 
+  slidesToShow={1} 
+  slidesToScroll={1} 
+  arrows={images.length > 1} 
 >
   {images.length > 0 ? (
     images.map((image, index) => (
