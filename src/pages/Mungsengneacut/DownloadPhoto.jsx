@@ -1,9 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import downloadBG from '../../assets/mungsengneacut/downloadBG.svg';
 import Swal from 'sweetalert2';
-import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { LuShare2 } from 'react-icons/lu';
 import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
@@ -12,74 +11,61 @@ import { fetchDownloadUrl } from '../../api/mungsengneacut';
 const DownloadPhoto = () => {
   const location = useLocation();
   const { capturedImage } = location.state || {};
-  const [accessToken] = useState(
-    localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN),
-  );
   const [imageDownloadUrl, setImageDownloadUrl] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const navigate = useNavigate();
+
   const MungsengneacutHome = () => {
     navigate(ROUTER_PATHS.MUNGSENGNEACUT);
   };
 
-  const fetchImageDownloadUrl = async () => {
-    try {
-      setLoading(true);
-      const url = await fetchDownloadUrl(capturedImage);
-
-      if (url) {
-        setImageDownloadUrl(url);
-      } else {
-        Swal.fire({
-          icon: 'info',
-          title: '처리 중',
-          text: '이미지를 처리 중입니다. 캡처된 이미지를 다운로드하세요.',
-          confirmButtonColor: '#3288FF',
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      Swal.fire({
-        icon: 'error',
-        title: '다운로드 실패',
-        text: '이미지 다운로드 URL을 가져오는 중 문제가 발생했습니다.',
-        confirmButtonColor: '#3288FF',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (accessToken && capturedImage) {
-      fetchImageDownloadUrl();
-    } else {
-      setLoading(false);
-    }
-  }, [accessToken, capturedImage]);
-
-  const handleDownload = () => {
-    if (imageDownloadUrl) {
-      const link = document.createElement('a');
-      link.href = imageDownloadUrl;
-      link.download = '멍생네컷.png';
-      link.click();
-    } else if (capturedImage) {
-      const link = document.createElement('a');
-      link.href = capturedImage;
-      link.download = '멍생네컷.png';
-      link.click();
-    } else {
+  const handleDownload = async () => {
+    if (!capturedImage) {
       Swal.fire({
         icon: 'error',
         title: '다운로드 실패',
         text: '다운로드할 이미지를 찾을 수 없습니다.',
         confirmButtonColor: '#3288FF',
       });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      let downloadUrl = imageDownloadUrl;
+
+      if (!imageDownloadUrl) {
+        const url = await fetchDownloadUrl(capturedImage);
+        setImageDownloadUrl(url);
+        downloadUrl = url;
+      }
+
+      if (downloadUrl) {
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = '멍생네컷.png';
+        link.click();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '다운로드 실패',
+          text: '이미지를 가져오는 데 실패했습니다.',
+          confirmButtonColor: '#3288FF',
+        });
+      }
+    } catch (error) {
+      console.error('이미지 다운로드 실패:', error);
+      Swal.fire({
+        icon: 'error',
+        title: '다운로드 실패',
+        text: '이미지 다운로드 중 오류가 발생했습니다.',
+        confirmButtonColor: '#3288FF',
+      });
+    } finally {
+      setLoading(false);
     }
   };
-
   const handleShare = async (platform, imageUrl) => {
     try {
       if (!imageUrl) {
@@ -125,18 +111,19 @@ const DownloadPhoto = () => {
         <div className="block">
           <img src={downloadBG} alt="배경" className="max-w-full opacity-65" />
           {capturedImage ? (
-            <div className="block absolute top-[10%] left-[23%] p-4 rounded-lg bg-white shadow-md">
+            <div className="block absolute top-[10%] left-[5%] md:left-[23%] p-4 rounded-lg bg-white shadow-md w-2/3 md:w-1/2">
               <img
                 src={imageDownloadUrl || capturedImage}
                 alt="Captured Photo"
-                className="w-full h-auto mb-4 "
+                className="w-full h-auto mb-4"
               />
               <div className="flex justify-center gap-4 mt-4">
                 <button
                   onClick={handleDownload}
                   className="w-[140px] py-2 text-white bg-blue-500 rounded-lg"
+                  disabled={loading}
                 >
-                  사진 다운로드
+                  {loading ? '처리 중...' : '사진 다운로드'}
                 </button>
                 <button
                   onClick={MungsengneacutHome}
@@ -164,25 +151,19 @@ const DownloadPhoto = () => {
                 onClick={() => handleShare('instagram', imageDownloadUrl)}
                 className="flex items-center justify-center bg-white rounded-full w-9 h-9"
               >
-                <div className="flex items-center justify-center bg-white rounded-full w-9 h-9">
-                  <FaInstagram size={22} className="text-[#E4405F]" />
-                </div>
+                <FaInstagram size={22} className="text-[#E4405F]" />
               </button>
               <button
-                onClick={() => handleShare('instagram', imageDownloadUrl)}
+                onClick={() => handleShare('facebook', imageDownloadUrl)}
                 className="flex items-center justify-center bg-white rounded-full w-9 h-9"
               >
-                <div className="flex items-center justify-center bg-white rounded-full w-9 h-9">
-                  <FaFacebookF size={22} className="text-[#1877F2]" />
-                </div>
+                <FaFacebookF size={22} className="text-[#1877F2]" />
               </button>
               <button
-                onClick={() => handleShare('instagram', imageDownloadUrl)}
+                onClick={() => handleShare('twitter', imageDownloadUrl)}
                 className="flex items-center justify-center bg-white rounded-full w-9 h-9"
               >
-                <div className="flex items-center justify-center bg-white rounded-full w-9 h-9">
-                  <FaTwitter size={22} className="text-[#1DA1F2]" />
-                </div>
+                <FaTwitter size={22} className="text-[#1DA1F2]" />
               </button>
             </div>
           )}

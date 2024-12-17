@@ -39,7 +39,7 @@ const UserData = ({ memberD, navigate }) => {
   };
 
   return (
-    <div className="h-auto py-5 mt-5 bg-white border rounded-lg px-9 border-borderlineGray min-h-40">
+    <div className="h-auto px-5 py-5 mt-5 bg-white border rounded-lg md:px-9 border-borderlineGray min-h-40">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <img

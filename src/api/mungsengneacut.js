@@ -108,8 +108,16 @@ export const fetchPaginatedPhotos = async (
 };
 
 export const fetchDownloadUrl = async (capturedImage) => {
+  if (!capturedImage) {
+    console.error('capturedImage가 비어 있습니다.');
+    throw new Error('다운로드할 이미지가 없습니다.');
+  }
+
   try {
     const response = await fetch(capturedImage);
+    if (!response.ok) {
+      throw new Error('이미지 변환에 실패했습니다.');
+    }
     const blob = await response.blob();
 
     const formData = new FormData();
@@ -122,7 +130,7 @@ export const fetchDownloadUrl = async (capturedImage) => {
       },
     });
 
-    return apiResponse.data.data.imageDownloadUrl;
+    return apiResponse.data?.data?.imageDownloadUrl || null;
   } catch (error) {
     console.error('다운로드 URL 가져오기 실패:', error);
     throw error;
