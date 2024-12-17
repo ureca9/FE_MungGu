@@ -14,7 +14,7 @@ const UserData = ({ memberD, navigate }) => {
     }),
     navigate: PropTypes.func.isRequired,
   };
-  const { isLoggedIn, setLogout } = useLoginStore();
+  const { checkIsLoggedIn, setLogout } = useLoginStore();
 
   const handleLogout = () => {
     Swal.fire({
@@ -52,7 +52,7 @@ const UserData = ({ memberD, navigate }) => {
           </span>
         </div>
         <div className="justify-between">
-          {!isLoggedIn ? (
+          {!checkIsLoggedIn() ? (
             <button
               onClick={() => navigate(ROUTER_PATHS.LOGIN)}
               className="text-sm px-2 py-1 font-bold text-[#3288FF] bg-transparent border-none cursor-pointer"
