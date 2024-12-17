@@ -16,16 +16,17 @@ const Main = () => {
       {/* Search */}
       <div className="p-4 bg-white">
   {/* 강조 문구 추가 */}
-  <p className="text-lg font-semibold text-center mb-2">
-    <span className="text-blue-500 font-bold">1,200여개의 반려견 동반 가능 장소!</span> 지금 검색해보세요
-  </p>
+  <p className="text-sm font-semibold text-center mb-2 sm:text-lg">
+  <span className="text-blue-500 font-bold">1,200여개의 반려견 동반 가능 장소!</span> 지금 검색해보세요
+</p>
 
   {/* 검색 버튼 */}
   <div className="flex justify-center">
-    <button
-      className="w-4/5 p-3 bg-white border-2 border-blue-500 rounded-xl text-gray-600 text-left flex items-center justify-between"
-      onClick={() => setSearchModalOpen(true)}
-    >
+  <button
+  className="w-[80%] p-3 bg-white border-2 border-blue-500 rounded-xl text-gray-600 text-left flex items-center justify-between sm:w-[89%]"
+  onClick={() => setSearchModalOpen(true)}
+>
+
       {/* 텍스트 */}
       무엇을 찾고 싶나요?
       {/* SVG 아이콘 */}
@@ -56,7 +57,7 @@ const Main = () => {
         <RecommendedPensions />
       </div>
 
-      <div className="flex justify-center mt-6">
+      <div className="pl-2 flex justify-center mt-6">
   <img src={AdImage} alt="광고 이미지" className="w-[88%] max-w-screen-md" />
 </div>
 

@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import usePlaceStore from '../../stores/map/usePlaceStore.js';
 
-const SubHeader = () => {
+const SubHeader = ({ title }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -44,7 +44,7 @@ const SubHeader = () => {
     [ROUTER_PATHS.VIEW_HISTORY]: '최근본 목록',
   };
 
-  const pageTitle = PAGE_TITLES[location.pathname] || '페이지 없음';
+  const pageTitle = title || PAGE_TITLES[location.pathname] || '페이지 없음';
   const { setSelectedPlace, setSearchResults } = usePlaceStore();
   const handleBackClick = () => {
     setSelectedPlace(null);
@@ -52,21 +52,21 @@ const SubHeader = () => {
   };
 
   return (
-    <header className="fixed top-0 z-10 w-full backdrop-md max-w-[768px]">
-      <div className="container flex items-center justify-between h-16 px-4 mx-auto">
-        <button
-          onClick={() => {
-            navigate(-1);
-            handleBackClick();
-          }}
-          className="text-xl"
-        >
-          <IoIosArrowBack />
-        </button>
-        <div className="text-xl font-bold">{pageTitle}</div>
-        <div className="w-5"></div>
-      </div>
-    </header>
+    <header className="fixed top-0 z-10 w-full bg-white shadow-md max-w-[768px]">
+  <div className="container flex items-center justify-between h-16 px-4 mx-auto">
+    <button
+      onClick={() => {
+        navigate(-1);
+        handleBackClick();
+      }}
+      className="text-xl"
+    >
+      <IoIosArrowBack />
+    </button>
+    <div className="text-xl font-bold">{pageTitle}</div>
+    <div className="w-5"></div>
+  </div>
+</header>
   );
 };
 

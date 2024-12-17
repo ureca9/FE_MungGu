@@ -20,9 +20,9 @@ const SearchModal = ({ onClose, defaultTab = "facility" }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-end z-50">
       <div
-        className={`bg-gray-100 w-full h-full flex flex-col rounded-t-lg p-6 transition-transform duration-300 ${
+        className={`bg-gray-100 w-full rounded-t-lg p-6 transition-transform duration-300 ${
           isAnimating ? "translate-y-0" : "translate-y-full"
         }`}
         style={{ maxWidth: "770px" }}
@@ -39,7 +39,9 @@ const SearchModal = ({ onClose, defaultTab = "facility" }) => {
         <div className="flex justify-center gap-4 mt-4">
           <button
             className={`px-4 py-2 rounded-lg ${
-              activeTab === "facility" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600"
+              activeTab === "facility"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-gray-600"
             }`}
             onClick={() => setActiveTab("facility")}
           >
@@ -47,7 +49,9 @@ const SearchModal = ({ onClose, defaultTab = "facility" }) => {
           </button>
           <button
             className={`px-4 py-2 rounded-lg ${
-              activeTab === "pension" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600"
+              activeTab === "pension"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-gray-600"
             }`}
             onClick={() => setActiveTab("pension")}
           >
@@ -56,7 +60,7 @@ const SearchModal = ({ onClose, defaultTab = "facility" }) => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 mt-6 overflow-hidden">
+        <div className="mt-6 overflow-hidden">
           {activeTab === "facility" && <FacilitySection onClose={handleClose} />}
           {activeTab === "pension" && <PensionSection onClose={handleClose} />}
         </div>

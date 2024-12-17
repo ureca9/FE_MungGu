@@ -71,8 +71,8 @@ const LiveReviews = ({ accessToken }) => {
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
-    <div className="p-6 bg-white rounded-lg relative">
-  <div className="flex items-center mb-0">
+    <div className="pl-1 pt-6 pr-6 pb-6 bg-white rounded-lg relative">
+  <div className="flex items-center mb-0 pl-4">
     <h2 className="text-lg font-bold mb-0">
       최근 리뷰
       <img
@@ -100,7 +100,7 @@ const LiveReviews = ({ accessToken }) => {
         <li
           key={review.reviewId}
           className="flex-none w-60 p-4 bg-white rounded-lg snap-start mt-0 list-none" // list-style 제거
-          style={{ margin: 0 }} // 모든 마진 제거
+          style={{ margin: 5 }} // 모든 마진 제거
         >
           <img
             src={review.img || "https://via.placeholder.com/150"}

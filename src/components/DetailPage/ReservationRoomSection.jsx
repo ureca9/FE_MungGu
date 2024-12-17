@@ -20,7 +20,7 @@ const ReservationRoomSection = ({ pensionId }) => {
   const [peopleCount, setPeopleCount] = useState(1);
   const [dogCount, setDogCount] = useState(0);
   const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(false); // 초기 로딩 제거
+  const [loading, setLoading] = useState(false); 
   const [error, setError] = useState(null);
 
   const fetchRooms = async () => {
@@ -52,7 +52,6 @@ const ReservationRoomSection = ({ pensionId }) => {
     }
   };
 
-  // 날짜 변경 시 유효성 검사
   useEffect(() => {
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -64,17 +63,14 @@ const ReservationRoomSection = ({ pensionId }) => {
     }
   }, [startDate, endDate]);
 
-  // 데이터 불러오기
   useEffect(() => {
     fetchRooms();
   }, [startDate, endDate, peopleCount, dogCount]);
 
   return (
-    <section className="p-4 bg-white mt-4">
-      {/* 제목 */}
+    <section className="pr-4 pt-4 pb-4 bg-white mt-4">
       <h3 className="text-lg font-bold mb-4">예약하기</h3>
 
-      {/* 날짜 및 옵션 선택 */}
       <div className="border-b border-gray-200 pb-4 mb-4 flex flex-wrap gap-4">
         <input
           type="date"
@@ -118,14 +114,12 @@ const ReservationRoomSection = ({ pensionId }) => {
         </div>
       </div>
 
-      {/* 로딩 상태 표시 */}
       {loading && (
         <div className="flex justify-center mb-4">
           <LoadingSpinner />
         </div>
       )}
 
-      {/* 방 정보 */}
       <div>
         {rooms.length === 0 && !loading ? (
           <p className="text-sm text-gray-500">조건에 맞는 방이 없습니다.</p>
@@ -135,7 +129,6 @@ const ReservationRoomSection = ({ pensionId }) => {
               key={room.roomId}
               className="flex border-b border-gray-200 py-6"
             >
-              {/* 이미지 */}
               <div className="w-1/3 h-24 sm:h-48 bg-gray-200 rounded-lg overflow-hidden">
                 <img
                   src={room.images[0] || "https://via.placeholder.com/150"}
@@ -144,9 +137,7 @@ const ReservationRoomSection = ({ pensionId }) => {
                 />
               </div>
 
-              {/* 텍스트 정보 */}
               <div className="w-2/3 flex flex-col justify-between pl-6">
-                {/* 상단: 방 이름과 가격 */}
                 <div className="flex justify-between items-center mb-2">
                   <h4 className="text-lg font-bold truncate">
                     {room.roomName}
@@ -161,7 +152,6 @@ const ReservationRoomSection = ({ pensionId }) => {
                   </div>
                 </div>
 
-                {/* 세부 정보 */}
                 <div className="text-sm text-gray-600">
                   <p className="mb-1">
                     {room.area ? `${room.area}㎡` : "면적 정보 없음"}
