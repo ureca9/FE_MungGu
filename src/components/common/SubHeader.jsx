@@ -48,7 +48,7 @@ const SubHeader = () => {
   };
 
   return (
-    <header className="fixed top-0 z-10 w-full backdrop-blur-md max-w-[768px]">
+    <header className="fixed top-0 z-10 w-full backdrop-md max-w-[768px]">
       <div className="container flex items-center justify-between h-16 px-4 mx-auto">
         <button
           onClick={() => {

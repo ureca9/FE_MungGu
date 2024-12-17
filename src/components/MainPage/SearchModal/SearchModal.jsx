@@ -3,28 +3,41 @@ import FacilitySection from "./FacilitySection";
 import PensionSection from "./PensionSection";
 
 const SearchModal = ({ onClose, defaultTab = "facility" }) => {
-  const [activeTab, setActiveTab] = useState(defaultTab); 
-
+  const [activeTab, setActiveTab] = useState(defaultTab);
+  const [isAnimating, setIsAnimating] = useState(false); // 초기값을 false로 설정
 
   useEffect(() => {
     setActiveTab(defaultTab);
+    // 모달이 처음 렌더링될 때 올라오는 애니메이션 트리거
+    const timer = setTimeout(() => {
+      setIsAnimating(true);
+    }, 10); // 짧은 지연 시간 설정 (10ms)
+
+    return () => clearTimeout(timer); // 컴포넌트 언마운트 시 타이머 클리어
   }, [defaultTab]);
+
+  const handleClose = () => {
+    setIsAnimating(false); // 애니메이션 종료 시작
+    setTimeout(onClose, 300); // 300ms 후 실제 모달 닫기 (애니메이션 지속 시간과 일치)
+  };
 
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-end z-50">
       <div
-        className="bg-gray-100 w-full rounded-t-lg p-6 overflow-y-auto max-h-[85vh]"
-        style={{ maxWidth: "800px" }} 
+        className={`bg-gray-100 w-full rounded-t-lg p-6 overflow-y-auto max-h-[85vh] transform transition-transform duration-300 ${
+          isAnimating ? "translate-y-0" : "translate-y-full"
+        }`}
+        style={{ maxWidth: "770px" }}
       >
-
+        {/* Header */}
         <div className="flex justify-between items-center border-b pb-4">
           <h2 className="text-xl font-bold">검색</h2>
-          <button onClick={onClose} className="text-gray-500 text-lg">
+          <button onClick={handleClose} className="text-gray-500 text-lg">
             ✖
           </button>
         </div>
 
-
+        {/* Tabs */}
         <div className="flex justify-center gap-4 mt-4">
           <button
             className={`px-4 py-2 rounded-lg ${
@@ -44,13 +57,10 @@ const SearchModal = ({ onClose, defaultTab = "facility" }) => {
           </button>
         </div>
 
+        {/* Content */}
         <div className="mt-6">
-          {activeTab === "facility" && <FacilitySection onClose={onClose} />}
-          {activeTab === "pension" && (
-          <PensionSection
-            onClose={onClose} 
-          />
-)}
+          {activeTab === "facility" && <FacilitySection onClose={handleClose} />}
+          {activeTab === "pension" && <PensionSection onClose={handleClose} />}
         </div>
       </div>
     </div>

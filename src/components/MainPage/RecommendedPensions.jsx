@@ -2,23 +2,21 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import treeIcon from "../../stories/assets/tree.svg";
 
 const RecommendedPensions = () => {
   const [pensions, setPensions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
-  const scrollRef = useRef(null); 
+  const scrollRef = useRef(null);
   const navigate = useNavigate();
 
+  // 데이터 가져오기
   useEffect(() => {
     const fetchRecommendedPensions = async () => {
       try {
         setLoading(true);
-
         const token = localStorage.getItem("ACCESS_TOKEN");
-
-        setIsLoggedIn(!!token);
 
         const headers = {
           Accept: "application/json",
@@ -31,9 +29,7 @@ const RecommendedPensions = () => {
 
         const response = await axios.get(
           "https://meong9.store/api/v1/spots/recommendations",
-          {
-            headers,
-          }
+          { headers }
         );
 
         const { data } = response.data;
@@ -44,7 +40,6 @@ const RecommendedPensions = () => {
           setError("추천 펜션 데이터를 불러오지 못했습니다.");
         }
       } catch (err) {
-        console.error("추천 펜션 데이터를 불러오는 중 오류 발생:", err);
         Swal.fire({
           title: "오류 발생",
           text: err.response?.data?.message || "추천 펜션 데이터를 불러오지 못했습니다.",
@@ -60,99 +55,96 @@ const RecommendedPensions = () => {
     fetchRecommendedPensions();
   }, []);
 
+
   const handlePensionClick = (id) => {
     navigate(`/pension-detail/${id}`);
   };
-
-  const handleLoginRedirect = () => {
-    navigate("/login"); 
-  };
-
-  const scrollLeft = () => {
-    scrollRef.current.scrollBy({ left: -200, behavior: "smooth" });
-  };
-
-  const scrollRight = () => {
-    scrollRef.current.scrollBy({ left: 200, behavior: "smooth" });
-  };
-
-  if (loading) {
-    return (
-      <section className="p-4">
-        <p className="text-gray-500">로딩 중...</p>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="p-4">
-        <p className="text-red-500">{error}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg"
-        >
-          다시 시도하기
-        </button>
-      </section>
-    );
-  }
+  
+    // 드래그 스크롤 기능
+    const addDragScroll = (ref) => {
+      let isDragging = false;
+      let startX, scrollLeft;
+  
+      const mouseDownHandler = (e) => {
+        isDragging = true;
+        startX = e.pageX - ref.current.offsetLeft;
+        scrollLeft = ref.current.scrollLeft;
+      };
+  
+      const mouseMoveHandler = (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - ref.current.offsetLeft;
+        const walk = (x - startX) * 2; // 스크롤 속도
+        ref.current.scrollLeft = scrollLeft - walk;
+      };
+  
+      const mouseUpHandler = () => {
+        isDragging = false;
+      };
+  
+      ref.current.addEventListener("mousedown", mouseDownHandler);
+      ref.current.addEventListener("mousemove", mouseMoveHandler);
+      ref.current.addEventListener("mouseup", mouseUpHandler);
+      ref.current.addEventListener("mouseleave", mouseUpHandler);
+    };
+  
+    useEffect(() => {
+      if (scrollRef.current) addDragScroll(scrollRef);
+    }, []);
 
   return (
-    <section className="p-4 relative">
-      {!isLoggedIn && (
-        <div className="absolute top-5 right-4">
-          <button
-            onClick={handleLoginRedirect}
-            className="text-sm text-blue-500 hover:underline"
-          >
-            더 정확한 추천을 받으려면?
-          </button>
-        </div>
-      )}
+    <div className="p-6 bg-white rounded-lg relative">
+  <div className="flex items-center mb-2">
+    <h2 className="text-lg font-bold mb-0">
+      추천 펜션
+      <img
+        src={treeIcon}
+        alt="리뷰 아이콘"
+        className="inline-block w-6 h-6 relative"
+        style={{ top: "-5px", left: "10px" }}
+      />
+    </h2>
+  </div>
 
-      <h2 className="text-lg font-bold mb-2">추천 펜션 ✨</h2>
-      <div className="relative">
-        <button
-          onClick={scrollLeft}
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-blue-600 z-10"
-        >
-          ◀
-        </button>
+  {pensions.length > 0 ? (
+    <div
+      ref={scrollRef}
+      className="
+        flex gap-x-4 overflow-x-auto snap-x snap-mandatory 
+        scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200 
+        sm:scrollbar-none"
+      style={{ scrollBehavior: "smooth" }}
+    >
+      {pensions.map((pension) => (
         <div
-          ref={scrollRef}
-          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200"
+          key={pension.id}
+          className="flex-none w-60 bg-white rounded-lg text-center snap-start cursor-pointer"
+          onClick={() => handlePensionClick(pension.id)}
         >
-          {pensions.map((pension) => (
-            <div
-              key={pension.id}
-              className="min-w-[200px] p-4 bg-white shadow-md rounded-lg text-center cursor-pointer snap-start"
-              onClick={() => handlePensionClick(pension.id)}
-            >
-              <div
-                className="w-full h-40 bg-gray-300 rounded-lg mb-2"
-                style={{
-                  backgroundImage: `url(${pension.img || "https://via.placeholder.com/150"})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              ></div>
-              <h3 className="text-sm font-bold">{pension.name}</h3>
-              <p className="text-xs text-gray-500">{pension.address}</p>
-              <p className="text-sm text-yellow-500 mt-1">
-                ⭐ {pension.reviewAvg || "0"} ({pension.reviewCount || "0"} 리뷰)
-              </p>
-            </div>
-          ))}
+          <div
+            className="w-full h-32 bg-gray-300 rounded-lg mb-2"
+            style={{
+              backgroundImage: `url(${pension.img || "https://via.placeholder.com/150"})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          ></div>
+          <h3 className="text-base font-semibold text-gray-800 truncate">
+            {pension.name}
+          </h3>
+          <p className="text-sm text-gray-500 truncate">{pension.address}</p>
+          <p className="text-sm text-gray-500 mt-1">
+            ⭐ {pension.reviewAvg || "0"} ({pension.reviewCount || "0"} 리뷰)
+          </p>
         </div>
-        <button
-          onClick={scrollRight}
-          className="absolute right-0 top-1/2 -translate-y-1/2 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-blue-600 z-10"
-        >
-          ▶
-        </button>
-      </div>
-    </section>
+      ))}
+    </div>
+  ) : (
+    <p className="text-center text-gray-500">추천 펜션 데이터를 찾을 수 없습니다.</p>
+  )}
+</div>
+
   );
 };
 
