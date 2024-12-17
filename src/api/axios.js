@@ -40,13 +40,23 @@ const handle401Error = async (error) => {
     return instance(originalRequest);
   } catch {
     localStorage.clear();
-    await Swal.fire({
+    const result = await Swal.fire({
       title: '로그인 후 이용해주세요.',
       icon: 'warning',
+      showCancelButton: true,
       confirmButtonText: '확인',
+      cancelButtonText: '취소',
       confirmButtonColor: '#3288FF',
+      customClass: {
+        cancelButton: 'swalCancelBtn',
+      },
     });
-    window.location.href = ROUTER_PATHS.LOGIN;
+
+    if (result.isConfirmed) {
+      window.location.href = ROUTER_PATHS.LOGIN;
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      window.history.back();
+    }
     return Promise.reject(error);
   }
 };

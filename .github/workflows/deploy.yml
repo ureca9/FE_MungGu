@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18.x
 
       - name: Install dependencies
         run: yarn install
@@ -26,7 +26,7 @@ jobs:
           VITE_KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
         run: yarn build
 
-      - name: Deploy to server
+      - name: Deploy to Vercel
         run: |
-          # 배포 스크립트 실행
-          scp -r ./dist user@server:/var/www/project
+          npm install -g vercel
+          vercel --token=${{ secrets.VERCEL_TOKEN }} --prod --yes --name=mungtivity

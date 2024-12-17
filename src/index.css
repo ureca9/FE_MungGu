@@ -118,6 +118,13 @@
   animation: bounce-grow 1.5s infinite;
 }
 
+.swalCancelBtn {
+  border: 2px solid #3288ff;
+  color: #3288ff;
+  background-color: white;
+  border-radius: 8px;
+}
+
 /* 기본적으로 스크롤바 숨김 */
 .scrollbar-hidden {
   scrollbar-width: none; /* Firefox */
