@@ -65,7 +65,6 @@ export const uploadPhoto = async (file) => {
     const response = await instance.post('/photos', formData, {
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
       },
     });
 
@@ -126,7 +125,6 @@ export const fetchDownloadUrl = async (capturedImage) => {
     const apiResponse = await instance.post('/photos', formData, {
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
       },
     });
 

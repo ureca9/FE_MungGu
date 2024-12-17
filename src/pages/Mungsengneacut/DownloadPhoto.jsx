@@ -151,19 +151,25 @@ const DownloadPhoto = () => {
           {showShareOptions && (
             <div className="absolute top-[10%] left-[80%] bg-[#f1f1f1] rounded-full shadow-md w-12 h-[190px] flex flex-col items-center gap-2 pt-[60px]">
               <button
-                onClick={() => handleShare('instagram', imageDownloadUrl)}
+                onClick={() =>
+                  handleShare('instagram', imageDownloadUrl || capturedImage)
+                }
                 className="flex items-center justify-center bg-white rounded-full w-9 h-9"
               >
                 <FaInstagram size={22} className="text-[#E4405F]" />
               </button>
               <button
-                onClick={() => handleShare('facebook', imageDownloadUrl)}
+                onClick={() =>
+                  handleShare('facebook', imageDownloadUrl || capturedImage)
+                }
                 className="flex items-center justify-center bg-white rounded-full w-9 h-9"
               >
                 <FaFacebookF size={22} className="text-[#1877F2]" />
               </button>
               <button
-                onClick={() => handleShare('twitter', imageDownloadUrl)}
+                onClick={() =>
+                  handleShare('twitter', imageDownloadUrl || capturedImage)
+                }
                 className="flex items-center justify-center bg-white rounded-full w-9 h-9"
               >
                 <FaTwitter size={22} className="text-[#1DA1F2]" />

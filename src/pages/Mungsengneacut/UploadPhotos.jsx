@@ -110,7 +110,7 @@ const UploadPhotos = () => {
               >
                 <label
                   htmlFor={`file-upload-${index}`}
-                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
+                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer text-xs md:text-base"
                 >
                   {image ? (
                     <img
@@ -158,13 +158,13 @@ const UploadPhotos = () => {
               >
                 <label
                   htmlFor={`file-upload-${index}`}
-                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
+                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer text-xs md:text-base"
                 >
                   {image ? (
                     <img
                       src={image}
                       alt={`Uploaded ${index}`}
-                      className="object-cover w-full h-full cursor-pointer"
+                      className="w-full h-full cursor-pointer"
                     />
                   ) : (
                     '이미지 업로드'
@@ -206,13 +206,13 @@ const UploadPhotos = () => {
               >
                 <label
                   htmlFor={`file-upload-${index}`}
-                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
+                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer text-xs md:text-base"
                 >
                   {image ? (
                     <img
                       src={image}
                       alt={`Uploaded ${index}`}
-                      className="object-cover w-full h-full cursor-pointer"
+                      className="w-full h-full cursor-pointer"
                     />
                   ) : (
                     '이미지 업로드'
