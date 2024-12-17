@@ -98,6 +98,37 @@ const DownloadPhoto = () => {
     }
   };
 
+  const handleShare = async (platform, imageUrl) => {
+    try {
+      if (!imageUrl) {
+        throw new Error('공유할 이미지가 없습니다.');
+      }
+
+      const shareData = {
+        instagram: `https://www.instagram.com/share?url=${encodeURIComponent(imageUrl)}`,
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(imageUrl)}`,
+        twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(imageUrl)}`,
+      };
+
+      if (navigator.share && platform === 'native') {
+        await navigator.share({
+          url: imageUrl,
+          title: '멍생네컷',
+        });
+      } else {
+        window.open(shareData[platform], '_blank');
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        icon: 'error',
+        title: '공유 실패',
+        text: '이미지 공유 중 문제가 발생했습니다.',
+        confirmButtonColor: '#3288FF',
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -107,7 +138,7 @@ const DownloadPhoto = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center ">
       <div className="relative">
         <div className="block">
           <img src={downloadBG} alt="배경" className="max-w-full opacity-65" />
@@ -147,33 +178,30 @@ const DownloadPhoto = () => {
 
           {showShareOptions && (
             <div className="absolute top-[10%] left-[80%] bg-[#f1f1f1] rounded-full shadow-md w-12 h-[190px] flex flex-col items-center gap-2 pt-[60px]">
-              <a
-                href="https://www.instagram.com"
-                target="_blank"
-                rel="noreferrer"
+              <button
+                onClick={() => handleShare('instagram', imageDownloadUrl)}
+                className="flex items-center justify-center bg-white rounded-full w-9 h-9"
               >
                 <div className="flex items-center justify-center bg-white rounded-full w-9 h-9">
                   <FaInstagram size={22} className="text-[#E4405F]" />
                 </div>
-              </a>
-              <a
-                href="https://www.facebook.com"
-                target="_blank"
-                rel="noreferrer"
+              </button>
+              <button
+                onClick={() => handleShare('instagram', imageDownloadUrl)}
+                className="flex items-center justify-center bg-white rounded-full w-9 h-9"
               >
                 <div className="flex items-center justify-center bg-white rounded-full w-9 h-9">
                   <FaFacebookF size={22} className="text-[#1877F2]" />
                 </div>
-              </a>
-              <a
-                href="https://www.twitter.com"
-                target="_blank"
-                rel="noreferrer"
+              </button>
+              <button
+                onClick={() => handleShare('instagram', imageDownloadUrl)}
+                className="flex items-center justify-center bg-white rounded-full w-9 h-9"
               >
                 <div className="flex items-center justify-center bg-white rounded-full w-9 h-9">
                   <FaTwitter size={22} className="text-[#1DA1F2]" />
                 </div>
-              </a>
+              </button>
             </div>
           )}
         </div>
