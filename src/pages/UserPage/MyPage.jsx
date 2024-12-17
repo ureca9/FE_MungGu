@@ -19,8 +19,10 @@ const MyPage = () => {
   };
 
   useEffect(() => {
-    userData();
-  }, []);
+    if (!memberD.nickname) {
+      userData();
+    }
+  }, [memberD]);
 
   return (
     <div className="bg-backgroundGray min-w-96 sm:w-full">
