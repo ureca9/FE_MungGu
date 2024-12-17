@@ -205,7 +205,7 @@ const PlaceDetailPage = () => {
   )}
 </Slider>
 
-</div>;
+</div>
 
       <section className="p-4 bg-white">
         <h2 className="text-lg font-bold">{placeName}</h2>
