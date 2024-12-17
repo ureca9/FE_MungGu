@@ -72,7 +72,7 @@ const MyReview = () => {
         </div>
         <span className="flex flex-row items-center">
           <button
-            className={`flex items-center gap-1 p-2 mx-2 ${sortState === 'latest' ? 'px-2 py-1 border rounded-lg border-[#8A8A8A]' : ''}`}
+            className={`flex transition duration-300 transform hover:scale-105 items-center gap-1 p-2 mx-2 ${sortState === 'latest' ? 'px-2 py-1 border rounded-lg border-[#8A8A8A]' : ''}`}
             onClick={() => {
               setSortState('latest');
               sortReviews();
@@ -84,7 +84,7 @@ const MyReview = () => {
             </span>
           </button>
           <button
-            className={`flex items-center p-2 gap-1 ${sortState === 'oldest' ? 'px-2 py-1 border rounded-lg border-[#8A8A8A]' : ''}`}
+            className={`flex transition duration-300 transform hover:scale-105 items-center p-2 gap-1 ${sortState === 'oldest' ? 'px-2 py-1 border rounded-lg border-[#8A8A8A]' : ''}`}
             onClick={() => {
               setSortState('oldest');
               sortReviews();

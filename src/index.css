@@ -124,3 +124,28 @@
   background-color: white;
   border-radius: 8px;
 }
+
+/* 기본적으로 스크롤바 숨김 */
+.scrollbar-hidden {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+/* 스크롤 중 스크롤바 표시 */
+.show-scrollbar::-webkit-scrollbar {
+  display: block; /* Chrome, Safari */
+  height: 8px; /* 스크롤바 높이 */
+}
+
+.show-scrollbar::-webkit-scrollbar-thumb {
+  background: #3288ff; /* 스크롤바 색상 */
+  border-radius: 4px; /* 둥근 스크롤바 */
+}
+
+.show-scrollbar::-webkit-scrollbar-track {
+  background: #f0f0f0; /* 트랙 색상 */
+}
