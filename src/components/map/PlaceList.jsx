@@ -71,7 +71,9 @@ const PlaceList = ({ selectedCategory }) => {
     if (selectedPlace) return selectedPlace;
     if (searchResults.length > 0) return searchResults;
     if (selectedCategory !== '전체') {
-      return likedPlaces.filter((place) => place.category === selectedCategory);
+      return likedPlaces.filter(
+        (place) => place.categoryName === selectedCategory,
+      );
     }
     return likedPlaces;
   }, [searchResults, selectedCategory, likedPlaces, selectedPlace]);
