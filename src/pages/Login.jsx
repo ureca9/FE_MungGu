@@ -89,7 +89,12 @@ const Login = () => {
           ></div>
           카카오로 로그인하기
         </button>
-        <button className="mt-4 text-sm text-gray-400">건너뛰기</button>
+        <button
+          className="mt-4 text-sm text-gray-400"
+          onClick={() => navigate(ROUTER_PATHS.MAIN)}
+        >
+          건너뛰기
+        </button>
       </div>
     </div>
   );

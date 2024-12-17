@@ -71,7 +71,7 @@ const UploadPhotos = () => {
   const handleCapture = async () => {
     const element = document.getElementById('frame');
     const canvas = await html2canvas(element);
-    const capturedImage = canvas.toDataURL('image/png');
+    const capturedImage = canvas.toDataURL('image/png', 1.0);
 
     navigate(ROUTER_PATHS.DOWNLOAD_PHOTOS, {
       state: { capturedImage },

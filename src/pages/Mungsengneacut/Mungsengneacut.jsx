@@ -5,6 +5,7 @@ import ROUTER_PATHS from '../../utils/RouterPath';
 import HeaderImg from '../../assets/mungsengneacut/HeaderImg.svg';
 import { instance } from '../../api/axios';
 import LoadingSpinner from './../../components/common/LoadingSpinner';
+import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 
 const CustomTabPanel = ({ children, value, index }) => {
   return (
@@ -83,7 +84,7 @@ const Mungsengneacut = () => {
             headers: {
               Accept: 'application/json',
               'Content-Type': 'application/json',
-              Authorization: `Bearer {access_token}`,
+              Authorization: `Bearer ${localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN)}`,
             },
           });
           setMyPhotos(response.data.data.myMeongPhotoList);
