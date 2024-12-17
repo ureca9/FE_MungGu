@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import downloadBG from '../../assets/mungsengneacut/downloadBG.svg';
 import Swal from 'sweetalert2';
-import { instance } from '../../api/axios';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { LuShare2 } from 'react-icons/lu';
 import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
+import { fetchDownloadUrl } from '../../api/mungsengneacut';
 
 const DownloadPhoto = () => {
   const location = useLocation();
@@ -26,38 +26,20 @@ const DownloadPhoto = () => {
   const fetchImageDownloadUrl = async () => {
     try {
       setLoading(true);
-      const response = await fetch(capturedImage);
-      const blob = await response.blob();
+      const url = await fetchDownloadUrl(capturedImage);
 
-      const formData = new FormData();
-      formData.append('image', blob, 'capturedImage.png');
-
-      const apiResponse = await instance.post('/photos', formData, {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (
-        apiResponse.status === 200 &&
-        apiResponse.data.message === 'success'
-      ) {
-        const { imageDownloadUrl: url, processing } = apiResponse.data.data;
-        if (processing) {
-          Swal.fire({
-            icon: 'info',
-            title: '처리 중',
-            text: '이미지를 처리 중입니다. 캡처된 이미지를 다운로드하세요.',
-            confirmButtonColor: '#3288FF',
-          });
-        }
+      if (url) {
         setImageDownloadUrl(url);
       } else {
-        throw new Error('서버에서 오류가 발생했습니다.');
+        Swal.fire({
+          icon: 'info',
+          title: '처리 중',
+          text: '이미지를 처리 중입니다. 캡처된 이미지를 다운로드하세요.',
+          confirmButtonColor: '#3288FF',
+        });
       }
     } catch (error) {
-      console.error('Error fetching image download URL:', error);
+      console.error(error);
       Swal.fire({
         icon: 'error',
         title: '다운로드 실패',

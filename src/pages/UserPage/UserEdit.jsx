@@ -12,7 +12,6 @@ import KakaoLogo from '../../assets/login/KakaoLogo.svg';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import ROUTER_PATHS from '../../utils/RouterPath';
-import { debounce } from 'lodash';
 
 const UserEdit = () => {
   const navigate = useNavigate();
@@ -103,15 +102,6 @@ const UserEdit = () => {
     };
   }, [previewUrl]);
 
-  const debouncedCheckNickname = debounce(async (nickname) => {
-    try {
-      const message = await checkNickname(nickname.trim());
-      return message !== '중복된 닉네임입니다.';
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
-  }, 500);
   const checkNicknameDuplicate = async () => {
     const nickname = watch('nickname');
 
@@ -136,7 +126,9 @@ const UserEdit = () => {
     }
 
     try {
-      const isAvailable = await debouncedCheckNickname(nickname);
+      const message = await checkNickname(nickname.trim());
+      const isAvailable = message !== '중복된 닉네임입니다.';
+
       Swal.fire({
         icon: isAvailable ? 'success' : 'error',
         text: isAvailable
