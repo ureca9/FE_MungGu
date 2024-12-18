@@ -73,7 +73,7 @@ const MapSearch = () => {
             <input
               type="text"
               placeholder="도착지를 입력해주세요"
-              className="w-full py-3 px-4 border border-gray-300 rounded-lg"
+              className="w-full py-3 px-4 border border-gray-300 rounded-lg mr-8"
               value={endLocation?.name}
               onClick={() => {
                 setSearchType(SearchType.END);
