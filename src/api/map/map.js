@@ -22,6 +22,17 @@ export const searchSpot = async (keyword, latitude, longitude) => {
   }
 };
 
+export const getSpotInfo = async (id, type, latitude, longitude) => {
+  try {
+    const response = await instance.get(
+      `/map/places?id=${id}&type=${type}&latitude=${latitude}&longitude=${longitude}`,
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const getLikeList = async (categoryName, latitude, longitude) => {
   try {
     const response = await instance.get(

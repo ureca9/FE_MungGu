@@ -14,7 +14,7 @@ const MapSearch = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const { searchHistory, setSearchHistory } = useSearchHistoryStore();
-  const { searchType, setSearchResults } = usePlaceStore();
+  const { searchType, setSearchResults, setSelectedPlace } = usePlaceStore();
   const { coords } = useCoordsStore();
   const { latitude, longitude } = coords;
 
@@ -40,7 +40,7 @@ const MapSearch = () => {
     if (searchTerm.trim() !== '') {
       try {
         const response = await searchSpot(searchTerm, latitude, longitude);
-
+        setSelectedPlace(null);
         if (response.content.length === 0)
           Swal.fire({
             title: '검색 결과가 없습니다.',

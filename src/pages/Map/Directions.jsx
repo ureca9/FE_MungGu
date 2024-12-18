@@ -5,7 +5,6 @@ import ROUTER_PATHS from '../../utils/RouterPath.js';
 import usePlaceStore from '../../stores/map/usePlaceStore.js';
 import { SearchType } from '../../utils/SearchType.js';
 import Swal from 'sweetalert2';
-import { getCarDirection } from '../../api/map/map.js';
 
 const Directions = () => {
   const {

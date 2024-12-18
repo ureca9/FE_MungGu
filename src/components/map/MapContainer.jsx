@@ -1,6 +1,11 @@
 import { useRef, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { getCarDirection, getMarkers, searchSpot } from '../../api/map/map.js';
+import {
+  getCarDirection,
+  getMarkers,
+  getSpotInfo,
+  searchSpot,
+} from '../../api/map/map.js';
 import heartMarker from '../../assets/common/heartMarker.png';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
 import usePlaceStore from '../../stores/map/usePlaceStore.js';
@@ -17,7 +22,9 @@ const MapContainer = () => {
   const { coords, setCoords } = useCoordsStore();
   const {
     searchResults,
+    setSearchResults,
     setSelectedPlace,
+    selectedPlace,
     searchType,
     startLocation,
     endLocation,
@@ -29,13 +36,10 @@ const MapContainer = () => {
   };
 
   const waitForKakaoMaps = (callback, retries = 10) => {
-    if (window.kakao && window.kakao.maps) {
-      callback();
-    } else if (retries > 0) {
+    if (window.kakao && window.kakao.maps) callback();
+    else if (retries > 0)
       setTimeout(() => waitForKakaoMaps(callback, retries - 1), 100);
-    } else {
-      showError('Kakao Maps를 불러오지 못했습니다.');
-    }
+    else showError('Kakao Maps를 불러오지 못했습니다.');
   };
 
   const setCurrentLocation = () => {
@@ -135,9 +139,25 @@ const MapContainer = () => {
     searchMarkersRef.current = [];
   };
 
+  const parsePlaceType = (type) => {
+    const typeMapping = {
+      PLACE: '시설',
+      PENSION: '펜션',
+    };
+    return typeMapping[type] || type;
+  };
+
   const handleMarkerClick = async (place) => {
-    const data = await searchSpot(place.name, place.latitude, place.longitude);
-    setSelectedPlace(data.content);
+    if (searchResults.length > 0) setSearchResults([]);
+    const placeId = place.id || place.placeId;
+    const placeType = parsePlaceType(place.type);
+    const data = await getSpotInfo(
+      placeId,
+      placeType,
+      place.latitude,
+      place.longitude,
+    );
+    setSelectedPlace(data);
   };
 
   const drawRoute = async () => {

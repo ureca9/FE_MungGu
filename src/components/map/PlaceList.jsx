@@ -68,7 +68,7 @@ const PlaceList = ({ selectedCategory }) => {
   };
 
   const placesToShow = useMemo(() => {
-    if (selectedPlace) return selectedPlace;
+    if (selectedPlace) return [selectedPlace];
     if (searchResults.length > 0) return searchResults;
     if (selectedCategory !== '전체') {
       return likedPlaces.filter(
