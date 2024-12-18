@@ -22,6 +22,16 @@ instance.interceptors.request.use((config) => {
 
 const handle401Error = async (error) => {
   const originalRequest = error.config;
+  const EXCEPTION_URLS = Object.freeze(['/photos']);
+  const isExceptionUrl = (requestUrl) => {
+    const basePath = new URL(requestUrl, instance.defaults.baseURL).pathname;
+    return EXCEPTION_URLS.some(
+      (url) => basePath === url || basePath.startsWith(`${url}/`),
+    );
+  };
+  if (isExceptionUrl(originalRequest.url)) {
+    return Promise.resolve();
+  }
 
   try {
     const response = await getAuthToken();

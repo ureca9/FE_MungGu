@@ -45,7 +45,6 @@ export const fetchMyPhotos = async (page, pageSize) => {
       {
         headers: {
           Accept: 'application/json',
-          Authorization: `Bearer ${localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN)}`,
         },
       },
     );

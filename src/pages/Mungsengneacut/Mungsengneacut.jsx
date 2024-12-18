@@ -10,6 +10,8 @@ import {
   fetchMyPhotos,
   fetchPaginatedPhotos,
 } from '../../api/mungsengneacut';
+import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
+import Swal from 'sweetalert2';
 
 const PAGE_SIZE = 6;
 
@@ -67,6 +69,8 @@ const Mungsengneacut = () => {
 
   useEffect(() => {
     const getNickname = async () => {
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
+      if (!token) return;
       try {
         const name = await fetchNickname();
         setNickname(name);
@@ -155,6 +159,31 @@ const Mungsengneacut = () => {
     navigate(ROUTER_PATHS.CHOOSE_FRAME);
   };
 
+  const handleTabClick = async (tabIndex) => {
+    if (tabIndex === 1) {
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
+      if (!token) {
+        const result = await Swal.fire({
+          title: '로그인 후 이용해주세요.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: '확인',
+          cancelButtonText: '취소',
+          confirmButtonColor: '#3288FF',
+          customClass: {
+            cancelButton: 'swalCancelBtn',
+          },
+        });
+
+        if (result.isConfirmed) {
+          navigate(ROUTER_PATHS.LOGIN);
+        }
+        return;
+      }
+    }
+    setSelectedTab(tabIndex);
+  };
+
   return (
     <>
       <div className="relative">
@@ -176,7 +205,7 @@ const Mungsengneacut = () => {
                 ? 'border-b-[3px] border-[#3288FF] font-bold text-[#3288FF]'
                 : 'text-gray-500 border-b-[3px] border-b-white'
             }`}
-            onClick={() => setSelectedTab(0)}
+            onClick={() => handleTabClick(0)}
           >
             전체
           </button>
@@ -186,7 +215,7 @@ const Mungsengneacut = () => {
                 ? 'border-b-[3px] border-[#3288FF] font-bold text-[#3288FF]'
                 : 'text-gray-500 border-b-[3px] border-b-white'
             }`}
-            onClick={() => setSelectedTab(1)}
+            onClick={() => handleTabClick(1)}
           >
             MY
           </button>
