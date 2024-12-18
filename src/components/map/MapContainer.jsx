@@ -178,8 +178,8 @@ const MapContainer = () => {
       polylineRef.current = new kakao.maps.Polyline({
         path: linePath,
         strokeWeight: 5,
-        strokeColor: '#000000',
-        strokeOpacity: 0.7,
+        strokeColor: '#489AE7',
+        strokeOpacity: 0.8,
         strokeStyle: 'solid',
       });
       polylineRef.current.setMap(mapRef.current);
