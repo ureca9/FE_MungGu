@@ -172,7 +172,7 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                 </div>
                 <div
                   ref={scrollRef}
-                  className="flex items-end w-full gap-1 overflow-x-auto min-h-28 scrollbar-none"
+                  className="flex items-end w-full gap-1 overflow-x-auto min-h-28 "
                 >
                   {file.map((file, index) => (
                     <div
