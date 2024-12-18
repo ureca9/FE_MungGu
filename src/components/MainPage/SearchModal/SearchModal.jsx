@@ -27,7 +27,6 @@ const SearchModal = ({ onClose, defaultTab = "facility" }) => {
         }`}
         style={{ maxWidth: "770px" }}
       >
-        {/* Header */}
         <div className="flex justify-between items-center border-b pb-4">
           <h2 className="text-xl font-bold">검색</h2>
           <button onClick={handleClose} className="text-gray-500 text-lg">
@@ -35,7 +34,6 @@ const SearchModal = ({ onClose, defaultTab = "facility" }) => {
           </button>
         </div>
 
-        {/* Tabs */}
         <div className="flex justify-center gap-4 mt-4">
           <button
             className={`px-4 py-2 rounded-lg ${
@@ -59,7 +57,6 @@ const SearchModal = ({ onClose, defaultTab = "facility" }) => {
           </button>
         </div>
 
-        {/* Content */}
         <div className="mt-6 overflow-hidden">
           {activeTab === "facility" && <FacilitySection onClose={handleClose} />}
           {activeTab === "pension" && <PensionSection onClose={handleClose} />}

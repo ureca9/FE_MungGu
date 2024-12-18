@@ -13,13 +13,13 @@ import SubHeader from '../../components/common/SubHeader';
 
 
 const sliderSettings = {
-  dots: false, // 하단 네비게이션 점 비활성화
-  infinite: true, // 무한 스크롤 활성화
-  speed: 500, // 슬라이더 전환 속도
-  slidesToShow: 1, // 한 번에 보여줄 슬라이드 개수
-  slidesToScroll: 1, // 한 번에 스크롤할 슬라이드 개수
-  autoplay: true, // 자동 슬라이드 활성화
-  autoplaySpeed: 3000, // 3초마다 슬라이드 (3000ms)
+  dots: false, 
+  infinite: true, 
+  speed: 500, 
+  slidesToShow: 1, 
+  slidesToScroll: 1, 
+  autoplay: true, 
+  autoplaySpeed: 3000,
 };
 
 const PensionDetailPage = () => {
@@ -35,7 +35,6 @@ const PensionDetailPage = () => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
 
-  // 최근본 장소
   useEffect(() => {
     if (pensionDetail) {
       const watchedPlace = JSON.parse(localStorage.getItem('watched')) || [];
@@ -61,17 +60,33 @@ const PensionDetailPage = () => {
   const toggleLike = async () => {
     try {
       const accessToken = localStorage.getItem('ACCESS_TOKEN');
+      if (!accessToken) {
+        const result = await Swal.fire({
+          title: '로그인 후 이용해주세요.',
+          icon: 'warning',
+          showCancelButton: true, 
+          confirmButtonText: '로그인',
+          cancelButtonText: '취소',
+          confirmButtonColor: '#3288FF',
+        });
+  
+        if (result.isConfirmed) {
+          navigate('/login');
+        }
+        return; 
+      }
+
       const headers = {
         Accept: 'application/json',
         ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
       };
-
+  
       await axios.post(
         `https://meong9.store/api/v1/pensions/likes/${id}`,
         {},
         { headers },
       );
-
+  
       setLikeStatus((prev) => !prev);
     } catch (error) {
       console.error('찜 상태 업데이트 실패:', error);
@@ -97,7 +112,7 @@ const PensionDetailPage = () => {
           { headers },
         );
         setPensionDetail(response.data.data);
-        setLikeStatus(response.data.data.likeStatus || false); // 찜 상태 설정
+        setLikeStatus(response.data.data.likeStatus || false); 
       } catch (error) {
         setError('펜션 정보를 불러오는 데 실패했습니다.');
       } finally {
@@ -143,6 +158,7 @@ const PensionDetailPage = () => {
     <div className="min-h-screen" style={{ backgroundColor: '#f9fafb' }}>
       
       <SubHeader title={pensionDetail.pensionName || "펜션 상세" }/>
+      
       <div className="w-full h-[400px] overflow-hidden">
       <Slider {...sliderSettings}>
   {images.map((image, index) => (
@@ -159,37 +175,38 @@ const PensionDetailPage = () => {
       </div>
 
       <section className="p-4 mt-4 bg-white">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold">{pensionDetail.pensionName}</h2>
-          <button
-            onClick={toggleLike}
-            className={`w-10 h-10 flex items-center justify-center rounded-full ${
-              likeStatus ? 'text-red-500' : 'text-gray-400'
-            }`}
-          >
-            {likeStatus ? '❤️' : '🤍'}
-          </button>
-        </div>
-        <p className="text-sm text-gray-500">{pensionDetail.address}</p>
-        <div className="flex items-center mt-2">
-          <span className="mr-2 text-yellow-500">
-            ⭐ {pensionDetail.reviewAvg}
-          </span>
-          <span className="text-sm text-gray-500">
-            ({pensionDetail.reviewCount})
-          </span>
-        </div>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {pensionDetail.tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2 py-1 text-xs bg-gray-100 rounded-md"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      </section>
+  <div className="flex items-center justify-between">
+    <h2 className="text-lg font-bold">{pensionDetail.pensionName}</h2>
+    <button
+      onClick={toggleLike}
+      className={`w-10 h-10 flex items-center justify-center rounded-full ${
+        likeStatus ? 'text-red-500' : 'text-gray-400'
+      }`}
+    >
+      {likeStatus ? '❤️' : '🤍'}
+    </button>
+  </div>
+  <p className="text-sm text-gray-500">{pensionDetail.address}</p>
+  <div className="flex items-center mt-2">
+    <span className="mr-2 text-yellow-500">
+      ⭐ {pensionDetail.reviewAvg}
+    </span>
+    <span className="text-sm text-gray-500">
+      ({pensionDetail.reviewCount})
+    </span>
+  </div>
+  <div className="flex flex-wrap gap-2 mt-2">
+    {pensionDetail.tags.map((tag, index) => (
+      <span
+        key={index}
+        className="px-3 py-1 text-sm bg-gray-200 rounded-full"
+      >
+        {tag}
+      </span>
+    ))}
+  </div>
+</section>
+
 
       <section className="p-4 mt-4 bg-white">
         <h3 className="mb-2 text-lg font-bold">소개글</h3>

@@ -105,19 +105,33 @@ const PlaceDetailPage = () => {
   const toggleLike = async () => {
     try {
       const accessToken = localStorage.getItem('ACCESS_TOKEN');
+      if (!accessToken) {
+        const result = await Swal.fire({
+          title: '로그인 후 이용해주세요.',
+          icon: 'warning',
+          showCancelButton: true, 
+          confirmButtonText: '로그인',
+          cancelButtonText: '취소',
+          confirmButtonColor: '#3288FF',
+        });
+  
+        if (result.isConfirmed) {
+          navigate('/login');
+        }
+        return; 
+      }
       const headers = {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
         ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
       };
-
+  
       await axios.post(
-        `https://meong9.store/api/v1/places/likes/${id}`,
+        `https://meong9.store/api/v1/pl/likes/${id}`,
         {},
-        { headers }
+        { headers },
       );
-
-      setLikeStatus((prevStatus) => !prevStatus);
+  
+      setLikeStatus((prev) => !prev);
     } catch (error) {
       console.error('찜 상태 업데이트 실패:', error);
       Swal.fire({
@@ -202,22 +216,38 @@ const PlaceDetailPage = () => {
 
 </div>
 
-      <section className="p-4 bg-white">
-        <h2 className="text-lg font-bold">{placeName}</h2>
-        <p className="mb-2 text-sm text-gray-600">{address}</p>
-        <div className="flex items-center mb-4 space-x-2">
-          <span className="text-sm text-yellow-500">
-            ⭐ {reviewAvg} ({reviewCount} 리뷰)
-          </span>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {tags.map((tag, index) => (
-            <span key={index} className="px-3 py-1 text-sm bg-gray-200 rounded-full">
-              {tag}
-            </span>
-          ))}
-        </div>
-      </section>
+<section className="p-4 bg-white">
+  <div className="flex items-center justify-between mb-2">
+    <h2 className="text-lg font-bold">{placeName}</h2>
+    <div className="flex items-center space-x-4">
+      <span className="text-sm text-yellow-500 flex items-center space-x-1">
+        <span>⭐</span>
+        <span>{reviewAvg}</span>
+        <span className="text-gray-500">({reviewCount} 리뷰)</span>
+      </span>
+      <button
+        onClick={toggleLike}
+        className={`w-10 h-10 flex items-center justify-center rounded-full ${
+          likeStatus ? 'text-red-500' : 'text-gray-400'
+        }`}
+      >
+        {likeStatus ? '❤️' : '🤍'}
+      </button>
+    </div>
+  </div>
+  <p className="mb-2 text-sm text-gray-600">{address}</p>
+
+  <div className="flex flex-wrap gap-2 mt-2">
+    {tags.map((tag, index) => (
+      <span
+        key={index}
+        className="px-3 py-1 text-sm bg-gray-200 rounded-full"
+      >
+        {tag}
+      </span>
+    ))}
+  </div>
+</section>
 
       <section className="p-4 mt-4 bg-white">
         <h3 className="mb-2 text-lg font-bold">운영 정보</h3>
@@ -252,7 +282,13 @@ const PlaceDetailPage = () => {
       전체보기 &gt;
     </button>
   </div>
-  <div className="flex overflow-x-auto space-x-4 scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200">
+  <div
+    className="
+      flex gap-2 overflow-x-auto 
+      space-x-4 bg-white shadow-sm 
+      scrollbar-hidden
+    "
+  >
     {photoReviewList.map((photoReview) => {
       const matchingReview = review.find(
         (r) => String(r.reviewId) === String(photoReview.reviewId)
@@ -294,7 +330,8 @@ const PlaceDetailPage = () => {
   </div>
 </section>
 
-      {/* 리뷰 모달 */}
+
+
       {isModalOpen && (
         <ReviewDetailModal
           isOpen={isModalOpen}
