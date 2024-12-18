@@ -3,6 +3,7 @@ import PlaceList from './PlaceList.jsx';
 import { useState } from 'react';
 import usePlaceStore from '../../stores/map/usePlaceStore.js';
 import usePanelStateStore from '../../stores/map/usePanelStateStore.js';
+import { FaTimes } from 'react-icons/fa';
 
 const MapPanel = () => {
   const panelHeightClass = {
@@ -28,13 +29,23 @@ const MapPanel = () => {
     >
       <div
         className="flex items-center justify-center p-4 cursor-pointer sticky top-0 z-10"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           if (panelState === 'collapsed') setPanelState('expanded');
           else if (panelState === 'expanded') setPanelState('maximized');
-          else setPanelState('collapsed');
+          else setPanelState('expanded');
         }}
       >
-        <div className="w-12 h-1 bg-gray-400 rounded-full"></div>
+        <div className="flex-grow flex justify-center">
+          <div className="w-12 h-1 bg-gray-400 rounded-full hover:bg-blue-500"></div>
+        </div>
+        <FaTimes
+          className="text-2xl text-gray-500 hover:text-red-500"
+          onClick={(e) => {
+            e.stopPropagation();
+            setPanelState('collapsed');
+          }}
+        />
       </div>
 
       <div
