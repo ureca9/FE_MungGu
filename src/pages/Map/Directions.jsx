@@ -25,7 +25,6 @@ const Directions = () => {
       });
       return;
     }
-    setSearchType(SearchType.SEARCH);
     navigate(ROUTER_PATHS.MAP);
   };
 
