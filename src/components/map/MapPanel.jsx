@@ -48,10 +48,13 @@ const MapPanel = () => {
           }}
         />
       </div>
-      <div className="flex justify-center items-center py-1">
-        <img src={heartBtn} />
-        <span className="text-2xl text-center">저장</span>
-      </div>
+      {searchResults.length === 0 && (
+        <div className="flex justify-center items-center py-1">
+          <img src={heartBtn} />
+          <span className="text-2xl text-center">저장</span>
+        </div>
+      )}
+
       <div
         className="h-full p-4"
         role="region"
