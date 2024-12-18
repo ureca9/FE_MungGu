@@ -21,6 +21,7 @@ const Directions = () => {
       Swal.fire({
         title: '출발지와 도착지를 모두 입력해주세요.',
         icon: 'warning',
+        confirmButtonColor: '#3288FF',
       });
       return;
     }
