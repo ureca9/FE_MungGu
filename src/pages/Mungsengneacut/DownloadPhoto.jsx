@@ -6,7 +6,8 @@ import downloadBgMobile from '../../assets/mungsengneacut/downloadBgMobile.svg';
 import Swal from 'sweetalert2';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { LuShare2 } from 'react-icons/lu';
-import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram } from 'react-icons/fa';
+import { FaXTwitter } from 'react-icons/fa6';
 import { fetchDownloadUrl } from '../../api/mungsengneacut';
 
 const DownloadPhoto = () => {
@@ -83,36 +84,6 @@ const DownloadPhoto = () => {
       setLoading(false);
     }
   };
-  const handleShare = async (platform, imageUrl) => {
-    try {
-      if (!imageUrl) {
-        throw new Error('공유할 이미지가 없습니다.');
-      }
-
-      const shareData = {
-        instagram: `https://www.instagram.com/share?url=${encodeURIComponent(imageUrl)}`,
-        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(imageUrl)}`,
-        twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(imageUrl)}`,
-      };
-
-      if (navigator.share && platform === 'native') {
-        await navigator.share({
-          url: imageUrl,
-          title: '멍생네컷',
-        });
-      } else {
-        window.open(shareData[platform], '_blank');
-      }
-    } catch (error) {
-      console.error(error);
-      Swal.fire({
-        icon: 'error',
-        title: '공유 실패',
-        text: '이미지 공유 중 문제가 발생했습니다.',
-        confirmButtonColor: '#3288FF',
-      });
-    }
-  };
 
   if (loading) {
     return (
@@ -169,27 +140,27 @@ const DownloadPhoto = () => {
             <div className="absolute top-[2%] md:top-[10%] left-[85%] md:left-[80%] bg-[#f1f1f1] rounded-full shadow-md w-12 h-[190px] flex flex-col items-center gap-2 pt-[60px]">
               <button
                 onClick={() =>
-                  handleShare('instagram', imageDownloadUrl || capturedImage)
+                  window.open('https://www.instagram.com/', '_blank')
                 }
                 className="flex items-center justify-center bg-white rounded-full w-9 h-9"
               >
                 <FaInstagram size={22} className="text-[#E4405F]" />
               </button>
+
               <button
                 onClick={() =>
-                  handleShare('facebook', imageDownloadUrl || capturedImage)
+                  window.open('https://www.facebook.com/', '_blank')
                 }
                 className="flex items-center justify-center bg-white rounded-full w-9 h-9"
               >
                 <FaFacebookF size={22} className="text-[#1877F2]" />
               </button>
+
               <button
-                onClick={() =>
-                  handleShare('twitter', imageDownloadUrl || capturedImage)
-                }
+                onClick={() => window.open('https://x.com/', '_blank')}
                 className="flex items-center justify-center bg-white rounded-full w-9 h-9"
               >
-                <FaTwitter size={22} className="text-[#1DA1F2]" />
+                <FaXTwitter size={22} className="text-black" />
               </button>
             </div>
           )}
