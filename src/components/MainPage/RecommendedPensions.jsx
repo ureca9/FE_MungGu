@@ -89,7 +89,9 @@ const RecommendedPensions = () => {
     };
   
     useEffect(() => {
-      if (scrollRef.current) addDragScroll(scrollRef);
+      if (scrollRef.current) {
+        addDragScroll(scrollRef);
+      }
     }, []);
 
   return (
@@ -108,13 +110,14 @@ const RecommendedPensions = () => {
 
   {pensions.length > 0 ? (
     <div
-      ref={scrollRef}
-      className="
-        flex gap-x-4 overflow-x-auto snap-x snap-mandatory 
-        scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200 
-        sm:scrollbar-none"
-      style={{ scrollBehavior: "smooth" }}
-    >
+    ref={scrollRef}
+    className="
+      flex gap-x-4 overflow-x-auto snap-x snap-mandatory 
+      scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200 
+      sm:scrollbar-none pb-1 mb-[-1px] overscroll-none
+    "
+    style={{ scrollBehavior: "smooth" }}
+  >
       {pensions.map((pension) => (
         <div
           key={pension.id}
@@ -122,18 +125,19 @@ const RecommendedPensions = () => {
           onClick={() => handlePensionClick(pension.id)}
         >
           <div
-            className="w-full h-32 bg-gray-300 rounded-lg mb-2"
+            className="w-48 h-24 bg-gray-300 rounded-lg mb-2 
+                      sm:w-full h-32"
             style={{
               backgroundImage: `url(${pension.img || "https://via.placeholder.com/150"})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
             }}
           ></div>
-          <h3 className="text-base font-semibold text-gray-800 truncate">
+          <h3 className="text-base font-semibold text-gray-800 truncate sm:pr-0 pr-12">
             {pension.name}
           </h3>
-          <p className="text-sm text-gray-500 truncate">{pension.address}</p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 truncate sm:pr-0 pr-12">{pension.address}</p>
+          <p className="text-sm text-gray-500 mt-1 sm:pr-0 pr-12">
             ⭐ {pension.reviewAvg || "0"} ({pension.reviewCount || "0"} 리뷰)
           </p>
         </div>

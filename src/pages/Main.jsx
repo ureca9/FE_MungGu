@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import HotPlaces from "../components/MainPage/HotPlaces";
-import RecommendedPensions from "../components/MainPage/RecommendedPensions";
-import LiveReviews from "../components/MainPage/LiveReviews";
-import SearchModal from "../components/MainPage/SearchModal/SearchModal.jsx";
-import AdImage from "../stories/assets/광고2.svg";
-import FooterImage from "../stories/assets/Footer.svg";
+import React, { useState } from 'react';
+import HotPlaces from '../components/MainPage/HotPlaces';
+import RecommendedPensions from '../components/MainPage/RecommendedPensions';
+import LiveReviews from '../components/MainPage/LiveReviews';
+import SearchModal from '../components/MainPage/SearchModal/SearchModal.jsx';
+import AdImage from '../stories/assets/광고2.svg';
+import FooterImage from '../stories/assets/Footer.svg';
 
 const Main = () => {
   const [isSearchModalOpen, setSearchModalOpen] = useState(false);
@@ -15,38 +15,40 @@ const Main = () => {
 
       {/* Search */}
       <div className="p-4 bg-white">
-  {/* 강조 문구 추가 */}
+        {/* 강조 문구 추가 */}
   <p className="text-sm font-semibold text-center mb-2 sm:text-lg">
-  <span className="text-blue-500 font-bold">1,200여개의 반려견 동반 가능 장소!</span> 지금 검색해보세요
+          <span className="text-blue-500 font-bold">
+            1,200여개의 반려견 동반 가능 장소!
+          </span>{' '}
+          지금 검색해보세요
 </p>
 
   {/* 검색 버튼 */}
   <div className="flex justify-center">
-  <button
+          <button
   className="w-[80%] p-3 bg-white border-2 border-blue-500 rounded-xl text-gray-600 text-left flex items-center justify-between sm:w-[89%]"
-  onClick={() => setSearchModalOpen(true)}
+            onClick={() => setSearchModalOpen(true)}
 >
-
-      {/* 텍스트 */}
-      무엇을 찾고 싶나요?
+            {/* 텍스트 */}
+            무엇을 찾고 싶나요?
       {/* SVG 아이콘 */}
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth="2"
-        stroke="currentColor"
-        className="w-5 h-5 text-gray-500"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M21 21l-4.35-4.35M16.5 9.75a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0z"
-        />
-      </svg>
-    </button>
-  </div>
-</div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+              stroke="currentColor"
+              className="w-5 h-5 text-gray-500"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-4.35-4.35M16.5 9.75a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0z"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
 
       {/* Sections */}
       <div className="px-8">
@@ -58,15 +60,23 @@ const Main = () => {
       </div>
 
       <div className="pl-2 flex justify-center mt-6">
-  <img src={AdImage} alt="광고 이미지" className="w-[88%] max-w-screen-md" />
-</div>
+        <img
+          src={AdImage}
+          alt="광고 이미지"
+          className="w-[88%] max-w-screen-md sm: w-[80%] "
+        />
+      </div>
 
       <div className="px-8 mt-6">
         <LiveReviews />
       </div>
 
       <div className="flex justify-center mt-10">
-        <img src={FooterImage} alt="푸터 이미지" className="w-full max-w-screen-lg" />
+        <img
+          src={FooterImage}
+          alt="푸터 이미지"
+          className="w-full max-w-screen-lg"
+        />
       </div>
 
       {/* Search Modal */}

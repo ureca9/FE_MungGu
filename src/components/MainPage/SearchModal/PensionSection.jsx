@@ -39,7 +39,7 @@ const PensionSection = ({ onClose }) => {
         }
       );
       const data = response.data.data;
-      const weather = Object.values(data).slice(1, 11); // day1~day10 날씨 데이터 추출
+      const weather = Object.values(data).slice(1, 11); 
       setWeatherData(weather);
     } catch (error) {
       console.error("[PensionSection] 날씨 데이터 요청 실패:", error);
@@ -153,6 +153,8 @@ const PensionSection = ({ onClose }) => {
   
 
   const renderSelectedSummary = (section) => {
+    if (activeSection === section) return null; // 선택된 탭에서는 요약 숨김
+  
     switch (section) {
       case "region":
         return selectedRegion || "선택되지 않음";
@@ -165,46 +167,44 @@ const PensionSection = ({ onClose }) => {
       case "profile":
         return heaviestDogWeight > 0
           ? `최대 ${heaviestDogWeight}kg`
-          : "선택되지 않음"; // 선택된 무게 반영
+          : "선택되지 않음";
       default:
         return null;
     }
   };
+  
 
   
 
   return (
     <div className="flex flex-col h-full bg-gray-100 rounded-lg shadow-md">
       <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
-  <h3
-    className="text-lg font-semibold mb-2 cursor-pointer flex justify-between items-center"
-    onClick={() =>
-      setActiveSection((prev) => (prev === "combined" ? null : "combined"))
-    }
-  >
-    어디로 놀러갈까요?
-    <span className="text-sm text-gray-500">
-      {renderSelectedSummary("region")}
-    </span>
-  </h3>
+      <h3
+  className="text-lg font-semibold mb-2 cursor-pointer flex justify-between items-center"
+  onClick={() =>
+    setActiveSection((prev) => (prev === "combined" ? null : "combined"))
+  }
+>
+  어디로 놀러갈까요?
+  <span className="text-sm text-gray-500">
+    {activeSection !== "combined" && renderSelectedSummary("region")}
+  </span>
+</h3>
 
-  {/* 섹션 내용 */}
   <div
     className={`overflow-hidden transition-all duration-300 ${
       activeSection === "combined" ? "max-h-[500px]" : "max-h-0"
     }`}
   >
-    {/* 검색창 */}
     <div className="mb-4 relative">
   <input
     type="text"
     value={searchWord}
     onChange={(e) => setSearchWord(e.target.value)}
     placeholder="지역 또는 펜션 검색"
-    className="w-full p-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    className="w-full p-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:none"
   />
 
-  {/* SVG 아이콘 추가 */}
   <div className="absolute top-1/2 right-3 transform -translate-y-1/2">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -223,7 +223,6 @@ const PensionSection = ({ onClose }) => {
   </div>
 </div>
 
-    {/* 지역 선택 */}
     <div className="grid grid-cols-2 gap-2">
       {regions.map((region) => (
         <button
@@ -272,15 +271,13 @@ const PensionSection = ({ onClose }) => {
   tileContent={tileContent}
   tileClassName={({ date, view }) => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // 오늘 날짜의 시간을 00:00:00으로 설정
+    today.setHours(0, 0, 0, 0);
     
     if (view === "month") {
       if (date < today) {
-        // 오늘 이전 날짜
         return "past-date";
       }
       if (date.getDay() === 6) {
-        // 토요일
         return "highlight-saturday";
       }
     }
@@ -297,9 +294,8 @@ const PensionSection = ({ onClose }) => {
 </button>
 
 </div>
-</div> {/* 닫히지 않은 div를 여기서 마무리 */}
+</div> 
 
-      {/* 프로필 섹션 */}
       <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
         <h3
           className="text-lg font-semibold mb-2 cursor-pointer flex justify-between items-center"
@@ -317,7 +313,7 @@ const PensionSection = ({ onClose }) => {
   setMaxDogWeight={(weight) => setHeaviestDogWeight(weight)}
   onComplete={(selectedProfile) => {
     if (selectedProfile) {
-      setTimeout(() => { // 비동기 상태 업데이트
+      setTimeout(() => { 
         setHeaviestDogWeight(selectedProfile.weight);
       }, 0);
     }
@@ -328,7 +324,6 @@ const PensionSection = ({ onClose }) => {
         </div>
       </div>
 
-      {/* 검색 버튼 */}
       <div className="p-3 border-t bg-white">
         <button
           onClick={handleSearch}

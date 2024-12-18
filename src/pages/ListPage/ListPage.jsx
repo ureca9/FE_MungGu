@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import SearchModal from "../../components/MainPage/SearchModal/SearchModal";
 import SubHeader from "../../components/common/SubHeader";
+import Swal from 'sweetalert2';
 
 const ListPage = () => {
   const navigate = useNavigate();
@@ -188,37 +189,47 @@ const ListPage = () => {
 
   const toggleLike = async (placeId) => {
     try {
-      setResults((prevResults) =>
-        prevResults.map((place) =>
-          place.placeId === placeId
-            ? { ...place, likeStatus: !place.likeStatus }
-            : place
-        )
-      );
-
-      const accessToken = localStorage.getItem("ACCESS_TOKEN");
-
-      await axios.post(
-        `https://meong9.store/api/v1/places/likes/${placeId}`,
-        {},
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-          },
+      const accessToken = localStorage.getItem('ACCESS_TOKEN');
+      if (!accessToken) {
+        const result = await Swal.fire({
+          title: '로그인 후 이용해주세요.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: '로그인',
+          cancelButtonText: '취소',
+          confirmButtonColor: '#3288FF',
+        });
+  
+        if (result.isConfirmed) {
+          navigate('/login');
         }
+        return;
+      }
+  
+      const headers = {
+        Accept: 'application/json',
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+      };
+  
+      await axios.post(
+        `https://meong9.store/api/v1/places/likes/${placeId}`, // placeId 사용
+        {},
+        { headers },
+      );
+  
+      setResults((prevResults) =>
+        prevResults.map((item) =>
+          item.placeId === placeId
+            ? { ...item, likeStatus: !item.likeStatus }
+            : item
+        )
       );
     } catch (error) {
-      console.error("Failed to toggle like status:", error);
-
-      setResults((prevResults) =>
-        prevResults.map((place) =>
-          place.placeId === placeId
-            ? { ...place, likeStatus: !place.likeStatus }
-            : place
-        )
-      );
+      console.error('찜 상태 업데이트 실패:', error);
+      Swal.fire({
+        title: '찜 상태를 업데이트하는 중 문제가 발생했습니다.',
+        icon: 'error',
+      });
     }
   };
 

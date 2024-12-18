@@ -11,7 +11,7 @@ const FacilitySection = ({ onClose }) => {
     heaviestDogWeight: 0,
   });
 
-  const [activeSection, setActiveSection] = useState("region"); // 현재 활성화된 섹션
+  const [activeSection, setActiveSection] = useState("region"); 
   const navigate = useNavigate();
 
   const regions = [
@@ -59,13 +59,13 @@ const FacilitySection = ({ onClose }) => {
   };
 
   const renderSelectedSummary = (section) => {
-    if (activeSection === section) return null; // 탭이 열려 있으면 표시하지 않음
+    if (activeSection === section) return null; 
 
     switch (section) {
       case "region":
-        return searchData.regionList.join(", "); // 선택된 모든 지역 표시
+        return searchData.regionList.join(", "); 
       case "category":
-        return searchData.placeTypes.join(", "); // 선택된 모든 카테고리 표시
+        return searchData.placeTypes.join(", "); 
       case "profile":
         return searchData.heaviestDogWeight > 0
           ? `최대 ${searchData.heaviestDogWeight}kg`
@@ -78,7 +78,6 @@ const FacilitySection = ({ onClose }) => {
   const handleSearch = () => {
     const queryParams = new URLSearchParams();
   
-    // 검색어가 입력된 경우 지역 데이터를 무시
     if (searchData.searchWord) {
       queryParams.append("searchWord", searchData.searchWord);
     } else {
@@ -135,7 +134,6 @@ const FacilitySection = ({ onClose }) => {
 
 
 <div className="p-4 bg-white rounded-lg shadow-sm mb-3">
-  {/* 탭 제목 */}
   <h3
     className="text-lg font-semibold mb-2 cursor-pointer flex justify-between items-center"
     onClick={() =>
@@ -146,13 +144,11 @@ const FacilitySection = ({ onClose }) => {
     <span className="text-sm text-gray-500">{renderSelectedSummary("region")}</span>
   </h3>
 
-  {/* 검색창과 지역 선택 섹션 */}
   <div
     className={`overflow-hidden transition-all duration-300 ${
       activeSection === "where" || activeSection === "region" ? "max-h-[500px]" : "max-h-0"
     }`}
   >
-    {/* 검색창 */}
     <div className="mb-4 relative">
   <input
     type="text"
@@ -161,9 +157,8 @@ const FacilitySection = ({ onClose }) => {
       setSearchData((prev) => ({ ...prev, searchWord: e.target.value }))
     }
     placeholder="지역 또는 시설 검색"
-    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10" // padding-right 추가
+    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:none pr-10" // padding-right 추가
   />
-  {/* SVG 아이콘 */}
   <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -183,7 +178,6 @@ const FacilitySection = ({ onClose }) => {
 </div>
 
 
-    {/* 지역 선택 */}
     <div className="mb-2">
       <button
         onClick={() => handleRegionSelect("전체")}
@@ -212,7 +206,6 @@ const FacilitySection = ({ onClose }) => {
       ))}
     </div>
 
-    {/* 다음 버튼 */}
     <button
       className="w-full mt-4 bg-white text-[#3288FF] border border-[#3288FF] py-2 rounded-lg"
       onClick={() => setActiveSection("category")}

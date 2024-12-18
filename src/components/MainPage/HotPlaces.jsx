@@ -7,14 +7,14 @@ import fireIcon from '../../stories/assets/fire.svg';
 const HotPlaces = ({ accessToken, refreshAccessToken }) => {
   const [places, setPlaces] = useState([]);
   const [error, setError] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(7); // 기본값을 7(펜션)으로 설정
+  const [selectedCategory, setSelectedCategory] = useState(7); 
   const scrollRef = useRef(null);
   const categoryRef = useRef(null);
   const navigate = useNavigate();
 
   const categories = [
-    { id: 7, name: "펜션", apiPath: "/api/v1/pensions/top" }, // 펜션을 첫 번째로
-    { id: 6, name: "마당", apiPath: "/api/v1/places/6/top" }, // 마당을 두 번째로
+    { id: 7, name: "펜션", apiPath: "/api/v1/pensions/top" }, 
+    { id: 6, name: "마당", apiPath: "/api/v1/places/6/top" }, 
     { id: 1, name: "공원", apiPath: "/api/v1/places/1/top" },
     { id: 2, name: "관광지", apiPath: "/api/v1/places/2/top" },
     { id: 3, name: "놀이터", apiPath: "/api/v1/places/3/top" },
@@ -31,7 +31,6 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
         "Content-Type": "application/json",
       };
   
-      // 토큰이 있는 경우에만 Authorization 헤더 추가
       if (token) {
         headers.Authorization = `Bearer ${token}`;
       }
@@ -70,7 +69,6 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
     navigate(routePath);
   };
 
-  // 드래그 스크롤 기능
   const addDragScroll = (ref) => {
     let isDragging = false;
     let startX, scrollLeft;
@@ -117,29 +115,34 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
   />
 </h2>
 
-      {/* 카테고리 버튼 */}
-      <div
-        ref={categoryRef}
-        className="pl-2 flex gap-2 mb-4 overflow-x-auto cursor-grab"
-        style={{ scrollbarWidth: "none" }}
-      >
-        <style>{`div::-webkit-scrollbar { display: none; }`}</style>
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => setSelectedCategory(category.id)}
-            className={`px-4 py-2 min-w-[100px] border rounded-lg ${
-              selectedCategory === category.id
-                ? "border-[#3288ff] text-blue-500 font-semibold"
-                : "border-gray-300 text-gray-600"
-            } hover:bg-gray-100 text-center`}
-          >
-            {category.name}
-          </button>
-        ))}
-      </div>
+<div
+  ref={categoryRef}
+  className="pl-2 flex gap-2 mb-4 overflow-x-auto cursor-grab"
+  style={{ scrollbarWidth: "none" }}
+>
+  <style>{`div::-webkit-scrollbar { display: none; }`}</style>
+  {categories.map((category) => (
+    <button
+      key={category.id}
+      onClick={() => setSelectedCategory(category.id)}
+      className={`
+        px-4 py-2 min-w-[100px] border rounded-lg 
+        text-center 
+        ${
+          selectedCategory === category.id
+            ? "border-[#3288ff] text-blue-500 font-semibold"
+            : "border-gray-300 text-gray-600"
+        }
+        hover:bg-gray-100 
+        text-[12px] px-[8px] py-[4px]
+        sm:text-base sm:px-2 sm:py-1
+      `}
+    >
+      {category.name}
+    </button>
+  ))}
+</div>
 
-      {/* 스크롤 가능한 그리드 */}
       <div
   ref={scrollRef}
   className="
@@ -166,7 +169,6 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
               style={{ width: "100%" }}
               onClick={() => handleItemClick(place)}
             >
-              {/* 이미지 영역 */}
               <div
                 className="w-20 h-20 bg-gray-300 rounded-lg flex-shrink-0"
                 style={{
@@ -176,14 +178,11 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
                 }}
               ></div>
 
-              {/* 텍스트 영역 */}
               <div className="flex-1 ml-2">
-                {/* 주소 */}
                 <p className="text-xs text-gray-500 truncate mt-1">
                   {place.address || "주소 정보 없음"}
                 </p>
 
-                {/* 제목 + 숫자 */}
                 <div className="flex items-center">
                   <p className="text-lg font-bold mr-1">{idx + 1 + startIndex}.</p>
                   <h3 className="text-sm font-bold truncate">
@@ -191,7 +190,6 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
                   </h3>
                 </div>
 
-                {/* 별점 */}
                 <p className="text-sm text-gray-500 mt-1">
                   ⭐ {place.reviewAvg?.toFixed(1)} ({place.reviewCount || 0})
                 </p>

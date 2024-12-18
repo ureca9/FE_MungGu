@@ -4,6 +4,7 @@ import axios from "axios";
 import SearchModal from "../../components/MainPage/SearchModal/SearchModal";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import useLoadingStore from "../../stores/common/useLoadingStore";
+import Swal from 'sweetalert2';
 
 const PensionListPage = () => {
   const navigate = useNavigate();
@@ -101,40 +102,54 @@ const PensionListPage = () => {
   
   const toggleLike = async (pensionId) => {
     try {
+      const accessToken = localStorage.getItem('ACCESS_TOKEN');
+      if (!accessToken) {
+        // 로그인 상태가 아니라면 경고 모달 띄우기
+        const result = await Swal.fire({
+          title: '로그인 후 이용해주세요.',
+          icon: 'warning',
+          showCancelButton: true, // 취소 버튼 추가
+          confirmButtonText: '로그인',
+          cancelButtonText: '취소',
+          confirmButtonColor: '#3288FF',
+        });
+  
+        if (result.isConfirmed) {
+          // 확인 버튼을 누르면 /login으로 이동
+          navigate('/login');
+        }
+        return; // 로그인하지 않은 경우 찜 요청 중단
+      }
+  
+      // 로그인 상태일 때 찜 상태 토글 처리
+      const headers = {
+        Accept: 'application/json',
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+      };
+  
+      await axios.post(
+        `https://meong9.store/api/v1/pensions/likes/${pensionId}`, // pensionId 사용
+        {},
+        { headers },
+      );
+  
+      // 찜 상태를 업데이트
       setPensions((prevPensions) =>
         prevPensions.map((pension) =>
           pension.pensionId === pensionId
             ? { ...pension, likeStatus: !pension.likeStatus }
             : pension
         )
-      );
-
-      const accessToken = localStorage.getItem("ACCESS_TOKEN");
-
-      await axios.post(
-        `https://meong9.store/api/v1/pensions/likes/${pensionId}`,
-        {},
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-          },
-        }
       );
     } catch (error) {
-      console.error("Failed to toggle like status:", error);
-
-      setPensions((prevPensions) =>
-        prevPensions.map((pension) =>
-          pension.pensionId === pensionId
-            ? { ...pension, likeStatus: !pension.likeStatus }
-            : pension
-        )
-      );
+      console.error('찜 상태 업데이트 실패:', error);
+      Swal.fire({
+        title: '찜 상태를 업데이트하는 중 문제가 발생했습니다.',
+        icon: 'error',
+      });
     }
   };
-
+  
   useEffect(() => {
     const loadInitialData = async () => {
       setIsLoading(true);
@@ -232,7 +247,6 @@ const PensionListPage = () => {
     <div className="min-h-screen bg-gray-50">
       <LoadingSpinner />
   
-      {/* 검색 모달 */}
       {isModalOpen && (
         <SearchModal
           onClose={() => setIsModalOpen(false)}
@@ -240,7 +254,6 @@ const PensionListPage = () => {
         />
       )}
   
-      {/* 검색 헤더 */}
       <header className="bg-white shadow-md p-4 flex items-center justify-between">
         <div
           className="flex items-center gap-2 p-3 border border-gray-300 rounded-lg cursor-pointer flex-grow"
@@ -255,7 +268,6 @@ const PensionListPage = () => {
         </div>
       </header>
   
-      {/* 태그 필터 */}
       <div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-hidden">
   {tags.map((tag) => (
     <button
@@ -272,7 +284,6 @@ const PensionListPage = () => {
   ))}
 </div>
   
-      {/* 펜션 리스트 */}
       <div className="p-4 space-y-4">
         {filteredPensions.length > 0 ? (
           filteredPensions.map((pension) => (
@@ -281,16 +292,13 @@ const PensionListPage = () => {
               className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer"
               onClick={() => handlePensionClick(pension.pensionId)}
             >
-              {/* 이미지 */}
               <img
                 src={pension.images?.[0] || "/placeholder-image.jpg"}
                 alt={pension.pensionName || "이미지 없음"}
                 className="w-full h-48 sm:h-[250px] object-cover"
               />
   
-              {/* 카드 내용 */}
               <div className="p-4 flex justify-between items-start">
-                {/* 왼쪽: 이름과 주소 */}
                 <div className="flex flex-col space-y-1">
                   <h2 className="text-[14px] sm:text-xl font-bold mb-2 truncate">
                     {pension.pensionName || "이름 없음"}
@@ -299,16 +307,13 @@ const PensionListPage = () => {
                     {pension.address || "주소 정보 없음"}
                   </p>
   
-                  {/* 입실/퇴실 시간 (sm 이하에서 보임) */}
                   <p className="text-sm text-gray-500 flex sm:hidden flex-col">
                     <span>입실 {pension.startTime || "정보 없음"}</span>
                     <span>퇴실 {pension.endTime || "정보 없음"}</span>
                   </p>
                 </div>
   
-                {/* 오른쪽: 리뷰, 좋아요 버튼, 가격, 입/퇴실 */}
                 <div className="flex flex-col items-end space-y-1 -mt-1">
-                  {/* 리뷰와 좋아요 */}
                   <div className="flex items-center space-x-1 sm:space-x-2">
                     <span className="text-yellow-500 font-semibold">
                       ⭐ {pension.reviewAvg || "0"}{" "}
@@ -328,8 +333,6 @@ const PensionListPage = () => {
                       {pension.likeStatus ? "❤️" : "🤍"}
                     </button>
                   </div>
-  
-                  {/* 가격 부분 */}
                   <div className="flex items-baseline space-x-1 flex-nowrap">
   <span className="text-blue-500 font-bold text-lg sm:text-2xl">
     {pension.lowestPrice
@@ -341,9 +344,6 @@ const PensionListPage = () => {
   </span>
 </div>
 
-
-  
-                  {/* 입실/퇴실 시간 (sm 이상에서 보임) */}
                   <p className="hidden sm:flex text-sm text-gray-500 space-x-1">
                     <span>입실 {pension.startTime || "정보 없음"}</span>
                     <span>~</span>
