@@ -2,12 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import petFourPic from '../../assets/MypageImg/petFourpic.svg';
 import { IoHeartCircleSharp } from 'react-icons/io5';
+import MyPageImg from '../../assets/MypageImg/MyPageImg.png';
 const ServiceList = () => {
   const navigate = useNavigate();
   const serviceList = [
     {
       name: '멍생네컷',
-      path: '/',
+      path: ROUTER_PATHS.MUNGSENGNEACUT,
       icon: <img src={petFourPic} alt="멍생네컷" />,
     },
     {
@@ -22,26 +23,38 @@ const ServiceList = () => {
     {
       name: '내가 쓴 후기',
       path: ROUTER_PATHS.MY_REVIEW,
-      icon: 'bg-후기_아이콘',
+      icon: (
+        <div
+          className="w-[24px] h-[24px]"
+          style={{
+            backgroundImage: `url(${MyPageImg})`,
+            backgroundPosition: '-54px -133px',
+          }}
+        ></div>
+      ),
     },
     {
       name: '최근 본 장소',
       path: ROUTER_PATHS.VIEW_HISTORY,
-      icon: 'bg-최근_본_장소_아이콘',
+      icon: (
+        <div
+          className="w-[24px] h-[24px]"
+          style={{
+            backgroundImage: `url(${MyPageImg})`,
+            backgroundPosition: '-149px -54px',
+          }}
+        ></div>
+      ),
     },
   ];
   return (
-    <div className="h-auto py-8 bg-white border rounded-lg px-9 border-borderlineGray">
+    <div className="h-auto p-5 bg-white border rounded-lg md:py-8 md:px-9 border-borderlineGray">
       <div className="mb-3 text-xl text-textGray">서비스 관리</div>
       <div className="flex flex-col">
         {serviceList.map((service) => (
           <label key={service.name} className="flex items-center my-3 w-52">
             <div className="flex text-3xl cursor-pointer">
-              {service.name === '멍생네컷' || service.name === '즐겨찾기' ? (
-                <div>{service.icon}</div>
-              ) : (
-                <div className={service.icon}></div>
-              )}
+              <div>{service.icon}</div>
             </div>
             <button
               onClick={() => {

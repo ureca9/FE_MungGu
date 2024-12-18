@@ -4,50 +4,41 @@ import { IoMdCheckmark } from 'react-icons/io';
 import usePetStore from '../../stores/pet/usePetStore';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import Swal from 'sweetalert2';
-import { useRef, useEffect } from 'react'; // useRef, useEffect 추가
+import MyPageImg from '../../assets/MypageImg/MyPageImg.png';
+import { useRef, useEffect } from 'react';
 const MyPet = ({ memberD, navigate }) => {
   const { selectedPetId, setSelectedPetId } = usePetStore();
-  const scrollRef = useRef(null); // 스크롤 컨테이너 ref
+  const scrollRef = useRef(null);
+
+  const { setBasicData } = usePetStore();
+  useEffect(() => {
+    setBasicData(null);
+  }, [setBasicData]);
+
+  const handleWheel = (e) => {
+    e.preventDefault();
+
+    const ref = scrollRef.current;
+
+    if (e.deltaY > 0) {
+      ref.scrollLeft += 40;
+    } else {
+      ref.scrollLeft -= 40;
+    }
+  };
 
   useEffect(() => {
-    const scrollContainer = scrollRef.current;
+    const ref = scrollRef.current;
 
-    if (scrollContainer) {
-      let isDragging = false;
-      let startX;
-      let scrollLeft;
-
-      const onMouseDown = (e) => {
-        isDragging = true;
-        startX = e.pageX - scrollContainer.offsetLeft;
-        scrollLeft = scrollContainer.scrollLeft;
-      };
-
-      const onMouseUp = () => {
-        isDragging = false;
-      };
-
-      const onMouseMove = (e) => {
-        if (!isDragging) return;
-        e.preventDefault();
-        const x = e.pageX - scrollContainer.offsetLeft;
-        const walk = (x - startX) * 1; // 스크롤 속도 조절
-        scrollContainer.scrollLeft = scrollLeft - walk;
-      };
-
-      scrollContainer.addEventListener('mousedown', onMouseDown);
-      scrollContainer.addEventListener('mouseup', onMouseUp);
-      scrollContainer.addEventListener('mouseleave', onMouseUp);
-      scrollContainer.addEventListener('mousemove', onMouseMove);
-
-      return () => {
-        // 컴포넌트 unmount 시 이벤트 리스너 제거
-        scrollContainer.removeEventListener('mousedown', onMouseDown);
-        scrollContainer.removeEventListener('mouseup', onMouseUp);
-        scrollContainer.removeEventListener('mouseleave', onMouseUp);
-        scrollContainer.removeEventListener('mousemove', onMouseMove);
-      };
+    if (ref) {
+      ref.addEventListener('wheel', handleWheel);
     }
+
+    return () => {
+      if (ref) {
+        ref.removeEventListener('wheel', handleWheel);
+      }
+    };
   }, []);
 
   const handleClick = (puppyId) => {
@@ -58,7 +49,7 @@ const MyPet = ({ memberD, navigate }) => {
     }
   };
   return (
-    <div className="flex flex-col w-full h-auto p-3 bg-white border rounded-lg sm:p-8 border-borderlineGray">
+    <div className="flex flex-col w-full h-auto p-5 bg-white border rounded-lg md:p-8 border-borderlineGray">
       <div className="flex items-center justify-between mb-2">
         <span>
           <span className="text-xl text-textGray">마이펫</span>
@@ -84,10 +75,9 @@ const MyPet = ({ memberD, navigate }) => {
           }}
         />
       </div>
-      {/* <div className="flex w-full gap-1 pt-1 overflow-x-auto sm:justify-start sm:gap-2 scrollbar-none"> */}
       <div
-        ref={scrollRef} // ref 연결
-        className="flex w-full gap-1 pt-4 overflow-x-auto overflow-y-hidden sm:justify-start sm:gap-2 scrollbar-none"
+        ref={scrollRef}
+        className="flex w-full gap-1 pt-4 overflow-x-auto overflow-y-hidden md:justify-start md:gap-2 scrollbar-none"
       >
         {memberD?.puppyList.map((puppy) => (
           <div
@@ -115,10 +105,16 @@ const MyPet = ({ memberD, navigate }) => {
             e.preventDefault();
             navigate('/pet-add');
           }}
-          className="flex flex-col items-center justify-center"
+          className="flex flex-col items-center justify-center pt-2 pr-1 transition duration-300 transform hover:scale-105"
         >
           <div className="bg-[#F5F5F5] border border-[#8A8A8A] flex items-center justify-center rounded-full size-16">
-            <div className="bg-PlusIcon"></div>
+            <div
+              className="w-[35px] h-[35px]"
+              style={{
+                backgroundImage: `url(${MyPageImg})`,
+                backgroundPosition: ' -10px -78px',
+              }}
+            ></div>
           </div>
           <span className="flex justify-center mt-2 text-textGray">
             추가하기

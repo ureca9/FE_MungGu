@@ -25,8 +25,8 @@ const MyPage = () => {
   }, [memberD]);
 
   return (
-    <div className="bg-backgroundGray min-w-96 sm:w-full">
-      <div className="flex flex-col gap-3 mx-2 sm:gap-5 sm:mx-5">
+    <div className="bg-backgroundGray min-w-96 md:w-full">
+      <div className="flex flex-col gap-3 mx-5 md:gap-5 md:mx-5">
         <UserData memberD={memberD} navigate={navigate} />
         <MyPet memberD={memberD} navigate={navigate} />
         <ServiceList />

@@ -1,11 +1,12 @@
 import { Description, Dialog, DialogPanel } from '@headlessui/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { RxStarFilled } from 'react-icons/rx';
 import usericon from '../../assets/MypageImg/user.svg';
 import { BsChevronCompactLeft, BsChevronCompactRight } from 'react-icons/bs';
 import { CircularProgress } from '@mui/material';
 
 const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
+  const scrollRef = useRef(null);
   const { content, nickname, score, visitDate, file, profileImageUrl } =
     reviewData;
 
@@ -27,6 +28,73 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
   const handleImageLoad = () => {
     setIsLoading(false);
   };
+
+  const handleClickImage = (index) => {
+    setCurrentImageIndex(index);
+    setIsLoading(true);
+  };
+
+  useEffect(() => {
+    const ref = scrollRef.current;
+    const handleWheel = (e) => {
+      e.stopPropagation(); // 이벤트 전파 방지
+      if (e.deltaY > 0) {
+        ref.scrollLeft += 40;
+      } else {
+        ref.scrollLeft -= 40;
+      }
+    };
+
+    console.log('스크롤', scrollRef.current);
+
+    if (ref && isOpen && ref.current) {
+      // ref.current가 유효한지 확인
+      ref.addEventListener('wheel', handleWheel);
+    }
+
+    return () => {
+      // 컴포넌트가 언마운트되거나 isOpen 상태가 변경될 때 리스너 제거
+      if (ref) {
+        ref.removeEventListener('wheel', handleWheel);
+      }
+    };
+  }, [isOpen, scrollRef]); // isOpen 상태가 변경될 때만 useEffect 실행
+
+  // const handleWheel = (e) => {
+  //   // e.preventDefault();
+  //   e.stopPropagation();
+  //   const ref = scrollRef.current;
+  //   if (e.deltaY > 0) {
+  //     ref.scrollLeft += 40;
+  //   } else {
+  //     ref.scrollLeft -= 40;
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   const ref = scrollRef.current;
+  //   if (ref) {
+  //     ref.addEventListener('wheel', handleWheel);
+  //   }
+  //   return () => {
+  //     if (ref) {
+  //       ref.removeEventListener('wheel', handleWheel);
+  //     }
+  //   };
+  // }, []);
+
+  // useEffect(() => {
+  //   const ref = scrollRef.current;
+  //   if (isOpen && ref) {
+  //     ref.addEventListener('wheel', handleWheel);
+  //   }
+  //   return () => {
+  //     if (ref) {
+  //       ref.removeEventListener('wheel', handleWheel);
+  //     }
+  //   };
+  // }, [isOpen]);
+
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
@@ -98,13 +166,19 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                   </span>
                 </div>
               </div>
-              <div className="flex flex-col justify-between flex-grow h-full mt-5 overflow-y-auto">
-                <div className="flex mb-2 overflow-y-auto">{content}</div>
-                <div className="flex items-end w-full gap-1 overflow-y-auto min-h-28">
+              <div className="flex flex-col justify-between flex-grow h-full mt-5 overflow-y-auto scrollbar-none">
+                <div className="flex mb-2 overflow-y-auto scrollbar-none">
+                  {content}
+                </div>
+                <div
+                  ref={scrollRef}
+                  className="flex items-end w-full gap-1 overflow-x-auto min-h-28 scrollbar-none"
+                >
                   {file.map((file, index) => (
                     <div
                       key={index}
-                      className="min-w-20 max-w-20 h-20 bg-[#D9D9D9] rounded-lg flex items-center justify-center"
+                      onClick={() => handleClickImage(index)}
+                      className="min-w-20 max-w-20 h-20 bg-[#D9D9D9] rounded-lg flex items-center justify-center cursor-pointer"
                     >
                       {file.fileType === 'IMAGE' ? (
                         <img

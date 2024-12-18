@@ -39,7 +39,7 @@ const UserData = ({ memberD, navigate }) => {
   };
 
   return (
-    <div className="h-auto py-5 mt-5 bg-white border rounded-lg px-9 border-borderlineGray min-h-40">
+    <div className="h-auto p-5 mt-3 bg-white border rounded-lg md:py-5 md:mt-5 md:px-9 border-borderlineGray min-h-40">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <img
@@ -51,11 +51,11 @@ const UserData = ({ memberD, navigate }) => {
             {memberD?.nickname || '로그인이 필요합니다'}
           </span>
         </div>
-        <div className="justify-between">
+        <div className="flex flex-col items-center justify-between h-16 md:flex-row">
           {!isLoggedIn ? (
             <button
               onClick={() => navigate(ROUTER_PATHS.LOGIN)}
-              className="text-sm px-2 py-1 font-bold text-[#3288FF] bg-transparent border-none cursor-pointer"
+              className="text-sm py-1 font-bold text-[#3288FF] bg-transparent border-none cursor-pointer"
             >
               로그인
             </button>
@@ -63,7 +63,7 @@ const UserData = ({ memberD, navigate }) => {
             <>
               <button
                 onClick={handleLogout}
-                className="text-sm mr-4 font-bold text-[#FF0000] bg-transparent border-none cursor-pointer"
+                className="text-sm font-bold text-[#FF0000] bg-transparent border-none cursor-pointer px-4"
               >
                 로그아웃
               </button>
