@@ -8,6 +8,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
 import SubHeader from '../../components/common/SubHeader';
+import emptyIcon from "../../assets/common/petgray.svg"
 
 
 
@@ -313,7 +314,7 @@ const PlaceDetailPage = () => {
           <img
             src={
               photoReview.representativeImageUrl ||
-              'https://via.placeholder.com/150'
+              emptyIcon
             }
             alt="포토 리뷰"
             className="object-cover w-full h-24 mb-2 rounded-lg"

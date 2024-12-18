@@ -10,6 +10,7 @@ import RecommendedFacility from '../../components/DetailPage/RecommendedFacility
 import ReviewDetailModal from '../../components/review/ReviewDetailModal';
 import Swal from 'sweetalert2';
 import SubHeader from '../../components/common/SubHeader';
+import reviewemptyIcon from "../../assets/common/petgray.svg"
 
 
 const sliderSettings = {
@@ -244,12 +245,12 @@ const PensionDetailPage = () => {
     </button>
   </div>
   <div className="relative">
-  <div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-hidden">
+    <div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-hidden">
       {pensionDetail.review.slice(0, 20).map((review, index) => {
         const firstFileUrl =
           review.file && review.file.length > 0
             ? review.file[0].fileUrl
-            : null;
+            : reviewemptyIcon; // reviewemptyIcon으로 대체
         const fileType =
           review.file && review.file.length > 0
             ? review.file[0].fileType
@@ -263,7 +264,7 @@ const PensionDetailPage = () => {
           >
             {fileType === 'IMAGE' ? (
               <img
-                src={firstFileUrl || 'https://via.placeholder.com/150'}
+                src={firstFileUrl} // 이미지를 대체 URL로 사용
                 alt="리뷰 사진"
                 className="object-cover w-full h-24 rounded-lg"
               />
@@ -275,12 +276,14 @@ const PensionDetailPage = () => {
               />
             ) : (
               <div className="flex items-center justify-center w-full h-24 bg-gray-200 rounded-lg">
-                파일 없음
+                <img
+                  src={reviewemptyIcon} // 빈 리뷰 아이콘 표시
+                  alt="빈 리뷰 아이콘"
+                  className="w-12 h-12"
+                />
               </div>
             )}
-            <p className="mt-2 text-sm font-bold truncate">
-              {review.nickname}
-            </p>
+            <p className="mt-2 text-sm font-bold truncate">{review.nickname}</p>
             <p className="text-xs text-gray-500 truncate">
               {review.content.slice(0, 30)}...
             </p>
@@ -290,6 +293,7 @@ const PensionDetailPage = () => {
     </div>
   </div>
 </section>
+
 
 
 
