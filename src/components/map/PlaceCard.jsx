@@ -119,7 +119,12 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
       }
     >
       <div className="absolute top-4 right-4">
-        <button onClick={() => handleLikeClick(placeId)}>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleLikeClick(placeId);
+          }}
+        >
           {searchType === SearchType.SEARCH ? (
             likedPlaces[placeId] ? (
               <FaHeart
