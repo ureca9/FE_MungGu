@@ -12,10 +12,10 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
   const { setCoords } = useCoordsStore();
 
   const formatDistance = (distance) => {
-    if (distance == null) return '';
+    if (!distance) return '';
     return distance >= 1000
-      ? `${(distance / 1000).toFixed(1)}km`
-      : `${distance}m`;
+      ? (distance / 1000).toFixed(1) + 'km'
+      : distance.toFixed(1) + 'm';
   };
 
   const { type, placeId, name, images, latitude, longitude } = place;
