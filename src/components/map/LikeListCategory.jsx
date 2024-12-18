@@ -22,14 +22,15 @@ const LikeListCategory = ({ onCategorySelect }) => {
 
   return (
     <div className="p-4 rounded-lg">
-      <div className="flex gap-3">
+      <div className="flex gap-3 overflow-x-auto scroll-smooth">
+        <style>{`div::-webkit-scrollbar { display: none; }`}</style>
         {categories.map((category) => (
           <button
             key={category}
-            className={`flex justify-around items-center w-full py-2 border-2 rounded-lg transition ${
+            className={`flex justify-around items-center w-full min-w-[80px]  py-2 border-2 rounded-lg transition ${
               selectedCategory === category
-                ? 'bg-blue-500 text-white'
-                : 'bg-white text-gray-700'
+                ? 'border-[#3288ff] text-blue-500 font-semibold'
+                : 'border-gray-300 text-gray-600'
             } hover:bg-gray-100`}
             onClick={() => handleCategoryClick(category)}
           >
