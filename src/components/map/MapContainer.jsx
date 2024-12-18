@@ -7,6 +7,7 @@ import usePlaceStore from '../../stores/map/usePlaceStore.js';
 import { SearchType } from '../../utils/SearchType.js';
 import useLoadingStore from '../../stores/common/useLoadingStore.js';
 import LoadingSpinner from '../common/LoadingSpinner.jsx';
+import usePolylineStore from '../../stores/map/usePolylineStore.js';
 
 const MapContainer = () => {
   const mapContainer = useRef(null);
@@ -15,6 +16,7 @@ const MapContainer = () => {
   const likedMarkersRef = useRef([]);
   const searchMarkersRef = useRef([]);
   const polylineRef = useRef(null);
+  const { setPolyline } = usePolylineStore();
 
   const { coords, setCoords } = useCoordsStore();
   const {
@@ -193,6 +195,7 @@ const MapContainer = () => {
         strokeStyle: 'solid',
       });
       polylineRef.current.setMap(mapRef.current);
+      setPolyline(polylineRef.current);
     } catch (error) {
       console.error('경로 데이터를 불러오는 중 오류가 발생했습니다:', error);
     } finally {

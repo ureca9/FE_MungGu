@@ -1,12 +1,22 @@
-import { FaDirections } from 'react-icons/fa';
+import { FaDirections, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import ROUTER_PATHS from '../../utils/RouterPath.js';
 import usePlaceStore from '../../stores/map/usePlaceStore.js';
 import { SearchType } from '../../utils/SearchType.js';
+import usePolylineStore from '../../stores/map/usePolylineStore.js';
 
 const MapSearch = () => {
   const navigate = useNavigate();
-  const { searchType, setSearchType } = usePlaceStore();
+  const {
+    searchType,
+    startLocation,
+    endLocation,
+    setSearchType,
+    setSearchResults,
+    setSelectedPlace,
+    setEndLocation,
+  } = usePlaceStore();
+  const { polyline, clearPolyline } = usePolylineStore();
 
   const handleDirectionsClick = () => navigate(ROUTER_PATHS.DIRECTIONS);
   return (
@@ -31,7 +41,48 @@ const MapSearch = () => {
           </button>
         </div>
       ) : (
-        <h1>안녕</h1>
+        <div className="flex flex-col space-y-4">
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              placeholder="출발지를 입력해주세요"
+              className="w-full py-3 px-4 border border-gray-300 rounded-lg"
+              value={startLocation?.name}
+              onClick={() => {
+                setSearchType(SearchType.START);
+                navigate(ROUTER_PATHS.MAP_SEARCH);
+              }}
+              readOnly={true}
+            />
+            <button
+              className="text-gray-500 hover:text-red-500"
+              onClick={() => {
+                setSearchType(SearchType.SEARCH);
+                setSelectedPlace(null);
+                setEndLocation(null);
+                setSearchResults([]);
+                polyline.setMap(null);
+                clearPolyline();
+              }}
+            >
+              <FaTimes className="text-2xl" />
+            </button>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              placeholder="도착지를 입력해주세요"
+              className="w-full py-3 px-4 border border-gray-300 rounded-lg"
+              value={endLocation?.name}
+              onClick={() => {
+                setSearchType(SearchType.END);
+                navigate(ROUTER_PATHS.MAP_SEARCH);
+              }}
+              readOnly={true}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

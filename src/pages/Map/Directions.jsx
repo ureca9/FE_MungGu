@@ -36,6 +36,7 @@ const Directions = () => {
             type="text"
             placeholder="출발지를 입력해주세요"
             className="flex-grow py-3 px-4 border border-gray-300 rounded-lg"
+            readOnly={true}
             value={startLocation?.name}
             onClick={() => {
               setSearchType(SearchType.START);
@@ -44,7 +45,7 @@ const Directions = () => {
             onChange={(e) => setStartLocation(e.target.value)}
           />
           <button
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-red-500"
             onClick={() => navigate(ROUTER_PATHS.MAP)}
           >
             <FaTimes className="text-2xl" />
@@ -57,6 +58,7 @@ const Directions = () => {
             placeholder="도착지를 입력해주세요"
             className="flex-grow py-3 px-4 border border-gray-300 rounded-lg"
             value={endLocation?.name}
+            readOnly={true}
             onClick={() => {
               setSearchType(SearchType.END);
               navigate(ROUTER_PATHS.MAP_SEARCH);
@@ -64,7 +66,7 @@ const Directions = () => {
             onChange={(e) => setEndLocation(e.target.value)}
           />
           <button
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-blue-500"
             onClick={handleSearch}
           >
             <FaDirections className="text-2xl" />

@@ -8,7 +8,8 @@ import ROUTER_PATHS from '../../utils/RouterPath.js';
 
 const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
   const navigate = useNavigate();
-  const { searchType, setStartLocation, setEndLocation } = usePlaceStore();
+  const { searchType, setStartLocation, setEndLocation, setSelectedPlace } =
+    usePlaceStore();
   const { setCoords } = useCoordsStore();
 
   const formatDistance = (distance) => {
@@ -104,6 +105,7 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
   const handleListItemClick = (place) => {
     if (searchType === SearchType.START) setStartLocation(place);
     else if (searchType === SearchType.END) setEndLocation(place);
+    setSelectedPlace(place);
     navigate(ROUTER_PATHS.DIRECTIONS);
   };
 
