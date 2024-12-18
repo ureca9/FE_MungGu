@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import reviewIcon from "../../stories/assets/reviewicon.svg";
+import reviewenptyIcon from "../../assets/common/petgray.svg"
 
 const LiveReviews = ({ accessToken }) => {
   const [reviews, setReviews] = useState([]);
@@ -112,7 +113,7 @@ const LiveReviews = ({ accessToken }) => {
             style={{ margin: 5 }}
           >
             <img
-              src={review.img || "https://via.placeholder.com/150"}
+              src={review.img || reviewenptyIcon}
               alt={`${review.name} 대표 이미지`}
               className="w-full h-32 rounded-lg object-cover mb-0"
             />

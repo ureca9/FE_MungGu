@@ -3,6 +3,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import treeIcon from "../../stories/assets/tree.svg";
+import emptyIcon from "../../assets/common/petgray.svg"
+
 
 const RecommendedPensions = () => {
   const [pensions, setPensions] = useState([]);
@@ -119,27 +121,29 @@ const RecommendedPensions = () => {
   >
       {pensions.map((pension) => (
         <div
-          key={pension.id}
-          className="flex-none w-60 bg-white rounded-lg text-center snap-start cursor-pointer"
-          onClick={() => handlePensionClick(pension.id)}
-        >
-          <div
-            className="w-48 h-24 bg-gray-300 rounded-lg mb-2 
-                      sm:w-full h-32"
-            style={{
-              backgroundImage: `url(${pension.img || "https://via.placeholder.com/150"})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-            }}
-          ></div>
-          <h3 className="text-base font-semibold text-gray-800 truncate sm:pr-0 pr-12">
-            {pension.name}
-          </h3>
-          <p className="text-sm text-gray-500 truncate sm:pr-0 pr-12">{pension.address}</p>
-          <p className="text-sm text-gray-500 mt-1 sm:pr-0 pr-12">
-            ⭐ {pension.reviewAvg || "0"} ({pension.reviewCount || "0"} 리뷰)
-          </p>
-        </div>
+        key={pension.id}
+        className="flex-none w-60 bg-white rounded-lg text-center snap-start cursor-pointer"
+        onClick={() => handlePensionClick(pension.id)}
+      >
+        <div
+          className="w-48 h-24 bg-gray-300 rounded-lg mb-2 sm:w-full h-32"
+          style={{
+            backgroundImage: `url(${pension.img ? pension.img : emptyIcon})`, // 빈 사진을 대체
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        ></div>
+        <h3 className="text-base font-semibold text-gray-800 truncate sm:pr-0 pr-12">
+          {pension.name}
+        </h3>
+        <p className="text-sm text-gray-500 truncate sm:pr-0 pr-12">
+          {pension.address}
+        </p>
+        <p className="text-sm text-gray-500 mt-1 sm:pr-0 pr-12">
+          ⭐ {pension.reviewAvg || "0"} ({pension.reviewCount || "0"} 리뷰)
+        </p>
+      </div>
+      
       ))}
     </div>
   ) : (
