@@ -68,10 +68,12 @@ const PlaceList = ({ selectedCategory }) => {
   };
 
   const placesToShow = useMemo(() => {
-    if (selectedPlace) return selectedPlace;
+    if (selectedPlace) return [selectedPlace];
     if (searchResults.length > 0) return searchResults;
     if (selectedCategory !== '전체') {
-      return likedPlaces.filter((place) => place.category === selectedCategory);
+      return likedPlaces.filter(
+        (place) => place.categoryName === selectedCategory,
+      );
     }
     return likedPlaces;
   }, [searchResults, selectedCategory, likedPlaces, selectedPlace]);
@@ -97,7 +99,7 @@ const PlaceList = ({ selectedCategory }) => {
 };
 
 PlaceList.propTypes = {
-  selectedCategory: PropTypes.string.isRequired,
+  selectedCategory: PropTypes.string,
 };
 
 export default PlaceList;

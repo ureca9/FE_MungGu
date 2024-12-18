@@ -10,7 +10,8 @@ const SubHeader = ({ title }) => {
   const PAGE_TITLES = {
     [ROUTER_PATHS.MAP]: '강아지도',
     [ROUTER_PATHS.MAP_SEARCH]: '지도 검색',
-    [ROUTER_PATHS.DIRECTIONS]: '',
+    [ROUTER_PATHS.DIRECTIONS]: '길찾기',
+    [ROUTER_PATHS.MAP_SEARCH_RESULTS]: '검색 결과',
     [ROUTER_PATHS.MY_PAGE]: '마이페이지',
     [ROUTER_PATHS.LOGIN]: '로그인',
     [ROUTER_PATHS.SEARCH]: '검색',

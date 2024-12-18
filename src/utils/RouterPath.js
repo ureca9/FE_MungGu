@@ -2,6 +2,7 @@ const ROUTER_PATHS = {
   MAIN: '/',
   MAP: '/map',
   MAP_SEARCH: '/map-search',
+  MAP_SEARCH_RESULTS: '/map-search-results',
   DIRECTIONS: '/directions',
   MY_PAGE: '/my-page',
   LOGIN: '/login',
