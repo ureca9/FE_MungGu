@@ -27,7 +27,7 @@ const MapPanel = () => {
       aria-label={`장소 정보 패널 - ${panelState === 'collapsed' ? '접힘' : '펼쳐짐'}`}
     >
       <div
-        className="flex items-center justify-center p-4 cursor-pointer"
+        className="flex items-center justify-center p-4 cursor-pointer sticky top-0 z-10"
         onClick={() => {
           if (panelState === 'collapsed') setPanelState('expanded');
           else if (panelState === 'expanded') setPanelState('maximized');
