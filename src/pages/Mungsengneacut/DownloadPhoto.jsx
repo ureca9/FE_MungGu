@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import downloadBG from '../../assets/mungsengneacut/downloadBG.svg';
+import downloadBgMobile from '../../assets/mungsengneacut/downloadBgMobile.svg';
 import Swal from 'sweetalert2';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { LuShare2 } from 'react-icons/lu';
@@ -15,10 +16,26 @@ const DownloadPhoto = () => {
   const [loading, setLoading] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const navigate = useNavigate();
+  const [currentBg, setCurrentBg] = useState(downloadBG);
 
   const MungsengneacutHome = () => {
     navigate(ROUTER_PATHS.MUNGSENGNEACUT);
   };
+
+  useEffect(() => {
+    const updateBackground = () => {
+      if (window.innerWidth >= 768) {
+        setCurrentBg(downloadBG);
+      } else {
+        setCurrentBg(downloadBgMobile);
+      }
+    };
+    updateBackground();
+    window.addEventListener('resize', updateBackground);
+    return () => {
+      window.removeEventListener('resize', updateBackground);
+    };
+  }, []);
 
   const handleDownload = async () => {
     if (!capturedImage) {
@@ -109,9 +126,9 @@ const DownloadPhoto = () => {
     <div className="flex flex-col items-center justify-center ">
       <div className="relative">
         <div className="block">
-          <img src={downloadBG} alt="배경" className="max-w-full opacity-65" />
+          <img src={currentBg} alt="배경" className="max-w-full opacity-65" />
           {capturedImage ? (
-            <div className="block absolute top-[10%] left-[5%] md:left-[23%] p-4 rounded-lg bg-white shadow-md w-2/3 md:w-1/2">
+            <div className="block absolute top-[10%] left-[10%] md:left-[23%] p-4 rounded-lg bg-white shadow-md w-4/5 md:w-1/2">
               <img
                 src={imageDownloadUrl || capturedImage}
                 alt="Captured Photo"
@@ -142,14 +159,14 @@ const DownloadPhoto = () => {
         </div>
         <div className="block">
           <div
-            className="absolute z-10 top-[10%] left-[80%] bg-white rounded-full w-12 h-12 flex justify-center items-center shadow-md cursor-pointer"
+            className="absolute z-10 top-[2%] md:top-[10%] left-[85%] md:left-[80%] bg-white rounded-full w-12 h-12 flex justify-center items-center shadow-md cursor-pointer"
             onClick={() => setShowShareOptions(!showShareOptions)}
           >
             <LuShare2 size={22} />
           </div>
 
           {showShareOptions && (
-            <div className="absolute top-[10%] left-[80%] bg-[#f1f1f1] rounded-full shadow-md w-12 h-[190px] flex flex-col items-center gap-2 pt-[60px]">
+            <div className="absolute top-[2%] md:top-[10%] left-[85%] md:left-[80%] bg-[#f1f1f1] rounded-full shadow-md w-12 h-[190px] flex flex-col items-center gap-2 pt-[60px]">
               <button
                 onClick={() =>
                   handleShare('instagram', imageDownloadUrl || capturedImage)

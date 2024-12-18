@@ -45,9 +45,9 @@ const UserData = ({ memberD, navigate }) => {
           <img
             src={memberD?.profileImageUrl || userIcon}
             alt="사용자 프로필 이미지"
-            className="rounded-full size-20 bg-[#F5F5F5] border border-[#8A8A8A] user-icon"
+            className="rounded-full size-16 md:size-20 bg-[#F5F5F5] border border-[#8A8A8A] user-icon"
           />
-          <span className="ml-4 text-base">
+          <span className="ml-2 text-sm md:ml-4 md:text-base">
             {memberD?.nickname || '로그인이 필요합니다'}
           </span>
         </div>
@@ -63,7 +63,7 @@ const UserData = ({ memberD, navigate }) => {
             <>
               <button
                 onClick={handleLogout}
-                className="text-sm mr-4 font-bold text-[#FF0000] bg-transparent border-none cursor-pointer"
+                className="text-sm mr-2 md:mr-4 font-bold text-[#FF0000] bg-transparent border-none cursor-pointer"
               >
                 로그아웃
               </button>

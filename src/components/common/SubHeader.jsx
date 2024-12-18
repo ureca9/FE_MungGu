@@ -10,7 +10,8 @@ const SubHeader = ({ title }) => {
   const PAGE_TITLES = {
     [ROUTER_PATHS.MAP]: '강아지도',
     [ROUTER_PATHS.MAP_SEARCH]: '지도 검색',
-    [ROUTER_PATHS.DIRECTIONS]: '',
+    [ROUTER_PATHS.DIRECTIONS]: '길찾기',
+    [ROUTER_PATHS.MAP_SEARCH_RESULTS]: '검색 결과',
     [ROUTER_PATHS.MY_PAGE]: '마이페이지',
     [ROUTER_PATHS.LOGIN]: '로그인',
     [ROUTER_PATHS.SEARCH]: '검색',
@@ -52,16 +53,16 @@ const SubHeader = ({ title }) => {
   };
 
   return (
-    <header className="fixed top-0 z-10 w-full bg-white shadow-md max-w-[768px]">
-  <div className="container flex items-center justify-between h-16 px-4 mx-auto">
-    <button
-      onClick={() => {
-        navigate(-1);
-        handleBackClick();
+    <header className="fixed top-0 z-10 w-full bg-white max-w-[768px]">
+      <div className="container flex items-center justify-between h-16 px-4 mx-auto">
+        <button
+          onClick={() => {
+            navigate(-1);
+            handleBackClick();
       }}
       className="text-xl"
-    >
-      <IoIosArrowBack />
+        >
+          <IoIosArrowBack />
     </button>
     <div className="text-xl font-bold">{pageTitle}</div>
     <div className="w-5"></div>

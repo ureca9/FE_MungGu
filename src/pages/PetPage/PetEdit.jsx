@@ -8,6 +8,7 @@ import {
   GetPuppyBasicData,
   PatchPuppyEditData,
 } from '../../api/pet';
+import { CircularProgress } from '@mui/material';
 
 const PetEdit = () => {
   const { selectedPetId, basicData, setBasicData } = usePetStore();
@@ -58,6 +59,7 @@ const PetEdit = () => {
       Swal.fire({
         title: '수정 성공!',
         icon: 'success',
+        confirmButtonColor: '#3288FF',
       }).then(() => {
         window.location.href = ROUTER_PATHS.MY_PAGE;
       });
@@ -103,7 +105,9 @@ const PetEdit = () => {
           onDelete={handleDelete}
         />
       ) : (
-        <div>데이터를 찾을 수 없습니다.</div>
+        <div className="flex items-center justify-center">
+          <CircularProgress size={60} />
+        </div>
       )}
     </>
   );
