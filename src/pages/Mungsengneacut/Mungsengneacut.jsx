@@ -12,6 +12,7 @@ import {
 } from '../../api/mungsengneacut';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import Swal from 'sweetalert2';
+import { useLocation } from 'react-router-dom';
 
 const PAGE_SIZE = 6;
 
@@ -43,7 +44,9 @@ const formatDate = (dateString) => {
 };
 
 const Mungsengneacut = () => {
-  const [selectedTab, setSelectedTab] = useState(0);
+  const location = useLocation();
+  const initialTab = location.state?.selectedTab || 0;
+  const [selectedTab, setSelectedTab] = useState(initialTab);
   const [allPhotos, setAllPhotos] = useState([]);
   const [myPhotos, setMyPhotos] = useState([]);
   const [page, setPage] = useState(0);
