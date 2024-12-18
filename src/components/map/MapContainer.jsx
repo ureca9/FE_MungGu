@@ -24,7 +24,6 @@ const MapContainer = () => {
     searchResults,
     setSearchResults,
     setSelectedPlace,
-    selectedPlace,
     searchType,
     startLocation,
     endLocation,

@@ -100,6 +100,7 @@ const PlaceList = ({ selectedCategory }) => {
 
 PlaceList.propTypes = {
   selectedCategory: PropTypes.string,
+  categoryName: PropTypes.string,
 };
 
 export default PlaceList;
