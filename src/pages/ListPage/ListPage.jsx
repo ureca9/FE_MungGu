@@ -143,7 +143,6 @@ const ListPage = () => {
           const searchParams = new URLSearchParams();
           for (const key in params) {
             if (Array.isArray(params[key])) {
-              // Convert array to comma-separated string
               searchParams.append(key, params[key].join(","));
             } else {
               searchParams.append(key, params[key]);

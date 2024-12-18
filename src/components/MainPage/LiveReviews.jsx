@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // 페이지 이동을 위한 추가
+import { useNavigate } from "react-router-dom";
 import reviewIcon from "../../stories/assets/reviewicon.svg";
 
 const LiveReviews = ({ accessToken }) => {
@@ -13,7 +13,7 @@ const LiveReviews = ({ accessToken }) => {
   const startX = useRef(0);
   const scrollLeft = useRef(0);
 
-  const navigate = useNavigate(); // 페이지 이동 함수
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -65,7 +65,6 @@ const LiveReviews = ({ accessToken }) => {
     isDragging.current = false;
   };
 
-  // 클릭 이벤트 핸들러 추가
   const handleReviewClick = (type, id) => {
     if (type === "펜션") {
       navigate(`/pension-detail/${id}`);
@@ -106,7 +105,7 @@ const LiveReviews = ({ accessToken }) => {
           {reviews.map((review) => (
             <li
             key={review.reviewId}
-            onClick={() => handleReviewClick(review.type, review.id)} // type과 id를 전달
+            onClick={() => handleReviewClick(review.type, review.id)}
             className="
               flex-none w-60 p-4 bg-white rounded-lg snap-start mt-0 list-none 
               cursor-pointer hover:bg-gray-100 transition"

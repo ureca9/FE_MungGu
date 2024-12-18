@@ -153,7 +153,7 @@ const PensionSection = ({ onClose }) => {
   
 
   const renderSelectedSummary = (section) => {
-    if (activeSection === section) return null; // 선택된 탭에서는 요약 숨김
+    if (activeSection === section) return null; 
   
     switch (section) {
       case "region":

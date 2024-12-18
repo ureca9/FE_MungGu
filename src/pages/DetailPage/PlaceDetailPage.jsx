@@ -106,24 +106,20 @@ const PlaceDetailPage = () => {
     try {
       const accessToken = localStorage.getItem('ACCESS_TOKEN');
       if (!accessToken) {
-        // 로그인 상태가 아니라면 경고 모달 띄우기
         const result = await Swal.fire({
           title: '로그인 후 이용해주세요.',
           icon: 'warning',
-          showCancelButton: true, // 취소 버튼 추가
+          showCancelButton: true, 
           confirmButtonText: '로그인',
           cancelButtonText: '취소',
           confirmButtonColor: '#3288FF',
         });
   
         if (result.isConfirmed) {
-          // 확인 버튼을 누르면 /login으로 이동
           navigate('/login');
         }
-        return; // 로그인하지 않은 경우 찜 요청 중단
+        return; 
       }
-  
-      // 로그인 상태일 때 찜 상태 토글 처리
       const headers = {
         Accept: 'application/json',
         ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
@@ -224,13 +220,11 @@ const PlaceDetailPage = () => {
   <div className="flex items-center justify-between mb-2">
     <h2 className="text-lg font-bold">{placeName}</h2>
     <div className="flex items-center space-x-4">
-      {/* 리뷰 별과 리뷰 수 */}
       <span className="text-sm text-yellow-500 flex items-center space-x-1">
         <span>⭐</span>
         <span>{reviewAvg}</span>
         <span className="text-gray-500">({reviewCount} 리뷰)</span>
       </span>
-      {/* 찜 버튼 */}
       <button
         onClick={toggleLike}
         className={`w-10 h-10 flex items-center justify-center rounded-full ${
@@ -243,7 +237,6 @@ const PlaceDetailPage = () => {
   </div>
   <p className="mb-2 text-sm text-gray-600">{address}</p>
 
-  {/* 태그 표시 */}
   <div className="flex flex-wrap gap-2 mt-2">
     {tags.map((tag, index) => (
       <span

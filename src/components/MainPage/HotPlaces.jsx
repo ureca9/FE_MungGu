@@ -83,7 +83,7 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
       if (!isDragging) return;
       e.preventDefault();
       const x = e.pageX - ref.current.offsetLeft;
-      const walk = (x - startX) * 2; // 스크롤 속도
+      const walk = (x - startX) * 2; 
       ref.current.scrollLeft = scrollLeft - walk;
     };
 

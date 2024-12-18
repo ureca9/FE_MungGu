@@ -104,24 +104,22 @@ const PensionListPage = () => {
     try {
       const accessToken = localStorage.getItem('ACCESS_TOKEN');
       if (!accessToken) {
-        // 로그인 상태가 아니라면 경고 모달 띄우기
+
         const result = await Swal.fire({
           title: '로그인 후 이용해주세요.',
           icon: 'warning',
-          showCancelButton: true, // 취소 버튼 추가
+          showCancelButton: true, 
           confirmButtonText: '로그인',
           cancelButtonText: '취소',
           confirmButtonColor: '#3288FF',
         });
   
         if (result.isConfirmed) {
-          // 확인 버튼을 누르면 /login으로 이동
           navigate('/login');
         }
-        return; // 로그인하지 않은 경우 찜 요청 중단
+        return; 
       }
   
-      // 로그인 상태일 때 찜 상태 토글 처리
       const headers = {
         Accept: 'application/json',
         ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
@@ -157,7 +155,7 @@ const PensionListPage = () => {
         if (location.state) {
           setPensions(location.state.results || []);
           setFilters(location.state.filters || {});
-          setHasNext(location.state.hasNext ?? true); // 초기값 설정
+          setHasNext(location.state.hasNext ?? true); 
           sessionStorage.setItem(
             "pensionListData",
             JSON.stringify({
@@ -172,7 +170,7 @@ const PensionListPage = () => {
             const parsedData = JSON.parse(savedData);
             setPensions(parsedData.results || []);
             setFilters(parsedData.filters || []);
-            setHasNext(parsedData.hasNext ?? true); // 초기값 설정
+            setHasNext(parsedData.hasNext ?? true); 
           }
         }
       } finally {

@@ -72,7 +72,6 @@ const ReservationRoomSection = ({ pensionId }) => {
       <h3 className="text-lg font-bold mb-4">방 정보 보기</h3>
 
       <div className="border-b border-gray-200 pb-4 mb-4 flex flex-wrap gap-4">
-  {/* 날짜 선택 부분 */}
   <div className="w-full sm:w-auto flex gap-4">
     <input
       type="date"
@@ -88,7 +87,6 @@ const ReservationRoomSection = ({ pensionId }) => {
     />
   </div>
 
-  {/* 인원 수 및 강아지 수 선택 부분 */}
   <div className="w-full sm:w-auto flex gap-4">
     <div className="flex items-center gap-2 w-full sm:w-auto">
       <label className="text-sm text-gray-500 whitespace-nowrap">인원 수:</label>
@@ -150,11 +148,8 @@ const ReservationRoomSection = ({ pensionId }) => {
             </div>
 
             <div className="w-full sm:w-2/3 flex flex-col justify-between pl-0 sm:pl-6 mt-4 sm:mt-0">
-              {/* 방 이름 */}
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
                 <h4 className="text-lg font-bold truncate">{room.roomName}</h4>
-
-                {/* 가격과 1박 */}
                 <div className="flex items-center mt-2 sm:mt-0">
                   <span className="text-base sm:text-2xl font-extrabold text-[#3288ff]">
                     {room.price.toLocaleString()}원
@@ -165,7 +160,6 @@ const ReservationRoomSection = ({ pensionId }) => {
                 </div>
               </div>
 
-              {/* 상세 정보 */}
               <div className="text-sm text-gray-600">
                 <p className="mb-1">
                   {room.area ? `${room.area}㎡` : "면적 정보 없음"}

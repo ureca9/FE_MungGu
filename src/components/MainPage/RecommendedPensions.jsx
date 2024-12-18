@@ -16,11 +16,11 @@ const RecommendedPensions = () => {
     const fetchRecommendedPensions = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem("ACCESS_TOKEN");
+        const token = localStorage.getItem('ACCESS_TOKEN');
 
         const headers = {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         };
 
         if (token) {
@@ -28,7 +28,7 @@ const RecommendedPensions = () => {
         }
 
         const response = await axios.get(
-          "https://meong9.store/api/v1/spots/recommendations",
+          'https://meong9.store/api/v1/spots/recommendations',
           { headers }
         );
 
@@ -37,11 +37,11 @@ const RecommendedPensions = () => {
         if (data && data.recommend) {
           setPensions(data.recommend);
         } else {
-          setError("추천 펜션 데이터를 불러오지 못했습니다.");
+          setError('추천 펜션 데이터를 불러오지 못했습니다.');
         }
       } catch (err) {
         Swal.fire({
-          title: "오류 발생",
+          title: '오류 발생',
           text: err.response?.data?.message || "추천 펜션 데이터를 불러오지 못했습니다.",
           icon: "error",
           confirmButtonText: "확인",
@@ -55,38 +55,37 @@ const RecommendedPensions = () => {
     fetchRecommendedPensions();
   }, []);
 
-
   const handlePensionClick = (id) => {
     navigate(`/pension-detail/${id}`);
   };
-  
-    const addDragScroll = (ref) => {
-      let isDragging = false;
-      let startX, scrollLeft;
-  
-      const mouseDownHandler = (e) => {
-        isDragging = true;
-        startX = e.pageX - ref.current.offsetLeft;
-        scrollLeft = ref.current.scrollLeft;
-      };
-  
-      const mouseMoveHandler = (e) => {
-        if (!isDragging) return;
-        e.preventDefault();
-        const x = e.pageX - ref.current.offsetLeft;
-        const walk = (x - startX) * 2; 
-        ref.current.scrollLeft = scrollLeft - walk;
-      };
-  
-      const mouseUpHandler = () => {
-        isDragging = false;
-      };
-  
-      ref.current.addEventListener("mousedown", mouseDownHandler);
-      ref.current.addEventListener("mousemove", mouseMoveHandler);
-      ref.current.addEventListener("mouseup", mouseUpHandler);
-      ref.current.addEventListener("mouseleave", mouseUpHandler);
+
+  const addDragScroll = (ref) => {
+    let isDragging = false;
+    let startX, scrollLeft;
+
+    const mouseDownHandler = (e) => {
+      isDragging = true;
+      startX = e.pageX - ref.current.offsetLeft;
+      scrollLeft = ref.current.scrollLeft;
     };
+
+    const mouseMoveHandler = (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const x = e.pageX - ref.current.offsetLeft;
+      const walk = (x - startX) * 2;
+      ref.current.scrollLeft = scrollLeft - walk;
+    };
+
+    const mouseUpHandler = () => {
+      isDragging = false;
+    };
+  
+    ref.current.addEventListener('mousedown', mouseDownHandler);
+    ref.current.addEventListener('mousemove', mouseMoveHandler);
+    ref.current.addEventListener('mouseup', mouseUpHandler);
+    ref.current.addEventListener('mouseleave', mouseUpHandler);
+  };
   
     useEffect(() => {
       if (scrollRef.current) {
