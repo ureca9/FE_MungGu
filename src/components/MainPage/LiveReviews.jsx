@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import reviewIcon from "../../stories/assets/reviewicon.svg";
+import reviewenptyIcon from "../../assets/common/petgray.svg"
 
 const LiveReviews = ({ accessToken }) => {
   const [reviews, setReviews] = useState([]);
@@ -8,12 +10,12 @@ const LiveReviews = ({ accessToken }) => {
   const [error, setError] = useState(null);
   const scrollRef = useRef(null);
 
-  // 드래그 상태 관리
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
 
-  // 데이터 불러오기
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchReviews = async () => {
       setLoading(true);
@@ -46,94 +48,102 @@ const LiveReviews = ({ accessToken }) => {
     fetchReviews();
   }, [accessToken]);
 
-  // 드래그 이벤트 핸들러
   const handleMouseDown = (e) => {
     isDragging.current = true;
     startX.current = e.pageX - scrollRef.current.offsetLeft;
     scrollLeft.current = scrollRef.current.scrollLeft;
- // 드래그 중 커서 변경
   };
 
   const handleMouseMove = (e) => {
     if (!isDragging.current) return;
 
     const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX.current) * 1.5; // 스크롤 속도 조정
+    const walk = (x - startX.current) * 1.5;
     scrollRef.current.scrollLeft = scrollLeft.current - walk;
   };
 
   const handleMouseUpOrLeave = () => {
-    isDragging.current = false; // 드래그 해제 후 커서 복원
+    isDragging.current = false;
   };
 
-  // 스크롤 로딩 중 / 에러 처리
+  const handleReviewClick = (type, id) => {
+    if (type === "펜션") {
+      navigate(`/pension-detail/${id}`);
+    } else if (type === "시설") {
+      navigate(`/place/${id}`);
+    }
+  };
+
   if (loading) return <p className="text-center text-gray-500">로딩 중...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
     <div className="pl-1 pt-6 pr-6 pb-6 bg-white rounded-lg relative">
-  <div className="flex items-center mb-0 pl-4">
-    <h2 className="text-lg font-bold mb-0">
-      최근 리뷰
-      <img
-        src={reviewIcon}
-        alt="리뷰 아이콘"
-        className="inline-block w-6 h-6 relative"
-        style={{ top: "-5px", left: "10px" }}
-      />
-    </h2>
-  </div>
-
-  {reviews.length > 0 ? (
-    <div
-      ref={scrollRef}
-      className="
-        flex gap-x-[5px] overflow-x-auto snap-x snap-mandatory 
-        scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200 
-        sm:scrollbar-none"
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseUpOrLeave}
-      onMouseUp={handleMouseUpOrLeave}
-    >
-      {reviews.map((review) => (
-        <li
-          key={review.reviewId}
-          className="flex-none w-60 p-4 bg-white rounded-lg snap-start mt-0 list-none" // list-style 제거
-          style={{ margin: 5 }} // 모든 마진 제거
-        >
+      <div className="flex items-center mb-0 pl-4">
+        <h2 className="text-lg font-bold mb-0">
+          최근 리뷰
           <img
-            src={review.img || "https://via.placeholder.com/150"}
-            alt={`${review.name} 대표 이미지`}
-            className="w-full h-32 rounded-lg object-cover mb-0"
+            src={reviewIcon}
+            alt="리뷰 아이콘"
+            className="inline-block w-6 h-6 relative"
+            style={{ top: "-5px", left: "10px" }}
           />
-          <div className="flex-1 mt-0">
-            <h3 className="text-base font-semibold text-gray-800 truncate h-6 m-0">
-              {review.name}
-            </h3>
-            <p className="text-sm text-gray-500 truncate h-5 m-0">
-              {review.address}
-            </p>
-            <p className="text-gray-700 text-sm line-clamp-3 h-[60px] mt-1 mb-0">
-              {review.reviewContent}
-            </p>
-            <div className="flex items-center justify-between mt-1">
-              <div className="flex items-center space-x-2 text-sm text-gray-500">
-                <span>⭐ {review.reviewAvg}</span>
-                <span>({review.reviewCount} 리뷰)</span>
+        </h2>
+      </div>
+
+      {reviews.length > 0 ? (
+        <div
+          ref={scrollRef}
+          className="
+            flex gap-x-[5px] overflow-x-auto snap-x snap-mandatory 
+            scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200 
+            sm:scrollbar-none"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseUpOrLeave}
+          onMouseUp={handleMouseUpOrLeave}
+        >
+          {reviews.map((review) => (
+            <li
+            key={review.reviewId}
+            onClick={() => handleReviewClick(review.type, review.id)}
+            className="
+              flex-none w-60 p-4 bg-white rounded-lg snap-start mt-0 list-none 
+              cursor-pointer hover:bg-gray-100 transition"
+            style={{ margin: 5 }}
+          >
+            <img
+              src={review.img || reviewenptyIcon}
+              alt={`${review.name} 대표 이미지`}
+              className="w-full h-32 rounded-lg object-cover mb-0"
+            />
+            <div className="flex-1 mt-0">
+              <h3 className="text-base font-semibold text-gray-800 truncate h-6 m-0">
+                {review.name}
+              </h3>
+              <p className="text-sm text-gray-500 truncate h-5 m-0">
+                {review.address}
+              </p>
+              <p className="text-gray-700 text-sm line-clamp-3 h-[60px] mt-1 mb-0">
+                {review.reviewContent}
+              </p>
+              <div className="flex items-center justify-between mt-1">
+                <div className="flex items-center space-x-2 text-sm text-gray-500">
+                  <span>⭐ {review.reviewAvg}</span>
+                  <span>({review.reviewCount} 리뷰)</span>
+                </div>
+                <span className="text-sm italic text-gray-400 truncate h-5 m-0">
+                  {review.nickname}
+                </span>
               </div>
-              <span className="text-sm italic text-gray-400 truncate h-5 m-0">
-                {review.nickname}
-              </span>
             </div>
-          </div>
-        </li>
-      ))}
+          </li>
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-500 text-center">등록된 리뷰가 없습니다.</p>
+      )}
     </div>
-  ) : (
-    <p className="text-gray-500 text-center">등록된 리뷰가 없습니다.</p>
-  )}
-</div>
   );
 };
 

@@ -69,106 +69,122 @@ const ReservationRoomSection = ({ pensionId }) => {
 
   return (
     <section className="pr-4 pt-4 pb-4 bg-white mt-4">
-      <h3 className="text-lg font-bold mb-4">예약하기</h3>
+      <h3 className="text-lg font-bold mb-4">방 정보 보기</h3>
 
       <div className="border-b border-gray-200 pb-4 mb-4 flex flex-wrap gap-4">
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          className="p-2 border border-gray-300 rounded w-36 text-sm"
-        />
-        <input
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          className="p-2 border border-gray-300 rounded w-36 text-sm"
-        />
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-500">인원 수:</label>
-          <select
-            value={peopleCount}
-            onChange={(e) => setPeopleCount(Number(e.target.value))}
-            className="p-2 border border-gray-300 rounded text-sm"
-          >
-            {[...Array(10)].map((_, i) => (
-              <option key={i} value={i + 1}>
-                {i + 1}명
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-500">강아지 수:</label>
-          <select
-            value={dogCount}
-            onChange={(e) => setDogCount(Number(e.target.value))}
-            className="p-2 border border-gray-300 rounded text-sm"
-          >
-            {[...Array(10)].map((_, i) => (
-              <option key={i} value={i}>
-                {i}마리
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+  <div className="w-full sm:w-auto flex gap-4">
+    <input
+      type="date"
+      value={startDate}
+      onChange={(e) => setStartDate(e.target.value)}
+      className="w-full sm:w-36 p-2 border border-gray-300 rounded text-sm"
+    />
+    <input
+      type="date"
+      value={endDate}
+      onChange={(e) => setEndDate(e.target.value)}
+      className="w-full sm:w-36 p-2 border border-gray-300 rounded text-sm"
+    />
+  </div>
 
-      {loading && (
-        <div className="flex justify-center mb-4">
-          <LoadingSpinner />
-        </div>
-      )}
+  <div className="w-full sm:w-auto flex gap-4">
+    <div className="flex items-center gap-2 w-full sm:w-auto">
+      <label className="text-sm text-gray-500 whitespace-nowrap">인원 수:</label>
+      <select
+        value={peopleCount}
+        onChange={(e) => setPeopleCount(Number(e.target.value))}
+        className="w-full sm:w-auto p-2 border border-gray-300 rounded text-sm"
+      >
+        {[...Array(10)].map((_, i) => (
+          <option key={i} value={i + 1}>
+            {i + 1}명
+          </option>
+        ))}
+      </select>
+    </div>
+
+    <div className="flex items-center gap-2 w-full sm:w-auto">
+      <label className="text-sm text-gray-500 whitespace-nowrap">강아지 수:</label>
+      <select
+        value={dogCount}
+        onChange={(e) => setDogCount(Number(e.target.value))}
+        className="w-full sm:w-auto p-2 border border-gray-300 rounded text-sm"
+      >
+        {[...Array(10)].map((_, i) => (
+          <option key={i} value={i}>
+            {i}마리
+          </option>
+        ))}
+      </select>
+    </div>
+  </div>
+</div>
+
+
 
       <div>
-        {rooms.length === 0 && !loading ? (
-          <p className="text-sm text-gray-500">조건에 맞는 방이 없습니다.</p>
-        ) : (
-          rooms.map((room) => (
-            <div
-              key={room.roomId}
-              className="flex border-b border-gray-200 py-6"
-            >
-              <div className="w-1/3 h-24 sm:h-48 bg-gray-200 rounded-lg overflow-hidden">
-                <img
-                  src={room.images[0] || "https://via.placeholder.com/150"}
-                  alt={room.roomName}
-                  className="w-full h-full object-cover"
-                />
+  {loading ? (
+    <div className="flex justify-center mb-4">
+      <LoadingSpinner />
+    </div>
+  ) : (
+    (() => {
+      const filteredRooms = rooms.filter(
+        (room) => peopleCount <= room.guestCount && dogCount <= room.petCount
+      );
+
+      return filteredRooms.length > 0 ? (
+        filteredRooms.map((room) => (
+          <div
+            className="flex border-b border-gray-200 py-6 flex-col sm:flex-row"
+            key={room.roomId}
+          >
+            <div className="w-full sm:w-1/3 h-24 sm:h-48 bg-gray-200 rounded-lg overflow-hidden">
+              <img
+                src={room.images[0] || "https://via.placeholder.com/150"}
+                alt={room.roomName}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="w-full sm:w-2/3 flex flex-col justify-between pl-0 sm:pl-6 mt-4 sm:mt-0">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
+                <h4 className="text-lg font-bold truncate">{room.roomName}</h4>
+                <div className="flex items-center mt-2 sm:mt-0">
+                  <span className="text-base sm:text-2xl font-extrabold text-[#3288ff]">
+                    {room.price.toLocaleString()}원
+                  </span>
+                  <span className="text-xs text-gray-400 ml-1 sm:ml-2">
+                    / 1박
+                  </span>
+                </div>
               </div>
 
-              <div className="w-2/3 flex flex-col justify-between pl-6">
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className="text-lg font-bold truncate">
-                    {room.roomName}
-                  </h4>
-                  <div>
-                    <span className="text-base sm:text-2xl font-extrabold text-[#3288ff]">
-                      {room.price.toLocaleString()}원
-                    </span>
-                    <span className="text-xs text-gray-400 ml-1 sm:ml-1 sm:inline-block sm:mt-0 mt-1 w-full text-right sm:w-auto">
-                      / 1박
-                    </span>
-                  </div>
-                </div>
-
-                <div className="text-sm text-gray-600">
-                  <p className="mb-1">
-                    {room.area ? `${room.area}㎡` : "면적 정보 없음"}
-                  </p>
-                  <p className="mb-1">
-                    입실 {room.startTime || "정보 없음"} · 퇴실{" "}
-                    {room.endTime || "정보 없음"}
-                  </p>
-                  <p>
-                    기준 {room.guestCount}명 · 강아지 {room.petCount}마리
-                  </p>
-                </div>
+              <div className="text-sm text-gray-600">
+                <p className="mb-1">
+                  {room.area ? `${room.area}㎡` : "면적 정보 없음"}
+                </p>
+                <p className="mb-1">
+                  입실 {room.startTime || "정보 없음"} · 퇴실{" "}
+                  {room.endTime || "정보 없음"}
+                </p>
+                <p>
+                  기준 {room.guestCount}명 · 강아지 {room.petCount}마리
+                </p>
               </div>
             </div>
-          ))
-        )}
-      </div>
+          </div>
+        ))
+      ) : (
+        <p className="text-sm text-gray-500 text-center">
+          조건에 해당하는 방이 없습니다.
+        </p>
+      );
+    })()
+  )}
+</div>
+
+
     </section>
   );
 };

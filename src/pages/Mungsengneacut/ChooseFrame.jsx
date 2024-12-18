@@ -48,7 +48,7 @@ const ChooseFrame = () => {
       <div className="px-10 mt-5 text-lg text-center">
         원하는 <b className="text-[#3288ff]">프레임을 선택</b>해주세요!
       </div>
-      <div className="flex flex-col items-center justify-center gap-8 my-16 md:flex-row">
+      <div className="flex flex-col items-center justify-center gap-8 my-8 md:my-16 md:flex-row">
         {renderFrame('Frame1', Frame1)}
         {renderFrame('Frame2', Frame2)}
         {renderFrame('Frame3', Frame3)}

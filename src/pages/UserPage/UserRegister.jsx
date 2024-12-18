@@ -123,7 +123,7 @@ const UserRegister = () => {
       return false;
     }
 
-    const nicknameRegex = /^[가-힣a-zA-Z0-9]{2,8}$/;
+    const nicknameRegex = /^[가-힣a-zA-Z0-9 ]{2,8}$/;
     if (!nicknameRegex.test(nickname.trim())) {
       Swal.fire({
         icon: 'warning',

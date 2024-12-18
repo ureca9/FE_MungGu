@@ -127,7 +127,7 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
   };
 
   return (
-    <div className="flex flex-col mx-10 my-5 md:mx-28">
+    <div className="flex flex-col mx-5 my-5 md:mx-28">
       <div className="flex w-48 mb-5 text-2xl font-semibold leading-normal">
         {title}
       </div>

@@ -5,7 +5,8 @@ import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 const useLoginStore = create(
   persist(
     (set) => ({
-      isLoggedIn: () => {
+      isLoggedIn: false,
+      checkIsLoggedIn: () => {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
         if (!token) return false;
         try {

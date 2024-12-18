@@ -51,7 +51,7 @@ const MyReviewCard = ({ myReview, myReviews, setMyReviews }) => {
       <div className="flex">
         <div className=" flex  w-full h-32 rounded-2xl border border-[#8A8A8A] overflow-hidden">
           <div className="flex h-full min-w-32 max-w-32">
-            {file ? (
+            {file.fileUrl ? (
               file.fileType === 'IMAGE' ? (
                 <img
                   src={file.fileUrl}

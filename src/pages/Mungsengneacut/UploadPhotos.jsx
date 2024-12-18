@@ -72,7 +72,7 @@ const UploadPhotos = () => {
       const capturedImage = canvas.toDataURL('image/png', 1.0);
 
       navigate(ROUTER_PATHS.DOWNLOAD_PHOTOS, {
-        state: { capturedImage },
+        state: { capturedImage, selectedFrame },
       });
     } catch (error) {
       console.error('이미지 캡처 중 오류 발생:', error);
@@ -110,13 +110,13 @@ const UploadPhotos = () => {
               >
                 <label
                   htmlFor={`file-upload-${index}`}
-                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
+                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer text-xs md:text-base"
                 >
                   {image ? (
                     <img
                       src={image}
                       alt={`Uploaded ${index}`}
-                      className="object-cover w-full h-full cursor-pointer"
+                      className="w-full h-full cursor-pointer "
                     />
                   ) : (
                     '이미지 업로드'
@@ -158,13 +158,13 @@ const UploadPhotos = () => {
               >
                 <label
                   htmlFor={`file-upload-${index}`}
-                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
+                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer text-xs md:text-base"
                 >
                   {image ? (
                     <img
                       src={image}
                       alt={`Uploaded ${index}`}
-                      className="object-cover w-full h-full cursor-pointer"
+                      className="w-full h-full cursor-pointer"
                     />
                   ) : (
                     '이미지 업로드'
@@ -184,35 +184,35 @@ const UploadPhotos = () => {
       );
     } else if (selectedFrame === 'Frame3') {
       return (
-        <div className="relative w-1/2 mt-6">
+        <div className="relative w-1/4 mt-6">
           <div className="relative block" id="frame">
             <img
               src={frameImage}
               alt="Selected frame"
-              className="flex justify-center w-1/2 max-w-full mx-auto"
+              className="flex justify-center w-full max-w-full mx-auto"
             />
             {images.map((image, index) => (
               <div
                 key={index}
                 className={`absolute ${
                   index === 0
-                    ? 'top-[6%] left-[29%]'
+                    ? 'top-[6%] left-[6%]'
                     : index === 1
-                      ? 'top-[29%] left-[29%]'
+                      ? 'top-[29%] left-[6%]'
                       : index === 2
-                        ? 'top-[52%] left-[29%]'
-                        : 'top-[75%] left-[29%]'
-                } w-[42.5%] h-[22%] flex justify-center items-center border bg-white`}
+                        ? 'top-[52%] left-[6%]'
+                        : 'top-[75%] left-[6%]'
+                } w-[88%] h-[22%] flex justify-center items-center border bg-white`}
               >
                 <label
                   htmlFor={`file-upload-${index}`}
-                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer"
+                  className="w-full h-full flex justify-center items-center text-[#8a8a8a] cursor-pointer text-xs md:text-base"
                 >
                   {image ? (
                     <img
                       src={image}
                       alt={`Uploaded ${index}`}
-                      className="object-cover w-full h-full cursor-pointer"
+                      className="w-full h-full cursor-pointer"
                     />
                   ) : (
                     '이미지 업로드'

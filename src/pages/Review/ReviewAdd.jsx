@@ -20,6 +20,125 @@ const ReviewAdd = () => {
     setScore(newScore);
   };
 
+  const handleFileChange = async (event) => {
+    const files = [...event.target.files];
+    const maxFileSize = 5 * 1024 * 1024;
+
+    const reviewFormData = new FormData();
+    console.time('파일 처리 시간'); // 시간 측정 시작
+    const processedFiles = await Promise.all(
+      files.map((file) => {
+        if (file.size > maxFileSize) {
+          Swal.fire({
+            title: 'Oops...',
+            text: `${file.name} 파일의 용량이 너무 큽니다. (${maxFileSize / 1024 / 1024}MB 이하)`,
+            icon: 'error',
+          });
+          return null;
+        } else if (file.type.startsWith('image/')) {
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const img = new Image();
+              img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                // 이미지 크기 조정 (선택 사항)
+                const maxWidth = 500; // 최대 너비 설정
+                const scaleFactor = maxWidth / img.width;
+                canvas.width = maxWidth;
+                canvas.height = img.height * scaleFactor;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                // JPEG 또는 WebP로 압축
+                canvas.toBlob(
+                  (blob) => {
+                    const newFile = new File([blob], file.name, {
+                      type: 'image/JPEG',
+                    });
+                    // console.log('이미지 blob:', blob);
+                    console.log('이미지 File:', newFile);
+                    reviewFormData.append('file', newFile); // FormData에 File 객체 추가
+                    // reviewFormData.append('file', blob, file.name);
+                    resolve({
+                      file: newFile,
+                      // file: blob,
+                      fileUrl: URL.createObjectURL(blob),
+                      fileType: 'IMAGE',
+                      fileName: file.name,
+                    });
+                  },
+                  'image/JPEG',
+                  0.8, // 압축률 (0 ~ 1)
+                );
+              };
+              img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          });
+        } else if (file.type.startsWith('video/')) {
+          reviewFormData.append('file', file, file.name);
+          return {
+            file: file,
+            fileUrl: URL.createObjectURL(file),
+            fileType: 'VIDEO',
+            fileName: file.name,
+          };
+        } else {
+          return null;
+        }
+      }),
+    );
+    console.log('파일상태:', processedFiles);
+
+    setSelectedFiles(processedFiles.filter((file) => file !== null));
+    handleSubmit(reviewFormData);
+    console.timeEnd('파일 처리 시간');
+  };
+
+  // const handleFileChange = (event) => {
+  //   const files = [...event.target.files];
+  //   const maxFileSize = 5 * 1024 * 1024;
+
+  //   const processedFiles = files
+  //     .map((file) => {
+  //       if (file.size > maxFileSize) {
+  //         Swal.fire({
+  //           title: 'Oops...',
+  //           text: `${file.name} 파일의 용량이 너무 큽니다. (${maxFileSize / 1024 / 1024}MB 이하)`,
+  //           icon: 'error',
+  //         });
+  //         return null;
+  //       } else {
+  //         return {
+  //           file: file,
+  //           fileUrl: URL.createObjectURL(file),
+  //           fileType: file.type.startsWith('image/')
+  //             ? 'IMAGE'
+  //             : file.type.startsWith('video/')
+  //               ? 'VIDEO'
+  //               : null,
+  //           fileName: file.name,
+  //         };
+  //       }
+  //     })
+  //     .filter((file) => file !== null);
+  //   console.log('파일상태:', processedFiles);
+  //   setSelectedFiles(processedFiles);
+  // };
+
+  const checkDataForm = () => {
+    if (!content || !score || !visitDate) {
+      Swal.fire({
+        title: 'Oops...',
+        text: '모든 항목을 입력해주세요.',
+        icon: 'error',
+      });
+      return false;
+    }
+    return true;
+  };
+  const today = new Date().toISOString().split('T')[0];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!checkDataForm()) return;
@@ -54,122 +173,16 @@ const ReviewAdd = () => {
     }
   };
 
-  // const handleFileChange = (event) => {
-  //   const files = [...event.target.files];
-  //   const maxFileSize = 5 * 1024 * 1024;
-
-  //   const processedFiles = files.map((file) => {
-  //     if (file.size > maxFileSize) {
-  //       Swal.fire({
-  //         title: 'Oops...',
-  //         text: `${file.name} 파일의 용량이 너무 큽니다. (${maxFileSize / 1024 / 1024}MB 이하)`,
-  //         icon: 'error',
-  //       });
-  //       return null;
-  //     } else if (file.type.startsWith('image/')) {
-  //       return new Promise((resolve) => {
-  //         const reader = new FileReader();
-  //         reader.onload = (e) => {
-  //           const img = new Image();
-  //           img.onload = () => {
-  //             const canvas = document.createElement('canvas');
-  //             const ctx = canvas.getContext('2d');
-  //             // 이미지 크기 조정 (선택 사항)
-  //             const maxWidth = 500; // 최대 너비 설정
-  //             const scaleFactor = maxWidth / img.width;
-  //             canvas.width = maxWidth;
-  //             canvas.height = img.height * scaleFactor;
-  //             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  //             // JPEG 또는 WebP로 압축
-  //             canvas.toBlob(
-  //               (blob) => {
-  //                 resolve({
-  //                   file: blob, // 압축된 이미지 Blob
-  //                   fileUrl: URL.createObjectURL(blob),
-  //                   fileType: 'IMAGE',
-  //                   fileName: file.name,
-  //                 });
-  //               },
-  //               'image/JPEG', // JPEG 형식으로 압축
-  //               0.8, // 압축률 (0 ~ 1)
-  //             );
-  //           };
-  //           img.src = e.target.result;
-  //         };
-  //         reader.readAsDataURL(file);
-  //       });
-  //     } else if (file.type.startsWith('video/')) {
-  //       // 비디오 압축은 ffmpeg 등의 라이브러리 활용
-  //       return {
-  //         file: file,
-  //         fileUrl: URL.createObjectURL(file),
-  //         fileType: 'VIDEO',
-  //         fileName: file.name,
-  //       };
-  //     } else {
-  //       return null;
-  //     }
-  //   });
-
-  //   Promise.all(processedFiles).then((files) => {
-  //     setSelectedFiles(files.filter((file) => file !== null));
-  //   });
-  // };
-
-  const handleFileChange = (event) => {
-    const files = [...event.target.files];
-    const maxFileSize = 5 * 1024 * 1024;
-
-    const processedFiles = files
-      .map((file) => {
-        if (file.size > maxFileSize) {
-          Swal.fire({
-            title: 'Oops...',
-            text: `${file.name} 파일의 용량이 너무 큽니다. (${maxFileSize / 1024 / 1024}MB 이하)`,
-            icon: 'error',
-          });
-          return null;
-        } else {
-          return {
-            file: file,
-            fileUrl: URL.createObjectURL(file),
-            fileType: file.type.startsWith('image/')
-              ? 'IMAGE'
-              : file.type.startsWith('video/')
-                ? 'VIDEO'
-                : null,
-            fileName: file.name,
-          };
-        }
-      })
-      .filter((file) => file !== null);
-
-    setSelectedFiles(processedFiles);
-  };
-
-  const checkDataForm = () => {
-    if (!content || !score || !visitDate) {
-      Swal.fire({
-        title: 'Oops...',
-        text: '모든 항목을 입력해주세요.',
-        icon: 'error',
-      });
-      return false;
-    }
-    return true;
-  };
-  const today = new Date().toISOString().split('T')[0];
-
   return (
-    <div className="h-full min-w-96">
+    <div className="h-full min-w-80">
       <PlaceData />
       <form
         onSubmit={handleSubmit}
-        className="bg-[#F3F4F5] h-full sm:w-full sm:p-7 px-2 py-3 sm:gap-5 gap-3 flex flex-col"
+        className="bg-[#F3F4F5] h-full md:w-full md:p-7 px-2 py-3 md:gap-5 gap-3 flex flex-col"
       >
         <div className="flex justify-center w-full h-auto p-4 bg-white rounded-lg">
-          <div className="flex flex-col items-center justify-center w-4/5 sm:w-3/5 sm:gap-7">
-            <div className="font-semibold sm:text-2xl">
+          <div className="flex flex-col items-center justify-center w-4/5 md:w-3/5 md:gap-7">
+            <div className="font-semibold md:text-2xl">
               이 방문 장소를 추천하시겠어요?
             </div>
             <div className="flex flex-col justify-around w-full">
@@ -189,7 +202,7 @@ const ReviewAdd = () => {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2 overflow-x-auto h-aout sm:gap-5">
+        <div className="flex items-center gap-2 overflow-x-auto h-aout md:gap-5">
           <div>
             <label>
               <input
@@ -199,12 +212,12 @@ const ReviewAdd = () => {
                 multiple
                 accept="image/*, video/*"
               />
-              <div className="flex-col p-1 sm:p-2 w-24 h-24 sm:w-36 sm:h-36 bg-[#EBF4FF] flex rounded-lg items-center border border-[#3288FF] justify-center text-[#8A8A8A] ">
-                <p className="sm:mb-2 sm:text-lg">
+              <div className="flex-col p-1 md:p-2 w-24 h-24 md:w-36 md:h-36 bg-[#EBF4FF] flex rounded-lg items-center border border-[#3288FF] justify-center text-[#8A8A8A] ">
+                <p className="md:mb-2 md:text-lg">
                   사진첨부
                   <span className="text-2xl text-red-600">*</span>
                 </p>
-                <span className="sm:text-sm text-[12px]">
+                <span className="md:text-md text-[12px]">
                   영수증 사진이 없으면 후기가 삭제될수 있습니다.
                 </span>
               </div>
@@ -213,7 +226,7 @@ const ReviewAdd = () => {
           {selectedFiles.map((file, index) => (
             <div
               key={index}
-              className="min-w-24 max-w-24 h-24 sm:min-w-36 sm:h-36 bg-[#D9D9D9] flex rounded-lg items-center justify-center overflow-hidden"
+              className="min-w-24 max-w-24 h-24 md:min-w-36 md:h-36 bg-[#D9D9D9] flex rounded-lg items-center justify-center overflow-hidden"
             >
               {file.fileType === 'IMAGE' ? (
                 <img
@@ -233,7 +246,7 @@ const ReviewAdd = () => {
           {selectedFiles.length > 0 ? (
             ''
           ) : (
-            <div className="sm:w-36 sm:h-36 w-24 h-24 bg-[#D9D9D9] flex rounded-lg items-center justify-center ">
+            <div className="md:w-36 md:h-36 w-24 h-24 bg-[#D9D9D9] flex rounded-lg items-center justify-center ">
               <div className="text-[#8A8A8A] text-4xl flex">
                 <FaCamera />
               </div>
@@ -251,18 +264,18 @@ const ReviewAdd = () => {
               value={visitDate}
               max={today}
               onChange={(e) => setVisitDate(e.target.value)}
-              className="w-full p-2 sm:p-5 text-[#8A8A8A] sm:text-xl rounded-lg h-14 focus:outline-none"
+              className="w-full p-2 md:p-5 text-[#8A8A8A] md:text-xl rounded-lg h-14 focus:outline-none"
             />
           </div>
         </div>
-        <div className="sm:mt-4">
+        <div className="md:mt-4">
           <div className="flex items-center">
             <span className="mr-1 text-lg">후기 내용</span>
             <span className="mt-0.5 text-2xl text-red-600">*</span>
           </div>
-          <div className="flex p-4 bg-white rounded-lg sm:p-7 h-52">
+          <div className="flex p-4 bg-white rounded-lg md:p-7 h-52">
             <textarea
-              className="w-full h-full resize-none sm:text-xl"
+              className="w-full h-full resize-none md:text-xl"
               placeholder="내용을 작성해 주세요."
               value={content}
               maxLength="400"

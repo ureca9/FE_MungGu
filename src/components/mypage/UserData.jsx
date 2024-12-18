@@ -14,7 +14,7 @@ const UserData = ({ memberD, navigate }) => {
     }),
     navigate: PropTypes.func.isRequired,
   };
-  const { isLoggedIn, setLogout } = useLoginStore();
+  const { checkIsLoggedIn, setLogout } = useLoginStore();
 
   const handleLogout = () => {
     Swal.fire({
@@ -39,20 +39,20 @@ const UserData = ({ memberD, navigate }) => {
   };
 
   return (
-    <div className="h-auto py-5 mt-5 bg-white border rounded-lg px-9 border-borderlineGray min-h-40">
+    <div className="h-auto px-5 py-5 mt-5 bg-white border rounded-lg md:px-9 border-borderlineGray min-h-40">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <img
             src={memberD?.profileImageUrl || userIcon}
             alt="사용자 프로필 이미지"
-            className="rounded-full size-20 bg-[#F5F5F5] border border-[#8A8A8A] user-icon"
+            className="rounded-full size-16 md:size-20 bg-[#F5F5F5] border border-[#8A8A8A] user-icon"
           />
-          <span className="ml-4 text-base">
+          <span className="ml-2 text-sm md:ml-4 md:text-base">
             {memberD?.nickname || '로그인이 필요합니다'}
           </span>
         </div>
         <div className="justify-between">
-          {!isLoggedIn ? (
+          {!checkIsLoggedIn() ? (
             <button
               onClick={() => navigate(ROUTER_PATHS.LOGIN)}
               className="text-sm px-2 py-1 font-bold text-[#3288FF] bg-transparent border-none cursor-pointer"
@@ -63,7 +63,7 @@ const UserData = ({ memberD, navigate }) => {
             <>
               <button
                 onClick={handleLogout}
-                className="text-sm mr-4 font-bold text-[#FF0000] bg-transparent border-none cursor-pointer"
+                className="text-sm mr-2 md:mr-4 font-bold text-[#FF0000] bg-transparent border-none cursor-pointer"
               >
                 로그아웃
               </button>

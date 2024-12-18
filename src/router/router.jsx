@@ -22,6 +22,7 @@ import PreferencePlant from '../pages/UserPage/PreferencePlant.jsx';
 import PreferenceRegion from '../pages/UserPage/PreferenceRegion.jsx';
 import PlantEdit from '../pages/UserPage/PlantEdit.jsx';
 import RegionEdit from '../pages/UserPage/RegionEdit.jsx';
+import MapSearchResults from '../pages/Map/MapSearchResults.jsx';
 import ReviewAdd from '../pages/Review/ReviewAdd.jsx';
 import Mungsengneacut from '../pages/Mungsengneacut/Mungsengneacut.jsx';
 import ChooseFrame from '../pages/Mungsengneacut/ChooseFrame.jsx';
@@ -33,6 +34,7 @@ import PensionAllReview from '../pages/Review/PensionAllReview.jsx';
 import PlaceAllReview from '../pages/Review/PlaceAllReview.jsx';
 import LiveReviewList from '../pages/Review/LiveReviewList.jsx';
 import ViewHistory from '../pages/Review/ViewHistory.jsx';
+
 
 const routes = [
   {
@@ -58,6 +60,10 @@ const routes = [
   {
     path: ROUTER_PATHS.SEARCH,
     element: <Search />,
+  },
+  {
+    path: ROUTER_PATHS.MAP_SEARCH_RESULTS,
+    element: <MapSearchResults />,
   },
   {
     path: ROUTER_PATHS.USER_EDIT,

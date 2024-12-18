@@ -54,7 +54,7 @@ const MyReview = () => {
   });
 
   return (
-    <div className="flex flex-col w-full h-full gap-3 p-7 min-w-96">
+    <div className="flex flex-col w-full h-full gap-3 p-3 md:p-7 min-w-80">
       <div className="flex justify-between w-full mb-5">
         <div className="relative flex w-2/5">
           <input

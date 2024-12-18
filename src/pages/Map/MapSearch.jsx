@@ -7,12 +7,14 @@ import usePlaceStore from '../../stores/map/usePlaceStore.js';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
 import { searchSpot } from '../../api/map/map.js';
 import Swal from 'sweetalert2';
+import ROUTER_PATHS from '../../utils/RouterPath.js';
+import { SearchType } from '../../utils/SearchType.js';
 
 const MapSearch = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const { searchHistory, setSearchHistory } = useSearchHistoryStore();
-  const { setSearchResults } = usePlaceStore();
+  const { searchType, setSearchResults, setSelectedPlace } = usePlaceStore();
   const { coords } = useCoordsStore();
   const { latitude, longitude } = coords;
 
@@ -38,7 +40,7 @@ const MapSearch = () => {
     if (searchTerm.trim() !== '') {
       try {
         const response = await searchSpot(searchTerm, latitude, longitude);
-
+        setSelectedPlace(null);
         if (response.content.length === 0)
           Swal.fire({
             title: '검색 결과가 없습니다.',
@@ -48,7 +50,11 @@ const MapSearch = () => {
         else {
           handleSaveSearchHistory(searchTerm);
           setSearchResults(response.content);
-          navigate('/map');
+          const routePath =
+            searchType === SearchType.SEARCH
+              ? ROUTER_PATHS.MAP
+              : ROUTER_PATHS.MAP_SEARCH_RESULTS;
+          navigate(routePath);
         }
       } catch (error) {
         console.error(error);
