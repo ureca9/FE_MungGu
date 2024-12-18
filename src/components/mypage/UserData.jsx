@@ -21,8 +21,10 @@ const UserData = ({ memberD, navigate }) => {
       title: '정말 로그아웃 하시겠습니까?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: '#3288ff',
+      customClass: {
+        cancelButton: 'swalCancelBtn',
+      },
       confirmButtonText: '로그아웃',
       cancelButtonText: '취소',
     }).then((result) => {

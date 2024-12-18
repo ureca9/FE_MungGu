@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const ReservationRoomSection = ({ pensionId }) => {
   const today = new Date();
@@ -16,10 +17,10 @@ const ReservationRoomSection = ({ pensionId }) => {
 
   const [startDate, setStartDate] = useState(formatDate(today));
   const [endDate, setEndDate] = useState(formatDate(tomorrow));
-  const [peopleCount, setPeopleCount] = useState(1); // Default people count
-  const [dogCount, setDogCount] = useState(0); // Default dog count
+  const [peopleCount, setPeopleCount] = useState(1);
+  const [dogCount, setDogCount] = useState(0);
   const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); 
   const [error, setError] = useState(null);
 
   const fetchRooms = async () => {
@@ -33,22 +34,14 @@ const ReservationRoomSection = ({ pensionId }) => {
 
       const response = await axios.get(
         `https://meong9.store/api/v1/${pensionId}/rooms`,
-        {
-          headers,
-          params: { startDate, endDate },
-        }
+        { headers, params: { startDate, endDate } }
       );
 
       if (response.data && response.data.data) {
-        const parsedRooms = response.data.data
-          .map((item) => ({
-            ...item.room,
-            images: item.images,
-          }))
-          .filter(
-            (room) =>
-              room.guestCount >= peopleCount && room.petCount >= dogCount
-          ); // Filter rooms based on people and dog count
+        const parsedRooms = response.data.data.map((item) => ({
+          ...item.room,
+          images: item.images,
+        }));
         setRooms(parsedRooms);
       }
     } catch (err) {
@@ -60,65 +53,43 @@ const ReservationRoomSection = ({ pensionId }) => {
   };
 
   useEffect(() => {
-    if (startDate && endDate) {
-      fetchRooms();
-    }
-  }, [startDate, endDate, peopleCount, dogCount]);
-
-  useEffect(() => {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const today = new Date();
-    const maxBookingDate = new Date();
-    maxBookingDate.setMonth(maxBookingDate.getMonth() + 3);
 
-    if (end <= start) {
-      const newEndDate = new Date(start);
-      newEndDate.setDate(start.getDate() + 1);
-      setEndDate(formatDate(newEndDate));
+    if (start >= end) {
+      const nextDay = new Date(start);
+      nextDay.setDate(start.getDate() + 1);
+      setEndDate(formatDate(nextDay));
     }
+  }, [startDate, endDate]);
 
-    if (start < today) {
-      setStartDate(formatDate(today));
-      return;
-    }
-
-    if (start > maxBookingDate) {
-      setStartDate(formatDate(maxBookingDate));
-      return;
-    }
-  }, [startDate]);
-
-  ReservationRoomSection.propTypes = {
-    pensionId: PropTypes.string.isRequired,
-  };
-
-  if (loading) return <div>로딩 중...</div>;
-  if (error) return <div>{error}</div>;
+  useEffect(() => {
+    fetchRooms();
+  }, [startDate, endDate, peopleCount, dogCount]);
 
   return (
-    <section className="p-4 bg-white mt-4">
+    <section className="pr-4 pt-4 pb-4 bg-white mt-4">
       <h3 className="text-lg font-bold mb-4">예약하기</h3>
 
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className="border-b border-gray-200 pb-4 mb-4 flex flex-wrap gap-4">
         <input
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          className="p-2 text-sm border border-gray-300 rounded w-36"
+          className="p-2 border border-gray-300 rounded w-36 text-sm"
         />
         <input
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
-          className="p-2 text-sm border border-gray-300 rounded w-36"
+          className="p-2 border border-gray-300 rounded w-36 text-sm"
         />
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-500">사람 수:</label>
+          <label className="text-sm text-gray-500">인원 수:</label>
           <select
             value={peopleCount}
             onChange={(e) => setPeopleCount(Number(e.target.value))}
-            className="p-2 text-sm border border-gray-300 rounded"
+            className="p-2 border border-gray-300 rounded text-sm"
           >
             {[...Array(10)].map((_, i) => (
               <option key={i} value={i + 1}>
@@ -132,56 +103,78 @@ const ReservationRoomSection = ({ pensionId }) => {
           <select
             value={dogCount}
             onChange={(e) => setDogCount(Number(e.target.value))}
-            className="p-2 text-sm border border-gray-300 rounded"
+            className="p-2 border border-gray-300 rounded text-sm"
           >
             {[...Array(10)].map((_, i) => (
               <option key={i} value={i}>
-                {i}견
+                {i}마리
               </option>
             ))}
           </select>
         </div>
-        <button
-          onClick={fetchRooms}
-          className="p-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          조회
-        </button>
       </div>
 
-      {rooms.length === 0 ? (
-        <p className="text-sm text-gray-500">조건에 맞는 방이 없습니다.</p>
-      ) : (
-        rooms.map((room, index) => (
-          <div
-            key={room.roomId || index}
-            className="flex items-center mb-4 border border-gray-300 rounded shadow overflow-hidden"
-          >
-            <div className="w-36 h-24 overflow-hidden">
-              <img
-                src={room.images[0] || "https://via.placeholder.com/150"}
-                alt={room.roomName}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            <div className="flex-1 p-4">
-              <h4 className="text-base font-bold mb-2">{room.roomName}</h4>
-              <p className="text-sm text-gray-500 mb-1">
-                {room.area ? `${room.area}㎡` : "면적 정보 없음"} · 기준 {room.guestCount}명 · 최대 {room.petCount}견
-              </p>
-              <p className="text-sm text-gray-500 mb-1">
-                {room.startTime ? `입실 ${room.startTime}` : "입실 시간 정보 없음"} · {room.endTime ? `퇴실 ${room.endTime}` : "퇴실 시간 정보 없음"}
-              </p>
-              <p className="text-sm text-gray-800 font-semibold">
-                {room.price.toLocaleString()}원 / 1박
-              </p>
-            </div>
-          </div>
-        ))
+      {loading && (
+        <div className="flex justify-center mb-4">
+          <LoadingSpinner />
+        </div>
       )}
+
+      <div>
+        {rooms.length === 0 && !loading ? (
+          <p className="text-sm text-gray-500">조건에 맞는 방이 없습니다.</p>
+        ) : (
+          rooms.map((room) => (
+            <div
+              key={room.roomId}
+              className="flex border-b border-gray-200 py-6"
+            >
+              <div className="w-1/3 h-24 sm:h-48 bg-gray-200 rounded-lg overflow-hidden">
+                <img
+                  src={room.images[0] || "https://via.placeholder.com/150"}
+                  alt={room.roomName}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              <div className="w-2/3 flex flex-col justify-between pl-6">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="text-lg font-bold truncate">
+                    {room.roomName}
+                  </h4>
+                  <div>
+                    <span className="text-base sm:text-2xl font-extrabold text-[#3288ff]">
+                      {room.price.toLocaleString()}원
+                    </span>
+                    <span className="text-xs text-gray-400 ml-1 sm:ml-1 sm:inline-block sm:mt-0 mt-1 w-full text-right sm:w-auto">
+                      / 1박
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-sm text-gray-600">
+                  <p className="mb-1">
+                    {room.area ? `${room.area}㎡` : "면적 정보 없음"}
+                  </p>
+                  <p className="mb-1">
+                    입실 {room.startTime || "정보 없음"} · 퇴실{" "}
+                    {room.endTime || "정보 없음"}
+                  </p>
+                  <p>
+                    기준 {room.guestCount}명 · 강아지 {room.petCount}마리
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </section>
   );
+};
+
+ReservationRoomSection.propTypes = {
+  pensionId: PropTypes.string.isRequired,
 };
 
 export default ReservationRoomSection;

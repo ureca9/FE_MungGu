@@ -39,20 +39,6 @@
 }
 
 @layer utilities {
-  .bg-googleIcon {
-    @apply w-[19px] h-[19px];
-    background: url('src/assets/login/LoginImgSprite.png') -230px -94px;
-  }
-  .bg-naverIcon {
-    @apply w-[20px] h-[20px];
-    background: url('src/assets/login/LoginImgSprite.png') -230px -54px;
-  }
-  .bg-kakaoIcon {
-    @apply w-[24px] h-[24px];
-    background: url('src/assets/login/LoginImgSprite.png') -230px -10px;
-  }
-}
-@layer utilities {
   .bg-user {
     @apply w-[48px] h-[48px];
     background: url('src/assets/MypageImg/MyPageImg.png') -10px -10px;
@@ -130,4 +116,36 @@
 }
 .animate-bounce-grow {
   animation: bounce-grow 1.5s infinite;
+}
+
+.swalCancelBtn {
+  border: 2px solid #3288ff;
+  color: #3288ff;
+  background-color: white;
+  border-radius: 8px;
+}
+
+/* 기본적으로 스크롤바 숨김 */
+.scrollbar-hidden {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+/* 스크롤 중 스크롤바 표시 */
+.show-scrollbar::-webkit-scrollbar {
+  display: block; /* Chrome, Safari */
+  height: 8px; /* 스크롤바 높이 */
+}
+
+.show-scrollbar::-webkit-scrollbar-thumb {
+  background: #3288ff; /* 스크롤바 색상 */
+  border-radius: 4px; /* 둥근 스크롤바 */
+}
+
+.show-scrollbar::-webkit-scrollbar-track {
+  background: #f0f0f0; /* 트랙 색상 */
 }

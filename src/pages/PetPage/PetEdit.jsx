@@ -36,7 +36,7 @@ const PetEdit = () => {
     try {
       const puppyFormData = new FormData();
 
-      const joinPuppy = {
+      const editPuppy = {
         name: formData.name,
         breedId: formData.breedId,
         birthDate: formData.birthDate,
@@ -46,7 +46,7 @@ const PetEdit = () => {
       };
       puppyFormData.append(
         'data',
-        new Blob([JSON.stringify(joinPuppy)], { type: 'application/json' }),
+        new Blob([JSON.stringify(editPuppy)], { type: 'application/json' }),
       );
 
       if (formData.image) {
@@ -54,6 +54,7 @@ const PetEdit = () => {
       }
       const response = await PatchPuppyEditData(selectedPetId, puppyFormData);
       console.log('반려동물 수정 성공 :', response.data);
+      setBasicData(null);
       Swal.fire({
         title: '수정 성공!',
         icon: 'success',

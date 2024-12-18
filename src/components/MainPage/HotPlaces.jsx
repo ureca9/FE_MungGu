@@ -1,106 +1,208 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "../common/LoadingSpinner";
+import fireIcon from '../../stories/assets/fire.svg';
 
-const HotPlaces = () => {
-  const [places, setPlaces] = useState([]); // 초기 상태를 빈 배열로 설정
-  const [loading, setLoading] = useState(true);
+const HotPlaces = ({ accessToken, refreshAccessToken }) => {
+  const [places, setPlaces] = useState([]);
   const [error, setError] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const [selectedCategory, setSelectedCategory] = useState(7); // 기본값을 7(펜션)으로 설정
+  const scrollRef = useRef(null);
+  const categoryRef = useRef(null);
   const navigate = useNavigate();
 
-  const categories = ['전체', '카페', '펜션', '공원', '놀이터', '산'];
+  const categories = [
+    { id: 7, name: "펜션", apiPath: "/api/v1/pensions/top" }, // 펜션을 첫 번째로
+    { id: 6, name: "마당", apiPath: "/api/v1/places/6/top" }, // 마당을 두 번째로
+    { id: 1, name: "공원", apiPath: "/api/v1/places/1/top" },
+    { id: 2, name: "관광지", apiPath: "/api/v1/places/2/top" },
+    { id: 3, name: "놀이터", apiPath: "/api/v1/places/3/top" },
+    { id: 4, name: "카페", apiPath: "/api/v1/places/4/top" },
+    { id: 5, name: "해수욕장", apiPath: "/api/v1/places/5/top" },
+  ];
 
-  useEffect(() => {
-    const fetchPlaces = async () => {
-      try {
-        const response = await axios.get('/api/hot-places');
-        setPlaces(response.data.data || []); // 데이터가 없을 경우 빈 배열로 대체
-      } catch (error) {
-        console.error('데이터를 가져오는데 실패했습니다:', error.message);
-        setError('데이터를 가져오는데 실패했습니다.');
-      } finally {
-        setLoading(false);
+  const fetchPlaces = async () => {
+    try {
+      const token = accessToken || localStorage.getItem("ACCESS_TOKEN");
+  
+      const headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      };
+  
+      // 토큰이 있는 경우에만 Authorization 헤더 추가
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
       }
-    };
-
-    fetchPlaces();
-  }, []);
-
-  if (loading) {
-    return (
-      <section className="p-4">
-        <h2 className="text-lg font-bold mb-2">지금 핫한 장소 🔥</h2>
-        <p>로딩 중...</p>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="p-4">
-        <h2 className="text-lg font-bold mb-2">지금 핫한 장소 🔥</h2>
-        <p className="text-red-500">{error}</p>
-      </section>
-    );
-  }
-
-  const filteredPlaces =
-    selectedCategory === '전체'
-      ? places
-      : places.filter((place) => place.category === selectedCategory);
-
-  const handleItemClick = (place) => {
-    if (place.category === '펜션') {
-      navigate(`/pension-detail/${place.id}`);
-    } else {
-      navigate(`/place/${place.id}`);
+  
+      const selectedApiPath = categories.find(
+        (category) => category.id === selectedCategory
+      )?.apiPath;
+  
+      if (!selectedApiPath) throw new Error("유효하지 않은 카테고리입니다.");
+  
+      const response = await axios.get(`https://meong9.store${selectedApiPath}`, {
+        headers,
+      });
+  
+      if (response.data && response.data.data) {
+        setPlaces(response.data.data);
+      } else {
+        setPlaces([]);
+      }
+    } catch (error) {
+      setError("데이터를 가져오는데 실패했습니다.");
+      console.error(error);
     }
   };
+  
+
+  useEffect(() => {
+    fetchPlaces();
+  }, [selectedCategory]);
+
+  const handleItemClick = (place) => {
+    const routePath =
+      selectedCategory === 7
+        ? `/pension-detail/${place.pensionId}`
+        : `/place/${place.placeId || place.pensionId}`;
+    navigate(routePath);
+  };
+
+  // 드래그 스크롤 기능
+  const addDragScroll = (ref) => {
+    let isDragging = false;
+    let startX, scrollLeft;
+
+    const mouseDownHandler = (e) => {
+      isDragging = true;
+      startX = e.pageX - ref.current.offsetLeft;
+      scrollLeft = ref.current.scrollLeft;
+    };
+
+    const mouseMoveHandler = (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const x = e.pageX - ref.current.offsetLeft;
+      const walk = (x - startX) * 2; // 스크롤 속도
+      ref.current.scrollLeft = scrollLeft - walk;
+    };
+
+    const mouseUpHandler = () => {
+      isDragging = false;
+    };
+
+    ref.current.addEventListener("mousedown", mouseDownHandler);
+    ref.current.addEventListener("mousemove", mouseMoveHandler);
+    ref.current.addEventListener("mouseup", mouseUpHandler);
+    ref.current.addEventListener("mouseleave", mouseUpHandler);
+  };
+
+  useEffect(() => {
+    if (scrollRef.current) addDragScroll(scrollRef);
+    if (categoryRef.current) addDragScroll(categoryRef);
+  }, []);
 
   return (
     <section className="p-4">
-      <h2 className="text-lg font-bold mb-4">지금 핫한 장소 🔥</h2>
+      <LoadingSpinner />
+      <h2 className="pl-2 text-lg font-bold mb-4">
+  지금 핫한 장소 
+  <img 
+          src={fireIcon}
+          alt="불 아이콘"
+          className="inline-block w-6 h-6 relative"
+    style={{ top: '-5px' , left : '10px'}}
+  />
+</h2>
 
-      <div className="flex gap-2 mb-4 overflow-x-auto">
+      {/* 카테고리 버튼 */}
+      <div
+        ref={categoryRef}
+        className="pl-2 flex gap-2 mb-4 overflow-x-auto cursor-grab"
+        style={{ scrollbarWidth: "none" }}
+      >
+        <style>{`div::-webkit-scrollbar { display: none; }`}</style>
         {categories.map((category) => (
           <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`px-4 py-2 rounded-full ${
-              selectedCategory === category
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-600'
-            }`}
+            key={category.id}
+            onClick={() => setSelectedCategory(category.id)}
+            className={`px-4 py-2 min-w-[100px] border rounded-lg ${
+              selectedCategory === category.id
+                ? "border-[#3288ff] text-blue-500 font-semibold"
+                : "border-gray-300 text-gray-600"
+            } hover:bg-gray-100 text-center`}
           >
-            {category}
+            {category.name}
           </button>
         ))}
       </div>
 
-      <div className="flex gap-4 overflow-x-auto">
-        {Array.isArray(filteredPlaces) && filteredPlaces.length > 0 ? (
-          filteredPlaces.map((place) => (
+      {/* 스크롤 가능한 그리드 */}
+      <div
+  ref={scrollRef}
+  className="
+    flex gap-x-[5px] overflow-x-auto snap-x snap-mandatory 
+    scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200
+    sm:scrollbar-none"
+  style={{ scrollSnapType: "x mandatory" }}
+>
+  {places.length > 0 &&
+    [...Array(Math.ceil(places.length / 3))].map((_, index) => {
+      const startIndex = index * 3;
+      const listItems = places.slice(startIndex, startIndex + 3);
+
+      return (
+        <div
+          key={index}
+          className="flex flex-col gap-y-4 w-[340px] scroll-snap-align-start"
+          style={{ flex: "0 0 auto" }}
+        >
+          {listItems.map((place, idx) => (
             <div
-              key={place.id}
-              className="w-40 flex-shrink-0 p-4 bg-white shadow-md rounded-lg text-center cursor-pointer"
+              key={`place-${place.placeId || place.pensionId}-${idx}`}
+              className="flex items-center bg-white p-2 rounded-lg cursor-pointer"
+              style={{ width: "100%" }}
               onClick={() => handleItemClick(place)}
             >
+              {/* 이미지 영역 */}
               <div
-                className="bg-gray-300 w-full h-20 rounded-lg mb-2"
-                style={{ backgroundImage: `url(${place.img})`, backgroundSize: 'cover' }}
+                className="w-20 h-20 bg-gray-300 rounded-lg flex-shrink-0"
+                style={{
+                  backgroundImage: `url(${place.placeImageUrl || place.pensionImageUrl || "/default-image.jpg"})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
               ></div>
-              <h3 className="text-sm font-bold">{place.name}</h3>
-              <p className="text-xs text-gray-500">{place.address}</p>
-              <p className="text-sm text-yellow-500 mt-1">
-                ⭐ {place.reviewAvg} ({place.reviewCount} 리뷰)
-              </p>
+
+              {/* 텍스트 영역 */}
+              <div className="flex-1 ml-2">
+                {/* 주소 */}
+                <p className="text-xs text-gray-500 truncate mt-1">
+                  {place.address || "주소 정보 없음"}
+                </p>
+
+                {/* 제목 + 숫자 */}
+                <div className="flex items-center">
+                  <p className="text-lg font-bold mr-1">{idx + 1 + startIndex}.</p>
+                  <h3 className="text-sm font-bold truncate">
+                    {place.placeName || place.pensionName || "이름 정보 없음"}
+                  </h3>
+                </div>
+
+                {/* 별점 */}
+                <p className="text-sm text-gray-500 mt-1">
+                  ⭐ {place.reviewAvg?.toFixed(1)} ({place.reviewCount || 0})
+                </p>
+              </div>
             </div>
-          ))
-        ) : (
-          <p className="text-gray-500">현재 표시할 장소가 없습니다.</p>
-        )}
-      </div>
+          ))}
+        </div>
+      );
+    })}
+</div>
+
     </section>
   );
 };

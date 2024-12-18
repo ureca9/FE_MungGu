@@ -1,50 +1,69 @@
-import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
 import { RxStarFilled } from 'react-icons/rx';
 import { FaPenAlt } from 'react-icons/fa';
-import ROUTER_PATHS from '../../utils/RouterPath';
-import { useNavigate } from 'react-router-dom';
-import { GetPensionsSummary } from '../../api/review';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
+import { GetPensionsSummary, GetPlacesSummary } from '../../api/review';
+import useTypeStore from '../../stores/review/useTypeStore';
 
 const AllReviewHeader = () => {
   const navigate = useNavigate();
+  const { id: pensionId } = useParams();
+  const { id: placeId } = useParams();
   const [summary, setSummary] = useState({});
+  const location = useLocation();
+
+  const { plcPenType, setPlcPenIdType } = useTypeStore();
+
+  useEffect(() => {
+    const type = location.pathname.includes('pension') ? '020' : '010';
+    setPlcPenIdType(type);
+    console.log('PlcPenIdType:', type);
+  }, []);
 
   const pensionsSummary = async () => {
     try {
-      const response = await GetPensionsSummary();
-      console.log('편션 요약 응답 :', response);
+      const response = await GetPensionsSummary(pensionId);
       setSummary(response.data);
     } catch (error) {
       console.error('펜션 요약 오류 :', error);
     }
   };
 
+  const placeSummary = async () => {
+    try {
+      const response = await GetPlacesSummary(placeId);
+      setSummary(response.data);
+    } catch (error) {
+      console.error('시설 요약 오류 :', error);
+    }
+  };
+
   useEffect(() => {
-    pensionsSummary();
-  }, []);
+    plcPenType === '020' ? pensionsSummary() : placeSummary();
+  }, [plcPenType]);
+
   return (
-    <div>
+    <div className="p-5 pb-2 md:p-6 md:pb-2">
       <div className="flex justify-between">
-        <h1 className="flex text-xl font-semibold">{summary.pensionName}</h1>
+        <h1 className="w-full text-xl font-semibold line-clamp-1">
+          {summary.pensionName}
+        </h1>
         <div className="flex">
           <CRUDBtn
             styleType="blue"
             size="lg"
             label="글 작성"
-            // onClick={onDelete}
             onClick={(e) => {
               e.preventDefault();
-              navigate(ROUTER_PATHS.REVIEW_ADD);
+              navigate(`/review-add/${pensionId}`);
             }}
-            // style={{ display: deleteButton ? 'block' : 'none' }}
           />
         </div>
       </div>
-      <div className="flex border items-center justify-center flex-col border-[#8A8A8A] h-28 rounded-lg my-4">
+      <div className="flex border items-center justify-center flex-col border-[#8A8A8A] h-24 md:h-32 rounded-lg mb-1 mt-3 md:my-4">
         <div className="flex items-center">
           <span className="text-[#FDBD00] mr-2 text-3xl">
-            {/* <IoIosStar /> */}
             <RxStarFilled />
           </span>
           <span className="text-4xl font-bold">{summary.reviewAvg}</span>
@@ -56,8 +75,12 @@ const AllReviewHeader = () => {
           <span className="text-[#8A8A8A]">
             <FaPenAlt />
           </span>
-          <span className="ml-2 text-[#3288FF] ">{summary.reviewCount}명</span>
-          <span className="text-[#8A8A8A]">이 리뷰를 남겨주셨습니다.</span>
+          <span className="ml-2 text-lg text-[#3288FF] ">
+            {summary.reviewCount}명
+          </span>
+          <span className="text-lg text-[#8A8A8A]">
+            이 리뷰를 남겨주셨습니다.
+          </span>
         </div>
       </div>
     </div>
