@@ -11,6 +11,7 @@ import ReviewDetailModal from '../../components/review/ReviewDetailModal';
 import Swal from 'sweetalert2';
 import SubHeader from '../../components/common/SubHeader';
 import reviewemptyIcon from "../../assets/common/petgray.svg"
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 
 const sliderSettings = {
@@ -180,11 +181,13 @@ const PensionDetailPage = () => {
     <h2 className="text-lg font-bold">{pensionDetail.pensionName}</h2>
     <button
       onClick={toggleLike}
-      className={`w-10 h-10 flex items-center justify-center rounded-full ${
-        likeStatus ? 'text-red-500' : 'text-gray-400'
-      }`}
+      className="w-10 h-10 flex items-center justify-center rounded-full"
     >
-      {likeStatus ? '❤️' : '🤍'}
+      {likeStatus ? (
+        <FaHeart className="text-red-500" size={24} />
+      ) : (
+        <FaRegHeart className="text-gray-400" size={24} />
+      )}
     </button>
   </div>
   <p className="text-sm text-gray-500">{pensionDetail.address}</p>
@@ -236,7 +239,7 @@ const PensionDetailPage = () => {
 
       <section className="relative pr-4 pt-4 pb-4 mt-4 bg-white">
   <div className="flex items-center justify-between mb-2">
-    <h3 className="pl-4 text-lg font-bold">리얼 포토 리뷰</h3>
+    <h3 className="pl-4 text-lg font-bold">리얼 리뷰</h3>
     <button
       className="text-sm text-blue-500 hover:underline"
       onClick={() => navigate(`/pension-all-review/${id}`)}
@@ -245,7 +248,7 @@ const PensionDetailPage = () => {
     </button>
   </div>
   <div className="relative">
-    <div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-hidden">
+    <div className="flex gap-2 p-4 overflow-x-auto bg-white scrollbar-hidden">
       {pensionDetail.review.slice(0, 20).map((review, index) => {
         const firstFileUrl =
           review.file && review.file.length > 0
@@ -260,7 +263,7 @@ const PensionDetailPage = () => {
           <div
             key={index}
             onClick={() => handleReviewClick(review)}
-            className="flex-none p-2 rounded-lg shadow-md cursor-pointer w-36 bg-gray-50"
+            className="flex-none p-2 rounded-lg cursor-pointer w-36 bg-gray-50"
           >
             {fileType === 'IMAGE' ? (
               <img

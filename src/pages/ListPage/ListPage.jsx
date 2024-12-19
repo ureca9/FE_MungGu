@@ -4,6 +4,7 @@ import axios from "axios";
 import SearchModal from "../../components/MainPage/SearchModal/SearchModal";
 import SubHeader from "../../components/common/SubHeader";
 import Swal from 'sweetalert2';
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 
 const ListPage = () => {
   const navigate = useNavigate();
@@ -322,21 +323,23 @@ const ListPage = () => {
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-lg font-bold text-gray-800 truncate">{item.placeName}</h2>
             <div className="flex items-center gap-2">
-              <span className="text-gray-500 font-medium">
-                ⭐ {item.reviewAvg || "0"} ({item.reviewCount || "0"})
-              </span>
-              <button
-                className={`w-10 h-10 flex items-center justify-center rounded-full ${
-                  item.likeStatus ? "text-red-500" : "text-gray-400"
-                }`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleLike(item.placeId);
-                }}
-              >
-                {item.likeStatus ? "❤️" : "🤍"}
-              </button>
-            </div>
+  <span className="text-gray-500 font-medium">
+    ⭐ {item.reviewAvg || "0"} ({item.reviewCount || "0"})
+  </span>
+  <button
+    className={`w-10 h-10 flex items-center justify-center rounded-full`}
+    onClick={(e) => {
+      e.stopPropagation();
+      toggleLike(item.placeId);
+    }}
+  >
+    {item.likeStatus ? (
+      <FaHeart className="text-red-500" size={24} />
+    ) : (
+      <FaRegHeart className="text-gray-400" size={24} />
+    )}
+  </button>
+</div>
           </div>
 
           <p className="text-sm text-gray-600 mb-1">

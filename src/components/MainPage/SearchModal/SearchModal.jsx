@@ -7,11 +7,19 @@ const SearchModal = ({ onClose, defaultTab = "facility" }) => {
   const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
+    // Set the active tab and enable animation
     setActiveTab(defaultTab);
     const timer = setTimeout(() => {
       setIsAnimating(true);
     }, 10);
-    return () => clearTimeout(timer);
+
+    // Disable body scroll when modal is open
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      clearTimeout(timer);
+      document.body.style.overflow = "auto"; // Enable body scroll when modal is closed
+    };
   }, [defaultTab]);
 
   const handleClose = () => {
@@ -25,8 +33,9 @@ const SearchModal = ({ onClose, defaultTab = "facility" }) => {
         className={`bg-gray-100 w-full rounded-t-lg p-6 transition-transform duration-300 ${
           isAnimating ? "translate-y-0" : "translate-y-full"
         }`}
-        style={{ maxWidth: "770px" }}
+        style={{ maxWidth: "770px", maxHeight: "90vh" }}
       >
+        {/* Header */}
         <div className="flex justify-between items-center border-b pb-4">
           <h2 className="text-xl font-bold">검색</h2>
           <button onClick={handleClose} className="text-gray-500 text-lg">
@@ -34,6 +43,7 @@ const SearchModal = ({ onClose, defaultTab = "facility" }) => {
           </button>
         </div>
 
+        {/* Tab Buttons */}
         <div className="flex justify-center gap-4 mt-4">
           <button
             className={`px-4 py-2 rounded-lg ${
@@ -57,7 +67,8 @@ const SearchModal = ({ onClose, defaultTab = "facility" }) => {
           </button>
         </div>
 
-        <div className="mt-6 overflow-hidden">
+        {/* Content Section with Scroll */}
+        <div className="mt-6 overflow-y-auto" style={{ maxHeight: "70vh" }}>
           {activeTab === "facility" && <FacilitySection onClose={handleClose} />}
           {activeTab === "pension" && <PensionSection onClose={handleClose} />}
         </div>

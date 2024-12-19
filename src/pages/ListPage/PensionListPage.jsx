@@ -5,6 +5,7 @@ import SearchModal from "../../components/MainPage/SearchModal/SearchModal";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import useLoadingStore from "../../stores/common/useLoadingStore";
 import Swal from 'sweetalert2';
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 
 const PensionListPage = () => {
   const navigate = useNavigate();
@@ -37,11 +38,9 @@ const PensionListPage = () => {
 
   const fetchMorePensions = async (page = currentPage + 1, currentFilters = filters) => {
     if (isFetching || !hasNext) {
-      console.log("Fetch blocked - isFetching:", isFetching, "hasNext:", hasNext);
       return;
     }
   
-    console.log("Fetching more pensions...");
     setIsFetching(true);
     setIsLoading(true);
   
@@ -80,7 +79,6 @@ const PensionListPage = () => {
       const newPensions = response.data.data.pensionInfo || [];
       const nextPageExists = response.data.data.hasNext;
   
-      console.log("New pensions:", newPensions, "Has next:", nextPageExists);
   
       setPensions((prevPensions) => {
         const uniquePensions = new Map();
@@ -312,25 +310,27 @@ const PensionListPage = () => {
                 </div>
   
                 <div className="flex flex-col items-end space-y-1 -mt-1">
-                  <div className="flex items-center space-x-1 sm:space-x-2">
-                    <span className="text-yellow-500 font-semibold">
-                      ⭐ {pension.reviewAvg || "0"}{" "}
-                      <span className="text-gray-500 text-sm">
-                        ({pension.reviewCount || "0"})
-                      </span>
-                    </span>
-                    <button
-                      className={`w-8 h-8 flex items-center justify-center rounded-full ${
-                        pension.likeStatus ? "text-red-500" : "text-gray-400"
-                      }`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleLike(pension.pensionId);
-                      }}
-                    >
-                      {pension.likeStatus ? "❤️" : "🤍"}
-                    </button>
-                  </div>
+                <div className="flex items-center space-x-1 sm:space-x-2">
+  <span className="text-yellow-500 font-semibold">
+    ⭐ {pension.reviewAvg || "0"}{" "}
+    <span className="text-gray-500 text-sm">
+      ({pension.reviewCount || "0"})
+    </span>
+  </span>
+  <button
+    className="w-8 h-8 flex items-center justify-center rounded-full"
+    onClick={(e) => {
+      e.stopPropagation(); // 클릭 이벤트 전파 방지
+      toggleLike(pension.pensionId);
+    }}
+  >
+    {pension.likeStatus ? (
+      <FaHeart className="text-red-500" size={20} />
+    ) : (
+      <FaRegHeart className="text-gray-400" size={20} />
+    )}
+  </button>
+</div>
                   <div className="flex items-baseline space-x-1 flex-nowrap">
   <span className="text-blue-500 font-bold text-lg sm:text-2xl">
     {pension.lowestPrice
