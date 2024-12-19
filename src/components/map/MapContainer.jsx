@@ -1,15 +1,13 @@
 import { useRef, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import {
-  getCarDirection,
-  getMarkers,
-  getSpotInfo,
-  searchSpot,
-} from '../../api/map/map.js';
+import { getCarDirection, getMarkers, getSpotInfo } from '../../api/map/map.js';
 import heartMarker from '../../assets/common/heartMarker.png';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
 import usePlaceStore from '../../stores/map/usePlaceStore.js';
 import { SearchType } from '../../utils/SearchType.js';
+import useLoadingStore from '../../stores/common/useLoadingStore.js';
+import LoadingSpinner from '../common/LoadingSpinner.jsx';
+import usePolylineStore from '../../stores/map/usePolylineStore.js';
 
 const MapContainer = () => {
   const mapContainer = useRef(null);
@@ -18,18 +16,19 @@ const MapContainer = () => {
   const likedMarkersRef = useRef([]);
   const searchMarkersRef = useRef([]);
   const polylineRef = useRef(null);
+  const { setPolyline } = usePolylineStore();
 
   const { coords, setCoords } = useCoordsStore();
   const {
     searchResults,
     setSearchResults,
     setSelectedPlace,
-    selectedPlace,
     searchType,
     startLocation,
     endLocation,
     setStartLocation,
   } = usePlaceStore();
+  const { isLoading, setIsLoading, setIsMapLoading } = useLoadingStore();
 
   const showError = (title, icon = 'error') => {
     Swal.fire({ title, icon });
@@ -43,6 +42,7 @@ const MapContainer = () => {
   };
 
   const setCurrentLocation = () => {
+    setIsLoading(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -62,6 +62,7 @@ const MapContainer = () => {
         });
 
         initMap(latitude, longitude);
+        setIsLoading(false);
       },
       (error) => {
         console.error('현재 위치를 가져오지 못했습니다:', error);
@@ -74,13 +75,22 @@ const MapContainer = () => {
   };
 
   const initMap = async (latitude, longitude) => {
-    const map = new window.kakao.maps.Map(mapContainer.current, {
-      center: new window.kakao.maps.LatLng(latitude, longitude),
-      level: 3,
-    });
-    mapRef.current = map;
-    addCurrentMarker(map, latitude, longitude);
-    await addLikedMarker(map);
+    setIsMapLoading(true);
+
+    try {
+      const map = new window.kakao.maps.Map(mapContainer.current, {
+        center: new window.kakao.maps.LatLng(latitude, longitude),
+        level: 3,
+      });
+      mapRef.current = map;
+      addCurrentMarker(map, latitude, longitude);
+      await addLikedMarker(map);
+    } catch (error) {
+      console.error('지도 초기화 중 오류 발생:', error);
+      showError('지도를 불러오는데 실패했습니다. 페이지를 새로고침 해주세요.');
+    } finally {
+      setIsMapLoading(false);
+    }
   };
 
   const addCurrentMarker = (map, latitude, longitude) => {
@@ -92,6 +102,7 @@ const MapContainer = () => {
   };
 
   const addLikedMarker = async (map) => {
+    setIsLoading(true);
     try {
       const places = await getMarkers();
       likedMarkersRef.current = places.map((place) => {
@@ -115,6 +126,8 @@ const MapContainer = () => {
     } catch (error) {
       console.error('찜한 장소를 불러오는 중 오류가 발생했습니다:', error);
       showError('찜한 장소를 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -162,7 +175,7 @@ const MapContainer = () => {
 
   const drawRoute = async () => {
     if (!startLocation || !endLocation || !mapRef.current) return;
-
+    setIsLoading(true);
     try {
       const data = await getCarDirection(startLocation, endLocation);
       const linePath = data.routes[0].sections[0].roads.flatMap((road) => {
@@ -183,8 +196,11 @@ const MapContainer = () => {
         strokeStyle: 'solid',
       });
       polylineRef.current.setMap(mapRef.current);
+      setPolyline(polylineRef.current);
     } catch (error) {
       console.error('경로 데이터를 불러오는 중 오류가 발생했습니다:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -208,7 +224,12 @@ const MapContainer = () => {
     drawRoute();
   }, [startLocation, endLocation]);
 
-  return <div ref={mapContainer} id="map" className="w-full h-full"></div>;
+  return (
+    <>
+      {isLoading && <LoadingSpinner />}
+      <div ref={mapContainer} id="map" className="w-full h-full"></div>
+    </>
+  );
 };
 
 export default MapContainer;
