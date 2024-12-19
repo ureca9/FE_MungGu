@@ -33,7 +33,7 @@ const MapSearch = () => {
         <div className="flex items-center">
           <input
             type="text"
-            placeholder="지역명/장소으로 입력해주세요"
+            placeholder="지역명/장소로 입력해주세요"
             className="w-full py-4 pl-2 border rounded-lg"
             onFocus={() => {
               setSearchType(SearchType.SEARCH);

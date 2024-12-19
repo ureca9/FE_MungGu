@@ -171,7 +171,6 @@ const MapContainer = () => {
       place.longitude,
     );
     setSelectedPlace(data);
-    console.log(data);
   };
 
   const drawRoute = async () => {
