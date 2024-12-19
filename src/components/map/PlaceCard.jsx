@@ -19,7 +19,8 @@ const PlaceCard = ({ place, likedPlaces, handleLikeClick }) => {
       : distance.toFixed(1) + 'm';
   };
 
-  const { type, placeId, name, images, latitude, longitude } = place;
+  const placeId = place.placeId || place.id;
+  const { type, name, images, latitude, longitude } = place;
 
   const getBusinessStatus = (businessHour) => {
     if (!businessHour || businessHour.trim() === '정보없음') {

@@ -49,8 +49,12 @@ const MapPanel = () => {
         />
       </div>
       {searchResults.length === 0 && (
-        <div className="flex justify-center items-center py-1">
-          <img src={heartBtn} />
+        <div
+          className="flex justify-center items-center py-1"
+          role="status"
+          aria-label="저장된 장소가 없습니다"
+        >
+          <img src={heartBtn} alt="하트 아이콘" />
           <span className="text-2xl text-center">저장</span>
         </div>
       )}

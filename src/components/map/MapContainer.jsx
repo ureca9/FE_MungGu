@@ -87,6 +87,7 @@ const MapContainer = () => {
       await addLikedMarker(map);
     } catch (error) {
       console.error('지도 초기화 중 오류 발생:', error);
+      showError('지도를 불러오는데 실패했습니다. 페이지를 새로고침 해주세요.');
     } finally {
       setIsMapLoading(false);
     }
@@ -170,6 +171,7 @@ const MapContainer = () => {
       place.longitude,
     );
     setSelectedPlace(data);
+    console.log(data);
   };
 
   const drawRoute = async () => {

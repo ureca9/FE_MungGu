@@ -19,6 +19,14 @@ const MapSearch = () => {
   const { polyline, clearPolyline } = usePolylineStore();
 
   const handleDirectionsClick = () => navigate(ROUTER_PATHS.DIRECTIONS);
+  const resetSearch = () => {
+    setSearchType(SearchType.SEARCH);
+    setSelectedPlace(null);
+    setEndLocation(null);
+    setSearchResults([]);
+    if (polyline) polyline.setMap(null);
+    clearPolyline();
+  };
   return (
     <div className="absolute top-4 left-4 right-4 z-10 p-4 bg-transparent">
       {searchType === SearchType.SEARCH ? (
@@ -56,14 +64,7 @@ const MapSearch = () => {
             />
             <button
               className="text-gray-500 hover:text-red-500"
-              onClick={() => {
-                setSearchType(SearchType.SEARCH);
-                setSelectedPlace(null);
-                setEndLocation(null);
-                setSearchResults([]);
-                polyline.setMap(null);
-                clearPolyline();
-              }}
+              onClick={() => resetSearch()}
             >
               <FaTimes className="text-2xl" />
             </button>
