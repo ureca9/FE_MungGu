@@ -7,7 +7,6 @@ import { ERROR_MESSAGES } from '../../utils/ErrorMessage.js';
 export const getAuthToken = async () => {
   try {
     const response = await instance.post('/auth/token');
-    console.log(response);
     return response;
   } catch (error) {
     console.error('토큰 갱신 실패:', error);
