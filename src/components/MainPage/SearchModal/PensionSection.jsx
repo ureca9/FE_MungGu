@@ -18,7 +18,6 @@ const PensionSection = ({ onClose }) => {
   const regions = ["서울", "경기", "인천", "강원권", "충청권", "전라권", "경상권", "제주권"];
 
   useEffect(() => {
-    console.log("Updated heaviestDogWeight:", heaviestDogWeight);
   }, [heaviestDogWeight]);
 
   const handleRegionSelect = async (region) => {

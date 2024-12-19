@@ -9,6 +9,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
 import SubHeader from '../../components/common/SubHeader';
 import emptyIcon from "../../assets/common/petgray.svg"
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 
 
@@ -228,11 +229,13 @@ const PlaceDetailPage = () => {
       </span>
       <button
         onClick={toggleLike}
-        className={`w-10 h-10 flex items-center justify-center rounded-full ${
-          likeStatus ? 'text-red-500' : 'text-gray-400'
-        }`}
+        className="w-10 h-10 flex items-center justify-center rounded-full"
       >
-        {likeStatus ? '❤️' : '🤍'}
+        {likeStatus ? (
+          <FaHeart className="text-red-500" size={24} />
+        ) : (
+          <FaRegHeart className="text-gray-400" size={24} />
+        )}
       </button>
     </div>
   </div>
@@ -275,7 +278,7 @@ const PlaceDetailPage = () => {
 
       <section className="p-4 mt-4 bg-white">
   <div className="flex items-center justify-between mb-4">
-    <h3 className="text-lg font-bold">리얼 포토 리뷰</h3>
+    <h3 className="text-lg font-bold">리얼 리뷰</h3>
     <button
       className="text-sm text-blue-500 hover:underline"
       onClick={() => navigate(`/place-all-review/${id}`)}
@@ -286,7 +289,7 @@ const PlaceDetailPage = () => {
   <div
     className="
       flex gap-2 overflow-x-auto 
-      space-x-4 bg-white shadow-sm 
+      space-x-4 bg-white 
       scrollbar-hidden
     "
   >
@@ -298,7 +301,7 @@ const PlaceDetailPage = () => {
       return (
         <div
           key={photoReview.reviewId}
-          className="flex-none p-2 text-center rounded-lg shadow-md w-36 bg-gray-50 cursor-pointer"
+          className="flex-none p-2 text-center rounded-lg w-36 bg-gray-50 cursor-pointer"
           onClick={() =>
             handleReviewClick({
               reviewId: photoReview.reviewId,
