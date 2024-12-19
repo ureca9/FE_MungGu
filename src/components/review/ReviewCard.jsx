@@ -62,7 +62,7 @@ const ReviewCard = ({ review }) => {
               <span className="text-[#FDBD00] text-2xl">
                 <RxStarFilled />
               </span>
-              <span className="ml-1 font-semibold">{score}.0</span>
+              <span className="ml-1 font-semibold">{score}</span>
               <span className="font-extralight text-[#8A8A8A] text-md ml-3">
                 {visitDate}
               </span>

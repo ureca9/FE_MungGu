@@ -4,6 +4,7 @@ import { GetMyReviewData } from '../../api/review';
 import MyReviewCard from '../../components/review/MyReviewCard';
 import { FiSearch } from 'react-icons/fi';
 import useMyReviewStore from '../../stores/review/useMyReviewStore';
+import ViewHistoryMiniCard from '../../components/review/ViewHistoryMiniCard';
 
 const MyReview = () => {
   const [inputValue, setInputValue] = useState('');

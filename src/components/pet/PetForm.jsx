@@ -51,7 +51,6 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
     if (profileImage) {
       formData.append('image', profileImage);
     }
-    console.log('저장하는 데이터 :', [...formData.entries()]);
     onSubmit({ ...puppyData, image: profileImage });
   };
 
@@ -113,17 +112,28 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
   };
 
   const handleBirthDateChange = (e) => {
-    let input = e.target.value.replace(/-/g, '');
-    if (input.length > 8) {
-      input = input.slice(0, 8);
+    let input = e.target.value;
+    const numbers = input.replace(/-/g, '');
+
+    if (numbers.length > 8) {
+      numbers = numbers.slice(0, 8);
     }
-    if (input.length >= 5) {
-      input = input.slice(0, 4) + '-' + input.slice(4);
+
+    let formattedInput = '';
+    if (numbers.length >= 7) {
+      formattedInput =
+        numbers.slice(0, 4) +
+        '-' +
+        numbers.slice(4, 6) +
+        '-' +
+        numbers.slice(6);
+    } else if (numbers.length >= 5) {
+      formattedInput = numbers.slice(0, 4) + '-' + numbers.slice(4);
+    } else {
+      formattedInput = numbers;
     }
-    if (input.length >= 7) {
-      input = input.slice(0, 7) + '-' + input.slice(7);
-    }
-    setBirthDate(input);
+
+    setBirthDate(formattedInput);
   };
 
   return (
