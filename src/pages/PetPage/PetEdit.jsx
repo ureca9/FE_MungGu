@@ -9,6 +9,7 @@ import {
   PatchPuppyEditData,
 } from '../../api/pet';
 import { CircularProgress } from '@mui/material';
+import SubHeader from '../../components/common/SubHeader';
 
 const PetEdit = () => {
   const { selectedPetId, basicData, setBasicData } = usePetStore();
@@ -91,22 +92,25 @@ const PetEdit = () => {
 
   return (
     <>
-      {isLoading ? (
-        <div>로딩 중...</div>
-      ) : basicData ? (
-        <PetForm
-          key="edit"
-          title="우리 강아지 정보를 수정해주세요."
-          buttonText="수정"
-          deleteButton={true}
-          onSubmit={handleEdit}
-          onDelete={handleDelete}
-        />
-      ) : (
-        <div className="flex items-center justify-center">
-          <CircularProgress size={60} />
-        </div>
-      )}
+      <div className="min-h-screen">
+        <SubHeader title={'강아지 수정/삭제'} />
+        {isLoading ? (
+          <div>로딩 중...</div>
+        ) : basicData ? (
+          <PetForm
+            key="edit"
+            title="우리 강아지 정보를 수정해주세요."
+            buttonText="수정"
+            deleteButton={true}
+            onSubmit={handleEdit}
+            onDelete={handleDelete}
+          />
+        ) : (
+          <div className="flex items-center justify-center">
+            <CircularProgress size={60} />
+          </div>
+        )}
+      </div>
     </>
   );
 };
