@@ -6,7 +6,7 @@ import useTypeStore from '../../stores/review/useTypeStore';
 import { RxStarFilled } from 'react-icons/rx';
 import { FaCamera } from 'react-icons/fa';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const ReviewAdd = () => {
   const { id: pensionId } = useParams();
@@ -15,7 +15,29 @@ const ReviewAdd = () => {
   const [visitDate, setVisitDate] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([]);
   const { plcPenType } = useTypeStore();
+  const scrollRef = useRef(null);
 
+  const handleWheel = (e) => {
+    e.preventDefault();
+    const ref = scrollRef.current;
+    if (e.deltaY > 0) {
+      ref.scrollLeft += 40;
+    } else {
+      ref.scrollLeft -= 40;
+    }
+  };
+
+  useEffect(() => {
+    const ref = scrollRef.current;
+    if (ref) {
+      ref.addEventListener('wheel', handleWheel);
+    }
+    return () => {
+      if (ref) {
+        ref.removeEventListener('wheel', handleWheel);
+      }
+    };
+  }, []);
   const handleScoreChange = (newScore) => {
     setScore(newScore);
   };
@@ -43,32 +65,26 @@ const ReviewAdd = () => {
               img.onload = () => {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                // 이미지 크기 조정 (선택 사항)
-                const maxWidth = 500; // 최대 너비 설정
+                const maxWidth = 500;
                 const scaleFactor = maxWidth / img.width;
                 canvas.width = maxWidth;
                 canvas.height = img.height * scaleFactor;
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                // JPEG 또는 WebP로 압축
                 canvas.toBlob(
                   (blob) => {
                     const newFile = new File([blob], file.name, {
                       type: 'image/JPEG',
                     });
-                    // console.log('이미지 blob:', blob);
-                    console.log('이미지 File:', newFile);
-                    reviewFormData.append('file', newFile); // FormData에 File 객체 추가
-                    // reviewFormData.append('file', blob, file.name);
+                    reviewFormData.append('file', newFile);
                     resolve({
                       file: newFile,
-                      // file: blob,
                       fileUrl: URL.createObjectURL(blob),
                       fileType: 'IMAGE',
                       fileName: file.name,
                     });
                   },
                   'image/JPEG',
-                  0.8, // 압축률 (0 ~ 1)
+                  0.8,
                 );
               };
               img.src = e.target.result;
@@ -88,43 +104,10 @@ const ReviewAdd = () => {
         }
       }),
     );
-    console.log('파일상태:', processedFiles);
-
     setSelectedFiles(processedFiles.filter((file) => file !== null));
     handleSubmit(reviewFormData);
     console.timeEnd('파일 처리 시간');
   };
-
-  // const handleFileChange = (event) => {
-  //   const files = [...event.target.files];
-  //   const maxFileSize = 5 * 1024 * 1024;
-
-  //   const processedFiles = files
-  //     .map((file) => {
-  //       if (file.size > maxFileSize) {
-  //         Swal.fire({
-  //           title: 'Oops...',
-  //           text: `${file.name} 파일의 용량이 너무 큽니다. (${maxFileSize / 1024 / 1024}MB 이하)`,
-  //           icon: 'error',
-  //         });
-  //         return null;
-  //       } else {
-  //         return {
-  //           file: file,
-  //           fileUrl: URL.createObjectURL(file),
-  //           fileType: file.type.startsWith('image/')
-  //             ? 'IMAGE'
-  //             : file.type.startsWith('video/')
-  //               ? 'VIDEO'
-  //               : null,
-  //           fileName: file.name,
-  //         };
-  //       }
-  //     })
-  //     .filter((file) => file !== null);
-  //   console.log('파일상태:', processedFiles);
-  //   setSelectedFiles(processedFiles);
-  // };
 
   const checkDataForm = () => {
     if (!content || !score || !visitDate) {
@@ -150,7 +133,6 @@ const ReviewAdd = () => {
       type: plcPenType,
       visitDate: visitDate,
     };
-    console.log('reviewData :', reviewData);
     reviewFormData.append(
       'data',
       new Blob([JSON.stringify(reviewData)], { type: 'application/json' }),
@@ -158,13 +140,12 @@ const ReviewAdd = () => {
     selectedFiles.forEach((file) => {
       reviewFormData.append('file', file.file);
     });
-    console.log('리뷰 저장:', [...reviewFormData.entries()]);
     try {
       const response = await PostPensionsReview(reviewFormData);
-      console.log('리뷰 추가 성공 :', response.data);
       Swal.fire({
         title: '추가 성공!',
         icon: 'success',
+        confirmButtonColor: '#3288FF',
       }).then(() => {
         window.history.back();
       });
@@ -202,7 +183,10 @@ const ReviewAdd = () => {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2 overflow-x-auto h-aout md:gap-5">
+        <div
+          ref={scrollRef}
+          className="flex items-center gap-2 overflow-x-auto scrollbar-none h-aout md:gap-5"
+        >
           <div>
             <label>
               <input

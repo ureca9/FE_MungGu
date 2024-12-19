@@ -17,9 +17,7 @@ const MyPet = ({ memberD, navigate }) => {
 
   const handleWheel = (e) => {
     e.preventDefault();
-
     const ref = scrollRef.current;
-
     if (e.deltaY > 0) {
       ref.scrollLeft += 40;
     } else {
@@ -29,11 +27,9 @@ const MyPet = ({ memberD, navigate }) => {
 
   useEffect(() => {
     const ref = scrollRef.current;
-
     if (ref) {
       ref.addEventListener('wheel', handleWheel);
     }
-
     return () => {
       if (ref) {
         ref.removeEventListener('wheel', handleWheel);

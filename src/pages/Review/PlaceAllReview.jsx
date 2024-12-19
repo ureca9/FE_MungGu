@@ -29,7 +29,6 @@ const PlaceAllReview = () => {
       const response = await GetPlaceReviews(placeId, page);
       setReviews((prevReviews) => [...prevReviews, ...response.reviews]);
       setHasNext(response.hasNext);
-      console.log('시설 리뷰 목록2 :', response);
     } catch (error) {
       console.error('시설 리뷰 가져오기 실패 :', error);
     } finally {
@@ -45,7 +44,6 @@ const PlaceAllReview = () => {
     if (inView && hasNext && !isLoading) {
       setPage((prevPage) => prevPage + 1);
     }
-    console.log('inView', inView);
   }, [inView, !isLoading, hasNext]);
 
   return (

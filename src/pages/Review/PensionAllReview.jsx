@@ -14,7 +14,6 @@ const PensionAllReview = () => {
   const [page, setPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [hasNext, setHasNext] = useState(true);
-  // const observerRef = useRef(null);
   const { ref, inView } = useInView({
     threshold: 0.5,
     triggerOnce: false,
@@ -30,7 +29,6 @@ const PensionAllReview = () => {
       const response = await GetPensionsReviews(pensionId, page);
       setReviews((prevReviews) => [...prevReviews, ...response.reviews]);
       setHasNext(response.hasNext);
-      console.log('펜션 리뷰 목록 :', reviews);
     } catch (error) {
       console.error('리뷰 가져오기 실패 :', error);
     } finally {
@@ -46,7 +44,6 @@ const PensionAllReview = () => {
     if (inView && hasNext && !isLoading) {
       setPage((prevPage) => prevPage + 1);
     }
-    console.log('inView', inView);
   }, [inView, !isLoading, hasNext]);
 
   return (

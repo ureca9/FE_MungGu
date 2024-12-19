@@ -32,9 +32,7 @@ import MyReview from '../pages/Review/MyReview.jsx';
 import ReviewEdit from '../pages/Review/ReviewEdit.jsx';
 import PensionAllReview from '../pages/Review/PensionAllReview.jsx';
 import PlaceAllReview from '../pages/Review/PlaceAllReview.jsx';
-import LiveReviewList from '../pages/Review/LiveReviewList.jsx';
 import ViewHistory from '../pages/Review/ViewHistory.jsx';
-
 
 const routes = [
   {
@@ -160,10 +158,6 @@ const routes = [
   {
     path: ROUTER_PATHS.MY_REVIEW_EDIT,
     element: <ReviewEdit />,
-  },
-  {
-    path: ROUTER_PATHS.LIVE_REVIEW_LIST,
-    element: <LiveReviewList />,
   },
   {
     path: ROUTER_PATHS.VIEW_HISTORY,
