@@ -119,11 +119,22 @@ const RecommendedPensions = () => {
               <div
                 className="w-48 h-24 bg-gray-300 rounded-lg mb-2 sm:w-full h-32"
                 style={{
-                  backgroundImage: `url(${pension.img ? pension.img : emptyIcon})`,
+                  backgroundImage: `url(${pension.img || emptyIcon})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
-              ></div>
+                role="img"
+                aria-label={pension.name}
+              >
+                <img
+                  src={pension.img || emptyIcon}
+                  alt={pension.name}
+                  className="hidden"
+                  onError={(e) => {
+                    e.target.parentElement.style.backgroundImage = `url(${emptyIcon})`;
+                  }}
+                  />
+              </div>
               <h3 className="text-base font-semibold text-gray-800 truncate sm:pr-0 pr-12">
                 {pension.name}
               </h3>
