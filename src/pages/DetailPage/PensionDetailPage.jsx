@@ -10,16 +10,16 @@ import RecommendedFacility from '../../components/DetailPage/RecommendedFacility
 import ReviewDetailModal from '../../components/review/ReviewDetailModal';
 import Swal from 'sweetalert2';
 import SubHeader from '../../components/common/SubHeader';
-import reviewemptyIcon from "../../assets/common/petgray.svg"
-
+import reviewemptyIcon from '../../assets/common/petgray.svg';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 const sliderSettings = {
-  dots: false, 
-  infinite: true, 
-  speed: 500, 
-  slidesToShow: 1, 
-  slidesToScroll: 1, 
-  autoplay: true, 
+  dots: false,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  autoplay: true,
   autoplaySpeed: 3000,
 };
 
@@ -65,29 +65,29 @@ const PensionDetailPage = () => {
         const result = await Swal.fire({
           title: '로그인 후 이용해주세요.',
           icon: 'warning',
-          showCancelButton: true, 
+          showCancelButton: true,
           confirmButtonText: '로그인',
           cancelButtonText: '취소',
           confirmButtonColor: '#3288FF',
         });
-  
+
         if (result.isConfirmed) {
           navigate('/login');
         }
-        return; 
+        return;
       }
 
       const headers = {
         Accept: 'application/json',
         ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
       };
-  
+
       await axios.post(
         `https://meong9.store/api/v1/pensions/likes/${id}`,
         {},
         { headers },
       );
-  
+
       setLikeStatus((prev) => !prev);
     } catch (error) {
       console.error('찜 상태 업데이트 실패:', error);
@@ -113,7 +113,7 @@ const PensionDetailPage = () => {
           { headers },
         );
         setPensionDetail(response.data.data);
-        setLikeStatus(response.data.data.likeStatus || false); 
+        setLikeStatus(response.data.data.likeStatus || false);
       } catch (error) {
         setError('펜션 정보를 불러오는 데 실패했습니다.');
       } finally {
@@ -155,59 +155,57 @@ const PensionDetailPage = () => {
   };
 
   return (
-    
     <div className="min-h-screen" style={{ backgroundColor: '#f9fafb' }}>
-      
-      <SubHeader title={pensionDetail.pensionName || "펜션 상세" }/>
-      
-      <div className="w-full h-[400px] overflow-hidden">
-      <Slider {...sliderSettings}>
-  {images.map((image, index) => (
-    <div key={index}>
-      <img
-        src={image}
-        alt={`Pension Image ${index + 1}`}
-        className="w-full h-[400px] object-cover"
-      />
-    </div>
-  ))}
-</Slider>
+      <SubHeader title={pensionDetail.pensionName || '펜션 상세'} />
 
+      <div className="w-full h-[400px] overflow-hidden">
+        <Slider {...sliderSettings}>
+          {images.map((image, index) => (
+            <div key={index}>
+              <img
+                src={image}
+                alt={`Pension Image ${index + 1}`}
+                className="w-full h-[400px] object-cover"
+              />
+            </div>
+          ))}
+        </Slider>
       </div>
 
       <section className="p-4 mt-4 bg-white">
-  <div className="flex items-center justify-between">
-    <h2 className="text-lg font-bold">{pensionDetail.pensionName}</h2>
-    <button
-      onClick={toggleLike}
-      className={`w-10 h-10 flex items-center justify-center rounded-full ${
-        likeStatus ? 'text-red-500' : 'text-gray-400'
-      }`}
-    >
-      {likeStatus ? '❤️' : '🤍'}
-    </button>
-  </div>
-  <p className="text-sm text-gray-500">{pensionDetail.address}</p>
-  <div className="flex items-center mt-2">
-    <span className="mr-2 text-yellow-500">
-      ⭐ {pensionDetail.reviewAvg}
-    </span>
-    <span className="text-sm text-gray-500">
-      ({pensionDetail.reviewCount})
-    </span>
-  </div>
-  <div className="flex flex-wrap gap-2 mt-2">
-    {pensionDetail.tags.map((tag, index) => (
-      <span
-        key={index}
-        className="px-3 py-1 text-sm bg-gray-200 rounded-full"
-      >
-        {tag}
-      </span>
-    ))}
-  </div>
-</section>
-
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold">{pensionDetail.pensionName}</h2>
+          <button
+            onClick={toggleLike}
+            className="flex items-center justify-center w-10 h-10 rounded-full"
+          >
+            {likeStatus ? (
+              <FaHeart className="text-red-500" size={24} />
+            ) : (
+              <FaRegHeart className="text-gray-400" size={24} />
+            )}
+          </button>
+        </div>
+        <p className="text-sm text-gray-500">{pensionDetail.address}</p>
+        <div className="flex items-center mt-2">
+          <span className="mr-2 text-yellow-500">
+            ⭐ {pensionDetail.reviewAvg}
+          </span>
+          <span className="text-sm text-gray-500">
+            ({pensionDetail.reviewCount})
+          </span>
+        </div>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {pensionDetail.tags.map((tag, index) => (
+            <span
+              key={index}
+              className="px-3 py-1 text-sm bg-gray-200 rounded-full"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </section>
 
       <section className="p-4 mt-4 bg-white">
         <h3 className="mb-2 text-lg font-bold">소개글</h3>
@@ -234,68 +232,67 @@ const PensionDetailPage = () => {
         <ReservationRoomSection pensionId={id} />
       </section>
 
-      <section className="relative pr-4 pt-4 pb-4 mt-4 bg-white">
-  <div className="flex items-center justify-between mb-2">
-    <h3 className="pl-4 text-lg font-bold">리얼 포토 리뷰</h3>
-    <button
-      className="text-sm text-blue-500 hover:underline"
-      onClick={() => navigate(`/pension-all-review/${id}`)}
-    >
-      전체보기 &gt;
-    </button>
-  </div>
-  <div className="relative">
-    <div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-hidden">
-      {pensionDetail.review.slice(0, 20).map((review, index) => {
-        const firstFileUrl =
-          review.file && review.file.length > 0
-            ? review.file[0].fileUrl
-            : reviewemptyIcon; // reviewemptyIcon으로 대체
-        const fileType =
-          review.file && review.file.length > 0
-            ? review.file[0].fileType
-            : null;
-
-        return (
-          <div
-            key={index}
-            onClick={() => handleReviewClick(review)}
-            className="flex-none p-2 rounded-lg shadow-md cursor-pointer w-36 bg-gray-50"
+      <section className="relative pt-4 pb-4 pr-4 mt-4 bg-white">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="pl-4 text-lg font-bold">리얼 리뷰</h3>
+          <button
+            className="text-sm text-blue-500 hover:underline"
+            onClick={() => navigate(`/pension-all-review/${id}`)}
           >
-            {fileType === 'IMAGE' ? (
-              <img
-                src={firstFileUrl} // 이미지를 대체 URL로 사용
-                alt="리뷰 사진"
-                className="object-cover w-full h-24 rounded-lg"
-              />
-            ) : fileType === 'VIDEO' ? (
-              <video
-                src={firstFileUrl}
-                className="object-cover w-full h-24 rounded-lg"
-                controls
-              />
-            ) : (
-              <div className="flex items-center justify-center w-full h-24 bg-gray-200 rounded-lg">
-                <img
-                  src={reviewemptyIcon} // 빈 리뷰 아이콘 표시
-                  alt="빈 리뷰 아이콘"
-                  className="w-12 h-12"
-                />
-              </div>
-            )}
-            <p className="mt-2 text-sm font-bold truncate">{review.nickname}</p>
-            <p className="text-xs text-gray-500 truncate">
-              {review.content.slice(0, 30)}...
-            </p>
+            전체보기 &gt;
+          </button>
+        </div>
+        <div className="relative">
+          <div className="flex gap-2 p-4 overflow-x-auto bg-white scrollbar-hidden">
+            {pensionDetail.review.slice(0, 20).map((review, index) => {
+              const firstFileUrl =
+                review.file && review.file.length > 0
+                  ? review.file[0].fileUrl
+                  : reviewemptyIcon; // reviewemptyIcon으로 대체
+              const fileType =
+                review.file && review.file.length > 0
+                  ? review.file[0].fileType
+                  : null;
+
+              return (
+                <div
+                  key={index}
+                  onClick={() => handleReviewClick(review)}
+                  className="flex-none p-2 rounded-lg cursor-pointer w-36 bg-gray-50"
+                >
+                  {fileType === 'IMAGE' ? (
+                    <img
+                      src={firstFileUrl} // 이미지를 대체 URL로 사용
+                      alt="리뷰 사진"
+                      className="object-cover w-full h-24 rounded-lg"
+                    />
+                  ) : fileType === 'VIDEO' ? (
+                    <video
+                      src={firstFileUrl}
+                      className="object-cover w-full h-24 rounded-lg"
+                      controls
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center w-full h-24 bg-gray-200 rounded-lg">
+                      <img
+                        src={reviewemptyIcon} // 빈 리뷰 아이콘 표시
+                        alt="빈 리뷰 아이콘"
+                        className="w-12 h-12"
+                      />
+                    </div>
+                  )}
+                  <p className="mt-2 text-sm font-bold truncate">
+                    {review.nickname}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {review.content.slice(0, 30)}...
+                  </p>
+                </div>
+              );
+            })}
           </div>
-        );
-      })}
-    </div>
-  </div>
-</section>
-
-
-
+        </div>
+      </section>
 
       <RecommendedFacility pensionId={id} />
 

@@ -4,12 +4,14 @@ import usePlaceStore from '../../stores/map/usePlaceStore.js';
 import PlaceCard from './PlaceCard';
 import { addLikePlace, getLikeList } from '../../api/map/map.js';
 import useCoordsStore from '../../stores/map/useCoordsStore.js';
+import useLoadingStore from '../../stores/common/useLoadingStore.js';
 
 const PlaceList = ({ selectedCategory }) => {
   const { searchResults, likedPlaces, selectedPlace, setLikedPlaces } =
     usePlaceStore();
   const { coords } = useCoordsStore();
   const { latitude, longitude } = coords;
+  const { isMapLoading } = useLoadingStore();
 
   useEffect(() => {
     const fetchLikedPlaces = async () => {
@@ -80,7 +82,7 @@ const PlaceList = ({ selectedCategory }) => {
 
   return (
     <div className="mt-4">
-      {placesToShow.length > 0 ? (
+      {!isMapLoading && placesToShow.length > 0 ? (
         <ul className="space-y-6">
           {placesToShow.map((place, idx) => (
             <PlaceCard
@@ -91,9 +93,7 @@ const PlaceList = ({ selectedCategory }) => {
             />
           ))}
         </ul>
-      ) : (
-        <p className="text-gray-600">저장된 장소가 없습니다.</p>
-      )}
+      ) : null}
     </div>
   );
 };

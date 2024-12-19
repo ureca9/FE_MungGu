@@ -48,15 +48,53 @@ const UploadPhotos = () => {
     frameImages[selectedFrame].white,
   );
 
-  const handleImageUpload = (e, index) => {
+  const applyObjectFitToImage = (imageSrc, width, height) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = imageSrc;
+
+      img.onload = () => {
+        const ratio = Math.max(
+          canvas.width / img.width,
+          canvas.height / img.height,
+        );
+        const x = (canvas.width - img.width * ratio) / 2;
+        const y = (canvas.height - img.height * ratio) / 2;
+
+        ctx.drawImage(img, x, y, img.width * ratio, img.height * ratio);
+        resolve(canvas.toDataURL('image/png'));
+      };
+    });
+  };
+
+  const handleImageUpload = async (e, index) => {
     const file = e.target.files[0];
+
+    if (file && !file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+
     if (file) {
       const reader = new FileReader();
-      reader.onload = () => {
+      reader.onload = async () => {
+        const [width, height] =
+          selectedFrame === 'Frame3' ? [500, 300] : [400, 500];
+        const processedImage = await applyObjectFitToImage(
+          reader.result,
+          width,
+          height,
+        );
         const newImages = [...images];
-        newImages[index] = reader.result;
+        newImages[index] = processedImage;
         setImages(newImages);
-        e.target.value = '';
       };
       reader.readAsDataURL(file);
     }
@@ -126,6 +164,7 @@ const UploadPhotos = () => {
                   id={`file-upload-${index}`}
                   type="file"
                   className="hidden"
+                  accept="image/*"
                   ref={(el) => (fileInputRefs.current[index] = el)}
                   onChange={(e) => handleImageUpload(e, index)}
                 />
@@ -174,6 +213,7 @@ const UploadPhotos = () => {
                   id={`file-upload-${index}`}
                   type="file"
                   className="hidden"
+                  accept="image/*"
                   ref={(el) => (fileInputRefs.current[index] = el)}
                   onChange={(e) => handleImageUpload(e, index)}
                 />
@@ -222,6 +262,7 @@ const UploadPhotos = () => {
                   id={`file-upload-${index}`}
                   type="file"
                   className="hidden"
+                  accept="image/*"
                   ref={(el) => (fileInputRefs.current[index] = el)}
                   onChange={(e) => handleImageUpload(e, index)}
                 />

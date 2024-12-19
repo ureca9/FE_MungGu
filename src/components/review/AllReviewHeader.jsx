@@ -18,7 +18,6 @@ const AllReviewHeader = () => {
   useEffect(() => {
     const type = location.pathname.includes('pension') ? '020' : '010';
     setPlcPenIdType(type);
-    console.log('PlcPenIdType:', type);
   }, []);
 
   const pensionsSummary = async () => {

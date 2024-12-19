@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import reviewIcon from "../../stories/assets/reviewicon.svg";
-import reviewenptyIcon from "../../assets/common/petgray.svg"
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import reviewIcon from '../../stories/assets/reviewicon.svg';
+import reviewenptyIcon from '../../assets/common/petgray.svg';
 
 const LiveReviews = ({ accessToken }) => {
   const [reviews, setReviews] = useState([]);
@@ -21,16 +21,16 @@ const LiveReviews = ({ accessToken }) => {
       setLoading(true);
       try {
         const headers = {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         };
         if (accessToken) {
           headers.Authorization = `Bearer ${accessToken}`;
         }
 
         const response = await axios.get(
-          "https://meong9.store/api/v1/spots/reviews",
-          { headers }
+          'https://meong9.store/api/v1/spots/reviews',
+          { headers },
         );
 
         if (response.data?.data?.review) {
@@ -39,7 +39,7 @@ const LiveReviews = ({ accessToken }) => {
           setReviews([]);
         }
       } catch (err) {
-        setError("리뷰 데이터를 가져오는 중 오류가 발생했습니다.");
+        setError('리뷰 데이터를 가져오는 중 오류가 발생했습니다.');
       } finally {
         setLoading(false);
       }
@@ -67,9 +67,9 @@ const LiveReviews = ({ accessToken }) => {
   };
 
   const handleReviewClick = (type, id) => {
-    if (type === "펜션") {
+    if (type === '펜션') {
       navigate(`/pension-detail/${id}`);
-    } else if (type === "시설") {
+    } else if (type === '시설') {
       navigate(`/place/${id}`);
     }
   };
@@ -78,15 +78,15 @@ const LiveReviews = ({ accessToken }) => {
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
-    <div className="pl-1 pt-6 pr-6 pb-6 bg-white rounded-lg relative">
-      <div className="flex items-center mb-0 pl-4">
-        <h2 className="text-lg font-bold mb-0">
+    <div className="relative pt-6 pb-6 bg-white rounded-lg">
+      <div className="flex items-center mb-4">
+        <h2 className="mb-0 text-lg font-bold">
           최근 리뷰
           <img
             src={reviewIcon}
             alt="리뷰 아이콘"
-            className="inline-block w-6 h-6 relative"
-            style={{ top: "-5px", left: "10px" }}
+            className="relative inline-block w-6 h-6"
+            style={{ top: '-5px', left: '10px' }}
           />
         </h2>
       </div>
@@ -95,7 +95,7 @@ const LiveReviews = ({ accessToken }) => {
         <div
           ref={scrollRef}
           className="
-            flex gap-x-[5px] overflow-x-auto snap-x snap-mandatory 
+            flex gap-3 overflow-x-auto snap-x snap-mandatory
             scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200 
             sm:scrollbar-none"
           onMouseDown={handleMouseDown}
@@ -105,43 +105,41 @@ const LiveReviews = ({ accessToken }) => {
         >
           {reviews.map((review) => (
             <li
-            key={review.reviewId}
-            onClick={() => handleReviewClick(review.type, review.id)}
-            className="
-              flex-none w-60 p-4 bg-white rounded-lg snap-start mt-0 list-none 
-              cursor-pointer hover:bg-gray-100 transition"
-            style={{ margin: 5 }}
-          >
-            <img
-              src={review.img || reviewenptyIcon}
-              alt={`${review.name} 대표 이미지`}
-              className="w-full h-32 rounded-lg object-cover mb-0"
-            />
-            <div className="flex-1 mt-0">
-              <h3 className="text-base font-semibold text-gray-800 truncate h-6 m-0">
-                {review.name}
-              </h3>
-              <p className="text-sm text-gray-500 truncate h-5 m-0">
-                {review.address}
-              </p>
-              <p className="text-gray-700 text-sm line-clamp-3 h-[60px] mt-1 mb-0">
-                {review.reviewContent}
-              </p>
-              <div className="flex items-center justify-between mt-1">
-                <div className="flex items-center space-x-2 text-sm text-gray-500">
-                  <span>⭐ {review.reviewAvg}</span>
-                  <span>({review.reviewCount} 리뷰)</span>
+              key={review.reviewId}
+              onClick={() => handleReviewClick(review.type, review.id)}
+              className="flex-none mt-0 list-none transition bg-white rounded-lg cursor-pointer w-36 sm:w-60 snap-start hover:bg-gray-100"
+              style={{ margin: 5 }}
+            >
+              <img
+                src={review.img || reviewenptyIcon}
+                alt={`${review.name} 대표 이미지`}
+                className="object-cover w-full h-32 mb-0 rounded-lg"
+              />
+              <div className="flex-1 mt-0">
+                <h3 className="h-6 m-0 text-base font-semibold text-gray-800 truncate">
+                  {review.name}
+                </h3>
+                <p className="h-5 m-0 text-sm text-gray-500 truncate">
+                  {review.address}
+                </p>
+                <p className="text-gray-700 text-sm line-clamp-1 sm:line-clamp-3 sm:h-[60px] mt-1 mb-0">
+                  {review.reviewContent}
+                </p>
+                <div className="flex items-center justify-between mt-1">
+                  <div className="flex items-center space-x-2 text-sm text-gray-500">
+                    <span>⭐ {review.reviewAvg}</span>
+                    <span>({review.reviewCount} 리뷰)</span>
+                  </div>
+                  <span className="h-5 m-0 text-sm italic text-gray-400 truncate">
+                    {review.nickname}
+                  </span>
                 </div>
-                <span className="text-sm italic text-gray-400 truncate h-5 m-0">
-                  {review.nickname}
-                </span>
               </div>
-            </div>
-          </li>
+            </li>
           ))}
         </div>
       ) : (
-        <p className="text-gray-500 text-center">등록된 리뷰가 없습니다.</p>
+        <p className="text-center text-gray-500">등록된 리뷰가 없습니다.</p>
       )}
     </div>
   );

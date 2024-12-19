@@ -58,7 +58,11 @@ const ServiceList = () => {
             </div>
             <button
               onClick={() => {
-                navigate(service.path);
+                if (service.name === '멍생네컷') {
+                  navigate(service.path, { state: { selectedTab: 1 } });
+                } else {
+                  navigate(service.path);
+                }
               }}
               className="flex justify-start w-24 ml-[14px]"
             >

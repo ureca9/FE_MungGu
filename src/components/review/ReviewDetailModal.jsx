@@ -37,7 +37,7 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
   useEffect(() => {
     const ref = scrollRef.current;
     const handleWheel = (e) => {
-      e.stopPropagation(); // 이벤트 전파 방지
+      e.stopPropagation();
       if (e.deltaY > 0) {
         ref.scrollLeft += 40;
       } else {
@@ -45,55 +45,50 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
       }
     };
 
-    console.log('스크롤', scrollRef.current);
-
     if (ref && isOpen && ref.current) {
-      // ref.current가 유효한지 확인
       ref.addEventListener('wheel', handleWheel);
     }
 
     return () => {
-      // 컴포넌트가 언마운트되거나 isOpen 상태가 변경될 때 리스너 제거
       if (ref) {
         ref.removeEventListener('wheel', handleWheel);
       }
     };
-  }, [isOpen, scrollRef]); // isOpen 상태가 변경될 때만 useEffect 실행
+  }, [isOpen, scrollRef]);
 
-  // const handleWheel = (e) => {
-  //   // e.preventDefault();
-  //   e.stopPropagation();
-  //   const ref = scrollRef.current;
-  //   if (e.deltaY > 0) {
-  //     ref.scrollLeft += 40;
-  //   } else {
-  //     ref.scrollLeft -= 40;
-  //   }
-  // };
+  const handleWheel = (e) => {
+    e.stopPropagation();
+    const ref = scrollRef.current;
+    if (e.deltaY > 0) {
+      ref.scrollLeft += 40;
+    } else {
+      ref.scrollLeft -= 40;
+    }
+  };
 
-  // useEffect(() => {
-  //   const ref = scrollRef.current;
-  //   if (ref) {
-  //     ref.addEventListener('wheel', handleWheel);
-  //   }
-  //   return () => {
-  //     if (ref) {
-  //       ref.removeEventListener('wheel', handleWheel);
-  //     }
-  //   };
-  // }, []);
+  useEffect(() => {
+    const ref = scrollRef.current;
+    if (ref) {
+      ref.addEventListener('wheel', handleWheel);
+    }
+    return () => {
+      if (ref) {
+        ref.removeEventListener('wheel', handleWheel);
+      }
+    };
+  }, []);
 
-  // useEffect(() => {
-  //   const ref = scrollRef.current;
-  //   if (isOpen && ref) {
-  //     ref.addEventListener('wheel', handleWheel);
-  //   }
-  //   return () => {
-  //     if (ref) {
-  //       ref.removeEventListener('wheel', handleWheel);
-  //     }
-  //   };
-  // }, [isOpen]);
+  useEffect(() => {
+    const ref = scrollRef.current;
+    if (isOpen && ref) {
+      ref.addEventListener('wheel', handleWheel);
+    }
+    return () => {
+      if (ref) {
+        ref.removeEventListener('wheel', handleWheel);
+      }
+    };
+  }, [isOpen]);
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">

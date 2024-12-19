@@ -25,10 +25,10 @@ const PetAdd = () => {
       }
 
       const response = await PostPuppyData(puppyFormData);
-      console.log('반려동물 추가 성공 :', response.data);
       Swal.fire({
         title: '추가 성공!',
         icon: 'success',
+        confirmButtonColor: '#3288FF',
       }).then(() => {
         window.location.href = ROUTER_PATHS.MY_PAGE;
       });

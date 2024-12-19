@@ -1,6 +1,6 @@
 import Swal from 'sweetalert2';
 import { GetReviewBasicData, PatchReviewEdit } from '../../api/review';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
 import { FaCamera } from 'react-icons/fa';
@@ -22,12 +22,34 @@ const ReviewEdit = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const { setPlcPenIdType, setPensionId, setPlaceId } = useTypeStore();
+  const scrollRef = useRef(null);
+
+  const handleWheel = (e) => {
+    e.preventDefault();
+    const ref = scrollRef.current;
+    if (e.deltaY > 0) {
+      ref.scrollLeft += 40;
+    } else {
+      ref.scrollLeft -= 40;
+    }
+  };
+
+  useEffect(() => {
+    const ref = scrollRef.current;
+    if (ref) {
+      ref.addEventListener('wheel', handleWheel);
+    }
+    return () => {
+      if (ref) {
+        ref.removeEventListener('wheel', handleWheel);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const fetchReviewData = async () => {
       try {
         const response = await GetReviewBasicData(reviewId);
-        console.log('수정할 리뷰 정보:', response.data);
         setReviewBasic(response.data);
       } catch (error) {
         console.error('수정할 리뷰 정보오류:', error);
@@ -71,7 +93,6 @@ const ReviewEdit = () => {
       type: type,
       visitDate: visitDate,
     };
-    console.log('리뷰 데이터', reviewData);
     reviewFormData.append(
       'data',
       new Blob([JSON.stringify(reviewData)], { type: 'application/json' }),
@@ -79,14 +100,13 @@ const ReviewEdit = () => {
     selectedFiles.forEach((file) => {
       reviewFormData.append('file', file.file);
     });
-    console.log('리뷰 저장:', [...reviewFormData.entries()]);
 
     try {
       const response = await PatchReviewEdit(reviewFormData, reviewId);
-      console.log('리뷰수정 성공 :', response.data);
       Swal.fire({
         title: '수정 완료!',
         icon: 'success',
+        confirmButtonColor: '#3288FF',
       }).then(() => {
         window.location.href = ROUTER_PATHS.MY_REVIEW;
       });
@@ -100,12 +120,12 @@ const ReviewEdit = () => {
     }
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const files = [...event.target.files];
     const maxFileSize = 5 * 1024 * 1024;
-
-    const processedFiles = files
-      .map((file) => {
+    const reviewFormData = new FormData();
+    const processedFiles = await Promise.all(
+      files.map((file) => {
         if (file.size > maxFileSize) {
           Swal.fire({
             title: 'Oops...',
@@ -113,22 +133,57 @@ const ReviewEdit = () => {
             icon: 'error',
           });
           return null;
-        } else {
+        } else if (file.type.startsWith('image/')) {
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const img = new Image();
+              img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const maxWidth = 500;
+                const scaleFactor = maxWidth / img.width;
+                canvas.width = maxWidth;
+                canvas.height = img.height * scaleFactor;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                canvas.toBlob(
+                  (blob) => {
+                    const newFile = new File([blob], file.name, {
+                      type: 'image/JPEG',
+                    });
+                    console.log('이미지 File:', newFile);
+                    reviewFormData.append('file', newFile);
+                    resolve({
+                      file: newFile,
+                      fileUrl: URL.createObjectURL(blob),
+                      fileType: 'IMAGE',
+                      fileName: file.name,
+                    });
+                  },
+                  'image/JPEG',
+                  0.8,
+                );
+              };
+              img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          });
+        } else if (file.type.startsWith('video/')) {
+          reviewFormData.append('file', file, file.name);
           return {
             file: file,
             fileUrl: URL.createObjectURL(file),
-            fileType: file.type.startsWith('image/')
-              ? 'IMAGE'
-              : file.type.startsWith('video/')
-                ? 'VIDEO'
-                : null,
+            fileType: 'VIDEO',
             fileName: file.name,
           };
+        } else {
+          return null;
         }
-      })
-      .filter((file) => file !== null);
+      }),
+    );
 
-    setSelectedFiles(processedFiles);
+    setSelectedFiles(processedFiles.filter((file) => file !== null));
+    handleSubmit(reviewFormData);
   };
 
   const checkDataForm = () => {
@@ -151,6 +206,7 @@ const ReviewEdit = () => {
     );
   }
   const today = new Date().toISOString().split('T')[0];
+
   return (
     <div className="h-full min-w-96">
       {isDataLoaded ? <PlaceData /> : <CircularProgress size={80} />}
@@ -181,7 +237,10 @@ const ReviewEdit = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto h-aout sm:gap-5">
+          <div
+            ref={scrollRef}
+            className="flex items-center gap-2 overflow-x-auto h-aout sm:gap-5 scrollbar-none"
+          >
             <div>
               <label>
                 <input
