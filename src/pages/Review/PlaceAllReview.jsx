@@ -48,8 +48,8 @@ const PlaceAllReview = () => {
   }, [inView, !isLoading, hasNext]);
 
   return (
-    <div className="min-h-screen">
-      <SubHeader title={'시설 리뷰 전체보기'} />
+    // <div className="min-h-screen">
+    //   <SubHeader title={'시설 리뷰 전체보기'} />
       <div className="flex flex-col min-w-96 sm:w-full">
         <AllReviewHeader />
         <div className="h-2 mt-1 mb-5 bg-[#D9D9D9]"></div>
@@ -68,7 +68,7 @@ const PlaceAllReview = () => {
           <div ref={ref} className="h-4 root"></div>
         </div>
       </div>
-    </div>
+    // </div>
   );
 };
 
