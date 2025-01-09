@@ -2,7 +2,7 @@ import { useState } from 'react';
 import petgray from '../../assets/common/petgray.svg';
 import Swal from 'sweetalert2';
 import { BasicInput } from '../../stories/Input/BasicInput';
-import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
+import { BasicBtn } from '../../stories/buttons/basic-btn/BasicBtn';
 import MotionDiv from './MotionDiv';
 import BreedsPanel from './BreedsPanel';
 import usePetStore from '../../stores/pet/usePetStore';

@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import ROUTER_PATHS from '../../utils/RouterPath';
-import petFourPic from '../../assets/MypageImg/petFourpic.svg';
+import petFourPic from '../../assets/my-page-img/petFourpic.svg';
 import { IoHeartCircleSharp } from 'react-icons/io5';
-import MyPageImg from '../../assets/MypageImg/MyPageImg.png';
+import MyPageImg from '../../assets/my-page-img/MyPageImg.png';
 const ServiceList = () => {
   const navigate = useNavigate();
   const serviceList = [

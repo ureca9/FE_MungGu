@@ -1,6 +1,6 @@
 import { FaCamera } from 'react-icons/fa';
 import { RxStarFilled } from 'react-icons/rx';
-import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
+import { CRUDBtn } from '../../stories/buttons/crud-btn/CRUDBtn';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { DeleteReview } from '../../api/review';

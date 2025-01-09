@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { BasicInput } from '../../stories/Input/BasicInput';
-import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
+import { BasicBtn } from '../../stories/buttons/basic-btn/BasicBtn';
 import {
   fetchUserDetails,
   updateUserDetails,
-} from '../../api/userEdit/userEdit';
-import { checkNickname } from '../../api/userRegister/checkNickname';
+} from '../../api/user-edit/userEdit';
+import { checkNickname } from '../../api/user-register/checkNickname';
 import KakaoLogo from '../../assets/login/KakaoLogo.svg';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';

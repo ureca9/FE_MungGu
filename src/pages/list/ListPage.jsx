@@ -1,36 +1,36 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
-import SearchModal from "../../components/MainPage/SearchModal/SearchModal";
-import SubHeader from "../../components/common/SubHeader";
+import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import SearchModal from '../../components/main-page/search-modal/SearchModal';
+import SubHeader from '../../components/common/SubHeader';
 import Swal from 'sweetalert2';
-import { FaRegHeart, FaHeart } from "react-icons/fa";
+import { FaRegHeart, FaHeart } from 'react-icons/fa';
 
 const ListPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [results, setResults] = useState([]);
-  const [filteredResults, setFilteredResults] = useState([]); 
+  const [filteredResults, setFilteredResults] = useState([]);
   const [filters, setFilters] = useState({});
   const [currentPage, setCurrentPage] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
   const [hasNext, setHasNext] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTags, setSelectedTags] = useState([]); 
+  const [selectedTags, setSelectedTags] = useState([]);
   const isFetchingRef = useRef(isFetching);
 
   const tags = [
-    "전체",
-    "주차 가능",
-    "실내 공간",
-    "실외 공간",
-    "반려동물 전용",
-    "수영장",
-    "바비큐",
-    "금연",
-    "무게 제한 없음",
-  ]; 
+    '전체',
+    '주차 가능',
+    '실내 공간',
+    '실외 공간',
+    '반려동물 전용',
+    '수영장',
+    '바비큐',
+    '금연',
+    '무게 제한 없음',
+  ];
 
   useEffect(() => {
     isFetchingRef.current = isFetching;
@@ -41,31 +41,33 @@ const ListPage = () => {
       if (location.state) {
         const initialFilters = {
           ...location.state.filters,
-          regionList: location.state.filters.regionList?.includes("전체")
+          regionList: location.state.filters.regionList?.includes('전체')
             ? []
             : location.state.filters.regionList || [],
-          placeTypes: location.state.filters.placeTypes?.includes("전체")
+          placeTypes: location.state.filters.placeTypes?.includes('전체')
             ? []
             : location.state.filters.placeTypes || [],
         };
         setResults(location.state.results || []);
         setFilters(initialFilters);
         sessionStorage.setItem(
-          "facilityListData",
+          'facilityListData',
           JSON.stringify({
             results: location.state.results || [],
             filters: initialFilters,
-          })
+          }),
         );
       } else {
-        const savedData = JSON.parse(sessionStorage.getItem("facilityListData"));
+        const savedData = JSON.parse(
+          sessionStorage.getItem('facilityListData'),
+        );
         if (savedData) {
           const savedFilters = {
             ...savedData.filters,
-            regionList: savedData.filters.regionList?.includes("전체")
+            regionList: savedData.filters.regionList?.includes('전체')
               ? []
               : savedData.filters.regionList || [],
-            placeTypes: savedData.filters.placeTypes?.includes("전체")
+            placeTypes: savedData.filters.placeTypes?.includes('전체')
               ? []
               : savedData.filters.placeTypes || [],
           };
@@ -92,68 +94,71 @@ const ListPage = () => {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [filters, hasNext, currentPage]);
 
   useEffect(() => {
-    if (selectedTags.length === 0 || selectedTags.includes("전체")) {
+    if (selectedTags.length === 0 || selectedTags.includes('전체')) {
       setFilteredResults(results);
     } else {
       setFilteredResults(
         results.filter(
           (result) =>
             result.tags &&
-            selectedTags.every((tag) => result.tags.includes(tag))
-        )
+            selectedTags.every((tag) => result.tags.includes(tag)),
+        ),
       );
     }
   }, [selectedTags, results]);
 
   const fetchMoreData = async (page, currentFilters = filters) => {
     if (isFetchingRef.current || !hasNext) return;
-  
+
     setIsFetching(true);
     try {
       const params = {
         page,
         size: 10,
-        searchWord: currentFilters.searchWord || "",
-        regionList: currentFilters.regionList?.includes("전체")
+        searchWord: currentFilters.searchWord || '',
+        regionList: currentFilters.regionList?.includes('전체')
           ? []
           : currentFilters.regionList || [],
-        placeTypes: currentFilters.placeTypes?.includes("전체")
+        placeTypes: currentFilters.placeTypes?.includes('전체')
           ? []
           : currentFilters.placeTypes || [],
         heaviestDogWeight: currentFilters.heaviestDogWeight || 0,
       };
-  
-      const accessToken = localStorage.getItem("ACCESS_TOKEN");
-  
+
+      const accessToken = localStorage.getItem('ACCESS_TOKEN');
+
       const headers = {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
         ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
       };
-  
-      const response = await axios.get("https://meong9.store/api/v1/search/places", {
-        params,
-        paramsSerializer: (params) => {
-          const searchParams = new URLSearchParams();
-          for (const key in params) {
-            if (Array.isArray(params[key])) {
-              searchParams.append(key, params[key].join(","));
-            } else {
-              searchParams.append(key, params[key]);
+
+      const response = await axios.get(
+        'https://meong9.store/api/v1/search/places',
+        {
+          params,
+          paramsSerializer: (params) => {
+            const searchParams = new URLSearchParams();
+            for (const key in params) {
+              if (Array.isArray(params[key])) {
+                searchParams.append(key, params[key].join(','));
+              } else {
+                searchParams.append(key, params[key]);
+              }
             }
-          }
-          return searchParams.toString();
+            return searchParams.toString();
+          },
+          headers,
         },
-        headers,
-      });
-  
+      );
+
       const newResults = response.data.data.placeInfo;
       setResults((prevResults) => {
         const uniqueResults = new Map();
@@ -162,11 +167,11 @@ const ListPage = () => {
         });
         return Array.from(uniqueResults.values());
       });
-  
+
       setCurrentPage(page);
       setHasNext(response.data.data.hasNext);
-  
-      if (selectedTags.length === 0 || selectedTags.includes("전체")) {
+
+      if (selectedTags.length === 0 || selectedTags.includes('전체')) {
         setFilteredResults((prevFilteredResults) => [
           ...prevFilteredResults,
           ...newResults,
@@ -175,17 +180,16 @@ const ListPage = () => {
         setFilteredResults((prevFilteredResults) => [
           ...prevFilteredResults,
           ...newResults.filter((result) =>
-            selectedTags.every((tag) => result.tags.includes(tag))
+            selectedTags.every((tag) => result.tags.includes(tag)),
           ),
         ]);
       }
     } catch (error) {
-      console.error("Error fetching more data:", error);
+      console.error('Error fetching more data:', error);
     } finally {
       setIsFetching(false);
     }
   };
-  
 
   const toggleLike = async (placeId) => {
     try {
@@ -199,30 +203,30 @@ const ListPage = () => {
           cancelButtonText: '취소',
           confirmButtonColor: '#3288FF',
         });
-  
+
         if (result.isConfirmed) {
           navigate('/login');
         }
         return;
       }
-  
+
       const headers = {
         Accept: 'application/json',
         ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
       };
-  
+
       await axios.post(
         `https://meong9.store/api/v1/places/likes/${placeId}`, // placeId 사용
         {},
         { headers },
       );
-  
+
       setResults((prevResults) =>
         prevResults.map((item) =>
           item.placeId === placeId
             ? { ...item, likeStatus: !item.likeStatus }
-            : item
-        )
+            : item,
+        ),
       );
     } catch (error) {
       console.error('찜 상태 업데이트 실패:', error);
@@ -234,15 +238,15 @@ const ListPage = () => {
   };
 
   const toggleTag = (tag) => {
-    if (tag === "전체") {
-      setSelectedTags(["전체"]);
+    if (tag === '전체') {
+      setSelectedTags(['전체']);
     } else {
       setSelectedTags((prevTags) =>
-        prevTags.includes("전체")
+        prevTags.includes('전체')
           ? [tag]
           : prevTags.includes(tag)
-          ? prevTags.filter((t) => t !== tag)
-          : [...prevTags, tag]
+            ? prevTags.filter((t) => t !== tag)
+            : [...prevTags, tag],
       );
     }
   };
@@ -251,7 +255,8 @@ const ListPage = () => {
     navigate(`/place/${placeId}`);
   };
 
-  const pageTitle = filters.searchWord || location.state?.pageTitle || "장소 목록";
+  const pageTitle =
+    filters.searchWord || location.state?.pageTitle || '장소 목록';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -289,75 +294,79 @@ const ListPage = () => {
         <SearchModal onClose={() => setIsModalOpen(false)} filters={filters} />
       )}
 
-<div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-hidden">
-  {tags.map((tag) => (
-    <button
-      key={tag}
-      onClick={() => toggleTag(tag)}
-      className={`px-4 py-2 whitespace-nowrap border rounded-full ${
-        selectedTags.includes(tag)
-          ? "border-blue-500 text-blue-500 font-semibold"
-          : "border-gray-300 text-gray-600"
-      } hover:bg-gray-100`}
-    >
-      {tag}
-    </button>
-  ))}
-</div>
+      <div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-hidden">
+        {tags.map((tag) => (
+          <button
+            key={tag}
+            onClick={() => toggleTag(tag)}
+            className={`px-4 py-2 whitespace-nowrap border rounded-full ${
+              selectedTags.includes(tag)
+                ? 'border-blue-500 text-blue-500 font-semibold'
+                : 'border-gray-300 text-gray-600'
+            } hover:bg-gray-100`}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
 
       <div className="px-6 py-4 space-y-4">
-  {filteredResults.length > 0 ? (
-    filteredResults.map((item) => (
-      <div
-        key={item.placeId}
-        className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer"
-        onClick={() => handleCardClick(item.placeId)}
-      >
-        <img
-          src={item.images?.[0] || "/default-image.jpg"}
-          alt={item.placeName || "이미지 없음"}
-          className="w-full h-48 sm:h-80 object-cover"
-        />
+        {filteredResults.length > 0 ? (
+          filteredResults.map((item) => (
+            <div
+              key={item.placeId}
+              className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer"
+              onClick={() => handleCardClick(item.placeId)}
+            >
+              <img
+                src={item.images?.[0] || '/default-image.jpg'}
+                alt={item.placeName || '이미지 없음'}
+                className="w-full h-48 sm:h-80 object-cover"
+              />
 
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-lg font-bold text-gray-800 truncate">{item.placeName}</h2>
-            <div className="flex items-center gap-2">
-  <span className="text-gray-500 font-medium">
-    ⭐ {item.reviewAvg || "0"} ({item.reviewCount || "0"})
-  </span>
-  <button
-    className={`w-10 h-10 flex items-center justify-center rounded-full`}
-    onClick={(e) => {
-      e.stopPropagation();
-      toggleLike(item.placeId);
-    }}
-  >
-    {item.likeStatus ? (
-      <FaHeart className="text-red-500" size={24} />
-    ) : (
-      <FaRegHeart className="text-gray-400" size={24} />
-    )}
-  </button>
-</div>
-          </div>
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-lg font-bold text-gray-800 truncate">
+                    {item.placeName}
+                  </h2>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500 font-medium">
+                      ⭐ {item.reviewAvg || '0'} ({item.reviewCount || '0'})
+                    </span>
+                    <button
+                      className={`w-10 h-10 flex items-center justify-center rounded-full`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleLike(item.placeId);
+                      }}
+                    >
+                      {item.likeStatus ? (
+                        <FaHeart className="text-red-500" size={24} />
+                      ) : (
+                        <FaRegHeart className="text-gray-400" size={24} />
+                      )}
+                    </button>
+                  </div>
+                </div>
 
-          <p className="text-sm text-gray-600 mb-1">
-            {item.address || "주소 정보 없음"}
+                <p className="text-sm text-gray-600 mb-1">
+                  {item.address || '주소 정보 없음'}
+                </p>
+
+                <p className="text-sm text-gray-500">
+                  {item.businessHour
+                    ? `운영시간: ${item.businessHour}`
+                    : '운영시간 정보 없음'}
+                </p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500">
+            조건에 맞는 시설이 없습니다.
           </p>
-
-          <p className="text-sm text-gray-500">
-            {item.businessHour
-              ? `운영시간: ${item.businessHour}`
-              : "운영시간 정보 없음"}
-          </p>
-        </div>
+        )}
       </div>
-    ))
-  ) : (
-    <p className="text-center text-gray-500">조건에 맞는 시설이 없습니다.</p>
-  )}
-</div>
     </div>
   );
 };

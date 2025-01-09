@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import AppList from '../../components/mypage/AppList';
-import MyPet from '../../components/mypage/MyPet';
-import ServiceList from '../../components/mypage/ServiceList';
-import UserData from '../../components/mypage/UserData';
+import AppList from '../../components/my-page/AppList';
+import MyPet from '../../components/my-page/MyPet';
+import ServiceList from '../../components/my-page/ServiceList';
+import UserData from '../../components/my-page/UserData';
 import { GetmemberData } from '../../api/pet';
 const MyPage = () => {
   const navigate = useNavigate();

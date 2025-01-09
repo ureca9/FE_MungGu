@@ -1,60 +1,49 @@
 import { useEffect } from 'react';
+import { BasicBtn } from '../../stories/buttons/basic-btn/BasicBtn';
 import { useNavigate } from 'react-router-dom';
-import { savePreferenceRegions } from '../../api/userRegister/preference';
+import ROUTER_PATHS from '../../utils/RouterPath';
+import { savePreferencePlaces } from '../../api/user-register/preference';
 import useRegisterStore from '../../stores/register/useRegisterStore';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
-import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 
-const PreferenceRegion = () => {
-  const { selectedRegions, setSelectedRegions, resetState } =
-    useRegisterStore();
+const PreferencePlant = () => {
+  const { selectedPlants, setSelectedPlants } = useRegisterStore();
   const navigate = useNavigate();
-  const regions = [
-    '서울',
-    '경기',
-    '인천',
-    '강원권',
-    '충청권',
-    '전라권',
-    '경상권',
-    '제주권',
-  ];
+  const plant = ['카페', '공원', '해수욕장', '섬', '놀이터', '마당'];
 
   useEffect(() => {
-    setSelectedRegions(selectedRegions);
-  }, [setSelectedRegions, selectedRegions]);
+    setSelectedPlants(selectedPlants);
+  }, [setSelectedPlants, selectedPlants]);
 
   const toggleSelect = (option) => {
-    if (selectedRegions.includes(option)) {
-      setSelectedRegions(selectedRegions.filter((item) => item !== option));
-    } else if (selectedRegions.length < 2) {
-      setSelectedRegions([...selectedRegions, option]);
+    if (selectedPlants.includes(option)) {
+      setSelectedPlants(selectedPlants.filter((item) => item !== option));
+    } else if (selectedPlants.length < 2) {
+      setSelectedPlants([...selectedPlants, option]);
     }
   };
 
   const handleSubmit = async () => {
-    if (selectedRegions.length !== 2) {
+    if (selectedPlants.length !== 2) {
       Swal.fire({
         icon: 'warning',
         title: '선택 오류',
-        text: '2개의 지역을 선택해주세요.',
+        text: '2개의 시설을 선택해주세요.',
         confirmButtonColor: '#3288FF',
       });
       return;
     }
 
     try {
-      await savePreferenceRegions(selectedRegions, navigate);
-
+      await savePreferencePlaces(selectedPlants);
       Swal.fire({
         icon: 'success',
         title: '저장 성공',
-        text: '선호 지역이 저장되었습니다.',
+        text: '선호 시설이 저장되었습니다.',
         confirmButtonColor: '#3288FF',
       }).then(() => {
-        resetState();
-        localStorage.removeItem(LOCAL_STORAGE_KEYS.REGISTER_STORAGE);
+        navigate(ROUTER_PATHS.PREFERENCE_REGION);
       });
     } catch (error) {
       Swal.fire({
@@ -68,23 +57,26 @@ const PreferenceRegion = () => {
 
   return (
     <>
-      <div className="h-1 w-full bg-[#3288ff]"></div>
+      <div className="flex">
+        <div className="h-1 w-3/4 bg-[#3288ff]"></div>
+        <div className="h-1 w-1/4 bg-[#3288ff] opacity-20"></div>
+      </div>
       <div className="flex flex-col w-full ">
         <div className="pt-8 mb-4 text-xl text-center">
-          <strong className="text-[#3288ff]">선호하는 지역 2개</strong>를
+          <strong className="text-[#3288ff]">선호하는 시설 2개</strong>를
           선택해주세요!
         </div>
-        <main className="flex flex-col items-center pt-16 pb-16">
-          <div className="grid grid-rows-[auto] gap-10">
+        <main className="flex flex-col items-center justify-center pt-16 pb-16">
+          <div className="grid grid-rows-[auto] w-full">
             <div className="flex justify-center gap-8 md:gap-16">
-              {regions.slice(0, 3).map((option, index) => (
+              {plant.slice(0, 2).map((option, index) => (
                 <button
                   key={index}
                   onClick={() => toggleSelect(option)}
-                  className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-2 text-lg font-semibold 
+                  className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
-                    selectedRegions.includes(option)
+                    selectedPlants.includes(option)
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
                   }`}
@@ -96,15 +88,15 @@ const PreferenceRegion = () => {
                 </button>
               ))}
             </div>
-            <div className="flex justify-center gap-8 md:gap-16">
-              {regions.slice(3, 5).map((option, index) => (
+            <div className="flex w-full gap-16 my-8 justify-evenly">
+              {plant.slice(2, 4).map((option, index) => (
                 <button
                   key={index}
                   onClick={() => toggleSelect(option)}
-                  className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-2 text-lg font-semibold 
+                  className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
-                    selectedRegions.includes(option)
+                    selectedPlants.includes(option)
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
                   }`}
@@ -117,14 +109,14 @@ const PreferenceRegion = () => {
               ))}
             </div>
             <div className="flex justify-center gap-8 md:gap-16">
-              {regions.slice(5).map((option, index) => (
+              {plant.slice(4).map((option, index) => (
                 <button
                   key={index}
                   onClick={() => toggleSelect(option)}
-                  className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-2 text-lg font-semibold 
+                  className={`w-24 h-24 rounded-full border-2 text-lg font-semibold 
                   flex items-center justify-center transition-all duration-500
                   ${
-                    selectedRegions.includes(option)
+                    selectedPlants.includes(option)
                       ? 'bg-[#C4DDFF] border-[#3288FF] text-[#3288FF] scale-150 animate-bounce-grow'
                       : 'bg-white border-[#8a8a8a] text-[#8a8a8a] scale-100 animate-bounce-custom'
                   }`}
@@ -138,13 +130,12 @@ const PreferenceRegion = () => {
             </div>
           </div>
           <div className="w-2/3 mt-16">
-            <button
+            <BasicBtn
+              styleType="blue"
+              size="md"
+              label="다음"
               onClick={handleSubmit}
-              className="w-full px-4 py-2 font-semibold text-white transition-all bg-blue-500 rounded-lg shadow-md hover:bg-blue-700"
-              disabled={selectedRegions.length !== 2}
-            >
-              완료
-            </button>
+            />
           </div>
         </main>
       </div>
@@ -152,4 +143,4 @@ const PreferenceRegion = () => {
   );
 };
 
-export default PreferenceRegion;
+export default PreferencePlant;

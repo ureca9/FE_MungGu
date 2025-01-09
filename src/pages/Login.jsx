@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchAccessToken } from '../api/auth/auth.js';
-import useLoginStore from '../stores/Auth/useLoginStore';
+import useLoginStore from '../stores/auth/useLoginStore';
 import LoadingSpinner from './../components/common/LoadingSpinner';
 import Swal from 'sweetalert2';
 import ROUTER_PATHS from '../utils/RouterPath.js';

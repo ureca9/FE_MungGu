@@ -2,11 +2,11 @@ import Swal from 'sweetalert2';
 import { GetReviewBasicData, PatchReviewEdit } from '../../api/review';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
+import { BasicBtn } from '../../stories/buttons/basic-btn/BasicBtn';
 import { FaCamera } from 'react-icons/fa';
 import { RxStarFilled } from 'react-icons/rx';
 import ROUTER_PATHS from '../../utils/RouterPath';
-import PlaceData from '../../components/review/reviewAdd/PlaceData';
+import PlaceData from '../../components/review/review-add/PlaceData';
 import useTypeStore from '../../stores/review/useTypeStore';
 import { CircularProgress } from '@mui/material';
 

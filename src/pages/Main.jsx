@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import HotPlaces from '../components/MainPage/HotPlaces';
-import RecommendedPensions from '../components/MainPage/RecommendedPensions';
-import LiveReviews from '../components/MainPage/LiveReviews';
-import SearchModal from '../components/MainPage/SearchModal/SearchModal.jsx';
+import HotPlaces from '../components/main-page/HotPlaces';
+import RecommendedPensions from '../components/main-page/RecommendedPensions';
+import LiveReviews from '../components/main-page/LiveReviews';
+import SearchModal from '../components/main-page/search-modal/SearchModal.jsx';
 import AdImage2 from '../stories/assets/광고2.svg';
 import AdImage3 from '../stories/assets/광고3.svg';
 import FooterImage from '../stories/assets/Footer.svg';
