@@ -98,6 +98,7 @@ const LiveReviews = ({ accessToken }) => {
             flex gap-3 overflow-x-auto snap-x snap-mandatory
             scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200 
             sm:scrollbar-none"
+          style={{ scrollSnapType: 'x mandatory', scrollBehavior: 'smooth' }} 
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseUpOrLeave}
