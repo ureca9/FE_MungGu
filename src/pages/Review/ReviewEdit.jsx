@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
 import { FaCamera } from 'react-icons/fa';
-import { RxStarFilled } from 'react-icons/rx';
+import { RxStar, RxStarFilled } from 'react-icons/rx';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import PlaceData from '../../components/review/reviewAdd/PlaceData';
 import useTypeStore from '../../stores/review/useTypeStore';
@@ -222,17 +222,21 @@ const ReviewEdit = () => {
               </div>
               <div className="flex flex-col justify-around w-full">
                 <div className="flex justify-around">
-                  {[1, 2, 3, 4, 5].map((value) => (
-                    <RxStarFilled
-                      key={value}
-                      className={`text-5xl cursor-pointer ${
-                        value <= score
-                          ? 'text-[#FDBD00]'
-                          : 'text-white drop-shadow-[0_0.5px_0.5px_rgba(0,0,0,1)] '
-                      }`}
-                      onClick={() => handleScoreChange(value)}
-                    />
-                  ))}
+                  {[1, 2, 3, 4, 5].map((value) =>
+                    value <= score ? (
+                      <RxStarFilled
+                        key={value}
+                        className="text-5xl cursor-pointer text-[#FDBD00]"
+                        onClick={() => handleScoreChange(value)}
+                      />
+                    ) : (
+                      <RxStar
+                        key={value}
+                        className="text-5xl text-[#D9D9D9] cursor-pointer"
+                        onClick={() => handleScoreChange(value)}
+                      />
+                    ),
+                  )}
                 </div>
               </div>
             </div>

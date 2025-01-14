@@ -178,7 +178,7 @@ const ReviewAdd = () => {
                   ) : (
                     <RxStar
                       key={value}
-                      className="text-5xl text-black cursor-pointer"
+                      className="text-5xl text-[#D9D9D9] cursor-pointer"
                       onClick={() => handleScoreChange(value)}
                     />
                   ),
