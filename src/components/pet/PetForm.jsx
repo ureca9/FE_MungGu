@@ -75,6 +75,7 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
         title: 'Oops...',
         text: '생년월일은 YYYY-MM-DD 형식이어야 합니다.',
         icon: 'error',
+        confirmButtonColor: '#3288FF',
       });
       return false;
     }
@@ -85,6 +86,7 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
         title: 'Oops...',
         text: '생년월일은 오늘 이전 날짜여야 합니다.',
         icon: 'error',
+        confirmButtonColor: '#3288FF',
       });
       return false;
     }

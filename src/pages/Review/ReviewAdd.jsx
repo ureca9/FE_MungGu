@@ -65,7 +65,7 @@ const ReviewAdd = () => {
               img.onload = () => {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                const maxWidth = 500;
+                const maxWidth = 800;
                 const scaleFactor = maxWidth / img.width;
                 canvas.width = maxWidth;
                 canvas.height = img.height * scaleFactor;
@@ -73,7 +73,7 @@ const ReviewAdd = () => {
                 canvas.toBlob(
                   (blob) => {
                     const newFile = new File([blob], file.name, {
-                      type: 'image/JPEG',
+                      type: 'image/webp',
                     });
                     reviewFormData.append('file', newFile);
                     resolve({
@@ -83,7 +83,7 @@ const ReviewAdd = () => {
                       fileName: file.name,
                     });
                   },
-                  'image/JPEG',
+                  'image/webp',
                   0.8,
                 );
               };
@@ -143,8 +143,10 @@ const ReviewAdd = () => {
     try {
       const response = await PostPensionsReview(reviewFormData);
       Swal.fire({
-        title: '추가 성공!',
-        icon: 'success',
+        title: response === 'success' ? '추가 성공!' : 'Oops...',
+        text:
+          response === 'success' ? '' : response || '리뷰 작성이 정지됐습니다.',
+        icon: response === 'success' ? 'success' : 'error',
         confirmButtonColor: '#3288FF',
       }).then(() => {
         window.history.back();

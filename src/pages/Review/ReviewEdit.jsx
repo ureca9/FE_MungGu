@@ -141,7 +141,7 @@ const ReviewEdit = () => {
               img.onload = () => {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                const maxWidth = 500;
+                const maxWidth = 800;
                 const scaleFactor = maxWidth / img.width;
                 canvas.width = maxWidth;
                 canvas.height = img.height * scaleFactor;
@@ -149,7 +149,7 @@ const ReviewEdit = () => {
                 canvas.toBlob(
                   (blob) => {
                     const newFile = new File([blob], file.name, {
-                      type: 'image/JPEG',
+                      type: 'image/webp',
                     });
                     console.log('이미지 File:', newFile);
                     reviewFormData.append('file', newFile);
@@ -160,7 +160,7 @@ const ReviewEdit = () => {
                       fileName: file.name,
                     });
                   },
-                  'image/JPEG',
+                  'image/webp',
                   0.8,
                 );
               };

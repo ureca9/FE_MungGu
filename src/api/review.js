@@ -82,7 +82,8 @@ export const PostPensionsReview = async (reviewFormData) => {
         Accept: 'application/json',
       },
     });
-    return response;
+    console.log('결과:', response.data.message);
+    return response.data.message;
   } catch (error) {
     console.error('리뷰 등록 중 오류 발생:', error);
   }
