@@ -57,7 +57,7 @@ const PlaceDetailPage = () => {
             description: placeDetail.description,
           },
           ...watchedPlace,
-        ].slice(0, 10);
+        ].slice(0, 20);
         localStorage.setItem('watched', JSON.stringify(updatedWatched));
       }
     }
@@ -197,7 +197,7 @@ const PlaceDetailPage = () => {
 >
   {images.length > 0 ? (
     images.map((image, index) => (
-      <div key={index} className="w-full h-80 bg-gray-300">
+      <div key={index} className="w-full bg-gray-300 h-80">
         <img
           src={image}
           alt={`${placeName} 이미지 ${index + 1}`}
@@ -222,14 +222,14 @@ const PlaceDetailPage = () => {
   <div className="flex items-center justify-between mb-2">
     <h2 className="text-lg font-bold">{placeName}</h2>
     <div className="flex items-center space-x-4">
-      <span className="text-sm text-yellow-500 flex items-center space-x-1">
+      <span className="flex items-center space-x-1 text-sm text-yellow-500">
         <span>⭐</span>
         <span>{reviewAvg}</span>
         <span className="text-gray-500">({reviewCount} 리뷰)</span>
       </span>
       <button
         onClick={toggleLike}
-        className="w-10 h-10 flex items-center justify-center rounded-full"
+        className="flex items-center justify-center w-10 h-10 rounded-full"
       >
         {likeStatus ? (
           <FaHeart className="text-red-500" size={24} />
@@ -287,11 +287,7 @@ const PlaceDetailPage = () => {
     </button>
   </div>
   <div
-    className="
-      flex gap-2 overflow-x-auto 
-      space-x-4 bg-white 
-      scrollbar-hidden
-    "
+    className="flex gap-2 space-x-4 overflow-x-auto bg-white  scrollbar-hidden"
   >
     {photoReviewList.map((photoReview) => {
       const matchingReview = review.find(
@@ -301,7 +297,7 @@ const PlaceDetailPage = () => {
       return (
         <div
           key={photoReview.reviewId}
-          className="flex-none p-2 text-center rounded-lg w-36 bg-gray-50 cursor-pointer"
+          className="flex-none p-2 text-center rounded-lg cursor-pointer w-36 bg-gray-50"
           onClick={() =>
             handleReviewClick({
               reviewId: photoReview.reviewId,

@@ -1,4 +1,8 @@
-import { PostPensionsReview } from '../../api/review';
+import {
+  PostPensionsReview,
+  PostPresignedUrls,
+  PutReviewPresignedUrls,
+} from '../../api/review';
 import Swal from 'sweetalert2';
 import { useParams } from 'react-router-dom';
 import PlaceData from '../../components/review/reviewAdd/PlaceData';
@@ -14,6 +18,7 @@ const ReviewAdd = () => {
   const [content, setContent] = useState('');
   const [visitDate, setVisitDate] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([]);
+  // const [contentFiles, setContentFiles] = useState([]);
   const { plcPenType } = useTypeStore();
   const scrollRef = useRef(null);
 
@@ -44,12 +49,11 @@ const ReviewAdd = () => {
 
   const handleFileChange = async (event) => {
     const files = [...event.target.files];
-    const maxFileSize = 5 * 1024 * 1024;
+    const maxFileSize = 10 * 1024 * 1024;
+    const filePaths = []; // 파일 경로를 저장할 배열
 
-    const reviewFormData = new FormData();
-    console.time('파일 처리 시간'); // 시간 측정 시작
     const processedFiles = await Promise.all(
-      files.map((file) => {
+      files.map((file, index) => {
         if (file.size > maxFileSize) {
           Swal.fire({
             title: 'Oops...',
@@ -57,56 +61,35 @@ const ReviewAdd = () => {
             icon: 'error',
           });
           return null;
-        } else if (file.type.startsWith('image/')) {
-          return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const img = new Image();
-              img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const maxWidth = 800;
-                const scaleFactor = maxWidth / img.width;
-                canvas.width = maxWidth;
-                canvas.height = img.height * scaleFactor;
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                canvas.toBlob(
-                  (blob) => {
-                    const newFile = new File([blob], file.name, {
-                      type: 'image/webp',
-                    });
-                    reviewFormData.append('file', newFile);
-                    resolve({
-                      file: newFile,
-                      fileUrl: URL.createObjectURL(blob),
-                      fileType: 'IMAGE',
-                      fileName: file.name,
-                    });
-                  },
-                  'image/webp',
-                  0.8,
-                );
-              };
-              img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-          });
-        } else if (file.type.startsWith('video/')) {
-          reviewFormData.append('file', file, file.name);
+        } else if (
+          file.type.startsWith('image/') ||
+          file.type.startsWith('video/')
+        ) {
+          const fileExtension = file.name.substring(file.name.lastIndexOf('.')); // 파일 확장자 추출 (예: ".jpg", ".mp4")
+          const filePath = `Review/${pensionId}_review${index}${fileExtension}`; // 파일 경로 생성
+          filePaths.push(filePath); // 배열에 추가
           return {
             file: file,
             fileUrl: URL.createObjectURL(file),
-            fileType: 'VIDEO',
+            fileType: file.type.startsWith('image/') ? 'IMAGE' : 'VIDEO',
             fileName: file.name,
+            filePath: filePath,
           };
         } else {
           return null;
         }
       }),
     );
+
     setSelectedFiles(processedFiles.filter((file) => file !== null));
-    handleSubmit(reviewFormData);
-    console.timeEnd('파일 처리 시간');
+    // setContentFiles(filePaths);
+    console.log('파일형식:', processedFiles);
+    // JSON 데이터 생성
+    const requestData = {
+      files: filePaths,
+    };
+    // 서버로 전송
+    // handleSubmit(requestData);
   };
 
   const checkDataForm = () => {
@@ -125,37 +108,94 @@ const ReviewAdd = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!checkDataForm()) return;
-    const reviewFormData = new FormData();
+    const reviewData = {
+      plcPenId: Number(pensionId),
+      type: plcPenType,
+      files: selectedFiles.map((item) => item.filePath),
+    };
+    console.log('전송 데이터:', reviewData);
+
+    try {
+      const response = await PostPresignedUrls(reviewData);
+      console.log('add결과:', response.data);
+
+      const presignedUrls = response.data; // Presigned URL 목록
+      const filesToUpload = selectedFiles.map((item) => item.file); // 업로드할 실제 파일들
+      await handleFileUpload(filesToUpload, presignedUrls);
+      console.log('모든PostPresignedUrls을 호출했습니다.');
+      // Swal.fire({
+      //   title: response === 'success' ? '추가 성공!' : 'Oops...',
+      //   text:
+      //     response === 'success' ? '' : response || '등록중 오류가가 발생했습니다.',
+      //   icon: response === 'success' ? 'success' : 'error',
+      //   confirmButtonColor: '#3288FF',
+      // }).then(() => {
+      //   window.history.back();
+      // });
+    } catch (error) {
+      console.error('추가 중 오류 발생:', error);
+    }
+  };
+
+  const handleFileUpload = async (files, presignedUrls) => {
+    try {
+      const uploadResponses = await PutReviewPresignedUrls(
+        files,
+        presignedUrls,
+      );
+      console.log('uploadResponses2:', uploadResponses);
+      // 모든 파일이 성공적으로 업로드되었는지 확인
+      const allSuccess = uploadResponses.every(
+        (response) => response.status === 200,
+      );
+      // 결과 확인
+      if (allSuccess) {
+        console.log('모든 파일이 성공적으로 업로드되었습니다.');
+        reviewSubmit(); // 모든 파일이 성공적으로 업로드된 경우에만 실행
+      } else {
+        console.error('일부 파일 업로드에 실패했습니다.');
+        uploadResponses.forEach((response, index) => {
+          if (response.statusText === 'OK') {
+            console.log(`File ${files[index].name} uploaded successfully`);
+          } else {
+            console.error(`File ${files[index].name} failed to upload`);
+          }
+        });
+      }
+    } catch (error) {
+      console.error('파일 업로드 중 오류 발생:', error);
+    }
+  };
+  const reviewSubmit = async () => {
+    if (!checkDataForm()) return;
     const reviewData = {
       plcPenId: Number(pensionId),
       content: content,
       score: score,
       type: plcPenType,
       visitDate: visitDate,
+      fileUrls: selectedFiles.map((item) => item.fileUrl),
     };
-    reviewFormData.append(
-      'data',
-      new Blob([JSON.stringify(reviewData)], { type: 'application/json' }),
-    );
-    selectedFiles.forEach((file) => {
-      reviewFormData.append('file', file.file);
-    });
+    console.log('reviewSubmit전송 데이터:', reviewData);
+
     try {
-      const response = await PostPensionsReview(reviewFormData);
-      Swal.fire({
-        title: response === 'success' ? '추가 성공!' : 'Oops...',
-        text:
-          response === 'success' ? '' : response || '리뷰 작성이 정지됐습니다.',
-        icon: response === 'success' ? 'success' : 'error',
-        confirmButtonColor: '#3288FF',
-      }).then(() => {
-        window.history.back();
-      });
+      const response = await PostPensionsReview(reviewData);
+      console.log('reviewSubmit결과:', response);
+
+      // console.log('모든 파일이 성공적으로 업로드되었습니다.');
+      // Swal.fire({
+      //   title: response === 'success' ? '추가 성공!' : 'Oops...',
+      //   text:
+      //     response === 'success' ? '' : response || '등록중 오류가가 발생했습니다.',
+      //   icon: response === 'success' ? 'success' : 'error',
+      //   confirmButtonColor: '#3288FF',
+      // }).then(() => {
+      //   window.history.back();
+      // });
     } catch (error) {
       console.error('추가 중 오류 발생:', error);
     }
   };
-
   return (
     <div className="h-full min-w-80">
       <PlaceData />

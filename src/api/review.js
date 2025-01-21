@@ -74,16 +74,54 @@ export const GetPlacesSummary = async (placeId) => {
     throw error;
   }
 };
-
-export const PostPensionsReview = async (reviewFormData) => {
+//presigned-url 주소 받기기
+export const PostPresignedUrls = async (reviewData) => {
   try {
-    const response = await instance.post('/reviews', reviewFormData, {
+    const response = await instance.post('/reviews/presigned-url', reviewData, {
+      // const response = await instance.post('/reviews', reviewFormData, {
       headers: {
         Accept: 'application/json',
       },
     });
-    console.log('결과:', response.data.message);
-    return response.data.message;
+    console.log('axios결과:', response);
+    // console.log('결과:', response.data.message);
+    return response;
+    // return response.data.message;
+  } catch (error) {
+    console.error('리뷰 등록 중 오류 발생:', error);
+  }
+};
+//Presigned URL에 맞게 각 이미지 파일 보내기
+export const PutReviewPresignedUrls = async (files, presignedUrls) => {
+  try {
+    const uploadMatching = files.map((file, index) => {
+      const { url } = presignedUrls[index];
+      console.log(`업로드 파일 ${file.name} 주소 ${url}`);
+
+      return axios.put(url, file, {
+        headers: {
+          'Content-Type': file.type,
+        },
+      });
+    });
+    const uploadResponses = await Promise.all(uploadMatching);
+    console.log('uploadResponses:', uploadResponses);
+    return uploadResponses;
+  } catch (error) {
+    console.error('리뷰 등록 중 presignedUrls오류 발생:', error);
+  }
+};
+// DB 데이터 보내기기
+export const PostPensionsReview = async (reviewData) => {
+  try {
+    const response = await instance.post('/reviews', reviewData, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log('PostPensionsReview 결과:', response);
+    return response;
   } catch (error) {
     console.error('리뷰 등록 중 오류 발생:', error);
   }

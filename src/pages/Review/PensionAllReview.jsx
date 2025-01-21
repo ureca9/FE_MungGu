@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { GetPensionsReviews } from '../../api/review';
-import ReviewCard from '../../components/review/ReviewCard';
+// import ReviewCard from '../../components/review/ReviewCard';
 import useTypeStore from '../../stores/review/useTypeStore';
 import AllReviewHeader from '../../components/review/AllReviewHeader';
 import { useInView } from 'react-intersection-observer';
 import SubHeader from '../../components/common/SubHeader';
-
+import { debounce } from 'lodash';
+const ReviewCard = lazy(() => import('../../components/review/ReviewCard'));
 const PensionAllReview = () => {
   const { id: pensionId } = useParams();
   const { setPensionId } = useTypeStore();
   const [reviews, setReviews] = useState([]);
-
   const [page, setPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [hasNext, setHasNext] = useState(true);
@@ -26,6 +26,7 @@ const PensionAllReview = () => {
 
   const fetchPensionsReviews = async (page) => {
     if (isLoading) return;
+    setIsLoading(true);
     try {
       const response = await GetPensionsReviews(pensionId, page);
       setReviews((prevReviews) => [...prevReviews, ...response.reviews]);
@@ -41,11 +42,15 @@ const PensionAllReview = () => {
     fetchPensionsReviews(page);
   }, [pensionId, page]);
 
-  useEffect(() => {
+  const handlePageChange = debounce(() => {
     if (inView && hasNext && !isLoading) {
       setPage((prevPage) => prevPage + 1);
     }
-  }, [inView, !isLoading, hasNext]);
+  }, 1000); //(1초) 대기 후 실행
+
+  useEffect(() => {
+    handlePageChange();
+  }, [inView, hasNext, isLoading]);
 
   return (
     <div className="min-h-screen">
@@ -55,16 +60,17 @@ const PensionAllReview = () => {
         <AllReviewHeader />
         <div className="h-2 mt-1 mb-5 bg-[#D9D9D9]"></div>
         <div className="flex flex-col gap-3 px-5 min-w-96 md:w-full md:px-6">
-          {isLoading ? (
-            <div>Loading...</div>
-          ) : (
-            reviews.map((review, index) => (
-              <div key={index}>
-                <ReviewCard key={index} review={review} />
-                <div className="mt-3 h-1 bg-[#D9D9D9] "></div>
+          {reviews.map((review, index) => (
+            <Suspense
+              fallback={<div>리뷰를 불러오는 중입니다...</div>}
+              key={index}
+            >
+              <div>
+                <ReviewCard review={review} />
+                <div className="mt-3 h-1 bg-[#D9D9D9]"></div>
               </div>
-            ))
-          )}
+            </Suspense>
+          ))}
           {isLoading && <div>Loading...</div>}
           <div ref={ref} className="h-4 root"></div>
         </div>

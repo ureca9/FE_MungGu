@@ -52,7 +52,7 @@ const PensionDetailPage = () => {
             introduction: pensionDetail.introduction,
           },
           ...watchedPlace,
-        ].slice(0, 10);
+        ].slice(0, 20);
         localStorage.setItem('watched', JSON.stringify(updatedWatched));
       }
     }
