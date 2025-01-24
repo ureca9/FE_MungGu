@@ -78,15 +78,12 @@ export const GetPlacesSummary = async (placeId) => {
 export const PostPresignedUrls = async (reviewData) => {
   try {
     const response = await instance.post('/reviews/presigned-url', reviewData, {
-      // const response = await instance.post('/reviews', reviewFormData, {
       headers: {
         Accept: 'application/json',
       },
     });
     console.log('axios결과:', response);
-    // console.log('결과:', response.data.message);
     return response;
-    // return response.data.message;
   } catch (error) {
     console.error('리뷰 등록 중 오류 발생:', error);
   }
@@ -96,7 +93,7 @@ export const PutReviewPresignedUrls = async (files, presignedUrls) => {
   try {
     const uploadMatching = files.map((file, index) => {
       const { url } = presignedUrls[index];
-      console.log(`업로드 파일 ${file.name} 주소 ${url}`);
+      console.log(`업로드 파일 ${file.name} url ${url}`);
 
       return axios.put(url, file, {
         headers: {

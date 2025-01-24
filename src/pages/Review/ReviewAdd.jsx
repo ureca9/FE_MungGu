@@ -113,16 +113,18 @@ const ReviewAdd = () => {
       type: plcPenType,
       files: selectedFiles.map((item) => item.filePath),
     };
-    console.log('전송 데이터:', reviewData);
-
+    // console.log('전송 데이터:', reviewData);
+    console.log('[Step 1] 리뷰 데이터 준비 완료:', reviewData);
     try {
       const response = await PostPresignedUrls(reviewData);
-      console.log('add결과:', response.data);
+      // console.log('add결과:', response.data);
+      console.log('[Step 2] Presigned URL 응답:', response.data);
 
       const presignedUrls = response.data; // Presigned URL 목록
       const filesToUpload = selectedFiles.map((item) => item.file); // 업로드할 실제 파일들
       await handleFileUpload(filesToUpload, presignedUrls);
-      console.log('모든PostPresignedUrls을 호출했습니다.');
+      // console.log('모든PostPresignedUrls을 호출했습니다.');
+      console.log('[Step 3] 파일 업로드 완료!');
       // Swal.fire({
       //   title: response === 'success' ? '추가 성공!' : 'Oops...',
       //   text:
@@ -133,7 +135,8 @@ const ReviewAdd = () => {
       //   window.history.back();
       // });
     } catch (error) {
-      console.error('추가 중 오류 발생:', error);
+      // console.error('추가 중 오류 발생:', error);
+      console.error('[Error] Presigned URL 요청 중 오류 발생:', error);
     }
   };
 
@@ -143,27 +146,28 @@ const ReviewAdd = () => {
         files,
         presignedUrls,
       );
-      console.log('uploadResponses2:', uploadResponses);
+      // console.log('uploadResponses2:', uploadResponses);
+      console.log('[Step 4] 파일 업로드 응답:', uploadResponses);
       // 모든 파일이 성공적으로 업로드되었는지 확인
       const allSuccess = uploadResponses.every(
         (response) => response.status === 200,
       );
       // 결과 확인
       if (allSuccess) {
-        console.log('모든 파일이 성공적으로 업로드되었습니다.');
+        console.log('[Success] 모든 파일이 성공적으로 업로드되었습니다.');
         reviewSubmit(); // 모든 파일이 성공적으로 업로드된 경우에만 실행
       } else {
-        console.error('일부 파일 업로드에 실패했습니다.');
+        console.error('[Error] 일부 파일 업로드에 실패.');
         uploadResponses.forEach((response, index) => {
           if (response.statusText === 'OK') {
-            console.log(`File ${files[index].name} uploaded successfully`);
+            console.log(`파일 ${files[index].name} 업로드드 성공`);
           } else {
-            console.error(`File ${files[index].name} failed to upload`);
+            console.error(`파일일 ${files[index].name} 업로드 실패`);
           }
         });
       }
     } catch (error) {
-      console.error('파일 업로드 중 오류 발생:', error);
+      console.error('[Error] 파일 업로드 중 오류 발생:', error);
     }
   };
   const reviewSubmit = async () => {
