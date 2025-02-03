@@ -105,6 +105,7 @@ const RecommendedPensions = () => {
             flex gap-4 overflow-x-auto snap-x snap-mandatory 
             scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200 
             sm:scrollbar-none pb-1 mb-[-1px]"
+            style={{ scrollSnapType: 'x mandatory', scrollBehavior: 'smooth' }} 
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseUpOrLeave}
