@@ -66,10 +66,11 @@ const PlaceDetailPage = () => {
     setIsModalOpen(true);
   };
 
+
   const handleViewAllReviews = () => {
     navigate(`/place-all-review/${id}`);
   };
-
+  
   // 찜 상태 업데이트 함수 (장소용 API 엔드포인트로 요청)
   const handleToggleLike = async () => {
     try {
@@ -147,6 +148,7 @@ const PlaceDetailPage = () => {
       {placeDetail.viewCount != null && (
         <ViewerCount viewCount={placeDetail.viewCount} />
       )}
+
 
       <PlaceInfoSection 
         businessHour={placeDetail.businessHour} 
