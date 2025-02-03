@@ -1,10 +1,10 @@
-import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
+import { CRUDBtn } from '../../stories/buttons/crud-btn/CRUDBtn';
 import petgray from '../../assets/common/petgray.svg';
 import { IoMdCheckmark } from 'react-icons/io';
 import usePetStore from '../../stores/pet/usePetStore';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import Swal from 'sweetalert2';
-import MyPageImg from '../../assets/MypageImg/MyPageImg.png';
+import MyPageImg from '../../assets/my-page-img/MyPageImg.png';
 import { useRef, useEffect } from 'react';
 const MyPet = ({ memberD, navigate }) => {
   const { selectedPetId, setSelectedPetId } = usePetStore();

@@ -5,11 +5,11 @@ import {
 } from '../../api/review';
 import Swal from 'sweetalert2';
 import { useParams } from 'react-router-dom';
-import PlaceData from '../../components/review/reviewAdd/PlaceData';
+import PlaceData from '../../components/review/review-add/PlaceData';
 import useTypeStore from '../../stores/review/useTypeStore';
 import { RxStar, RxStarFilled } from 'react-icons/rx';
 import { FaCamera } from 'react-icons/fa';
-import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
+import { BasicBtn } from '../../stories/buttons/basic-btn/BasicBtn';
 import { useEffect, useRef, useState } from 'react';
 
 const ReviewAdd = () => {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BasicBtn } from './../../stories/Buttons/BasicBtn/BasicBtn';
+import { BasicBtn } from '../../stories/buttons/basic-btn/BasicBtn';
 import Frame1 from '../../assets/mungsengneacut/Frame1.svg';
 import Frame2 from '../../assets/mungsengneacut/Frame2.svg';
 import Frame3 from '../../assets/mungsengneacut/Frame3.svg';

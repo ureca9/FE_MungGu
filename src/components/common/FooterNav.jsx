@@ -7,7 +7,7 @@ import meongsengneacutOff from '../../assets/common/footer/meongsengneacutOff.sv
 import meongsengneacutHover from '../../assets/common/footer/meongsengneacutHover.svg';
 import { useState } from 'react';
 import ROUTER_PATHS from '../../utils/RouterPath';
-import SearchModal from '../MainPage/SearchModal/SearchModal';
+import SearchModal from '../main-page/search-modal/SearchModal';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey.js';
 import Swal from 'sweetalert2';
 

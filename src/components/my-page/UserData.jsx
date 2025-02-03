@@ -1,9 +1,9 @@
 import Swal from 'sweetalert2';
-import useLoginStore from '../../stores/Auth/useLoginStore';
-import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
+import useLoginStore from '../../stores/auth/useLoginStore';
+import { CRUDBtn } from '../../stories/buttons/crud-btn/CRUDBtn';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import ROUTER_PATHS from '../../utils/RouterPath';
-import userIcon from '../../assets/MypageImg/user.svg';
+import userIcon from '../../assets/my-page-img/user.svg';
 import PropTypes from 'prop-types';
 
 const UserData = ({ memberD, navigate }) => {

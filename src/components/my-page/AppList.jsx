@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import MyPageImg from '../../assets/MypageImg/MyPageImg.png';
+import MyPageImg from '../../assets/my-page-img/MyPageImg.png';
 const AppList = () => {
   const appList = [
     {

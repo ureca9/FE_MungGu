@@ -1,4 +1,4 @@
-import usericon from '../../assets/MypageImg/user.svg';
+import usericon from '../../assets/my-page-img/user.svg';
 import { RxStarFilled } from 'react-icons/rx';
 import ReviewDetailModal from './ReviewDetailModal';
 import { useEffect, useState } from 'react';
