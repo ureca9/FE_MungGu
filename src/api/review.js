@@ -74,7 +74,7 @@ export const GetPlacesSummary = async (placeId) => {
     throw error;
   }
 };
-//presigned-url 주소 받기기
+//presigned-url 주소 요청 받기
 export const PostPresignedUrls = async (reviewData) => {
   try {
     const response = await instance.post('/reviews/presigned-url', reviewData, {
@@ -82,7 +82,6 @@ export const PostPresignedUrls = async (reviewData) => {
         Accept: 'application/json',
       },
     });
-    console.log('axios결과:', response);
     return response;
   } catch (error) {
     console.error('리뷰 등록 중 오류 발생:', error);
@@ -93,8 +92,6 @@ export const PutReviewPresignedUrls = async (files, presignedUrls) => {
   try {
     const uploadMatching = files.map((file, index) => {
       const { url } = presignedUrls[index];
-      console.log(`업로드 파일 ${file.name} url ${url}`);
-
       return axios.put(url, file, {
         headers: {
           'Content-Type': file.type,
@@ -102,7 +99,6 @@ export const PutReviewPresignedUrls = async (files, presignedUrls) => {
       });
     });
     const uploadResponses = await Promise.all(uploadMatching);
-    console.log('uploadResponses:', uploadResponses);
     return uploadResponses;
   } catch (error) {
     console.error('리뷰 등록 중 presignedUrls오류 발생:', error);
@@ -117,7 +113,6 @@ export const PostPensionsReview = async (reviewData) => {
         'Content-Type': 'application/json',
       },
     });
-    console.log('PostPensionsReview 결과:', response);
     return response;
   } catch (error) {
     console.error('리뷰 등록 중 오류 발생:', error);

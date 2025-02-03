@@ -119,6 +119,8 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                       className="flex object-contain w-full h-full"
                       src={file[currentImageIndex].fileUrl}
                       controls
+                      autoPlay
+                      muted
                       playsInline
                       disablePictureInPicture
                     />
