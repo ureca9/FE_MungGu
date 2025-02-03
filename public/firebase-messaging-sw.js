@@ -3,13 +3,13 @@ importScripts("https://www.gstatic.com/firebasejs/10.11.0/firebase-messaging-com
 
 // Firebase 설정
 const firebaseConfig = {
-  apiKey: import.meta.env.FCM_API_KEY,
-  authDomain: import.meta.env.FCM_AUTH_DOMAIN,
-  projectId: import.meta.env.FCM_PROJECT_ID,
-  storageBucket: import.meta.env.FCM_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.FCM_MESSAGING_SENDER_ID,
-  appId: import.meta.env.FCM_APP_ID,
-  measurementId: import.meta.env.FCM_MEASUREMENT_ID
+  apiKey: import.meta.env.VITE_FCM_API_KEY,
+  authDomain: import.meta.env.VITE_FCM_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FCM_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FCM_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FCM_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FCM_APP_ID,
+  measurementId: import.meta.env.VITE_FCM_MEASUREMENT_ID
 };
 
 // Firebase 앱 초기화

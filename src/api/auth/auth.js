@@ -64,7 +64,7 @@ export const registerFCMToken = async (memberId) => {
     
 
     const currentToken = await getToken(messaging, {
-      vapidKey: import.meta.env.FCM_VAPID_KEY
+      vapidKey: import.meta.env.VITE_FCM_VAPID_KEY
     });
     if (!currentToken) {
       console.warn('No FCM token received');
