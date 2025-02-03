@@ -103,20 +103,15 @@ const ReviewEdit = () => {
 
     try {
       const response = await PatchReviewEdit(reviewFormData, reviewId);
-      Swal.fire({
-        title: '수정 완료!',
-        icon: 'success',
-        confirmButtonColor: '#3288FF',
-      }).then(() => {
-        window.location.href = ROUTER_PATHS.MY_REVIEW;
-      });
+      // Swal.fire({
+      //   title: '수정 완료!',
+      //   icon: 'success',
+      //   confirmButtonColor: '#3288FF',
+      // }).then(() => {
+      //   window.location.href = ROUTER_PATHS.MY_REVIEW;
+      // });
     } catch (error) {
       console.error('추가 중 오류 발생:', error);
-      Swal.fire({
-        title: 'Oops...',
-        text: '추가 중 오류가 발생했습니다.',
-        icon: 'error',
-      });
     }
   };
 
