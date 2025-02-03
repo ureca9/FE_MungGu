@@ -22,7 +22,7 @@ const SubHeader = ({ title }) => {
     [ROUTER_PATHS.PREFERENCE_REGION]: '선호 지역 등록',
     [ROUTER_PATHS.REGION_NAME]: '지역명',
     [ROUTER_PATHS.PLACE_NAME]: '장소명',
-    [ROUTER_PATHS.PLACE_ALL_REVIEW]: '시설 리뷰 전체보기',
+    [ROUTER_PATHS.PLACE_ALL_REVIEW.split('/:')[0]]: '시설 리뷰 전체보기',
     [ROUTER_PATHS.PENSION_ALL_REVIEW]: '펜션 리뷰 전체보기',
     [ROUTER_PATHS.PET_EDIT_ID]: '강아지 수정',
     [ROUTER_PATHS.PET_REGISTER]: '강아지 등록',
@@ -45,12 +45,21 @@ const SubHeader = ({ title }) => {
     [ROUTER_PATHS.VIEW_HISTORY]: '최근본 목록',
   };
 
-  const pageTitle = title || PAGE_TITLES[location.pathname] || '페이지 없음';
-  const { setSelectedPlace, setSearchResults } = usePlaceStore();
-  const handleBackClick = () => {
-    setSelectedPlace(null);
-    setSearchResults([]);
-  };
+  // const pageTitle = title || PAGE_TITLES[location.pathname] || '페이지 없음';
+  // const { setSelectedPlace, setSearchResults } = usePlaceStore();
+  // const handleBackClick = () => {
+  //   setSelectedPlace(null);
+  //   setSearchResults([]);
+  // };
+  let pageTitle = title || '페이지 없음';
+
+  // startWith를 사용하여 페이지 제목 찾기
+  for (const path in PAGE_TITLES) {
+    if (location.pathname.startsWith(path)) {
+      pageTitle = PAGE_TITLES[path];
+      break;
+    }
+  }
 
   return (
     <header className="fixed top-0 z-10 w-full bg-white max-w-[768px]">
@@ -59,15 +68,15 @@ const SubHeader = ({ title }) => {
           onClick={() => {
             navigate(-1);
             handleBackClick();
-      }}
-      className="text-xl"
+          }}
+          className="text-xl"
         >
           <IoIosArrowBack />
-    </button>
-    <div className="text-xl font-bold">{pageTitle}</div>
-    <div className="w-5"></div>
-  </div>
-</header>
+        </button>
+        <div className="text-xl font-bold">{pageTitle}</div>
+        <div className="w-5"></div>
+      </div>
+    </header>
   );
 };
 

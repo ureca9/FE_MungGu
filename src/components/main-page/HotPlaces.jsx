@@ -10,6 +10,7 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
   const [selectedCategory, setSelectedCategory] = useState(7);
   const scrollRef = useRef(null);
   const categoryRef = useRef(null);
+  const buttonRefs = useRef({});
   const navigate = useNavigate();
 
   const categories = [
@@ -71,27 +72,6 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
     navigate(routePath);
   };
 
-  const handleWheel = (e) => {
-    e.preventDefault();
-    const ref = scrollRef.current;
-    if (e.deltaY > 0) {
-      ref.scrollLeft += 40;
-    } else {
-      ref.scrollLeft -= 40;
-    }
-  };
-
-  useEffect(() => {
-    const ref = scrollRef.current;
-    if (ref) {
-      ref.addEventListener('wheel', handleWheel);
-    }
-    return () => {
-      if (ref) {
-        ref.removeEventListener('wheel', handleWheel);
-      }
-    };
-  }, []);
   const addDragScroll = (ref) => {
     let isDragging = false;
     let startX, scrollLeft;
@@ -121,14 +101,14 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
   };
 
   useEffect(() => {
-    // if (scrollRef.current) addDragScroll(scrollRef);
+    if (scrollRef.current) addDragScroll(scrollRef);
     if (categoryRef.current) addDragScroll(categoryRef);
   }, []);
 
   return (
-    <section className="">
+    <section>
       <LoadingSpinner />
-      <h2 className="mb-4 text-lg font-bold ">
+      <h2 className="mb-4 text-lg font-bold">
         지금 핫한 장소
         <img
           src={fireIcon}
@@ -140,26 +120,27 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
 
       <div
         ref={categoryRef}
-        className="flex gap-2 mb-4 overflow-x-auto sm:overflow-y-auto cursor-grab"
-        style={{ scrollbarWidth: 'none' }}
+        className="flex gap-2 mb-4 overflow-x-auto cursor-grab"
+        style={{ scrollbarWidth: 'none', scrollBehavior: 'smooth' }}
       >
         <style>{`div::-webkit-scrollbar { display: none; }`}</style>
         {categories.map((category) => (
           <button
             key={category.id}
-            onClick={() => setSelectedCategory(category.id)}
-            className={`
-        px-4 py-2 min-w-[100px] border rounded-lg 
-        text-center 
-        ${
-          selectedCategory === category.id
-            ? 'border-[#3288ff] text-blue-500 font-semibold'
-            : 'border-gray-300 text-gray-600'
-        }
-        hover:bg-gray-100 
-        text-[12px] px-[8px] py-[4px]
-        sm:text-base sm:px-2 sm:py-1
-      `}
+            ref={(el) => (buttonRefs.current[category.id] = el)}
+            onClick={() => {
+              setSelectedCategory(category.id);
+              buttonRefs.current[category.id]?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+                inline: 'center',
+              });
+            }}
+            className={`px-4 py-2 min-w-[100px] border rounded-lg text-center ${
+              selectedCategory === category.id
+                ? 'border-[#3288ff] text-blue-500 font-semibold'
+                : 'border-gray-300 text-gray-600'
+            } hover:bg-gray-100 text-[12px] px-[8px] py-[4px] sm:text-base sm:px-2 sm:py-1`}
           >
             {category.name}
           </button>
@@ -168,11 +149,8 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
 
       <div
         ref={scrollRef}
-        className="
-    flex gap-x-[5px] overflow-x-auto snap-x snap-mandatory 
-    scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200
-    sm:scrollbar-none"
-        style={{ scrollSnapType: 'x mandatory' }}
+        className="flex gap-x-[5px] overflow-x-auto snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#3288ff] scrollbar-track-gray-200 sm:scrollbar-none cursor-grab"
+        style={{ scrollSnapType: 'x mandatory', scrollBehavior: 'smooth' }}
       >
         {places.length > 0 &&
           [...Array(Math.ceil(places.length / 3))].map((_, index) => {
@@ -182,7 +160,7 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
             return (
               <div
                 key={index}
-                className="flex flex-col gap-y-4 w-[270px] sm:w-[340px] scroll-snap-align-start"
+                className="flex flex-col gap-y-4 w-[270px] sm:w-[340px] snap-start"
                 style={{ flex: '0 0 auto' }}
               >
                 {listItems.map((place, idx) => (
@@ -211,9 +189,7 @@ const HotPlaces = ({ accessToken, refreshAccessToken }) => {
                           {idx + 1 + startIndex}.
                         </p>
                         <h3 className="text-sm font-bold line-clamp-1">
-                          {place.placeName ||
-                            place.pensionName ||
-                            '이름 정보 없음'}
+                          {place.placeName || place.pensionName || '이름 정보 없음'}
                         </h3>
                       </div>
 
