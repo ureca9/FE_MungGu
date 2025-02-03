@@ -166,22 +166,6 @@ const ReviewAdd = () => {
 
     try {
       const response = await PostPensionsReview(reviewData);
-      if (response.data.message === 'success') {
-        Swal.fire({
-          title: '추가 성공!',
-          icon: 'success',
-          confirmButtonColor: '#3288FF',
-        }).then(() => {
-          window.history.back();
-        });
-      } else {
-        Swal.fire({
-          title: '추가 실패',
-          text: response.data.message || '알 수 없는 오류가 발생했습니다.',
-          icon: 'error',
-          confirmButtonColor: '#FF0000',
-        });
-      }
     } catch (error) {
       console.error('추가 중 오류 발생:', error);
     }

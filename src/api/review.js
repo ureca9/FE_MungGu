@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { instance } from './axios';
+import Swal from 'sweetalert2';
 
 // 리뷰 목록 가져오기
 export const GetPensionsReviews = async (pensionId, page = 0) => {
@@ -113,6 +114,22 @@ export const PostPensionsReview = async (reviewData) => {
         'Content-Type': 'application/json',
       },
     });
+    if (response.data.message === 'success') {
+      Swal.fire({
+        title: '추가 성공!',
+        icon: 'success',
+        confirmButtonColor: '#3288FF',
+      }).then(() => {
+        window.history.back();
+      });
+    } else {
+      Swal.fire({
+        title: '추가 실패',
+        text: response.data.message || '알 수 없는 오류가 발생했습니다.',
+        icon: 'error',
+        confirmButtonColor: '#FF0000',
+      });
+    }
     return response;
   } catch (error) {
     console.error('리뷰 등록 중 오류 발생:', error);
