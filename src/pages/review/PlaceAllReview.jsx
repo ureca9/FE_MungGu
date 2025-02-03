@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react';
-import ReviewCard from '../../components/review/ReviewCard';
+import { lazy, Suspense, useEffect, useState } from 'react';
+// import ReviewCard from '../../components/review/ReviewCard';
 import { GetPlaceReviews } from '../../api/review';
 import { useParams } from 'react-router-dom';
 import useTypeStore from '../../stores/review/useTypeStore';
 import { useInView } from 'react-intersection-observer';
 import AllReviewHeader from '../../components/review/AllReviewHeader';
 import SubHeader from '../../components/common/SubHeader';
+import { debounce } from 'lodash';
+const ReviewCard = lazy(() => import('../../components/review/ReviewCard'));
 const PlaceAllReview = () => {
   const { id: placeId } = useParams();
   const [reviews, setReviews] = useState([]);
   const { setPlaceId } = useTypeStore();
-
   const [page, setPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [hasNext, setHasNext] = useState(true);
@@ -41,11 +42,15 @@ const PlaceAllReview = () => {
     fetchPlaceReviews(page);
   }, [placeId, page]);
 
-  useEffect(() => {
+  const handlePageChange = debounce(() => {
     if (inView && hasNext && !isLoading) {
       setPage((prevPage) => prevPage + 1);
     }
-  }, [inView, !isLoading, hasNext]);
+  }, 1000);
+
+  useEffect(() => {
+    handlePageChange();
+  }, [inView, hasNext, isLoading]);
 
   return (
     <div className="min-h-screen">
@@ -54,16 +59,17 @@ const PlaceAllReview = () => {
         <AllReviewHeader />
         <div className="h-2 mt-1 mb-5 bg-[#D9D9D9]"></div>
         <div className="flex flex-col gap-3 px-5 min-w-96 sm:w-full sm:px-6">
-          {isLoading ? (
-            <div>Loading...</div>
-          ) : (
-            reviews.map((review, index) => (
-              <div key={index}>
-                <ReviewCard key={index} review={review} />
-                <div className="mt-3 h-1 bg-[#D9D9D9] "></div>
+          {reviews.map((review, index) => (
+            <Suspense
+              fallback={<div>리뷰를 불러오는 중입니다...</div>}
+              key={index}
+            >
+              <div>
+                <ReviewCard review={review} />
+                <div className="mt-3 h-1 bg-[#D9D9D9]"></div>
               </div>
-            ))
-          )}
+            </Suspense>
+          ))}
           {isLoading && <div>Loading...</div>}
           <div ref={ref} className="h-4 root"></div>
         </div>
