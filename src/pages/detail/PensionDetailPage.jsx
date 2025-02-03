@@ -1,6 +1,6 @@
-// src/api/detail-page/pension-detail-page.js 의 위치에 맞게 경로를 조정하세요.
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios'; // 이 줄 추가
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -46,7 +46,7 @@ const PensionDetailPage = () => {
         setPensionDetail(data);
         setLikeStatus(data.likeStatus || false);
       } catch (err) {
-        setError(err.message);
+        setError('펜션 정보를 불러오는 데 실패했습니다.');
       } finally {
         setLoading(false);
       }
@@ -78,13 +78,9 @@ const PensionDetailPage = () => {
         return;
       }
 
-      await axios.post(
-        `https://meong9.store/api/v1/pensions/likes/${id}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
+      await axios.post(`https://meong9.store/api/v1/pensions/likes/${id}`, {}, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
 
       setLikeStatus((prev) => !prev);
     } catch (error) {
@@ -97,8 +93,7 @@ const PensionDetailPage = () => {
 
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
-  if (!pensionDetail)
-    return <div className="p-4">유효한 펜션 정보가 없습니다.</div>;
+  if (!pensionDetail) return <div className="p-4">유효한 펜션 정보가 없습니다.</div>;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f9fafb' }}>
@@ -134,7 +129,6 @@ const PensionDetailPage = () => {
         reviewCount={pensionDetail.reviewCount}
       />
 
-      {/* viewCount가 null이나 undefined가 아닐 때만 ViewerCount 렌더링 */}
       {pensionDetail.viewCount != null && (
         <ViewerCount viewCount={pensionDetail.viewCount} />
       )}

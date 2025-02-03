@@ -1,17 +1,20 @@
-// src/pages/PlaceDetailPage.js (또는 해당 컴포넌트가 위치한 경로)
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
 import SubHeader from '../../components/common/SubHeader';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import PlaceHeader from '../../components/detail-page/PlaceHeader';
 import PlaceInfoSection from '../../components/detail-page/PlaceInfoSection';
 import PlaceReviewSection from '../../components/detail-page/PlaceReviewSection';
 import ReviewDetailModal from '../../components/review/ReviewDetailModal';
-import emptyIcon from "../../assets/common/petgray.svg";
-import Slider from 'react-slick';
 import ViewerCount from '../../components/detail-page/ViewerCount';
+import emptyIcon from '../../assets/common/petgray.svg';
 
-// API 호출 함수를 import 합니다.
 import { fetchPlaceDetail } from '../../api/detail-page/place-detail-page';
 
 const sliderSettings = {
@@ -31,12 +34,14 @@ const PlaceDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
+  const [likeStatus, setLikeStatus] = useState(false);
 
   useEffect(() => {
     const getPlaceDetail = async () => {
       try {
         const data = await fetchPlaceDetail(id);
         setPlaceDetail(data);
+        setLikeStatus(data.likeStatus || false);
       } catch (error) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
       } finally {
@@ -47,7 +52,7 @@ const PlaceDetailPage = () => {
     getPlaceDetail();
   }, [id]);
 
-  // 리뷰 클릭 핸들러 (PensionDetailPage와 동일하게)
+  // 리뷰 클릭 핸들러
   const handleReviewClick = (review) => {
     setSelectedReview({
       reviewId: review.reviewId,
@@ -55,7 +60,6 @@ const PlaceDetailPage = () => {
       nickname: review.nickname,
       score: review.score,
       visitDate: review.visitDate,
-      // review.file이 undefined인 경우 빈 배열로 대체
       file: review.file || [],
       profileImageUrl: review.profileImageUrl,
     });
@@ -64,6 +68,42 @@ const PlaceDetailPage = () => {
 
   const handleViewAllReviews = () => {
     navigate(`/place-all-review/${id}`);
+  };
+
+  // 찜 상태 업데이트 함수 (장소용 API 엔드포인트로 요청)
+  const handleToggleLike = async () => {
+    try {
+      const accessToken = localStorage.getItem('ACCESS_TOKEN');
+      if (!accessToken) {
+        const result = await Swal.fire({
+          title: '로그인 후 이용해주세요.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: '로그인',
+          cancelButtonText: '취소',
+        });
+        if (result.isConfirmed) {
+          navigate('/login');
+        }
+        return;
+      }
+
+      // 장소의 찜 업데이트 엔드포인트 (예시)
+      await axios.post(
+        `https://meong9.store/api/v1/places/likes/${id}`,
+        {},
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+
+      // 서버 요청 성공 시 로컬 상태 업데이트
+      setLikeStatus((prev) => !prev);
+      setPlaceDetail((prev) => ({ ...prev, likeStatus: !prev.likeStatus }));
+    } catch (error) {
+      Swal.fire({
+        title: '찜 상태를 업데이트하는 중 문제가 발생했습니다.',
+        icon: 'error',
+      });
+    }
   };
 
   if (loading) return <LoadingSpinner />;
@@ -97,16 +137,13 @@ const PlaceDetailPage = () => {
       <PlaceHeader
         placeName={placeDetail.placeName}
         address={placeDetail.address}
-        likeStatus={placeDetail.likeStatus}
-        onToggleLike={() =>
-          setPlaceDetail((prev) => ({ ...prev, likeStatus: !prev.likeStatus }))
-        }
+        likeStatus={likeStatus}
+        onToggleLike={handleToggleLike}
         reviewAvg={placeDetail.reviewAvg}
         reviewCount={placeDetail.reviewCount}
         tags={placeDetail.tags}
       />
 
-      {/* viewCount가 null이 아닐 경우에만 ViewerCount 컴포넌트 렌더링 */}
       {placeDetail.viewCount != null && (
         <ViewerCount viewCount={placeDetail.viewCount} />
       )}
@@ -121,8 +158,6 @@ const PlaceDetailPage = () => {
       <PlaceReviewSection 
         photoReviewList={placeDetail.photoReviewList} 
         review={placeDetail.review} 
-        // 부모에서 handleReviewClick 함수를 onReviewClick prop으로 전달하는 경우,
-        // PlaceReviewSection 내부에서 해당 prop 이름으로 호출하도록 구현되어 있어야 합니다.
         onReviewClick={handleReviewClick}
         emptyIcon={emptyIcon} 
         onViewAllClick={handleViewAllReviews}
