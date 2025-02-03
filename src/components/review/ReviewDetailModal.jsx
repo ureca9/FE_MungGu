@@ -1,7 +1,7 @@
 import { Description, Dialog, DialogPanel } from '@headlessui/react';
 import { useEffect, useRef, useState } from 'react';
 import { RxStarFilled } from 'react-icons/rx';
-import usericon from '../../assets/MypageImg/user.svg';
+import usericon from '../../assets/my-page-img/user.svg';
 import { BsChevronCompactLeft, BsChevronCompactRight } from 'react-icons/bs';
 import { CircularProgress } from '@mui/material';
 
@@ -119,6 +119,8 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                       className="flex object-contain w-full h-full"
                       src={file[currentImageIndex].fileUrl}
                       controls
+                      autoPlay
+                      muted
                       playsInline
                       disablePictureInPicture
                     />

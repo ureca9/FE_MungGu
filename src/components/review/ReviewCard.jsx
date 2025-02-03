@@ -1,4 +1,4 @@
-import usericon from '../../assets/MypageImg/user.svg';
+import usericon from '../../assets/my-page-img/user.svg';
 import { RxStarFilled } from 'react-icons/rx';
 import ReviewDetailModal from './ReviewDetailModal';
 import { useEffect, useState } from 'react';
@@ -40,10 +40,10 @@ const ReviewCard = ({ review }) => {
 
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-      transition={{ duration: 0.5 }}
+    // ref={ref}
+    // initial={{ opacity: 0, y: 10 }}
+    // animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+    // transition={{ duration: 0.2 }}
     >
       <div
         className="flex flex-col justify-between h-auto cursor-pointer"

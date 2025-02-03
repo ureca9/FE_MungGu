@@ -2,7 +2,7 @@ import { useState } from 'react';
 import petgray from '../../assets/common/petgray.svg';
 import Swal from 'sweetalert2';
 import { BasicInput } from '../../stories/Input/BasicInput';
-import { BasicBtn } from '../../stories/Buttons/BasicBtn/BasicBtn';
+import { BasicBtn } from '../../stories/buttons/basic-btn/BasicBtn';
 import MotionDiv from './MotionDiv';
 import BreedsPanel from './BreedsPanel';
 import usePetStore from '../../stores/pet/usePetStore';
@@ -75,6 +75,7 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
         title: 'Oops...',
         text: '생년월일은 YYYY-MM-DD 형식이어야 합니다.',
         icon: 'error',
+        confirmButtonColor: '#3288FF',
       });
       return false;
     }
@@ -85,6 +86,7 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
         title: 'Oops...',
         text: '생년월일은 오늘 이전 날짜여야 합니다.',
         icon: 'error',
+        confirmButtonColor: '#3288FF',
       });
       return false;
     }
@@ -138,7 +140,10 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
 
   return (
     <div className="flex flex-col mx-5 my-5 md:mx-28">
-      <div className="flex w-48 mb-5 text-2xl font-semibold leading-normal">
+      <div className="flex w-full text-2xl font-semibold leading-normal">
+        우리 강아지 정보를
+      </div>
+      <div className="flex w-full mb-5 text-2xl font-semibold leading-normal">
         {title}
       </div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3 md:gap-6 ">

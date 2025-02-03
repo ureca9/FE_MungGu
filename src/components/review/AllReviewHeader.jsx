@@ -2,7 +2,7 @@ import { RxStarFilled } from 'react-icons/rx';
 import { FaPenAlt } from 'react-icons/fa';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { CRUDBtn } from '../../stories/Buttons/CRUDBtn/CRUDBtn';
+import { CRUDBtn } from '../../stories/buttons/crud-btn/CRUDBtn';
 import { GetPensionsSummary, GetPlacesSummary } from '../../api/review';
 import useTypeStore from '../../stores/review/useTypeStore';
 

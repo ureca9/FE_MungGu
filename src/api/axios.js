@@ -29,9 +29,8 @@ const handle401Error = async (error) => {
       (url) => basePath === url || basePath.startsWith(`${url}/`),
     );
   };
-  if (isExceptionUrl(originalRequest.url)) {
-    return Promise.resolve();
-  }
+
+  if (isExceptionUrl(originalRequest.url)) return Promise.resolve();
 
   try {
     const response = await getAuthToken();
