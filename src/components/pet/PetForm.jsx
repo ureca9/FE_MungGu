@@ -115,7 +115,7 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
 
   const handleBirthDateChange = (e) => {
     let input = e.target.value;
-    const numbers = input.replace(/-/g, '');
+    let numbers = input.replace(/-/g, '');
 
     if (numbers.length > 8) {
       numbers = numbers.slice(0, 8);

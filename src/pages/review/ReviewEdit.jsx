@@ -5,7 +5,6 @@ import { useParams } from 'react-router-dom';
 import { BasicBtn } from '../../stories/buttons/basic-btn/BasicBtn';
 import { FaCamera } from 'react-icons/fa';
 import { RxStar, RxStarFilled } from 'react-icons/rx';
-import ROUTER_PATHS from '../../utils/RouterPath';
 import PlaceData from '../../components/review/review-add/PlaceData';
 import useTypeStore from '../../stores/review/useTypeStore';
 import { CircularProgress } from '@mui/material';
@@ -103,13 +102,7 @@ const ReviewEdit = () => {
 
     try {
       const response = await PatchReviewEdit(reviewFormData, reviewId);
-      // Swal.fire({
-      //   title: '수정 완료!',
-      //   icon: 'success',
-      //   confirmButtonColor: '#3288FF',
-      // }).then(() => {
-      //   window.location.href = ROUTER_PATHS.MY_REVIEW;
-      // });
+      console.log('reviewFormData :', reviewFormData, 'reviewId', reviewId);
     } catch (error) {
       console.error('추가 중 오류 발생:', error);
     }
@@ -117,7 +110,7 @@ const ReviewEdit = () => {
 
   const handleFileChange = async (event) => {
     const files = [...event.target.files];
-    const maxFileSize = 5 * 1024 * 1024;
+    const maxFileSize = 100 * 1024 * 1024;
     const reviewFormData = new FormData();
     const processedFiles = await Promise.all(
       files.map((file) => {
@@ -146,7 +139,7 @@ const ReviewEdit = () => {
                     const newFile = new File([blob], file.name, {
                       type: 'image/webp',
                     });
-                    console.log('이미지 File:', newFile);
+                    // console.log('이미지 File:', newFile);
                     reviewFormData.append('file', newFile);
                     resolve({
                       file: newFile,

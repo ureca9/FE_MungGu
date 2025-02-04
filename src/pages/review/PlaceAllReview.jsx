@@ -1,5 +1,4 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-// import ReviewCard from '../../components/review/ReviewCard';
 import { GetPlaceReviews } from '../../api/review';
 import { useParams } from 'react-router-dom';
 import useTypeStore from '../../stores/review/useTypeStore';

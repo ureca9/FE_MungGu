@@ -42,13 +42,14 @@ const ReviewAdd = () => {
       }
     };
   }, []);
+
   const handleScoreChange = (newScore) => {
     setScore(newScore);
   };
 
   const handleFileChange = async (event) => {
     const files = [...event.target.files];
-    const maxFileSize = 10 * 1024 * 1024;
+    const maxFileSize = 100 * 1024 * 1024;
     const filePaths = [];
 
     const processedFiles = await Promise.all(
