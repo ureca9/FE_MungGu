@@ -91,15 +91,6 @@ export const registerFCMToken = async (memberId) => {
   }
 }
 
-// FCM 초기화 (중복 실행 방지)
-const App = () => {
-  useEffect(() => {
-    const accessToken = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
-  }, []); 
-
-  return React.createElement(RouterProvider, { router: router });
-};
-
 export const getAuthToken = async () => {
   try {
     const response = await instance.post('/auth/token');

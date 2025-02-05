@@ -3,13 +3,10 @@ importScripts("https://www.gstatic.com/firebasejs/10.11.0/firebase-messaging-com
 
 // Firebase 설정
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FCM_API_KEY,
-  authDomain: import.meta.env.VITE_FCM_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FCM_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FCM_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FCM_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FCM_APP_ID,
-  measurementId: import.meta.env.VITE_FCM_MEASUREMENT_ID
+  apiKey: "AIzaSyBUknTYf3TMbtrTC_7BtKPKbGpfwmIJPbc",
+  projectId: "mungtivity",
+  messagingSenderId: "328383190621",
+  appId: "1:328383190621:web:75815f81277dd7484f9fb4",
 };
 
 // Firebase 앱 초기화
