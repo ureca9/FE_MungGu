@@ -4,6 +4,7 @@ import ReviewDetailModal from './ReviewDetailModal';
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import LazyLoadImage from './LazyLoadImage'; // LazyLoadImage 컴포넌트 import
 
 const ReviewCard = ({ review }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -103,9 +104,11 @@ const ReviewCard = ({ review }) => {
                   className="w-20 h-20 md:w-32 md:h-32 overflow-hidden bg-[#D9D9D9] rounded-lg items-center justify-center flex-row flex flex-wrap transition duration-300 transform hover:scale-110"
                 >
                   {file.fileType === 'IMAGE' ? (
-                    <img
+                    <LazyLoadImage // LazyLoadImage 컴포넌트 사용
                       src={file.fileUrl}
+                      alt="Review Image"
                       className="object-cover w-full h-full"
+                      sizes="(max-width: 768px) 20vw, 32vw"
                     />
                   ) : file.fileType === 'VIDEO' ? (
                     <video

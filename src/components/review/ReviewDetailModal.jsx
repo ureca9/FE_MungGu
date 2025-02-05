@@ -4,6 +4,7 @@ import { RxStarFilled } from 'react-icons/rx';
 import usericon from '../../assets/my-page-img/user.svg';
 import { BsChevronCompactLeft, BsChevronCompactRight } from 'react-icons/bs';
 import { CircularProgress } from '@mui/material';
+import LazyLoadImage from './LazyLoadImage';
 
 const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
   const scrollRef = useRef(null);
@@ -54,7 +55,7 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
         }
       });
     } else {
-      videoRef.current.src = currentFile.fileUrl; // mp4 등 다른 비디오 파일 처리
+      videoRef.current.src = currentFile.fileUrl;
     }
   }, [file, currentImageIndex]);
 
@@ -137,7 +138,6 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                       className="flex object-contain w-full h-full"
                       src={file[currentImageIndex].fileUrl}
                       onLoad={handleImageLoad}
-                      alt="Review Image"
                     />
                   ) : file[currentImageIndex].fileType === 'VIDEO' ? (
                     <video
@@ -209,48 +209,21 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                   className="flex items-end w-full gap-1 overflow-x-auto min-h-28 "
                 >
                   {file &&
-                    file.map(
-                      (
-                        fileItem,
-                        index, //file 존재 여부 확인
-                      ) => (
-                        <div
-                          key={index}
-                          onClick={() => handleClickImage(index)}
-                          className="min-w-20 max-w-20 h-20 bg-[#D9D9D9] rounded-lg flex items-center justify-center cursor-pointer"
-                        >
-                          {fileItem.fileType === 'IMAGE' ? (
-                            <img
-                              className="object-cover w-full h-full rounded-lg"
-                              src={fileItem.fileUrl}
-                              alt={`Thumbnail ${index}`}
-                            />
-                          ) : fileItem.fileType === 'VIDEO' ? (
-                            <video
-                              ref={videoRef}
-                              onClick={(e) => e.preventDefault()}
-                              onPlay={(e) => e.preventDefault()}
-                              className="object-cover w-full h-full rounded-lg"
-                              muted
-                              playsInline
-                              disablePictureInPicture
-                            >
-                              <source
-                                src={file[currentImageIndex].fileUrl}
-                                type={
-                                  file[currentImageIndex].fileUrl.endsWith(
-                                    '.m3u8',
-                                  )
-                                    ? 'application/x-mpegURL'
-                                    : 'video/mp4'
-                                }
-                              />
-                              Your browser does not support the video tag.
-                            </video>
-                          ) : null}
-                        </div>
-                      ),
-                    )}
+                    file.map((fileItem, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleClickImage(index)}
+                        className="min-w-20 max-w-20 h-20 bg-[#D9D9D9] rounded-lg flex items-center justify-center cursor-pointer"
+                      >
+                        {fileItem.fileType === 'IMAGE' ? (
+                          <LazyLoadImage // LazyLoadImage 컴포넌트 사용
+                            className="object-cover w-full h-full rounded-lg"
+                            src={fileItem.fileUrl}
+                            alt={`Thumbnail ${index}`}
+                          />
+                        ) : null}
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
