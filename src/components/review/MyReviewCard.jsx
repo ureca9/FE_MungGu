@@ -11,35 +11,38 @@ const MyReviewCard = ({ myReview, myReviews, setMyReviews }) => {
   const handleDelete = async () => {
     try {
       const response = await DeleteReview(reviewId);
-      Swal.fire({
-        title: '후기를 삭제할까요?',
-        text: '한번 삭제되면 복구되지 않습니다.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3288FF',
-        customClass: {
-          cancelButton: 'swalCancelBtn',
-        },
-        cancelButtonText: '취소',
-        confirmButtonText: '삭제',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Swal.fire({
-            title: '삭제 성공!',
-            icon: 'success',
-            confirmButtonColor: '#3288FF',
-          }).then(() => {
-            const updatedReviews = myReviews.filter(
-              (review) => review.reviewId !== reviewId,
-            );
-            setMyReviews(updatedReviews);
-          });
-        }
-      });
+      if (response.success) {
+        Swal.fire({
+          title: '후기를 삭제할까요?',
+          text: '한번 삭제되면 복구되지 않습니다.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3288FF',
+          customClass: {
+            cancelButton: 'swalCancelBtn',
+          },
+          cancelButtonText: '취소',
+          confirmButtonText: '삭제',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire({
+              title: '삭제 성공!',
+              icon: 'success',
+              confirmButtonColor: '#3288FF',
+            }).then(() => {
+              const updatedReviews = myReviews.filter(
+                (review) => review.reviewId !== reviewId,
+              );
+              setMyReviews(updatedReviews);
+            });
+          }
+        });
+      }
     } catch (error) {
       console.error('리뷰 삭제 오류 :', error);
       Swal.fire({
         title: '삭제중 오류!',
+        text: error || '알 수 없는 오류가 발생했습니다.',
         icon: 'error',
       });
     }

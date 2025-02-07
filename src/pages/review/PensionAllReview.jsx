@@ -46,7 +46,7 @@ const PensionAllReview = () => {
     if (inView && hasNext && !isLoading) {
       setPage((prevPage) => prevPage + 1);
     }
-  }, 1000); //(1초) 대기 후 실행
+  }, 1000);
 
   useEffect(() => {
     handlePageChange();

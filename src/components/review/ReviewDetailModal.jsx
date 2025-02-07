@@ -4,9 +4,11 @@ import { RxStarFilled } from 'react-icons/rx';
 import usericon from '../../assets/my-page-img/user.svg';
 import { BsChevronCompactLeft, BsChevronCompactRight } from 'react-icons/bs';
 import { CircularProgress } from '@mui/material';
+import LazyLoadImage from './LazyLoadImage';
 
 const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
   const scrollRef = useRef(null);
+  const videoRef = useRef(null);
   const { content, nickname, score, visitDate, file, profileImageUrl } =
     reviewData;
 
@@ -33,6 +35,29 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
     setCurrentImageIndex(index);
     setIsLoading(true);
   };
+
+  // HLS.js 초기화
+  useEffect(() => {
+    const currentFile = file?.[currentImageIndex];
+    if (!videoRef.current || !currentFile || currentFile.fileType !== 'VIDEO')
+      return;
+
+    if (currentFile.fileUrl.endsWith('.m3u8')) {
+      import('hls.js').then(({ default: Hls }) => {
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(currentFile.fileUrl);
+          hls.attachMedia(videoRef.current);
+        } else if (
+          videoRef.current.canPlayType('application/vnd.apple.mpegurl')
+        ) {
+          videoRef.current.src = currentFile.fileUrl;
+        }
+      });
+    } else {
+      videoRef.current.src = currentFile.fileUrl;
+    }
+  }, [file, currentImageIndex]);
 
   useEffect(() => {
     const ref = scrollRef.current;
@@ -101,7 +126,7 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
             className="flex flex-col w-full h-full md:flex-row "
           >
             <div className="relative overflow:hidden flex items-center justify-center w-full h-2/5 md:w-1/2 md:h-full bg-[#D9D9D9]">
-              {file.length > 0 ? (
+              {file && file.length > 0 ? (
                 <>
                   {isLoading && (
                     <div className="absolute inset-0 z-10 flex items-center justify-center">
@@ -116,14 +141,25 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                     />
                   ) : file[currentImageIndex].fileType === 'VIDEO' ? (
                     <video
+                      ref={videoRef}
                       className="flex object-contain w-full h-full"
-                      src={file[currentImageIndex].fileUrl}
                       controls
                       autoPlay
                       muted
                       playsInline
+                      loop
                       disablePictureInPicture
-                    />
+                    >
+                      <source
+                        src={file[currentImageIndex].fileUrl}
+                        type={
+                          file[currentImageIndex].fileUrl.endsWith('.m3u8')
+                            ? 'application/x-mpegURL'
+                            : 'video/mp4'
+                        }
+                      />
+                      Your browser does not support the video tag.
+                    </video>
                   ) : null}
                   <button
                     className="absolute text-6xl text-white transform -translate-y-1/2 left-4 top-1/2"
@@ -150,6 +186,7 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                   <img
                     className="bg-[#F5F5F5] border border-[#8A8A8A] rounded-full size-12"
                     src={profileImageUrl || usericon}
+                    alt="Profile"
                   />
                   <span className="ml-2 text-[#8A8A8A]">{nickname} 님</span>
                 </div>
@@ -171,28 +208,22 @@ const ReviewDetailModal = ({ isOpen, onClose, reviewData = {} }) => {
                   ref={scrollRef}
                   className="flex items-end w-full gap-1 overflow-x-auto min-h-28 "
                 >
-                  {file.map((file, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handleClickImage(index)}
-                      className="min-w-20 max-w-20 h-20 bg-[#D9D9D9] rounded-lg flex items-center justify-center cursor-pointer"
-                    >
-                      {file.fileType === 'IMAGE' ? (
-                        <img
-                          className="object-cover w-full h-full rounded-lg"
-                          src={file.fileUrl}
-                        />
-                      ) : file.fileType === 'VIDEO' ? (
-                        <video
-                          className="object-cover w-full h-full rounded-lg"
-                          src={file.fileUrl}
-                          disablePictureInPicture
-                          onClick={(e) => e.preventDefault()}
-                          onPlay={(e) => e.preventDefault()}
-                        />
-                      ) : null}
-                    </div>
-                  ))}
+                  {file &&
+                    file.map((fileItem, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleClickImage(index)}
+                        className="min-w-20 max-w-20 h-20 bg-[#D9D9D9] rounded-lg flex items-center justify-center cursor-pointer"
+                      >
+                        {fileItem.fileType === 'IMAGE' ? (
+                          <LazyLoadImage // LazyLoadImage 컴포넌트 사용
+                            className="object-cover w-full h-full rounded-lg"
+                            src={fileItem.fileUrl}
+                            alt={`Thumbnail ${index}`}
+                          />
+                        ) : null}
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>

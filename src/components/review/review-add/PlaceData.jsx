@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
-import { FaCamera, FaWeightHanging } from 'react-icons/fa';
-import { FiHeart } from 'react-icons/fi';
-import { GiBarbecue, GiCampfire, GiWoodenFence } from 'react-icons/gi';
-import { PiShareNetworkThin } from 'react-icons/pi';
+import { FaCamera } from 'react-icons/fa';
 import { RxStarFilled } from 'react-icons/rx';
-import { TbParkingCircleFilled } from 'react-icons/tb';
 import { GetPentionData } from '../../../api/review';
 import useTypeStore from '../../../stores/review/useTypeStore';
 const PlaceData = () => {
@@ -22,9 +18,7 @@ const PlaceData = () => {
         console.error('장소정보 오류:', error);
       }
     };
-    // if (pensionId) {
     fetchPentionData();
-    // }
   }, []);
   return (
     <div className="bg-[#F3F4F5] w-full h-40 md:h-full px-2 md:px-7 pt-4 md:pt-7 gap-5 flex flex-col">
@@ -47,13 +41,11 @@ const PlaceData = () => {
             <div className="flex mb-2 text-lg font-semibold md:mb-5 md:text-2xl line-clamp-1">
               {basicPension.name}
             </div>
-            <div className="flex items-center justify-center gap-2 text-xl">
-              <div className="text-2xl ">
-                <PiShareNetworkThin />
-              </div>
-            </div>
+            <div className="flex items-center justify-center gap-2 text-xl"></div>
           </div>
-          <div className="flex mb-1 text-[#8A8A8A] line-clamp-2">{basicPension.address}</div>
+          <div className="flex mb-1 text-[#8A8A8A] line-clamp-2">
+            {basicPension.address}
+          </div>
           <div className="flex ">
             <span className="text-[#FDBD00] text-xl">
               <RxStarFilled />
@@ -65,19 +57,6 @@ const PlaceData = () => {
               {')'}
             </span>
           </div>
-          {/* <div className="flex mt-6 md:justify-around"> */}
-            {/* <div className="flex h-full gap-2 ">
-              {placeInfo.map((info, index) => (
-                <div
-                  key={index}
-                  className="flex ml-1 gap-1 text-[#8A8A8A] items-center justify-center"
-                >
-                  <span className="hidden md:block md:text-base">{info.icon}</span>
-                  <span className="text-xs md:text-base">{info.text}</span>
-                </div>
-              ))}
-            </div> */}
-          {/* </div> */}
         </div>
       </div>
     </div>
