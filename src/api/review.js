@@ -168,6 +168,7 @@ export const DeleteReview = async (reviewId) => {
         Accept: 'application/json',
       },
     });
+    console.error('반려동물 삭제 성공공:', response);
     return response.data;
   } catch (error) {
     console.error('반려동물 삭제 오류 :', error);

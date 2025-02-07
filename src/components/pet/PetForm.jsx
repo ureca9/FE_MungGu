@@ -299,12 +299,14 @@ const PetForm = ({ title, buttonText, deleteButton, onSubmit, onDelete }) => {
                   />
                   .
                   <input
-                    type="number"
+                    type="text"
                     placeholder="소수점 뒷자리"
                     value={weightBack}
                     onChange={(e) => setWeightBack(e.target.value)}
-                    min={0}
-                    max={9}
+                    pattern="[0-9]{0,1}" // 0~9 사이의 숫자 0개 또는 1개만 허용
+                    title="소수점 첫 번째 자리까지만 입력해주세요."
+                    // min={0}
+                    // max={9}
                     required
                     className="flex items-center justify-center w-full h-12 px-5 border rounded-lg cursor-pointer text-start border-inputGray"
                   />
