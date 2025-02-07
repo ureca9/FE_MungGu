@@ -52,7 +52,7 @@ const PetRegister = () => {
           <div className="h-1 w-1/2 bg-[#3288ff] opacity-20"></div>
         </div>
         <PetForm
-          title="우리 강아지 정보를 입력해 주세요."
+          title="입력해 주세요."
           buttonText="다음"
           deleteButton={false}
           onSubmit={puppyRegister}

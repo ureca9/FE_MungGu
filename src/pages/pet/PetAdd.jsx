@@ -41,7 +41,7 @@ const PetAdd = () => {
     <div>
       <PetForm
         key="add"
-        title="우리 강아지 정보를 입력해 주세요."
+        title="입력해 주세요."
         buttonText="추가"
         onSubmit={puppyAdd}
         deleteButton={false}

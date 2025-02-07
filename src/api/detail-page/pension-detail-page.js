@@ -1,4 +1,3 @@
-// src/api/detail-page/pension-detail-page.js
 import axios from 'axios';
 
 export const fetchPensionDetail = async (id) => {

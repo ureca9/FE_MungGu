@@ -1,9 +1,13 @@
-import { PostPensionsReview } from '../../api/review';
+import {
+  PostPensionsReview,
+  PostPresignedUrls,
+  PutReviewPresignedUrls,
+} from '../../api/review';
 import Swal from 'sweetalert2';
 import { useParams } from 'react-router-dom';
 import PlaceData from '../../components/review/review-add/PlaceData';
 import useTypeStore from '../../stores/review/useTypeStore';
-import { RxStarFilled } from 'react-icons/rx';
+import { RxStar, RxStarFilled } from 'react-icons/rx';
 import { FaCamera } from 'react-icons/fa';
 import { BasicBtn } from '../../stories/buttons/basic-btn/BasicBtn';
 import { useEffect, useRef, useState } from 'react';
@@ -44,69 +48,41 @@ const ReviewAdd = () => {
 
   const handleFileChange = async (event) => {
     const files = [...event.target.files];
-    const maxFileSize = 5 * 1024 * 1024;
+    const maxFileSize = 10 * 1024 * 1024;
+    const filePaths = [];
 
-    const reviewFormData = new FormData();
-    console.time('파일 처리 시간'); // 시간 측정 시작
     const processedFiles = await Promise.all(
-      files.map((file) => {
+      files.map((file, index) => {
         if (file.size > maxFileSize) {
           Swal.fire({
             title: 'Oops...',
-            text: `${file.name} 파일의 용량이 너무 큽니다. (${maxFileSize / 1024 / 1024}MB 이하)`,
+            text: `${file.name} 파일의 용량이 너무 큽니다. (${
+              maxFileSize / 1024 / 1024
+            }MB 이하)`,
             icon: 'error',
           });
           return null;
-        } else if (file.type.startsWith('image/')) {
-          return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const img = new Image();
-              img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const maxWidth = 500;
-                const scaleFactor = maxWidth / img.width;
-                canvas.width = maxWidth;
-                canvas.height = img.height * scaleFactor;
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                canvas.toBlob(
-                  (blob) => {
-                    const newFile = new File([blob], file.name, {
-                      type: 'image/JPEG',
-                    });
-                    reviewFormData.append('file', newFile);
-                    resolve({
-                      file: newFile,
-                      fileUrl: URL.createObjectURL(blob),
-                      fileType: 'IMAGE',
-                      fileName: file.name,
-                    });
-                  },
-                  'image/JPEG',
-                  0.8,
-                );
-              };
-              img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-          });
-        } else if (file.type.startsWith('video/')) {
-          reviewFormData.append('file', file, file.name);
+        } else if (
+          file.type.startsWith('image/') ||
+          file.type.startsWith('video/')
+        ) {
+          const fileExtension = file.name.substring(file.name.lastIndexOf('.'));
+          const filePath = `Review/${pensionId}_review${index}${fileExtension}`;
+          filePaths.push(filePath);
           return {
-            file: file,
+            file,
             fileUrl: URL.createObjectURL(file),
-            fileType: 'VIDEO',
+            fileType: file.type.startsWith('image/') ? 'IMAGE' : 'VIDEO',
             fileName: file.name,
+            filePath,
           };
         } else {
           return null;
         }
       }),
     );
-    setSelectedFiles(processedFiles.filter((file) => file !== null));
-    handleSubmit(reviewFormData);
-    console.timeEnd('파일 처리 시간');
+
+    setSelectedFiles(processedFiles.filter(Boolean));
   };
 
   const checkDataForm = () => {
@@ -120,35 +96,76 @@ const ReviewAdd = () => {
     }
     return true;
   };
+
   const today = new Date().toISOString().split('T')[0];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!checkDataForm()) return;
-    const reviewFormData = new FormData();
+
     const reviewData = {
       plcPenId: Number(pensionId),
-      content: content,
-      score: score,
       type: plcPenType,
-      visitDate: visitDate,
+      files: selectedFiles.map((item) => item.filePath),
     };
-    reviewFormData.append(
-      'data',
-      new Blob([JSON.stringify(reviewData)], { type: 'application/json' }),
-    );
-    selectedFiles.forEach((file) => {
-      reviewFormData.append('file', file.file);
-    });
+    console.log('[Step 1] presignedUrl 요청:', reviewData);
     try {
-      const response = await PostPensionsReview(reviewFormData);
-      Swal.fire({
-        title: '추가 성공!',
-        icon: 'success',
-        confirmButtonColor: '#3288FF',
-      }).then(() => {
-        window.history.back();
-      });
+      const response = await PostPresignedUrls(reviewData);
+      console.log('[Step 2] Presigned URL 응답:', response.data);
+
+      const filesToUpload = selectedFiles.map((item) => item.file);
+      const presignedUrls = response.data;
+      await handleFileUpload(filesToUpload, presignedUrls);
+      console.log('[Step 3] 파일 업로드 완료!');
+    } catch (error) {
+      console.error('[Error] Presigned URL 요청 중 오류 발생:', error);
+    }
+  };
+
+  const handleFileUpload = async (files, presignedUrls) => {
+    try {
+      const uploadResponses = await PutReviewPresignedUrls(
+        files,
+        presignedUrls,
+      );
+      const extractedUrls = uploadResponses
+        .filter((response) => response.status === 200)
+        .map((response) => response.config.url.split('?')[0]);
+
+      const presignedUrls01 = extractedUrls;
+      console.log('[Step 4] Presigned URL 업로드 응답:', uploadResponses);
+
+      if (uploadResponses.some((response) => response.status !== 200)) {
+        uploadResponses.forEach((response, index) => {
+          if (response.statusText !== 'OK') {
+            console.error(`파일 ${files[index].name} 업로드 실패`);
+          }
+        });
+        throw new Error('일부 파일 업로드에 실패했습니다.');
+      }
+      console.log('[Success] 모든 파일이 성공적으로 업로드되었습니다.');
+      await reviewSubmit(presignedUrls01);
+    } catch (error) {
+      console.error('[Error] 파일 업로드 중 오류 발생:', error);
+      throw error;
+    }
+  };
+
+  const reviewSubmit = async (presignedUrls01) => {
+    if (!checkDataForm()) return;
+    const reviewData = {
+      plcPenId: Number(pensionId),
+      content,
+      score,
+      type: plcPenType,
+      visitDate,
+      fileUrls: presignedUrls01,
+    };
+    console.log('reviewSubmit전송 데이터:', reviewData);
+    console.log('presignedUrls01:', presignedUrls01);
+
+    try {
+      const response = await PostPensionsReview(reviewData);
     } catch (error) {
       console.error('추가 중 오류 발생:', error);
     }
@@ -168,17 +185,21 @@ const ReviewAdd = () => {
             </div>
             <div className="flex flex-col justify-around w-full">
               <div className="flex justify-around">
-                {[1, 2, 3, 4, 5].map((value) => (
-                  <RxStarFilled
-                    key={value}
-                    className={`text-5xl cursor-pointer ${
-                      value <= score
-                        ? 'text-[#FDBD00]'
-                        : 'text-white drop-shadow-[0_0.5px_0.5px_rgba(0,0,0,1)] '
-                    }`}
-                    onClick={() => handleScoreChange(value)}
-                  />
-                ))}
+                {[1, 2, 3, 4, 5].map((value) =>
+                  value <= score ? (
+                    <RxStarFilled
+                      key={value}
+                      className="text-5xl cursor-pointer text-[#FDBD00]"
+                      onClick={() => handleScoreChange(value)}
+                    />
+                  ) : (
+                    <RxStar
+                      key={value}
+                      className="text-5xl text-[#D9D9D9] cursor-pointer"
+                      onClick={() => handleScoreChange(value)}
+                    />
+                  ),
+                )}
               </div>
             </div>
           </div>

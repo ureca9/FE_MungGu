@@ -140,6 +140,7 @@ const PlaceDetailPage = () => {
         <ViewerCount viewCount={placeDetail.viewCount} />
       )}
 
+
       <PlaceInfoSection 
         businessHour={placeDetail.businessHour} 
         telNo={placeDetail.telNo} 
