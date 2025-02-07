@@ -28,9 +28,6 @@ const ReviewSection = ({ reviews, onReviewClick, pensionId }) => {
       </div>
 
       <div className="relative">
-        <button className="absolute left-0 z-10 p-2 bg-white rounded-full shadow" onClick={scrollLeft}>
-          <FaChevronLeft />
-        </button>
         <div ref={scrollRef} className="flex gap-2 p-4 overflow-x-auto bg-white scrollbar-hidden">
           {reviews.slice(0, 20).map((review, index) => {
             const firstFileUrl = review.file?.[0]?.fileUrl || reviewemptyIcon;
@@ -57,9 +54,6 @@ const ReviewSection = ({ reviews, onReviewClick, pensionId }) => {
             );
           })}
         </div>
-        <button className="absolute right-0 z-10 p-2 bg-white rounded-full shadow" onClick={scrollRight}>
-          <FaChevronRight />
-        </button>
       </div>
     </section>
   );

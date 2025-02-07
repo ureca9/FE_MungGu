@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import reviewemptyIcon from "../../assets/common/petgray.svg";
 
 const RecommendedFacility = ({ pensionId }) => {
   const [recommendations, setRecommendations] = useState([]);
   const [error, setError] = useState(null);
-  const scrollRef = useRef(null); 
+  const scrollRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,7 +54,7 @@ const RecommendedFacility = ({ pensionId }) => {
       </div>
 
       <div className="relative">
-      <div className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-hidden">
+        <div ref={scrollRef} className="flex gap-2 p-4 overflow-x-auto bg-white shadow-sm scrollbar-hidden">
           {recommendations.map((facility) => (
             <div
               key={facility.id}
@@ -61,8 +62,8 @@ const RecommendedFacility = ({ pensionId }) => {
               onClick={() => navigate(`/place/${facility.id}`)}
             >
               <img
-                src={facility.img || "https://via.placeholder.com/150"}
-                alt={facility.name}
+                src={facility.img || reviewemptyIcon}
+                alt={facility.name || "시설 이미지 없음"}
                 className="w-full h-24 rounded-lg object-cover"
               />
               <p className="text-sm font-bold mt-2 truncate">{facility.name}</p>

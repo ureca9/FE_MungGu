@@ -1,22 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios'; // 이 줄 추가
+import axios from 'axios';
 import Slider from 'react-slick';
+import Swal from 'sweetalert2';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import Swal from 'sweetalert2';
 
-import LoadingSpinner from '../../components/common/LoadingSpinner';
-import RecommendedFacility from '../../components/detail-page/RecommendedFacility';
-import ReviewSection from '../../components/detail-page/ReviewSection';
-import ReviewDetailModal from '../../components/review/ReviewDetailModal';
 import SubHeader from '../../components/common/SubHeader';
-import PensionHeader from '../../components/detail-page/PensionHeader';
-import PensionIntroduction from '../../components/detail-page/PensionIntroduction';
-import ReservationRoomSection from '../../components/detail-page/ReservationRoomSection';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
+import PlaceHeader from '../../components/detail-page/PlaceHeader';
+import PlaceInfoSection from '../../components/detail-page/PlaceInfoSection';
+import PlaceReviewSection from '../../components/detail-page/PlaceReviewSection';
+import ReviewDetailModal from '../../components/review/ReviewDetailModal';
 import ViewerCount from '../../components/detail-page/ViewerCount';
+import emptyIcon from '../../assets/common/petgray.svg';
 
-import { fetchPensionDetail } from '../../api/detail-page/pension-detail-page';
+import { fetchPlaceDetail } from '../../api/detail-page/place-detail-page';
 
 const sliderSettings = {
   dots: true,
@@ -28,37 +27,31 @@ const sliderSettings = {
   autoplaySpeed: 3000,
 };
 
-const PensionDetailPage = () => {
-  const navigate = useNavigate();
+const PlaceDetailPage = () => {
   const { id } = useParams();
-  const [pensionDetail, setPensionDetail] = useState(null);
+  const navigate = useNavigate();
+  const [placeDetail, setPlaceDetail] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [likeStatus, setLikeStatus] = useState(false);
-  const [showFullIntro, setShowFullIntro] = useState(false);
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
 
   useEffect(() => {
-    const getData = async () => {
+    const getPlaceDetail = async () => {
       try {
-        const data = await fetchPensionDetail(id);
-        setPensionDetail(data);
+        const data = await fetchPlaceDetail(id);
+        console.log('Place Detail Data:', data);  // 데이터 확인용 로그 추가
+        setPlaceDetail(data);
         setLikeStatus(data.likeStatus || false);
-      } catch (err) {
-        setError('펜션 정보를 불러오는 데 실패했습니다.');
+      } catch (error) {
+        console.error('데이터를 불러오는 중 오류 발생:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    getData();
+    getPlaceDetail();
   }, [id]);
-
-  const handleReviewClick = (review) => {
-    setSelectedReview(review);
-    setIsReviewModalOpen(true);
-  };
 
   const handleToggleLike = async () => {
     try {
@@ -78,12 +71,16 @@ const PensionDetailPage = () => {
         return;
       }
 
-      await axios.post(`https://meong9.store/api/v1/pensions/likes/${id}`, {}, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      await axios.post(
+        `https://meong9.store/api/v1/places/likes/${id}`,
+        {},
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
 
       setLikeStatus((prev) => !prev);
+      setPlaceDetail((prev) => ({ ...prev, likeStatus: !prev.likeStatus }));
     } catch (error) {
+      console.error('찜 상태 업데이트 실패:', error);
       Swal.fire({
         title: '찜 상태를 업데이트하는 중 문제가 발생했습니다.',
         icon: 'error',
@@ -91,23 +88,32 @@ const PensionDetailPage = () => {
     }
   };
 
+  const handleReviewClick = (review) => {
+    setSelectedReview(review);
+    setIsModalOpen(true);
+  };
+
+  const handleViewAllReviews = () => {
+    navigate(`/place-all-review/${id}`);
+  };
+
   if (loading) return <LoadingSpinner />;
-  if (error) return <div className="p-4 text-red-500">{error}</div>;
-  if (!pensionDetail) return <div className="p-4">유효한 펜션 정보가 없습니다.</div>;
+  if (!placeDetail) return <div>데이터를 찾을 수 없습니다.</div>;
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f9fafb' }}>
-      <SubHeader title={pensionDetail?.pensionName || '펜션 상세'} />
+    <div className="min-h-screen bg-gray-100">
+      <SubHeader title={placeDetail.placeName} />
 
+      {/* 이미지 슬라이더 섹션 */}
       <div className="w-full h-[400px] overflow-hidden">
-        {pensionDetail?.images?.length > 0 ? (
+        {placeDetail?.images?.length > 0 ? (
           <Slider {...sliderSettings}>
-            {pensionDetail.images.slice(0, 5).map((image, index) => (
+            {placeDetail.images.slice(0, 5).map((image, index) => (
               <div key={index}>
-                <img
-                  src={image}
-                  alt={`펜션 이미지 ${index + 1}`}
-                  className="w-full h-[400px] object-cover"
+                <img 
+                  src={image} 
+                  alt={`장소 이미지 ${index + 1}`} 
+                  className="w-full h-[400px] object-cover" 
                 />
               </div>
             ))}
@@ -119,40 +125,38 @@ const PensionDetailPage = () => {
         )}
       </div>
 
-      <PensionHeader 
-        pensionName={pensionDetail.pensionName} 
-        address={pensionDetail.address} 
-        likeStatus={likeStatus} 
-        onToggleLike={handleToggleLike} 
-        tags={pensionDetail.tags || []}
-        reviewAvg={pensionDetail.reviewAvg}
-        reviewCount={pensionDetail.reviewCount}
+      <PlaceHeader
+        placeName={placeDetail.placeName}
+        address={placeDetail.address}
+        likeStatus={likeStatus}
+        onToggleLike={handleToggleLike}
+        reviewAvg={placeDetail.reviewAvg}
+        reviewCount={placeDetail.reviewCount}
+        tags={placeDetail.tags}
       />
 
-      {pensionDetail.viewCount != null && (
-        <ViewerCount viewCount={pensionDetail.viewCount} />
+      {placeDetail.viewCount != null && (
+        <ViewerCount viewCount={placeDetail.viewCount} />
       )}
 
-      <PensionIntroduction 
-        introduction={pensionDetail.introduction} 
-        showFullIntro={showFullIntro} 
-        setShowFullIntro={setShowFullIntro} 
+      <PlaceInfoSection 
+        businessHour={placeDetail.businessHour} 
+        telNo={placeDetail.telNo} 
+        hmpgUrl={placeDetail.hmpgUrl} 
+        description={placeDetail.description} 
       />
 
-      <ReservationRoomSection pensionId={id} />
-
-      <ReviewSection 
-        reviews={pensionDetail.review} 
-        onReviewClick={handleReviewClick} 
-        pensionId={id} 
+      <PlaceReviewSection 
+        review={placeDetail.review} 
+        onReviewClick={handleReviewClick}
+        emptyIcon={emptyIcon} 
+        onViewAllClick={handleViewAllReviews}
       />
 
-      <RecommendedFacility pensionId={id} />
-
-      {isReviewModalOpen && (
+      {isModalOpen && (
         <ReviewDetailModal 
-          isOpen={isReviewModalOpen} 
-          onClose={() => setIsReviewModalOpen(false)} 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
           reviewData={selectedReview} 
         />
       )}
@@ -160,4 +164,4 @@ const PensionDetailPage = () => {
   );
 };
 
-export default PensionDetailPage;
+export default PlaceDetailPage;

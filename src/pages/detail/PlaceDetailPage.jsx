@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import Swal from 'sweetalert2';
 import Slider from 'react-slick';
+import Swal from 'sweetalert2';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -32,14 +32,15 @@ const PlaceDetailPage = () => {
   const navigate = useNavigate();
   const [placeDetail, setPlaceDetail] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [likeStatus, setLikeStatus] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
-  const [likeStatus, setLikeStatus] = useState(false);
 
   useEffect(() => {
     const getPlaceDetail = async () => {
       try {
         const data = await fetchPlaceDetail(id);
+        console.log('Place Detail Data:', data);  // 데이터 확인용 로그 추가
         setPlaceDetail(data);
         setLikeStatus(data.likeStatus || false);
       } catch (error) {
@@ -48,29 +49,11 @@ const PlaceDetailPage = () => {
         setLoading(false);
       }
     };
-
+  
     getPlaceDetail();
   }, [id]);
+  
 
-  // 리뷰 클릭 핸들러
-  const handleReviewClick = (review) => {
-    setSelectedReview({
-      reviewId: review.reviewId,
-      content: review.content,
-      nickname: review.nickname,
-      score: review.score,
-      visitDate: review.visitDate,
-      file: review.file || [],
-      profileImageUrl: review.profileImageUrl,
-    });
-    setIsModalOpen(true);
-  };
-
-  const handleViewAllReviews = () => {
-    navigate(`/place-all-review/${id}`);
-  };
-
-  // 찜 상태 업데이트 함수 (장소용 API 엔드포인트로 요청)
   const handleToggleLike = async () => {
     try {
       const accessToken = localStorage.getItem('ACCESS_TOKEN');
@@ -82,28 +65,37 @@ const PlaceDetailPage = () => {
           confirmButtonText: '로그인',
           cancelButtonText: '취소',
         });
+
         if (result.isConfirmed) {
           navigate('/login');
         }
         return;
       }
 
-      // 장소의 찜 업데이트 엔드포인트 (예시)
       await axios.post(
         `https://meong9.store/api/v1/places/likes/${id}`,
         {},
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
-      // 서버 요청 성공 시 로컬 상태 업데이트
       setLikeStatus((prev) => !prev);
       setPlaceDetail((prev) => ({ ...prev, likeStatus: !prev.likeStatus }));
     } catch (error) {
+      console.error('찜 상태 업데이트 실패:', error);
       Swal.fire({
         title: '찜 상태를 업데이트하는 중 문제가 발생했습니다.',
         icon: 'error',
       });
     }
+  };
+
+  const handleReviewClick = (review) => {
+    setSelectedReview(review);
+    setIsModalOpen(true);
+  };
+
+  const handleViewAllReviews = () => {
+    navigate(`/place-all-review/${id}`);
   };
 
   if (loading) return <LoadingSpinner />;
