@@ -1,4 +1,6 @@
+import Swal from 'sweetalert2';
 import { instance } from './axios';
+import ROUTER_PATHS from '../utils/RouterPath';
 
 export const GetmemberData = async () => {
   try {
@@ -44,9 +46,22 @@ export const PatchPuppyEditData = async (selectedPetId, puppyFormData) => {
         },
       },
     );
+    if (response.data.message === 'success') {
+      Swal.fire({
+        title: '수정 성공!',
+        icon: 'success',
+        confirmButtonColor: '#3288FF',
+      }).then(() => {
+        window.location.href = ROUTER_PATHS.MY_PAGE;
+      });
+    }
     return response.data;
   } catch (error) {
     console.error('반려동물 수정 오류 :', error);
+    Swal.fire({
+      title: '수정 오류!',
+      icon: 'error',
+    });
   }
 };
 export const DeletePuppyData = async (selectedPetId) => {

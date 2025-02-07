@@ -55,19 +55,8 @@ const PetEdit = () => {
       }
       const response = await PatchPuppyEditData(selectedPetId, puppyFormData);
       setBasicData(null);
-      Swal.fire({
-        title: '수정 성공!',
-        icon: 'success',
-        confirmButtonColor: '#3288FF',
-      }).then(() => {
-        window.location.href = ROUTER_PATHS.MY_PAGE;
-      });
     } catch (error) {
       console.error('반려동물 수정 오류 :', error);
-      Swal.fire({
-        title: '수정 오류!',
-        icon: 'error',
-      });
     }
   };
 

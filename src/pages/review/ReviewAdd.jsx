@@ -19,7 +19,15 @@ const ReviewAdd = () => {
   const [visitDate, setVisitDate] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([]);
   const { plcPenType } = useTypeStore();
+  const [memberId, setMemberId] = useState(null);
   const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const id = localStorage.getItem('MEMBER_ID');
+    if (id) {
+      setMemberId(id);
+    }
+  }, []);
 
   const handleWheel = (e) => {
     e.preventDefault();
@@ -42,13 +50,14 @@ const ReviewAdd = () => {
       }
     };
   }, []);
+
   const handleScoreChange = (newScore) => {
     setScore(newScore);
   };
 
   const handleFileChange = async (event) => {
     const files = [...event.target.files];
-    const maxFileSize = 10 * 1024 * 1024;
+    const maxFileSize = 100 * 1024 * 1024;
     const filePaths = [];
 
     const processedFiles = await Promise.all(
@@ -67,7 +76,10 @@ const ReviewAdd = () => {
           file.type.startsWith('video/')
         ) {
           const fileExtension = file.name.substring(file.name.lastIndexOf('.'));
-          const filePath = `Review/${pensionId}_review${index}${fileExtension}`;
+          const filePath = `Review/${plcPenType}/${pensionId}_${memberId}_review${file.name}${fileExtension}`;
+          // const filePath = `Review/${plcPenType}/${pensionId}_${memberId}_review${index}${fileExtension}`;
+          //"Review/Pension/plcpenid_memberId_review0.jpeg"
+          //"Review/Place/plcpenid_memberId_review0.mp4"
           filePaths.push(filePath);
           return {
             file,
@@ -108,17 +120,17 @@ const ReviewAdd = () => {
       type: plcPenType,
       files: selectedFiles.map((item) => item.filePath),
     };
-    console.log('[Step 1] presignedUrl 요청:', reviewData);
+    // console.log('[Step 1] presignedUrl 요청:', reviewData);
     try {
       const response = await PostPresignedUrls(reviewData);
-      console.log('[Step 2] Presigned URL 응답:', response.data);
+      // console.log('[Step 2] Presigned URL 응답:', response.data);
 
       const filesToUpload = selectedFiles.map((item) => item.file);
       const presignedUrls = response.data;
       await handleFileUpload(filesToUpload, presignedUrls);
       console.log('[Step 3] 파일 업로드 완료!');
     } catch (error) {
-      console.error('[Error] Presigned URL 요청 중 오류 발생:', error);
+      // console.error('[Error] Presigned URL 요청 중 오류 발생:', error);
     }
   };
 
@@ -133,7 +145,7 @@ const ReviewAdd = () => {
         .map((response) => response.config.url.split('?')[0]);
 
       const presignedUrls01 = extractedUrls;
-      console.log('[Step 4] Presigned URL 업로드 응답:', uploadResponses);
+      // console.log('[Step 4] Presigned URL 업로드 응답:', uploadResponses);
 
       if (uploadResponses.some((response) => response.status !== 200)) {
         uploadResponses.forEach((response, index) => {
@@ -143,7 +155,7 @@ const ReviewAdd = () => {
         });
         throw new Error('일부 파일 업로드에 실패했습니다.');
       }
-      console.log('[Success] 모든 파일이 성공적으로 업로드되었습니다.');
+      // console.log('[Success] 모든 파일이 성공적으로 업로드되었습니다.');
       await reviewSubmit(presignedUrls01);
     } catch (error) {
       console.error('[Error] 파일 업로드 중 오류 발생:', error);
@@ -161,8 +173,8 @@ const ReviewAdd = () => {
       visitDate,
       fileUrls: presignedUrls01,
     };
-    console.log('reviewSubmit전송 데이터:', reviewData);
-    console.log('presignedUrls01:', presignedUrls01);
+    // console.log('reviewSubmit전송 데이터:', reviewData);
+    // console.log('presignedUrls01:', presignedUrls01);
 
     try {
       const response = await PostPensionsReview(reviewData);
