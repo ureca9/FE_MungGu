@@ -40,7 +40,6 @@ const PlaceDetailPage = () => {
     const getPlaceDetail = async () => {
       try {
         const data = await fetchPlaceDetail(id);
-        console.log('Place Detail Data:', data);  // 데이터 확인용 로그 추가
         setPlaceDetail(data);
         setLikeStatus(data.likeStatus || false);
       } catch (error) {
@@ -104,8 +103,6 @@ const PlaceDetailPage = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <SubHeader title={placeDetail.placeName} />
-
-      {/* 이미지 슬라이더 섹션 */}
       <div className="w-full h-[400px] overflow-hidden">
         {placeDetail?.images?.length > 0 ? (
           <Slider {...sliderSettings}>
