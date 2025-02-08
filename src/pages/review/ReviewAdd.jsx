@@ -128,9 +128,9 @@ const ReviewAdd = () => {
       const filesToUpload = selectedFiles.map((item) => item.file);
       const presignedUrls = response.data;
       await handleFileUpload(filesToUpload, presignedUrls);
-      console.log('[Step 3] 파일 업로드 완료!');
+      // console.log('[Step 3] 파일 업로드 완료!');
     } catch (error) {
-      // console.error('[Error] Presigned URL 요청 중 오류 발생:', error);
+      console.error('[Error] Presigned URL 요청 중 오류 발생:', error);
     }
   };
 

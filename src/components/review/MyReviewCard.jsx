@@ -11,7 +11,7 @@ const MyReviewCard = ({ myReview, myReviews, setMyReviews }) => {
   const handleDelete = async () => {
     try {
       const response = await DeleteReview(reviewId);
-      if (response.success) {
+      if (response.message === 'success') {
         Swal.fire({
           title: '후기를 삭제할까요?',
           text: '한번 삭제되면 복구되지 않습니다.',

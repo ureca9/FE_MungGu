@@ -168,7 +168,7 @@ export const DeleteReview = async (reviewId) => {
         Accept: 'application/json',
       },
     });
-    console.error('반려동물 삭제 성공공:', response);
+    console.error('반려동물 삭제 성공:', response.data);
     return response.data;
   } catch (error) {
     console.error('반려동물 삭제 오류 :', error);
@@ -197,7 +197,7 @@ export const PatchReviewEdit = async (reviewFormData, reviewId) => {
       },
     );
     Swal.fire({
-      title: '추가 성공!',
+      title: '수정 성공!',
       icon: 'success',
       confirmButtonColor: '#3288FF',
     }).then(() => {
@@ -207,7 +207,7 @@ export const PatchReviewEdit = async (reviewFormData, reviewId) => {
   } catch (error) {
     Swal.fire({
       title: 'Oops...',
-      text: '추가 중 오류가 발생했습니다.',
+      text: '수정 중 오류가 발생했습니다.',
       icon: 'error',
     });
     console.error('리뷰 수정 오류 :', error);

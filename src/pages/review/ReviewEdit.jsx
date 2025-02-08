@@ -102,8 +102,9 @@ const ReviewEdit = () => {
 
     try {
       const response = await PatchReviewEdit(reviewFormData, reviewId);
+      // console.error('수정 중:', reviewFormData, 'reviewId:', reviewId);
     } catch (error) {
-      console.error('추가 중 오류 발생:', error);
+      console.error('수정 중 오류 발생:', error);
     }
   };
 
