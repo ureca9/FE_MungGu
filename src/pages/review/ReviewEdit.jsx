@@ -22,6 +22,8 @@ const ReviewEdit = () => {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const { setPlcPenIdType, setPensionId, setPlaceId } = useTypeStore();
   const scrollRef = useRef(null);
+  const [textLength, setTextLength] = useState(0); // 글자 수 상태 추가
+  const maxLength = 400; // 최대 글자 수
 
   const handleWheel = (e) => {
     e.preventDefault();
@@ -34,22 +36,11 @@ const ReviewEdit = () => {
   };
 
   useEffect(() => {
-    const ref = scrollRef.current;
-    if (ref) {
-      ref.addEventListener('wheel', handleWheel);
-    }
-    return () => {
-      if (ref) {
-        ref.removeEventListener('wheel', handleWheel);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
     const fetchReviewData = async () => {
       try {
         const response = await GetReviewBasicData(reviewId);
         setReviewBasic(response.data);
+        setIsDataLoaded(true);
       } catch (error) {
         console.error('수정할 리뷰 정보오류:', error);
       } finally {
@@ -60,6 +51,20 @@ const ReviewEdit = () => {
       fetchReviewData();
     }
   }, [reviewId]);
+
+  useEffect(() => {
+    if (isDataLoaded) {
+      const ref = scrollRef.current;
+      if (ref) {
+        ref.addEventListener('wheel', handleWheel);
+      }
+      return () => {
+        if (ref) {
+          ref.removeEventListener('wheel', handleWheel);
+        }
+      };
+    }
+  }, [isDataLoaded, handleWheel]);
 
   useEffect(() => {
     if (reviewBasic) {
@@ -73,6 +78,7 @@ const ReviewEdit = () => {
       setPlaceId(reviewBasic.plcPenId);
       setPlcPenIdType(reviewBasic.type);
       setIsDataLoaded(true);
+      setTextLength(reviewBasic.content.length);
     }
   }, [reviewBasic]);
 
@@ -103,7 +109,7 @@ const ReviewEdit = () => {
     try {
       const response = await PatchReviewEdit(reviewFormData, reviewId);
     } catch (error) {
-      console.error('추가 중 오류 발생:', error);
+      console.error('수정 중 오류 발생:', error);
     }
   };
 
@@ -138,7 +144,6 @@ const ReviewEdit = () => {
                     const newFile = new File([blob], file.name, {
                       type: 'image/webp',
                     });
-                    // console.log('이미지 File:', newFile);
                     reviewFormData.append('file', newFile);
                     resolve({
                       file: newFile,
@@ -193,6 +198,20 @@ const ReviewEdit = () => {
     );
   }
   const today = new Date().toISOString().split('T')[0];
+
+  const handleContentChange = (e) => {
+    const currentText = e.target.value;
+    if (currentText.length <= maxLength) {
+      setContent(currentText);
+      setTextLength(currentText.length); // 글자 수 업데이트
+    } else {
+      Swal.fire({
+        title: 'Oops...',
+        text: `최대 글자 수(${maxLength})를 초과했습니다.`,
+        icon: 'warning',
+      });
+    }
+  };
 
   return (
     <div className="h-full min-w-96">
@@ -297,9 +316,12 @@ const ReviewEdit = () => {
             </div>
           </div>
           <div className="sm:mt-4">
-            <div className="flex items-center">
-              <span className="mr-1 text-lg">후기 내용</span>
-              <span className="mt-0.5 text-2xl text-red-600">*</span>
+            <div className="flex justify-between">
+              <div className="flex items-center">
+                <span className="mr-1 text-lg">후기 내용</span>
+                <span className="mt-0.5 text-2xl text-red-600">*</span>
+              </div>
+              <span className="text-lg text-[#8A8A8A]">{textLength}/400</span>
             </div>
             <div className="flex p-4 bg-white rounded-lg sm:p-7 h-52">
               <textarea
@@ -307,7 +329,7 @@ const ReviewEdit = () => {
                 placeholder="내용을 작성해 주세요."
                 value={content}
                 maxLength="400"
-                onChange={(e) => setContent(e.target.value)}
+                onChange={handleContentChange}
               ></textarea>
             </div>
           </div>
