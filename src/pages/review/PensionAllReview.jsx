@@ -5,8 +5,7 @@ import useTypeStore from '../../stores/review/useTypeStore';
 import AllReviewHeader from '../../components/review/AllReviewHeader';
 import { useInView } from 'react-intersection-observer';
 import SubHeader from '../../components/common/SubHeader';
-import { throttle } from 'lodash'; // debounce 대신 throttle 사용
-// import { debounce } from 'lodash';
+import { throttle } from 'lodash';
 import { CircularProgress } from '@mui/material';
 const ReviewCard = lazy(() => import('../../components/review/ReviewCard'));
 const PensionAllReview = () => {
@@ -16,8 +15,7 @@ const PensionAllReview = () => {
   const [page, setPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [hasNext, setHasNext] = useState(true);
-  const [hasInitialLoad, setHasInitialLoad] = useState(false); // 초기 로딩 완료 여부
-
+  const [hasInitialLoad, setHasInitialLoad] = useState(false);
   const { ref, inView } = useInView({
     threshold: 0.8,
     triggerOnce: false,
@@ -29,19 +27,6 @@ const PensionAllReview = () => {
     setPensionId(pensionId);
   }, [pensionId, setPensionId]);
 
-  // const fetchPensionsReviews = async (page) => {
-  //   if (isLoading) return;
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await GetPensionsReviews(pensionId, page);
-  //     setReviews((prevReviews) => [...prevReviews, ...response.reviews]);
-  //     setHasNext(response.hasNext);
-  //   } catch (error) {
-  //     console.error('리뷰 가져오기 실패 :', error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
   const fetchPensionsReviews = useCallback(
     async (pageToFetch) => {
       if (isLoading) return;
@@ -59,24 +44,19 @@ const PensionAllReview = () => {
     },
     [pensionId, isLoading],
   );
-  // useEffect(() => {
-  //   fetchPensionsReviews(page);
-  // }, [pensionId, page]);
 
-  // 초기 데이터 로딩
   useEffect(() => {
     const loadInitialData = async () => {
-      if (hasInitialLoad) return; // 초기 로딩이 이미 완료되었으면 중단
+      if (hasInitialLoad) return;
       if (scrollRef.current && localStorage.getItem('scrollPosition')) {
         scrollRef.current.scrollTop = localStorage.getItem('scrollPosition');
       }
       await fetchPensionsReviews(0);
-      setHasInitialLoad(true); // 초기 로딩 완료 상태로 설정
+      setHasInitialLoad(true);
     };
     loadInitialData();
   }, [fetchPensionsReviews]);
 
-  // Intersection Observer 감지 시 페이지 번호 증가
   const handlePageChange = useCallback(() => {
     if (inView && hasNext && !isLoading) {
       setPage((prevPage) => prevPage + 1);
@@ -89,26 +69,15 @@ const PensionAllReview = () => {
 
   useEffect(() => {
     if (hasInitialLoad) {
-      // 초기 로딩이 완료된 후에만 Intersection Observer 작동
       throttledPageChange();
     }
   }, [throttledPageChange, hasInitialLoad]);
 
-  // 페이지 번호 변경 시 데이터 로딩
   useEffect(() => {
     if (page > 0) {
       fetchPensionsReviews(page);
     }
   }, [page]);
-  // const handlePageChange = debounce(() => {
-  //   if (inView && hasNext && !isLoading) {
-  //     setPage((prevPage) => prevPage + 1);
-  //   }
-  // }, 1000);
-
-  // useEffect(() => {
-  //   handlePageChange();
-  // }, [inView]);
 
   return (
     <div className="min-h-screen">
