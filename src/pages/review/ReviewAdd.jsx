@@ -79,8 +79,8 @@ const ReviewAdd = () => {
           file.type.startsWith('video/')
         ) {
           const fileExtension = file.name.substring(file.name.lastIndexOf('.'));
-          const filePath = `Review/${plcPenType}/${pensionId}_${memberId}_review${file.name}${fileExtension}`;
-          // const filePath = `Review/${plcPenType}/${pensionId}_${memberId}_review${index}${fileExtension}`;
+          // const filePath = `Review/${plcPenType}/${pensionId}_${memberId}_review${file.name}${fileExtension}`;
+          const filePath = `Review/${plcPenType}/${pensionId}_${memberId}_review${index}${fileExtension}`;
           //"Review/Pension/plcpenid_memberId_review0.jpeg"
           //"Review/Place/plcpenid_memberId_review0.mp4"
           filePaths.push(filePath);
@@ -123,7 +123,6 @@ const ReviewAdd = () => {
       type: plcPenType,
       files: selectedFiles.map((item) => item.filePath),
     };
-    // console.log('[Step 1] presignedUrl 요청:', reviewData);
     try {
       const response = await PostPresignedUrls(reviewData);
       // console.log('[Step 2] Presigned URL 응답:', response.data);

@@ -108,7 +108,6 @@ const ReviewEdit = () => {
 
     try {
       const response = await PatchReviewEdit(reviewFormData, reviewId);
-      console.log('수정 중:', reviewFormData, 'reviewId:', reviewId);
     } catch (error) {
       console.error('수정 중 오류 발생:', error);
     }
@@ -145,7 +144,6 @@ const ReviewEdit = () => {
                     const newFile = new File([blob], file.name, {
                       type: 'image/webp',
                     });
-                    // console.log('이미지 File:', newFile);
                     reviewFormData.append('file', newFile);
                     resolve({
                       file: newFile,
@@ -331,7 +329,6 @@ const ReviewEdit = () => {
                 placeholder="내용을 작성해 주세요."
                 value={content}
                 maxLength="400"
-                // onChange={(e) => setContent(e.target.value)}
                 onChange={handleContentChange}
               ></textarea>
             </div>
