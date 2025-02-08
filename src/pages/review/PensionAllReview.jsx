@@ -7,6 +7,7 @@ import AllReviewHeader from '../../components/review/AllReviewHeader';
 import { useInView } from 'react-intersection-observer';
 import SubHeader from '../../components/common/SubHeader';
 import { debounce } from 'lodash';
+import { CircularProgress } from '@mui/material';
 const ReviewCard = lazy(() => import('../../components/review/ReviewCard'));
 const PensionAllReview = () => {
   const { id: pensionId } = useParams();
@@ -60,18 +61,20 @@ const PensionAllReview = () => {
         <AllReviewHeader />
         <div className="h-2 mt-1 mb-5 bg-[#D9D9D9]"></div>
         <div className="flex flex-col gap-3 px-5 min-w-96 md:w-full md:px-6">
-          {reviews.map((review, index) => (
-            <Suspense
-              fallback={<div>리뷰를 불러오는 중입니다...</div>}
-              key={index}
-            >
-              <div>
-                <ReviewCard review={review} />
-                <div className="mt-3 h-1 bg-[#D9D9D9]"></div>
-              </div>
-            </Suspense>
-          ))}
-          {isLoading && <div>Loading...</div>}
+          {isLoading ? (
+            <div className="absolute inset-0 z-10 flex items-center justify-center">
+              <CircularProgress size={60} />
+            </div>
+          ) : (
+            reviews.map((review, index) => (
+              <Suspense fallback={<></>} key={index}>
+                <div>
+                  <ReviewCard review={review} />
+                  <div className="mt-3 h-1 bg-[#D9D9D9]"></div>
+                </div>
+              </Suspense>
+            ))
+          )}
           <div ref={ref} className="h-4 root"></div>
         </div>
       </div>
