@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import HotPlaces from '../components/main-page/HotPlaces';
 import RecommendedPensions from '../components/main-page/RecommendedPensions';
 import LiveReviews from '../components/main-page/LiveReviews';
 import SearchModal from '../components/main-page/search-modal/SearchModal.jsx';
 import AdImage2 from '../stories/assets/광고2.svg';
 import AdImage3 from '../stories/assets/광고3.svg';
-import FooterImage from '../stories/assets/Footer.svg';
 import ViewHistoryMiniCard from '../components/review/ViewHistoryMiniCard.jsx';
+import MainFooterInfo from '../components/main-page/MainFooterInfo.jsx';
 
 const Main = () => {
   const [isSearchModalOpen, setSearchModalOpen] = useState(false);
@@ -92,14 +92,8 @@ const Main = () => {
       >
         <ViewHistoryMiniCard />
       </span>
-      <div className="flex justify-center mt-10">
-        <img
-          src={FooterImage}
-          alt="푸터 이미지"
-          className="w-full max-w-screen-lg"
-        />
-      </div>
-
+      <div className="flex justify-center mt-10"></div>
+      <MainFooterInfo />
       {isSearchModalOpen && (
         <SearchModal onClose={() => setSearchModalOpen(false)} />
       )}
