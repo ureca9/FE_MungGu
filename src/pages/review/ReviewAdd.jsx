@@ -22,6 +22,9 @@ const ReviewAdd = () => {
   const [memberId, setMemberId] = useState(null);
   const scrollRef = useRef(null);
 
+  const [textLength, setTextLength] = useState(0); // 글자 수 상태 추가
+  const maxLength = 400; // 최대 글자 수
+
   useEffect(() => {
     const id = localStorage.getItem('MEMBER_ID');
     if (id) {
@@ -183,6 +186,20 @@ const ReviewAdd = () => {
     }
   };
 
+  const handleContentChange = (e) => {
+    const currentText = e.target.value;
+    if (currentText.length <= maxLength) {
+      setContent(currentText);
+      setTextLength(currentText.length); // 글자 수 업데이트
+    } else {
+      Swal.fire({
+        title: 'Oops...',
+        text: `최대 글자 수(${maxLength})를 초과했습니다.`,
+        icon: 'warning',
+      });
+    }
+  };
+  
   return (
     <div className="h-full min-w-80">
       <PlaceData />
@@ -286,9 +303,12 @@ const ReviewAdd = () => {
           </div>
         </div>
         <div className="md:mt-4">
-          <div className="flex items-center">
-            <span className="mr-1 text-lg">후기 내용</span>
-            <span className="mt-0.5 text-2xl text-red-600">*</span>
+          <div className="flex justify-between">
+            <div className="flex items-center">
+              <span className="mr-1 text-lg">후기 내용</span>
+              <span className="mt-0.5 text-2xl text-red-600">*</span>
+            </div>
+            <span className="text-lg text-[#8A8A8A]">{textLength}/400</span>
           </div>
           <div className="flex p-4 bg-white rounded-lg md:p-7 h-52">
             <textarea
@@ -296,7 +316,8 @@ const ReviewAdd = () => {
               placeholder="내용을 작성해 주세요."
               value={content}
               maxLength="400"
-              onChange={(e) => setContent(e.target.value)}
+              // onChange={(e) => setContent(e.target.value)}
+              onChange={handleContentChange} // 변경된 함수 적용
             ></textarea>
           </div>
         </div>
