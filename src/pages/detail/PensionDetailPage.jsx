@@ -94,20 +94,17 @@ const PensionDetailPage = () => {
           confirmButtonText: '로그인',
           cancelButtonText: '취소',
         });
-
+  
         if (result.isConfirmed) {
           navigate('/login');
         }
         return;
       }
 
-      await axios.post(
-        `https://meong9.store/api/v1/pensions/likes/${id}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        },
-      );
+      await axios.post(`https://meong9.store/api/v1/pensions/likes/${id}`, {}, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+  
 
       setLikeStatus((prev) => !prev);
     } catch (error) {
@@ -117,6 +114,7 @@ const PensionDetailPage = () => {
       });
     }
   };
+  
 
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
@@ -130,16 +128,17 @@ const PensionDetailPage = () => {
       <div className="w-full h-[400px] overflow-hidden">
         {pensionDetail?.images?.length > 0 ? (
           <Slider {...sliderSettings}>
-            {pensionDetail.images.slice(0, 5).map((image, index) => (
-              <div key={index}>
-                <img
-                  src={image}
-                  alt={`펜션 이미지 ${index + 1}`}
-                  className="w-full h-[400px] object-cover"
-                />
-              </div>
-            ))}
-          </Slider>
+          {pensionDetail.images.slice(0, 5).map((image, index) => (
+            <div key={index}>
+              <img
+                src={image}
+                alt={`펜션 이미지 ${index + 1}`}
+                className="w-full h-[400px] object-cover"
+              />
+            </div>
+          ))}
+        </Slider>
+        
         ) : (
           <div className="flex items-center justify-center w-full h-[400px] bg-gray-300 text-gray-500">
             이미지가 없습니다.

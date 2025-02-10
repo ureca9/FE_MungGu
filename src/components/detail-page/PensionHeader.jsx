@@ -19,7 +19,6 @@ const PensionHeader = ({ pensionName, address, likeStatus, onToggleLike, tags = 
 
       <p className="text-sm text-gray-500">{address}</p>
 
-      {/* 별점 및 리뷰 수 추가 */}
       <div className="flex items-center mt-2">
         <span className="mr-2 text-yellow-500">
           ⭐ {reviewAvg ? reviewAvg.toFixed(1) : '0.0'}
@@ -29,7 +28,6 @@ const PensionHeader = ({ pensionName, address, likeStatus, onToggleLike, tags = 
         </span>
       </div>
 
-      {/* 태그 표시 영역 추가 */}
       {tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-2">
           {tags.map((tag, index) => (

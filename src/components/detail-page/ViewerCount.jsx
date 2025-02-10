@@ -1,4 +1,3 @@
-// src/components/detail-page/ViewerCount.jsx
 import React from 'react';
 
 const ViewerCount = ({ viewCount }) => {
