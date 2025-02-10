@@ -19,7 +19,18 @@ const ReviewAdd = () => {
   const [visitDate, setVisitDate] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([]);
   const { plcPenType } = useTypeStore();
+  const [memberId, setMemberId] = useState(null);
   const scrollRef = useRef(null);
+
+  const [textLength, setTextLength] = useState(0); // 글자 수 상태 추가
+  const maxLength = 400; // 최대 글자 수
+
+  useEffect(() => {
+    const id = localStorage.getItem('MEMBER_ID');
+    if (id) {
+      setMemberId(id);
+    }
+  }, []);
 
   const handleWheel = (e) => {
     e.preventDefault();
@@ -42,13 +53,14 @@ const ReviewAdd = () => {
       }
     };
   }, []);
+
   const handleScoreChange = (newScore) => {
     setScore(newScore);
   };
 
   const handleFileChange = async (event) => {
     const files = [...event.target.files];
-    const maxFileSize = 10 * 1024 * 1024;
+    const maxFileSize = 100 * 1024 * 1024;
     const filePaths = [];
 
     const processedFiles = await Promise.all(
@@ -67,7 +79,10 @@ const ReviewAdd = () => {
           file.type.startsWith('video/')
         ) {
           const fileExtension = file.name.substring(file.name.lastIndexOf('.'));
-          const filePath = `Review/${pensionId}_review${index}${fileExtension}`;
+          // const filePath = `Review/${plcPenType}/${pensionId}_${memberId}_review${file.name}${fileExtension}`;
+          const filePath = `Review/${plcPenType}/${pensionId}_${memberId}_review${index}${fileExtension}`;
+          //"Review/Pension/plcpenid_memberId_review0.jpeg"
+          //"Review/Place/plcpenid_memberId_review0.mp4"
           filePaths.push(filePath);
           return {
             file,
@@ -108,15 +123,14 @@ const ReviewAdd = () => {
       type: plcPenType,
       files: selectedFiles.map((item) => item.filePath),
     };
-    console.log('[Step 1] presignedUrl 요청:', reviewData);
     try {
       const response = await PostPresignedUrls(reviewData);
-      console.log('[Step 2] Presigned URL 응답:', response.data);
+      // console.log('[Step 2] Presigned URL 응답:', response.data);
 
       const filesToUpload = selectedFiles.map((item) => item.file);
       const presignedUrls = response.data;
       await handleFileUpload(filesToUpload, presignedUrls);
-      console.log('[Step 3] 파일 업로드 완료!');
+      // console.log('[Step 3] 파일 업로드 완료!');
     } catch (error) {
       console.error('[Error] Presigned URL 요청 중 오류 발생:', error);
     }
@@ -133,7 +147,7 @@ const ReviewAdd = () => {
         .map((response) => response.config.url.split('?')[0]);
 
       const presignedUrls01 = extractedUrls;
-      console.log('[Step 4] Presigned URL 업로드 응답:', uploadResponses);
+      // console.log('[Step 4] Presigned URL 업로드 응답:', uploadResponses);
 
       if (uploadResponses.some((response) => response.status !== 200)) {
         uploadResponses.forEach((response, index) => {
@@ -143,7 +157,7 @@ const ReviewAdd = () => {
         });
         throw new Error('일부 파일 업로드에 실패했습니다.');
       }
-      console.log('[Success] 모든 파일이 성공적으로 업로드되었습니다.');
+      // console.log('[Success] 모든 파일이 성공적으로 업로드되었습니다.');
       await reviewSubmit(presignedUrls01);
     } catch (error) {
       console.error('[Error] 파일 업로드 중 오류 발생:', error);
@@ -161,8 +175,8 @@ const ReviewAdd = () => {
       visitDate,
       fileUrls: presignedUrls01,
     };
-    console.log('reviewSubmit전송 데이터:', reviewData);
-    console.log('presignedUrls01:', presignedUrls01);
+    // console.log('reviewSubmit전송 데이터:', reviewData);
+    // console.log('presignedUrls01:', presignedUrls01);
 
     try {
       const response = await PostPensionsReview(reviewData);
@@ -171,6 +185,20 @@ const ReviewAdd = () => {
     }
   };
 
+  const handleContentChange = (e) => {
+    const currentText = e.target.value;
+    if (currentText.length <= maxLength) {
+      setContent(currentText);
+      setTextLength(currentText.length); // 글자 수 업데이트
+    } else {
+      Swal.fire({
+        title: 'Oops...',
+        text: `최대 글자 수(${maxLength})를 초과했습니다.`,
+        icon: 'warning',
+      });
+    }
+  };
+  
   return (
     <div className="h-full min-w-80">
       <PlaceData />
@@ -274,9 +302,12 @@ const ReviewAdd = () => {
           </div>
         </div>
         <div className="md:mt-4">
-          <div className="flex items-center">
-            <span className="mr-1 text-lg">후기 내용</span>
-            <span className="mt-0.5 text-2xl text-red-600">*</span>
+          <div className="flex justify-between">
+            <div className="flex items-center">
+              <span className="mr-1 text-lg">후기 내용</span>
+              <span className="mt-0.5 text-2xl text-red-600">*</span>
+            </div>
+            <span className="text-lg text-[#8A8A8A]">{textLength}/400</span>
           </div>
           <div className="flex p-4 bg-white rounded-lg md:p-7 h-52">
             <textarea
@@ -284,7 +315,8 @@ const ReviewAdd = () => {
               placeholder="내용을 작성해 주세요."
               value={content}
               maxLength="400"
-              onChange={(e) => setContent(e.target.value)}
+              // onChange={(e) => setContent(e.target.value)}
+              onChange={handleContentChange} // 변경된 함수 적용
             ></textarea>
           </div>
         </div>

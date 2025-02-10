@@ -13,6 +13,7 @@ import {
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import Swal from 'sweetalert2';
 import { useLocation } from 'react-router-dom';
+import Default from '../../stories/skeleton/mungsengneacut/Default';
 
 const PAGE_SIZE = 6;
 
@@ -235,7 +236,9 @@ const Mungsengneacut = () => {
             </div>
           )}
           {selectedTab === 0 ? (
-            allPhotos.length > 0 ? (
+            isLoading ? (
+              <Default count={PAGE_SIZE} />
+            ) : allPhotos.length > 0 ? (
               <ul className="grid grid-cols-2 gap-4 md:grid-cols-3">
                 {allPhotos.map((photo, index) => (
                   <li

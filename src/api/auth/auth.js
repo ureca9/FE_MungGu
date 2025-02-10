@@ -1,8 +1,95 @@
+import React, { useEffect } from 'react';
 import { instance } from '../axios.js';
 import Swal from 'sweetalert2';
 import LOCAL_STORAGE_KEYS from '../../utils/LocalStorageKey';
 import ROUTER_PATHS from '../../utils/RouterPath';
 import { ERROR_MESSAGES } from '../../utils/ErrorMessage.js';
+import { messaging } from "../../firebase";
+import { getToken } from "firebase/messaging"; 
+
+export const initializeFCM = async () => {
+  // localStorage에서 초기화 상태 확인
+  const isInitialized = localStorage.getItem('fcm_initialized') === 'true';
+  
+  if (isInitialized) {
+    console.log("FCM already initialized");
+    return;
+  }
+
+  if (!('serviceWorker' in navigator)) {
+    console.log("Service Worker not supported");
+    return;
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (!registration) {
+      await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+      console.log("Service Worker registered successfully");
+    }
+    
+    localStorage.setItem('fcm_initialized', 'true');
+  } catch (error) {
+    console.error("Service Worker registration failed:", error);
+  }
+};
+
+// FCM 토큰 등록 함수
+export const registerFCMToken = async (memberId) => {
+  if (!memberId) {
+    console.error("Member ID is required");
+    return;
+  }
+
+
+  try {
+    const permission = await Notification.requestPermission();
+    console.log("Permission result:", permission);
+
+    if (permission !== 'granted') {
+      if (permission === 'denied') {
+        Swal.fire({
+          icon: 'info',
+          title: '푸시 알림 권한이 필요합니다',
+          text: '푸시 알림을 받으려면 브라우저 설정에서 알림을 허용해 주세요.',
+          confirmButtonText: '확인',
+          confirmButtonColor: '#3288FF',
+        });
+      }
+      return;
+    }
+
+    // 이전 토큰 확인
+    const savedToken = localStorage.getItem(LOCAL_STORAGE_KEYS.FCM_TOKEN);
+    
+
+    const currentToken = await getToken(messaging, {
+      vapidKey: import.meta.env.VITE_FCM_VAPID_KEY
+    });
+    if (!currentToken) {
+      console.warn('No FCM token received');
+      return;
+    }
+
+    // 토큰이 같으면 재등록하지 않음
+    if (savedToken === currentToken) {
+      console.log("FCM token already registered");
+      return;
+    }
+
+    // 새 토큰 등록
+    await instance.post('/fcm/token', {
+      memberId,
+      token: currentToken
+    });
+
+    localStorage.setItem(LOCAL_STORAGE_KEYS.FCM_TOKEN, currentToken);
+    console.log('FCM token registered successfully');
+
+  } catch (error) {
+    console.error('FCM token registration error:', error);
+  }
+}
 
 export const getAuthToken = async () => {
   try {
@@ -31,6 +118,15 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
     if (!code || typeof code !== 'string') {
       throw new Error('Invalid authorization code');
     }
+
+    // 이미 처리된 코드인지 확인
+    const processedCode = localStorage.getItem('processedCode');
+    if (processedCode === code) {
+      console.log("This authorization code has already been processed.");
+      return;
+    }
+    localStorage.setItem('processedCode', code);
+
     const response = await instance.get(`/auth/callback/kakao?code=${code}`);
     const data = response.data;
 
@@ -73,6 +169,8 @@ export const fetchAccessToken = async (code, setLogin, navigate) => {
 
       updateLocalStorage(keysAndValues);
       setLogin(accessToken);
+
+      await registerFCMToken(memberId);
 
       if (typeof hasMemberInfo === 'boolean') {
         navigate(

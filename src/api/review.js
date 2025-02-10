@@ -122,16 +122,15 @@ export const PostPensionsReview = async (reviewData) => {
       }).then(() => {
         window.history.back();
       });
-    } else {
-      Swal.fire({
-        title: '추가 실패',
-        text: response.data.message || '알 수 없는 오류가 발생했습니다.',
-        icon: 'error',
-        confirmButtonColor: '#FF0000',
-      });
     }
     return response;
   } catch (error) {
+    Swal.fire({
+      title: '추가 실패',
+      text: error || '알 수 없는 오류가 발생했습니다.',
+      icon: 'error',
+      confirmButtonColor: '#FF0000',
+    });
     console.error('리뷰 등록 중 오류 발생:', error);
   }
 };
@@ -169,6 +168,7 @@ export const DeleteReview = async (reviewId) => {
         Accept: 'application/json',
       },
     });
+    console.error('반려동물 삭제 성공:', response.data);
     return response.data;
   } catch (error) {
     console.error('반려동물 삭제 오류 :', error);
@@ -196,8 +196,20 @@ export const PatchReviewEdit = async (reviewFormData, reviewId) => {
         },
       },
     );
+    Swal.fire({
+      title: '수정 성공!',
+      icon: 'success',
+      confirmButtonColor: '#3288FF',
+    }).then(() => {
+      window.history.back();
+    });
     return response.data;
   } catch (error) {
+    Swal.fire({
+      title: 'Oops...',
+      text: '수정 중 오류가 발생했습니다.',
+      icon: 'error',
+    });
     console.error('리뷰 수정 오류 :', error);
   }
 };

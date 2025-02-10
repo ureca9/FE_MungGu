@@ -36,6 +36,31 @@ const PlaceDetailPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
 
+  // 최근본 목록 만드는 코드 시작 -은석-
+  useEffect(() => {
+    if (placeDetail) {
+      const watchedPlace = JSON.parse(localStorage.getItem('watched')) || [];
+      const isExisting = watchedPlace.some((item) => item.placeid === id);
+      if (!isExisting) {
+        const updatedWatched = [
+          {
+            placeid: id,
+            placeName: placeDetail.placeName,
+            image: placeDetail.images[0],
+            reviewAvg: placeDetail.reviewAvg,
+            reviewCount: placeDetail.reviewCount,
+            address: placeDetail.address,
+            businessHour: placeDetail.businessHour,
+            closedDays: placeDetail.closedDays,
+            description: placeDetail.description,
+          },
+          ...watchedPlace,
+        ].slice(0, 20);
+        localStorage.setItem('watched', JSON.stringify(updatedWatched));
+      }
+    }
+  }, [placeDetail, id]); // 최근본 목록 만드는 코드 끝 -은석-
+
   useEffect(() => {
     const getPlaceDetail = async () => {
       try {
@@ -51,7 +76,6 @@ const PlaceDetailPage = () => {
   
     getPlaceDetail();
   }, [id]);
-  
 
   const handleToggleLike = async () => {
     try {
@@ -74,7 +98,7 @@ const PlaceDetailPage = () => {
       await axios.post(
         `https://meong9.store/api/v1/places/likes/${id}`,
         {},
-        { headers: { Authorization: `Bearer ${accessToken}` } }
+        { headers: { Authorization: `Bearer ${accessToken}` } },
       );
 
       setLikeStatus((prev) => !prev);
@@ -108,10 +132,10 @@ const PlaceDetailPage = () => {
           <Slider {...sliderSettings}>
             {placeDetail.images.slice(0, 5).map((image, index) => (
               <div key={index}>
-                <img 
-                  src={image} 
-                  alt={`장소 이미지 ${index + 1}`} 
-                  className="w-full h-[400px] object-cover" 
+                <img
+                  src={image}
+                  alt={`장소 이미지 ${index + 1}`}
+                  className="w-full h-[400px] object-cover"
                 />
               </div>
             ))}
@@ -137,27 +161,26 @@ const PlaceDetailPage = () => {
         <ViewerCount viewCount={placeDetail.viewCount} />
       )}
 
-
-      <PlaceInfoSection 
-        businessHour={placeDetail.businessHour} 
-        telNo={placeDetail.telNo} 
-        hmpgUrl={placeDetail.hmpgUrl} 
-        description={placeDetail.description} 
+      <PlaceInfoSection
+        businessHour={placeDetail.businessHour}
+        telNo={placeDetail.telNo}
+        hmpgUrl={placeDetail.hmpgUrl}
+        description={placeDetail.description}
       />
 
-      <PlaceReviewSection 
-        photoReviewList={placeDetail.photoReviewList} 
-        review={placeDetail.review} 
+      <PlaceReviewSection
+        photoReviewList={placeDetail.photoReviewList}
+        review={placeDetail.review}
         onReviewClick={handleReviewClick}
-        emptyIcon={emptyIcon} 
+        emptyIcon={emptyIcon}
         onViewAllClick={handleViewAllReviews}
       />
 
       {isModalOpen && (
-        <ReviewDetailModal 
-          isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)} 
-          reviewData={selectedReview} 
+        <ReviewDetailModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          reviewData={selectedReview}
         />
       )}
     </div>

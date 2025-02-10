@@ -39,6 +39,29 @@ const PensionDetailPage = () => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
 
+  // 최근본 목록 만드는 코드 시작 -은석-
+  useEffect(() => {
+    if (pensionDetail) {
+      const watchedPlace = JSON.parse(localStorage.getItem('watched')) || [];
+      const isExisting = watchedPlace.some((item) => item.pensionId === id);
+      if (!isExisting) {
+        const updatedWatched = [
+          {
+            pensionId: id,
+            pensionName: pensionDetail.pensionName,
+            image: pensionDetail.images[0],
+            reviewAvg: pensionDetail.reviewAvg,
+            reviewCount: pensionDetail.reviewCount,
+            address: pensionDetail.address,
+            introduction: pensionDetail.introduction,
+          },
+          ...watchedPlace,
+        ].slice(0, 20);
+        localStorage.setItem('watched', JSON.stringify(updatedWatched));
+      }
+    }
+  }, [pensionDetail, id]); // 최근본 목록 만드는 코드 끝 -은석-
+
   useEffect(() => {
     const getData = async () => {
       try {
@@ -77,12 +100,12 @@ const PensionDetailPage = () => {
         }
         return;
       }
-  
-      // 템플릿 문자열로 수정
+
       await axios.post(`https://meong9.store/api/v1/pensions/likes/${id}`, {}, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
   
+
       setLikeStatus((prev) => !prev);
     } catch (error) {
       Swal.fire({
@@ -95,7 +118,8 @@ const PensionDetailPage = () => {
 
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
-  if (!pensionDetail) return <div className="p-4">유효한 펜션 정보가 없습니다.</div>;
+  if (!pensionDetail)
+    return <div className="p-4">유효한 펜션 정보가 없습니다.</div>;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f9fafb' }}>
@@ -122,11 +146,11 @@ const PensionDetailPage = () => {
         )}
       </div>
 
-      <PensionHeader 
-        pensionName={pensionDetail.pensionName} 
-        address={pensionDetail.address} 
-        likeStatus={likeStatus} 
-        onToggleLike={handleToggleLike} 
+      <PensionHeader
+        pensionName={pensionDetail.pensionName}
+        address={pensionDetail.address}
+        likeStatus={likeStatus}
+        onToggleLike={handleToggleLike}
         tags={pensionDetail.tags || []}
         reviewAvg={pensionDetail.reviewAvg}
         reviewCount={pensionDetail.reviewCount}
@@ -136,27 +160,27 @@ const PensionDetailPage = () => {
         <ViewerCount viewCount={pensionDetail.viewCount} />
       )}
 
-      <PensionIntroduction 
-        introduction={pensionDetail.introduction} 
-        showFullIntro={showFullIntro} 
-        setShowFullIntro={setShowFullIntro} 
+      <PensionIntroduction
+        introduction={pensionDetail.introduction}
+        showFullIntro={showFullIntro}
+        setShowFullIntro={setShowFullIntro}
       />
 
       <ReservationRoomSection pensionId={id} />
 
-      <ReviewSection 
-        reviews={pensionDetail.review} 
-        onReviewClick={handleReviewClick} 
-        pensionId={id} 
+      <ReviewSection
+        reviews={pensionDetail.review}
+        onReviewClick={handleReviewClick}
+        pensionId={id}
       />
 
       <RecommendedFacility pensionId={id} />
 
       {isReviewModalOpen && (
-        <ReviewDetailModal 
-          isOpen={isReviewModalOpen} 
-          onClose={() => setIsReviewModalOpen(false)} 
-          reviewData={selectedReview} 
+        <ReviewDetailModal
+          isOpen={isReviewModalOpen}
+          onClose={() => setIsReviewModalOpen(false)}
+          reviewData={selectedReview}
         />
       )}
     </div>
