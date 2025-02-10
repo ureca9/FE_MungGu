@@ -28,17 +28,15 @@ const MapContainer = () => {
     endLocation,
     setStartLocation,
   } = usePlaceStore();
-  const { isLoading, setIsLoading, setIsMapLoading } = useLoadingStore();
+  const { isLoading, setIsLoading } = useLoadingStore();
 
   const showError = (title, icon = 'error') => {
     Swal.fire({ title, icon });
   };
 
-  const waitForKakaoMaps = (callback, retries = 10) => {
+  const waitForKakaoMaps = (callback) => {
     if (window.kakao && window.kakao.maps) callback();
-    else if (retries > 0)
-      setTimeout(() => waitForKakaoMaps(callback, retries - 1), 100);
-    else showError('Kakao Maps를 불러오지 못했습니다.');
+    else setTimeout(() => waitForKakaoMaps(callback), 100);
   };
 
   const setCurrentLocation = () => {
@@ -75,7 +73,12 @@ const MapContainer = () => {
   };
 
   const initMap = async (latitude, longitude) => {
-    setIsMapLoading(true);
+    if (mapRef.current) {
+      mapRef.current.setCenter(
+        new window.kakao.maps.LatLng(latitude, longitude),
+      );
+      return;
+    }
 
     try {
       const map = new window.kakao.maps.Map(mapContainer.current, {
@@ -88,8 +91,6 @@ const MapContainer = () => {
     } catch (error) {
       console.error('지도 초기화 중 오류 발생:', error);
       showError('지도를 불러오는데 실패했습니다. 페이지를 새로고침 해주세요.');
-    } finally {
-      setIsMapLoading(false);
     }
   };
 
