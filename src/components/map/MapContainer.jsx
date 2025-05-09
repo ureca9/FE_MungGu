@@ -15,7 +15,7 @@ const MapContainer = () => {
 
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_API_KEY}&autoload=false&libraries=services`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_API_KEY}&autoload=false&libraries=services,clusterer`;
     script.async = true;
     script.onload = () => {
       window.kakao.maps.load(() => {
@@ -40,6 +40,7 @@ const MapContainer = () => {
 
 const ActualMap = ({ mapContainer }) => {
   const mapRef = useRef(null);
+  const clustererRef = useRef(null);
   const currentLocationMarkerRef = useRef(null);
   const likedMarkersRef = useRef([]);
   const searchMarkersRef = useRef([]);
@@ -109,12 +110,16 @@ const ActualMap = ({ mapContainer }) => {
         level: 3,
       });
       mapRef.current = map;
+
+      const clusterer = new window.kakao.maps.MarkerClusterer({
+        map: map,
+        averageCenter: true,
+        minLevel: 5,
+      });
+      clustererRef.current = clusterer;
+
       addCurrentMarker(map, latitude, longitude);
       await addLikedMarker(map);
-
-      kakao.maps.event.addListener(map, 'idle', () => {
-        filterMarkers(map);
-      });
     } catch (error) {
       console.error('지도 초기화 중 오류 발생:', error);
       showError('지도를 불러오는데 실패했습니다. 페이지를 새로고침 해주세요.');
@@ -133,7 +138,7 @@ const ActualMap = ({ mapContainer }) => {
     setIsLoading(true);
     try {
       const places = await getMarkers();
-      likedMarkersRef.current = places.map((place) => {
+      const markers = places.map((place) => {
         const marker = new window.kakao.maps.Marker({
           position: new window.kakao.maps.LatLng(
             Number(place.latitude),
@@ -150,21 +155,14 @@ const ActualMap = ({ mapContainer }) => {
         });
         return marker;
       });
-      filterMarkers(map);
+      likedMarkersRef.current = markers;
+      clustererRef.current.addMarkers(markers);
     } catch (error) {
       console.error('찜한 장소를 불러오는 중 오류가 발생했습니다:', error);
       showError('찜한 장소를 불러오는데 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const filterMarkers = (map) => {
-    const bounds = map.getBounds();
-    likedMarkersRef.current.forEach((marker) => {
-      const pos = marker.getPosition();
-      marker.setMap(bounds.contain(pos) ? map : null);
-    });
   };
 
   const addSearchResultMarker = (map) => {
@@ -268,7 +266,7 @@ const ActualMap = ({ mapContainer }) => {
       <div
         ref={mapContainer}
         id="map"
-        className="w-full h-full will-change-transform contain-layout "
+        className="w-full h-full will-change-transform contain-layout"
       ></div>
     </>
   );
