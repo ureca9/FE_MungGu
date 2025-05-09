@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { getCarDirection, getMarkers, getSpotInfo } from '../../api/map/map.js';
 import heartMarker from '../../assets/common/heartMarker.png';
@@ -10,7 +10,36 @@ import LoadingSpinner from '../common/LoadingSpinner.jsx';
 import usePolylineStore from '../../stores/map/usePolylineStore.js';
 
 const MapContainer = () => {
+  const [isMapReady, setIsMapReady] = useState(false);
   const mapContainer = useRef(null);
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_API_KEY}&autoload=false&libraries=services`;
+    script.async = true;
+    script.onload = () => {
+      window.kakao.maps.load(() => {
+        setIsMapReady(true);
+      });
+    };
+    document.head.appendChild(script);
+  }, []);
+
+  return (
+    <div className="w-full h-full">
+      {isMapReady ? (
+        <ActualMap mapContainer={mapContainer} />
+      ) : (
+        <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+          <LoadingSpinner />
+        </div>
+      )}
+    </div>
+  );
+};
+
+// eslint-disable-next-line react/prop-types
+const ActualMap = ({ mapContainer }) => {
   const mapRef = useRef(null);
   const currentLocationMarkerRef = useRef(null);
   const likedMarkersRef = useRef([]);
@@ -28,17 +57,10 @@ const MapContainer = () => {
     endLocation,
     setStartLocation,
   } = usePlaceStore();
-  const { isLoading, setIsLoading, setIsMapLoading } = useLoadingStore();
+  const { isLoading, setIsLoading } = useLoadingStore();
 
   const showError = (title, icon = 'error') => {
     Swal.fire({ title, icon });
-  };
-
-  const waitForKakaoMaps = (callback, retries = 10) => {
-    if (window.kakao && window.kakao.maps) callback();
-    else if (retries > 0)
-      setTimeout(() => waitForKakaoMaps(callback, retries - 1), 100);
-    else showError('Kakao Maps를 불러오지 못했습니다.');
   };
 
   const setCurrentLocation = () => {
@@ -75,7 +97,12 @@ const MapContainer = () => {
   };
 
   const initMap = async (latitude, longitude) => {
-    setIsMapLoading(true);
+    if (mapRef.current) {
+      mapRef.current.setCenter(
+        new window.kakao.maps.LatLng(latitude, longitude),
+      );
+      return;
+    }
 
     try {
       const map = new window.kakao.maps.Map(mapContainer.current, {
@@ -88,8 +115,6 @@ const MapContainer = () => {
     } catch (error) {
       console.error('지도 초기화 중 오류 발생:', error);
       showError('지도를 불러오는데 실패했습니다. 페이지를 새로고침 해주세요.');
-    } finally {
-      setIsMapLoading(false);
     }
   };
 
@@ -205,7 +230,9 @@ const MapContainer = () => {
   };
 
   useEffect(() => {
-    waitForKakaoMaps(setCurrentLocation);
+    requestIdleCallback(() => {
+      setCurrentLocation();
+    });
   }, []);
 
   useEffect(() => {
