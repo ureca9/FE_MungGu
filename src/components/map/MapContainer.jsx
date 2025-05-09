@@ -9,6 +9,9 @@ import useLoadingStore from '../../stores/common/useLoadingStore.js';
 import LoadingSpinner from '../common/LoadingSpinner.jsx';
 import usePolylineStore from '../../stores/map/usePolylineStore.js';
 
+const idleCallback = window.requestIdleCallback || ((cb) => setTimeout(cb, 0));
+const cancelIdle = window.cancelIdleCallback || ((id) => clearTimeout(id));
+
 const MapContainer = () => {
   const [isMapReady, setIsMapReady] = useState(false);
   const mapContainer = useRef(null);
@@ -239,7 +242,7 @@ const ActualMap = ({ mapContainer }) => {
   };
 
   useEffect(() => {
-    requestIdleCallback(() => {
+    idleCallback(() => {
       setCurrentLocation();
     });
   }, []);
