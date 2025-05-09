@@ -38,7 +38,6 @@ const MapContainer = () => {
   );
 };
 
-// eslint-disable-next-line react/prop-types
 const ActualMap = ({ mapContainer }) => {
   const mapRef = useRef(null);
   const currentLocationMarkerRef = useRef(null);
@@ -112,6 +111,10 @@ const ActualMap = ({ mapContainer }) => {
       mapRef.current = map;
       addCurrentMarker(map, latitude, longitude);
       await addLikedMarker(map);
+
+      kakao.maps.event.addListener(map, 'idle', () => {
+        filterMarkers(map);
+      });
     } catch (error) {
       console.error('지도 초기화 중 오류 발생:', error);
       showError('지도를 불러오는데 실패했습니다. 페이지를 새로고침 해주세요.');
@@ -130,40 +133,38 @@ const ActualMap = ({ mapContainer }) => {
     setIsLoading(true);
     try {
       const places = await getMarkers();
-      const idleQueue = [...places];
-
-      const renderNextMarker = () => {
-        const place = idleQueue.shift();
-        if (!place) return;
-
-        requestIdleCallback(() => {
-          const marker = new window.kakao.maps.Marker({
-            position: new window.kakao.maps.LatLng(
-              Number(place.latitude),
-              Number(place.longitude),
-            ),
-            map,
-            image: new window.kakao.maps.MarkerImage(
-              heartMarker,
-              new window.kakao.maps.Size(26, 34),
-              { offset: new window.kakao.maps.Point(16, 34) },
-            ),
-          });
-          window.kakao.maps.event.addListener(marker, 'click', () => {
-            handleMarkerClick(place);
-          });
-          likedMarkersRef.current.push(marker);
-          renderNextMarker();
+      likedMarkersRef.current = places.map((place) => {
+        const marker = new window.kakao.maps.Marker({
+          position: new window.kakao.maps.LatLng(
+            Number(place.latitude),
+            Number(place.longitude),
+          ),
+          image: new window.kakao.maps.MarkerImage(
+            heartMarker,
+            new window.kakao.maps.Size(26, 34),
+            { offset: new window.kakao.maps.Point(16, 34) },
+          ),
         });
-      };
-
-      renderNextMarker();
+        window.kakao.maps.event.addListener(marker, 'click', () => {
+          handleMarkerClick(place);
+        });
+        return marker;
+      });
+      filterMarkers(map);
     } catch (error) {
       console.error('찜한 장소를 불러오는 중 오류가 발생했습니다:', error);
       showError('찜한 장소를 불러오는데 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const filterMarkers = (map) => {
+    const bounds = map.getBounds();
+    likedMarkersRef.current.forEach((marker) => {
+      const pos = marker.getPosition();
+      marker.setMap(bounds.contain(pos) ? map : null);
+    });
   };
 
   const addSearchResultMarker = (map) => {
