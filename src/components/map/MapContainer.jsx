@@ -130,24 +130,34 @@ const ActualMap = ({ mapContainer }) => {
     setIsLoading(true);
     try {
       const places = await getMarkers();
-      likedMarkersRef.current = places.map((place) => {
-        const marker = new window.kakao.maps.Marker({
-          position: new window.kakao.maps.LatLng(
-            Number(place.latitude),
-            Number(place.longitude),
-          ),
-          map,
-          image: new window.kakao.maps.MarkerImage(
-            heartMarker,
-            new window.kakao.maps.Size(26, 34),
-            { offset: new window.kakao.maps.Point(16, 34) },
-          ),
+      const idleQueue = [...places];
+
+      const renderNextMarker = () => {
+        const place = idleQueue.shift();
+        if (!place) return;
+
+        requestIdleCallback(() => {
+          const marker = new window.kakao.maps.Marker({
+            position: new window.kakao.maps.LatLng(
+              Number(place.latitude),
+              Number(place.longitude),
+            ),
+            map,
+            image: new window.kakao.maps.MarkerImage(
+              heartMarker,
+              new window.kakao.maps.Size(26, 34),
+              { offset: new window.kakao.maps.Point(16, 34) },
+            ),
+          });
+          window.kakao.maps.event.addListener(marker, 'click', () => {
+            handleMarkerClick(place);
+          });
+          likedMarkersRef.current.push(marker);
+          renderNextMarker();
         });
-        window.kakao.maps.event.addListener(marker, 'click', () => {
-          handleMarkerClick(place);
-        });
-        return marker;
-      });
+      };
+
+      renderNextMarker();
     } catch (error) {
       console.error('찜한 장소를 불러오는 중 오류가 발생했습니다:', error);
       showError('찜한 장소를 불러오는데 실패했습니다.');
