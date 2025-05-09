@@ -264,7 +264,11 @@ const ActualMap = ({ mapContainer }) => {
   return (
     <>
       {isLoading && <LoadingSpinner />}
-      <div ref={mapContainer} id="map" className="w-full h-full"></div>
+      <div
+        ref={mapContainer}
+        id="map"
+        className="w-full h-full will-change-transform contain-layout "
+      ></div>
     </>
   );
 };
