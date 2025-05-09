@@ -1,15 +1,19 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import ROUTER_PATHS from '../utils/RouterPath.js';
 import DefaultLayout from '../layout/DefaultLayout.jsx';
 import Main from '../pages/Main.jsx';
-import Map from '../pages/map/Map.jsx';
+const Map = lazy(() => import('../pages/map/Map.jsx'));
+const MapSearch = lazy(() => import('../pages/map/MapSearch.jsx'));
+const Directions = lazy(() => import('../pages/map/Directions.jsx'));
+const MapSearchResults = lazy(
+  () => import('../pages/map/MapSearchResults.jsx'),
+);
 import MyPage from '../pages/user/MyPage.jsx';
 import Search from '../pages/Search.jsx';
 import PetAdd from '../pages/pet/PetAdd.jsx';
 import PetEdit from '../pages/pet/PetEdit.jsx';
 import UserEdit from '../pages/user/UserEdit.jsx';
-import MapSearch from '../pages/map/MapSearch.jsx';
-import Directions from '../pages/map/Directions.jsx';
 import PlaceDetailPage from '../pages/detail/PlaceDetailPage.jsx';
 import SearchModal from '../components/main-page/search-modal/SearchModal.jsx';
 import ListPage from '../pages/list/ListPage.jsx';
@@ -22,7 +26,6 @@ import PreferencePlant from '../pages/user/PreferencePlant.jsx';
 import PreferenceRegion from '../pages/user/PreferenceRegion.jsx';
 import PlantEdit from '../pages/user/PlantEdit.jsx';
 import RegionEdit from '../pages/user/RegionEdit.jsx';
-import MapSearchResults from '../pages/map/MapSearchResults.jsx';
 import ReviewAdd from '../pages/review/ReviewAdd.jsx';
 import Mungsengneacut from '../pages/mungsengneacut/Mungsengneacut.jsx';
 import ChooseFrame from '../pages/mungsengneacut/ChooseFrame.jsx';
@@ -41,15 +44,27 @@ const routes = [
   },
   {
     path: ROUTER_PATHS.MAP,
-    element: <Map />,
+    element: (
+      <Suspense fallback={<div>로딩 중...</div>}>
+        <Map />
+      </Suspense>
+    ),
   },
   {
     path: ROUTER_PATHS.MAP_SEARCH,
-    element: <MapSearch />,
+    element: (
+      <Suspense fallback={<div>로딩 중...</div>}>
+        <MapSearch />
+      </Suspense>
+    ),
   },
   {
     path: ROUTER_PATHS.DIRECTIONS,
-    element: <Directions />,
+    element: (
+      <Suspense fallback={<div>로딩 중...</div>}>
+        <Directions />
+      </Suspense>
+    ),
   },
   {
     path: ROUTER_PATHS.MY_PAGE,
@@ -61,7 +76,11 @@ const routes = [
   },
   {
     path: ROUTER_PATHS.MAP_SEARCH_RESULTS,
-    element: <MapSearchResults />,
+    element: (
+      <Suspense fallback={<div>로딩 중...</div>}>
+        <MapSearchResults />
+      </Suspense>
+    ),
   },
   {
     path: ROUTER_PATHS.USER_EDIT,
