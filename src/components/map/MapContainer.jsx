@@ -9,13 +9,16 @@ import useLoadingStore from '../../stores/common/useLoadingStore.js';
 import LoadingSpinner from '../common/LoadingSpinner.jsx';
 import usePolylineStore from '../../stores/map/usePolylineStore.js';
 
+const idleCallback = window.requestIdleCallback || ((cb) => setTimeout(cb, 0));
+const cancelIdle = window.cancelIdleCallback || ((id) => clearTimeout(id));
+
 const MapContainer = () => {
   const [isMapReady, setIsMapReady] = useState(false);
   const mapContainer = useRef(null);
 
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_API_KEY}&autoload=false&libraries=services`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_API_KEY}&autoload=false&libraries=services,clusterer`;
     script.async = true;
     script.onload = () => {
       window.kakao.maps.load(() => {
@@ -38,9 +41,9 @@ const MapContainer = () => {
   );
 };
 
-// eslint-disable-next-line react/prop-types
 const ActualMap = ({ mapContainer }) => {
   const mapRef = useRef(null);
+  const clustererRef = useRef(null);
   const currentLocationMarkerRef = useRef(null);
   const likedMarkersRef = useRef([]);
   const searchMarkersRef = useRef([]);
@@ -110,6 +113,14 @@ const ActualMap = ({ mapContainer }) => {
         level: 3,
       });
       mapRef.current = map;
+
+      const clusterer = new window.kakao.maps.MarkerClusterer({
+        map: map,
+        averageCenter: true,
+        minLevel: 5,
+      });
+      clustererRef.current = clusterer;
+
       addCurrentMarker(map, latitude, longitude);
       await addLikedMarker(map);
     } catch (error) {
@@ -130,13 +141,12 @@ const ActualMap = ({ mapContainer }) => {
     setIsLoading(true);
     try {
       const places = await getMarkers();
-      likedMarkersRef.current = places.map((place) => {
+      const markers = places.map((place) => {
         const marker = new window.kakao.maps.Marker({
           position: new window.kakao.maps.LatLng(
             Number(place.latitude),
             Number(place.longitude),
           ),
-          map,
           image: new window.kakao.maps.MarkerImage(
             heartMarker,
             new window.kakao.maps.Size(26, 34),
@@ -148,6 +158,8 @@ const ActualMap = ({ mapContainer }) => {
         });
         return marker;
       });
+      likedMarkersRef.current = markers;
+      clustererRef.current.addMarkers(markers);
     } catch (error) {
       console.error('찜한 장소를 불러오는 중 오류가 발생했습니다:', error);
       showError('찜한 장소를 불러오는데 실패했습니다.');
@@ -230,7 +242,7 @@ const ActualMap = ({ mapContainer }) => {
   };
 
   useEffect(() => {
-    requestIdleCallback(() => {
+    idleCallback(() => {
       setCurrentLocation();
     });
   }, []);
@@ -254,7 +266,11 @@ const ActualMap = ({ mapContainer }) => {
   return (
     <>
       {isLoading && <LoadingSpinner />}
-      <div ref={mapContainer} id="map" className="w-full h-full"></div>
+      <div
+        ref={mapContainer}
+        id="map"
+        className="w-full h-full will-change-transform contain-layout"
+      ></div>
     </>
   );
 };

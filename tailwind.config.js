@@ -13,5 +13,17 @@ export default {
       },
     },
   },
-  plugins: [scrollbar],
+  plugins: [
+    scrollbar,
+    function ({ addUtilities }) {
+      addUtilities({
+        '.will-change-transform': {
+          willChange: 'transform',
+        },
+        '.contain-layout': {
+          contain: 'layout',
+        },
+      });
+    },
+  ],
 };
