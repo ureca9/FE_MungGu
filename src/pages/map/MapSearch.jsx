@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaSearch } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import SearchHistory from '../../components/map/SearchHistory.jsx';
 import useSearchHistoryStore from '../../stores/map/useSearchHistoryStore.js';

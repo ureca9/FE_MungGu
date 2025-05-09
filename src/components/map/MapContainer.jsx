@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { getCarDirection, getMarkers, getSpotInfo } from '../../api/map/map.js';
 import heartMarker from '../../assets/common/heartMarker.png';
@@ -10,7 +10,36 @@ import LoadingSpinner from '../common/LoadingSpinner.jsx';
 import usePolylineStore from '../../stores/map/usePolylineStore.js';
 
 const MapContainer = () => {
+  const [isMapReady, setIsMapReady] = useState(false);
   const mapContainer = useRef(null);
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_API_KEY}&autoload=false&libraries=services`;
+    script.async = true;
+    script.onload = () => {
+      window.kakao.maps.load(() => {
+        setIsMapReady(true);
+      });
+    };
+    document.head.appendChild(script);
+  }, []);
+
+  return (
+    <div className="w-full h-full">
+      {isMapReady ? (
+        <ActualMap mapContainer={mapContainer} />
+      ) : (
+        <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+          <LoadingSpinner />
+        </div>
+      )}
+    </div>
+  );
+};
+
+// eslint-disable-next-line react/prop-types
+const ActualMap = ({ mapContainer }) => {
   const mapRef = useRef(null);
   const currentLocationMarkerRef = useRef(null);
   const likedMarkersRef = useRef([]);
@@ -32,11 +61,6 @@ const MapContainer = () => {
 
   const showError = (title, icon = 'error') => {
     Swal.fire({ title, icon });
-  };
-
-  const waitForKakaoMaps = (callback) => {
-    if (window.kakao && window.kakao.maps) callback();
-    else setTimeout(() => waitForKakaoMaps(callback), 100);
   };
 
   const setCurrentLocation = () => {
@@ -206,7 +230,9 @@ const MapContainer = () => {
   };
 
   useEffect(() => {
-    waitForKakaoMaps(setCurrentLocation);
+    requestIdleCallback(() => {
+      setCurrentLocation();
+    });
   }, []);
 
   useEffect(() => {
