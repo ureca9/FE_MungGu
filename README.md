@@ -48,5 +48,3 @@ git commit -m "feat: "
 - 구현한 화면이나 영상
 - bug fix면 어떻게 해결했는지
 ```
-
-
